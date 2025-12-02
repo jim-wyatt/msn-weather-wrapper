@@ -349,21 +349,21 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download coverage reports
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.3
         with:
           name: coverage-reports
           path: artifacts/coverage/
         continue-on-error: true
 
       - name: Download security reports
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.3
         with:
           name: security-reports
           path: artifacts/security/
         continue-on-error: true
 
       - name: Download test results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.3
         with:
           pattern: test-results-*
           path: artifacts/tests/
@@ -437,14 +437,14 @@ jobs:
           fetch-depth: 0
 
       - name: Download report documentation
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.3
         with:
           name: report-documentation
           path: ${{ env.REPORTS_DIR }}/
         continue-on-error: true
 
       - name: Download coverage reports (for badges)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.3
         with:
           name: coverage-reports
           path: docs/assets/
@@ -532,13 +532,13 @@ jobs:
       id-token: write
     steps:
       - name: Download package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.3
         with:
           name: python-package
           path: dist/
 
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@v1.13.0
         with:
           print-hash: true
 
@@ -567,7 +567,7 @@ jobs:
           fi
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.3
         with:
           path: release-artifacts/
 
