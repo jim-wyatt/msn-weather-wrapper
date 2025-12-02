@@ -1,6 +1,5 @@
 """Data models for weather information."""
 
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -10,8 +9,8 @@ class Location(BaseModel):
 
     city: str = Field(description="City name")
     country: str = Field(description="Country name")
-    latitude: Optional[float] = Field(None, description="Latitude coordinate")
-    longitude: Optional[float] = Field(None, description="Longitude coordinate")
+    latitude: float | None = Field(None, description="Latitude coordinate")
+    longitude: float | None = Field(None, description="Longitude coordinate")
 
 
 class WeatherData(BaseModel):
