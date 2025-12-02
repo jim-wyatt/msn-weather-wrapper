@@ -40,7 +40,7 @@ jobs:
       contents: read
       packages: write
       id-token: write
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -99,6 +99,7 @@ jobs:
         with:
           name: app-sbom
           path: app_sbom.json
+          retention-days: 30
 
   scan-image:
     name: Scan Docker Image
@@ -108,7 +109,7 @@ jobs:
     permissions:
       contents: read
       security-events: write
-    
+
     steps:
       - name: Log in to Container Registry
         uses: docker/login-action@v3

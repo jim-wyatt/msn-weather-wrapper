@@ -134,6 +134,7 @@ jobs:
         with:
           name: test-results-${{ matrix.python-version }}
           path: junit-*.xml
+          retention-days: 7
 
   # Job 4: Coverage Report
   coverage:
@@ -181,6 +182,7 @@ jobs:
             coverage.json
             coverage.svg
             coverage-report.md
+          retention-days: 7
 
   # Job 5: Build and Test Docker Images
   docker-build:
@@ -309,6 +311,7 @@ jobs:
         with:
           name: sbom-reports
           path: sbom_output/
+          retention-days: 30
 
   # Job 8: Build Documentation
   docs:
@@ -334,6 +337,7 @@ jobs:
         with:
           name: documentation
           path: site/
+          retention-days: 30
 
   # Job 9: Generate Report Documentation
   generate-reports:
