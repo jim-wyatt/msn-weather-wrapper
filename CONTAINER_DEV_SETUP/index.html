@@ -2213,10 +2213,10 @@
 <h1 id="containerized-development">Containerized Development<a class="headerlink" href="#containerized-development" title="Permanent link">&para;</a></h1>
 <p>Develop entirely in containers with Podman - consistent environment, easy setup, instant hot reload.</p>
 <h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>./bootstrap-dev.sh<span class="w"> </span>setup<span class="w">   </span><span class="c1"># One-time setup</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>./bootstrap-dev.sh<span class="w"> </span>start<span class="w">   </span><span class="c1"># Start development</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>./bootstrap-dev.sh<span class="w"> </span>logs<span class="w">    </span><span class="c1"># View logs</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>./bootstrap-dev.sh<span class="w"> </span><span class="nb">test</span><span class="w">    </span><span class="c1"># Run all tests</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>./dev.sh<span class="w"> </span>setup<span class="w">   </span><span class="c1"># One-time setup</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>./dev.sh<span class="w"> </span>start<span class="w">   </span><span class="c1"># Start development</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>./dev.sh<span class="w"> </span>logs<span class="w">    </span><span class="c1"># View logs</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>./dev.sh<span class="w"> </span><span class="nb">test</span><span class="w">    </span><span class="c1"># Run all tests</span>
 </span></code></pre></div>
 <p><strong>Services available at:</strong>
 - Frontend: http://localhost:5173 (Vite HMR)
@@ -2236,20 +2236,20 @@
 </span></code></pre></div></p>
 <h2 id="commands-reference">Commands Reference<a class="headerlink" href="#commands-reference" title="Permanent link">&para;</a></h2>
 <h3 id="setup-management">Setup &amp; Management<a class="headerlink" href="#setup-management" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>./bootstrap-dev.sh<span class="w"> </span>setup<span class="w">     </span><span class="c1"># Build containers, install dependencies</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>./bootstrap-dev.sh<span class="w"> </span>start<span class="w">     </span><span class="c1"># Start all services</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>./bootstrap-dev.sh<span class="w"> </span>stop<span class="w">      </span><span class="c1"># Stop all services</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>./bootstrap-dev.sh<span class="w"> </span>restart<span class="w">   </span><span class="c1"># Restart services</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>./bootstrap-dev.sh<span class="w"> </span>clean<span class="w">     </span><span class="c1"># Remove everything</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>./bootstrap-dev.sh<span class="w"> </span>rebuild<span class="w">   </span><span class="c1"># Clean rebuild</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>./dev.sh<span class="w"> </span>setup<span class="w">     </span><span class="c1"># Build containers, install dependencies</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>./dev.sh<span class="w"> </span>start<span class="w">     </span><span class="c1"># Start all services</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>./dev.sh<span class="w"> </span>stop<span class="w">      </span><span class="c1"># Stop all services</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>./dev.sh<span class="w"> </span>restart<span class="w">   </span><span class="c1"># Restart services</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>./dev.sh<span class="w"> </span>clean<span class="w">     </span><span class="c1"># Remove everything</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>./dev.sh<span class="w"> </span>rebuild<span class="w">   </span><span class="c1"># Clean rebuild</span>
 </span></code></pre></div>
 <h3 id="development">Development<a class="headerlink" href="#development" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>./bootstrap-dev.sh<span class="w"> </span>logs<span class="w">            </span><span class="c1"># Follow all logs</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>./bootstrap-dev.sh<span class="w"> </span>shell-api<span class="w">       </span><span class="c1"># API container shell</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>./bootstrap-dev.sh<span class="w"> </span>shell-frontend<span class="w">  </span><span class="c1"># Frontend container shell</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>./dev.sh<span class="w"> </span>logs<span class="w">            </span><span class="c1"># Follow all logs</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>./dev.sh<span class="w"> </span>shell-api<span class="w">       </span><span class="c1"># API container shell</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>./dev.sh<span class="w"> </span>shell-frontend<span class="w">  </span><span class="c1"># Frontend container shell</span>
 </span></code></pre></div>
 <h3 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>./bootstrap-dev.sh<span class="w"> </span><span class="nb">test</span><span class="w">    </span><span class="c1"># All tests</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>./dev.sh<span class="w"> </span><span class="nb">test</span><span class="w">    </span><span class="c1"># All tests</span>
 </span></code></pre></div>
 <p>In API container shell:
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pytest<span class="w"> </span>tests/test_api.py<span class="w"> </span>-v<span class="w">           </span><span class="c1"># Specific tests</span>
@@ -2269,15 +2269,15 @@
 <h3 id="adding-dependencies">Adding Dependencies<a class="headerlink" href="#adding-dependencies" title="Permanent link">&para;</a></h3>
 <p><strong>Python:</strong>
 1. Edit <code>pyproject.toml</code>
-2. Run <code>./bootstrap-dev.sh rebuild</code></p>
+2. Run <code>./dev.sh rebuild</code></p>
 <p><strong>Node.js:</strong>
 1. Edit <code>frontend/package.json</code>
 2. Rebuild: <code>podman-compose -f podman-compose.dev.yml build frontend</code></p>
 <p>Or install temporarily in container:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>./bootstrap-dev.sh<span class="w"> </span>shell-api
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>./dev.sh<span class="w"> </span>shell-api
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>pip<span class="w"> </span>install<span class="w"> </span>package-name
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>./bootstrap-dev.sh<span class="w"> </span>shell-frontend
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>./dev.sh<span class="w"> </span>shell-frontend
 </span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>npm<span class="w"> </span>install<span class="w"> </span>package-name
 </span></code></pre></div></p>
 <h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
@@ -2299,22 +2299,22 @@
 <h3 id="containers-wont-start">Containers won't start<a class="headerlink" href="#containers-wont-start" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>podman<span class="w"> </span>ps<span class="w"> </span>-a<span class="w">                        </span><span class="c1"># Check status</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>podman<span class="w"> </span>logs<span class="w"> </span>msn-weather-api-dev<span class="w">     </span><span class="c1"># View logs</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>./bootstrap-dev.sh<span class="w"> </span>restart<span class="w">          </span><span class="c1"># Try restart</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>./dev.sh<span class="w"> </span>restart<span class="w">          </span><span class="c1"># Try restart</span>
 </span></code></pre></div>
 <h3 id="port-conflicts">Port conflicts<a class="headerlink" href="#port-conflicts" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>lsof<span class="w"> </span>-i<span class="w"> </span>:5000<span class="w">  </span><span class="c1"># Check what&#39;s using port</span>
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="c1"># Edit podman-compose.dev.yml to change ports</span>
 </span></code></pre></div>
 <h3 id="tests-failing">Tests failing<a class="headerlink" href="#tests-failing" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>./bootstrap-dev.sh<span class="w"> </span>shell-api
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>./dev.sh<span class="w"> </span>shell-api
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>pytest<span class="w"> </span>-vv<span class="w"> </span>--tb<span class="o">=</span>short<span class="w">              </span><span class="c1"># Verbose output</span>
 </span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>./bootstrap-dev.sh<span class="w"> </span>shell-frontend
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>./dev.sh<span class="w"> </span>shell-frontend
 </span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>npm<span class="w"> </span>run<span class="w"> </span>test:e2e:headed<span class="w">            </span><span class="c1"># See browser</span>
 </span></code></pre></div>
 <h3 id="clean-slate">Clean slate<a class="headerlink" href="#clean-slate" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>./bootstrap-dev.sh<span class="w"> </span>clean<span class="w">           </span><span class="c1"># Nuclear option</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>./bootstrap-dev.sh<span class="w"> </span>setup<span class="w">           </span><span class="c1"># Fresh start</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>./dev.sh<span class="w"> </span>clean<span class="w">           </span><span class="c1"># Nuclear option</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>./dev.sh<span class="w"> </span>setup<span class="w">           </span><span class="c1"># Fresh start</span>
 </span></code></pre></div>
 <h2 id="benefits">Benefits<a class="headerlink" href="#benefits" title="Permanent link">&para;</a></h2>
 <table>
