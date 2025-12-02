@@ -17,15 +17,21 @@ def api_url() -> str:
 @pytest.fixture(scope="module")
 def containers() -> Generator[None, None, None]:
     """Use already running containers or skip tests."""
-    # Check if containers are already running
-    result = subprocess.run(
-        ["podman", "ps", "--filter", "name=msn-weather-app", "--format", "{{.Names}}"],
-        capture_output=True,
-        text=True,
-    )
-
-    if "msn-weather-app" not in result.stdout:
-        pytest.skip("Container not running. Start with: podman-compose up -d")
+    # Check if containers are already running (try both docker and podman)
+    for cmd in [["docker", "ps"], ["podman", "ps"]]:
+        try:
+            result = subprocess.run(
+                cmd + ["--filter", "name=msn-weather-app", "--format", "{{.Names}}"],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if result.returncode == 0 and "msn-weather-app" in result.stdout:
+                break
+        except FileNotFoundError:
+            continue
+    else:
+        pytest.skip("Container not running. Start with: docker compose up -d or podman-compose up -d")
 
     # Wait for API to be ready
     max_retries = 15
@@ -252,13 +258,20 @@ class TestContainerizedAPI:
 
     def test_container_health_check(self, containers, api_url):
         """Test that container reports healthy status."""
-        result = subprocess.run(
-            ["podman", "ps", "--filter", "name=msn-weather-app", "--format", "{{.Status}}"],
-            capture_output=True,
-            text=True,
-        )
-        assert result.returncode == 0
-        assert "Up" in result.stdout
+        for cmd in ["docker", "podman"]:
+            try:
+                result = subprocess.run(
+                    [cmd, "ps", "--filter", "name=msn-weather-app", "--format", "{{.Status}}"],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                if result.returncode == 0 and result.stdout:
+                    assert "Up" in result.stdout
+                    return
+            except FileNotFoundError:
+                continue
+        pytest.fail("Neither docker nor podman available")
 
     def test_api_logs_no_errors(self, containers, api_url):
         """Test that API logs don't contain critical errors."""
@@ -266,12 +279,19 @@ class TestContainerizedAPI:
         requests.get(f"{api_url}/api/health", timeout=10)
 
         # Check logs
-        result = subprocess.run(
-            ["podman", "logs", "--tail", "20", "msn-weather-app"],
-            capture_output=True,
-            text=True,
-        )
-        assert result.returncode == 0
-        # Should not have Python exceptions or critical errors
-        assert "Traceback" not in result.stdout
-        assert "CRITICAL" not in result.stdout
+        for cmd in ["docker", "podman"]:
+            try:
+                result = subprocess.run(
+                    [cmd, "logs", "--tail", "20", "msn-weather-app"],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                if result.returncode == 0:
+                    # Should not have Python exceptions or critical errors
+                    assert "Traceback" not in result.stdout
+                    assert "CRITICAL" not in result.stdout
+                    return
+            except FileNotFoundError:
+                continue
+        pytest.fail("Neither docker nor podman available")
