@@ -248,7 +248,7 @@ jobs:
 
       - name: Start services with docker compose
         run: |
-          docker compose up -d
+          docker compose -f podman-compose.yml up -d
           sleep 15
 
       - name: Wait for API to be ready
@@ -267,11 +267,11 @@ jobs:
 
       - name: Show container logs on failure
         if: failure()
-        run: docker compose logs
+        run: docker compose -f podman-compose.yml logs
 
       - name: Stop services
         if: always()
-        run: docker compose down
+        run: docker compose -f podman-compose.yml down
 
   # Job 7: SBOM Generation
   sbom:
