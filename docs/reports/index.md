@@ -128,12 +128,12 @@ The CI/CD pipeline will fail if:
 
 ## 🔗 Related Documentation
 
-- [Security Overview](../security/index.md)
-- [Testing Methodology](../testing/results.md)
+- [Security Overview](../SECURITY.md)
+- [Testing Methodology](../TESTING.md)
 - [SBOM Generation](../SYFT_GUIDE.md)
 - [API Reference](../API.md)
 
 ---
 
 *Reports generated automatically by GitHub Actions CI/CD pipeline*  
-*Last Updated: {{ generated_timestamp }}*
+*Last Updated: 2025-12-02 16:43:23 UTC*

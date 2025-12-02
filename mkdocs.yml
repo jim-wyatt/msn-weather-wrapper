@@ -59,28 +59,19 @@ theme:
 nav:
   - Home:
       - Overview: index.md
-      - Quick Start: index.md#quick-start
-      - Features: index.md#features-at-a-glance
   
   - Getting Started:
-      - Installation: index.md#installation
-      - Usage: index.md#usage
-      - Requirements: index.md#requirements
+      - Installation Guide: DEVELOPMENT.md
+      - Usage Examples: API.md
   
   - API Reference:
       - API Documentation: API.md
-      - Endpoints: API.md#api-endpoints
-      - Examples: API.md#example-react-integration
   
   - Security:
       - Security Overview: SECURITY.md
-      - Security Testing: SECURITY.md#security-testing
-      - Best Practices: SECURITY.md#security-best-practices
   
   - Testing & Quality:
       - Testing Guide: TESTING.md
-      - Test Results: TESTING.md#test-results
-      - Coverage: TESTING.md#test-coverage-goals
   
   - Reports:
       - Overview: reports/index.md
@@ -94,16 +85,12 @@ nav:
       - Development Guide: DEVELOPMENT.md
       - Container Setup: CONTAINER_DEV_SETUP.md
       - Versioning: VERSIONING.md
-      - Contributing: index.md#contributing
   
   - Deployment:
-      - Deployment Guide: index.md#deployment
       - SBOM Generation: SYFT_GUIDE.md
   
   - About:
       - Changelog: CHANGELOG.md
-      - License: index.md#license
-      - Links: index.md#links
 
 markdown_extensions:
   - abbr

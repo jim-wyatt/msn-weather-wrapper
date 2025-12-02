@@ -340,7 +340,7 @@ def test_extract_wind_speed_not_found() -> None:
 
 def test_mph_to_kmh_conversion() -> None:
     """Test wind speed conversion from mph to km/h."""
-    html = '<div>Wind: 10 mph</div>'
+    html = "<div>Wind: 10 mph</div>"
     soup = BeautifulSoup(html, "lxml")
     client = WeatherClient()
     wind_speed = client._extract_wind_speed(soup)

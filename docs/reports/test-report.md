@@ -217,11 +217,11 @@ All quality gates passed:
 ## 🔗 Related Documentation
 
 - [Coverage Report](coverage-report.md) - Detailed code coverage analysis
-- [Security Testing](../testing/security-tests.md) - Security test methodology
-- [Integration Tests](../testing/integration.md) - Integration test details
+- [Security Testing](../SECURITY.md) - Security test methodology
+- [Integration Tests](../TESTING.md) - Integration test details
 
 ---
 
 *Report generated automatically by CI/CD pipeline*  
-*Last Updated: {{ generated_timestamp }}*  
+*Last Updated: 2025-12-02 16:43:23 UTC*  
 *Pipeline Run: [View on GitHub Actions](https://github.com/yourusername/msn-weather-wrapper/actions)*

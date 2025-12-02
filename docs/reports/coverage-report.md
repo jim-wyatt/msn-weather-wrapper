@@ -287,11 +287,11 @@ None - all critical areas covered.
 ## 🔗 Related Documentation
 
 - [Test Results](test-report.md) - Full test execution report
-- [Testing Guide](../testing/coverage.md) - Coverage methodology
-- [Security Testing](../testing/security-tests.md) - Security test coverage
+- [Testing Guide](../TESTING.md) - Coverage methodology
+- [Security Testing](../SECURITY.md) - Security test coverage
 
 ---
 
 *Report generated automatically by CI/CD pipeline*  
-*Last Updated: {{ generated_timestamp }}*  
+*Last Updated: 2025-12-02 16:43:23 UTC*  
 *Coverage Tool: pytest-cov v7.0+*

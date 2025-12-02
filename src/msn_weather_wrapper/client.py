@@ -2,7 +2,7 @@
 
 import json
 import re
-from typing import Dict, Optional, Union
+from typing import Optional, Union
 from urllib.parse import quote
 
 import requests
@@ -117,9 +117,7 @@ class WeatherClient:
         # Now get weather for this location
         return self.get_weather(location)
 
-    def _extract_weather_from_json(
-        self, html: str
-    ) -> Optional[Dict[str, Union[float, int, str]]]:
+    def _extract_weather_from_json(self, html: str) -> Optional[dict[str, Union[float, int, str]]]:
         """Extract weather data from embedded JSON in the HTML.
 
         Args:

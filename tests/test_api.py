@@ -72,9 +72,7 @@ def test_get_weather_success(mock_get_client, client):
 
 def test_post_weather_missing_body(client):
     """Test POST weather endpoint with missing body."""
-    response = client.post(
-        "/api/weather", data=json.dumps({}), content_type="application/json"
-    )
+    response = client.post("/api/weather", data=json.dumps({}), content_type="application/json")
     assert response.status_code == 400
     data = json.loads(response.data)
     assert "error" in data
@@ -130,8 +128,9 @@ def test_get_weather_client_error(mock_get_client, client):
     """Test GET weather endpoint when client raises an error."""
     # Clear the cache to ensure mock is used
     from api import get_cached_weather
+
     get_cached_weather.cache_clear()
-    
+
     # Setup mock to raise exception
     mock_client = MagicMock()
     mock_get_client.return_value = mock_client
@@ -149,8 +148,9 @@ def test_post_weather_client_error(mock_get_client, client):
     """Test POST weather endpoint when client raises an error."""
     # Clear the cache to ensure mock is used
     from api import get_cached_weather
+
     get_cached_weather.cache_clear()
-    
+
     # Setup mock to raise exception
     mock_client = MagicMock()
     mock_get_client.return_value = mock_client

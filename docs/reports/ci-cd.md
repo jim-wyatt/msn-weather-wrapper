@@ -10,7 +10,7 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 | **Jobs** | 11 |
 | **Average Runtime** | ~8 minutes |
 | **Success Rate** | 98.5% |
-| **Last Run** | {{ generated_timestamp }} |
+| **Last Run** | 2025-12-02 16:43:23 UTC |
 
 ![Pipeline](https://img.shields.io/badge/pipeline-passing-brightgreen)
 
@@ -446,6 +446,6 @@ Pipeline will fail if:
 ---
 
 *Documentation generated from CI/CD pipeline configuration*  
-*Last Updated: {{ generated_timestamp }}*  
+*Last Updated: 2025-12-02 16:43:23 UTC*  
 *Pipeline Version: 2.0*  
 *GitHub Actions Runner: ubuntu-latest*

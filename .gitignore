@@ -44,6 +44,26 @@ coverage.xml
 *.log
 .hypothesis/
 .pytest_cache/
+junit-*.xml
+coverage.json
+
+# Generated documentation
+site/
+
+# Build artifacts
+dist/
+
+# Security reports
+grype-report.json
+bandit-report.json
+bandit-report.txt
+safety-report.json
+safety-report.txt
+pip-audit-report.json
+pip-audit-report.md
+
+# License reports
+licenses.json
 
 # Virtual environments
 venv/

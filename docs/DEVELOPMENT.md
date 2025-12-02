@@ -2,6 +2,8 @@
 
 Complete guide for developing, testing, and contributing to MSN Weather Wrapper.
 
+---
+
 ## Quick Start
 
 ### Containerized Development (Recommended)
@@ -9,35 +11,26 @@ Complete guide for developing, testing, and contributing to MSN Weather Wrapper.
 Get a complete development environment in containers:
 
 ```bash
-# Clone and setup
-git clone https://github.com/yourusername/msn-weather-wrapper.git
+git clone https://github.com/jim-wyatt/msn-weather-wrapper.git
 cd msn-weather-wrapper
+
+# One-time setup
 ./bootstrap-dev.sh setup
 
 # Start development
 ./bootstrap-dev.sh start
 
-# View logs
-./bootstrap-dev.sh logs
-
-# Run tests
-./bootstrap-dev.sh test
+# Access services:
+# - Frontend: http://localhost:5173 (Vite dev server with HMR)
+# - Backend API: http://localhost:5000
+# - Health Check: http://localhost:5000/api/v1/health/ready
 ```
-
-**Services available at:**
-- Frontend: http://localhost:5173 (Vite dev server with HMR)
-- Backend API: http://localhost:5000
-- Health Check: http://localhost:5000/api/v1/health/ready
 
 ### Local Development
 
 For direct local development without containers:
 
 ```bash
-# Clone repository
-git clone https://github.com/yourusername/msn-weather-wrapper.git
-cd msn-weather-wrapper
-
 # Backend setup
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
@@ -52,6 +45,8 @@ cd frontend
 npm install
 npm run dev
 ```
+
+---
 
 ## Development Workflow
 
@@ -79,20 +74,22 @@ npm run dev
 #### Backend Changes
 1. Edit files in `src/msn_weather_wrapper/` or `api.py`
 2. Flask auto-reloads automatically
-3. Test your changes: `pytest tests/test_*.py`
+3. Test: `pytest tests/test_*.py`
 4. Check types: `mypy src/`
-5. Format code: `ruff format .`
+5. Format: `ruff format .`
 
 #### Frontend Changes
 1. Edit files in `frontend/src/`
-2. Vite HMR updates instantly in browser
-3. Test your changes: `npm run test:e2e`
+2. Vite HMR updates instantly
+3. Test: `npm run test:e2e`
 4. Type check: `npm run type-check`
 5. Build: `npm run build`
 
-### Code Quality Tools
+---
 
-#### Python Code Quality
+## Code Quality Tools
+
+### Python
 
 ```bash
 # Format code
@@ -100,16 +97,16 @@ ruff format .
 
 # Lint code
 ruff check .
-ruff check . --fix  # Auto-fix issues
+ruff check . --fix  # Auto-fix
 
 # Type checking
 mypy src/msn_weather_wrapper
 
-# Run all quality checks
+# Run all checks
 pre-commit run --all-files
 ```
 
-#### TypeScript Code Quality
+### TypeScript
 
 ```bash
 cd frontend
@@ -119,10 +116,214 @@ npm run type-check
 
 # Build (includes type checking)
 npm run build
-
-# Lint (via ESLint/TypeScript compiler)
-npm run type-check
 ```
+
+---
+
+## Testing
+
+### Backend Testing
+
+```bash
+# All tests
+pytest
+
+# Specific test file
+pytest tests/test_api.py -v
+
+# With coverage
+pytest --cov=src --cov-report=html
+
+# Security tests
+pytest tests/test_security.py -v
+```
+
+### Frontend Testing
+
+```bash
+cd frontend
+
+# Install Playwright (first time)
+npx playwright install
+
+# Run E2E tests
+npm run test:e2e
+
+# Interactive mode
+npm run test:e2e:ui
+
+# Headed mode (see browser)
+npm run test:e2e:headed
+```
+
+### Integration Testing
+
+```bash
+# Start API first
+python api.py
+
+# Run integration tests
+pytest tests/test_integration.py -v
+```
+
+---
+
+## Adding Features
+
+### Backend Feature
+
+1. **Write code** in `src/msn_weather_wrapper/`
+2. **Add tests** in `tests/`
+3. **Update types** in `models.py`
+4. **Add API endpoint** in `api.py` (if needed)
+5. **Update docs** in `docs/API.md`
+
+### Frontend Feature
+
+1. **Create component** in `frontend/src/components/`
+2. **Add types** in `frontend/src/types.ts`
+3. **Add E2E test** in `frontend/tests/e2e/`
+4. **Update styles** as needed
+
+---
+
+## Dependency Management
+
+### Python
+
+```bash
+# Edit pyproject.toml, then:
+pip install -e ".[dev]"
+```
+
+### Node.js
+
+```bash
+cd frontend
+npm install package-name          # Production
+npm install --save-dev package   # Development
+```
+
+---
+
+## Debugging
+
+### Backend
+
+```python
+# Using logging
+import structlog
+logger = structlog.get_logger()
+logger.info("debug message", variable=value)
+
+# Using ipdb
+import ipdb; ipdb.set_trace()
+
+# In container
+./bootstrap-dev.sh shell-api
+ipython
+```
+
+### Frontend
+
+- Open DevTools (F12)
+- Console tab for logs
+- Network tab for API calls
+- React DevTools extension
+
+---
+
+## Common Tasks
+
+### Generate Documentation
+
+```bash
+mkdocs serve       # Local preview
+mkdocs build       # Build static site
+mkdocs gh-deploy   # Deploy to GitHub Pages
+```
+
+### Generate SBOM
+
+```bash
+./tools/generate_sbom.sh
+cat sbom_output/SBOM_SUMMARY_*.md
+```
+
+### Update Dependencies
+
+```bash
+# Python
+pip install --upgrade -e ".[dev]"
+
+# Node.js
+cd frontend && npm update
+```
+
+---
+
+## Containerized Development Details
+
+### Architecture
+
+- **API Container**: Python 3.12 slim, port 5000, Flask with hot reload
+- **Frontend Container**: Node 20 Alpine, port 5173, Vite with HMR
+- **Volumes**: Source code mounted for hot reload
+
+### Environment Variables
+
+- **API**: `FLASK_ENV=development`, `FLASK_DEBUG=1`
+- **Frontend**: `NODE_ENV=development`
+
+---
+
+## Troubleshooting
+
+### Tests fail with import errors
+```bash
+pip install -e ".[dev]"
+```
+
+### Frontend won't start
+```bash
+cd frontend
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### Container won't build
+```bash
+./bootstrap-dev.sh clean
+./bootstrap-dev.sh setup
+```
+
+### Port already in use
+```bash
+# Find process
+lsof -i :5000
+
+# Kill process
+kill -9 <PID>
+```
+
+---
+
+## Contributing Guidelines
+
+Before submitting PR:
+
+1. ✅ All tests pass: `pytest`
+2. ✅ Code formatted: `ruff format .`
+3. ✅ No lint errors: `ruff check .`
+4. ✅ Types valid: `mypy src/`
+5. ✅ Coverage maintained: `pytest --cov=src`
+6. ✅ Frontend tests pass: `npm run test:e2e`
+7. ✅ Documentation updated
+8. ✅ CHANGELOG.md updated
+
+See the Contributing Guidelines section above for full guidelines.
+
+---
 
 ## Project Structure
 
@@ -140,422 +341,32 @@ msn-weather-wrapper/
 │   ├── test_security.py        # Security tests
 │   └── test_integration.py     # Integration tests
 ├── frontend/                   # React application
-│   ├── src/
+│   ├── src/                    # TypeScript source
 │   │   ├── components/         # React components
 │   │   ├── data/               # City database
 │   │   ├── App.tsx             # Main app
 │   │   └── main.tsx            # Entry point
-│   ├── tests/e2e/              # Playwright tests
-│   ├── Containerfile           # Production container
-│   └── Containerfile.dev       # Dev container
+│   └── tests/e2e/              # Playwright tests
 ├── api.py                      # Flask REST API
-├── bootstrap-dev.sh            # Dev environment script
+├── docs/                       # Documentation
 ├── Containerfile               # Production container
 ├── Containerfile.dev           # Dev container
 ├── podman-compose.yml          # Production compose
-├── pyproject.toml              # Python config
-└── docs/                       # Documentation
+└── pyproject.toml              # Python config
 ```
-
-## Testing
-
-### Backend Testing
-
-```bash
-# Run all tests
-pytest
-
-# Run specific test file
-pytest tests/test_api.py -v
-
-# Run with coverage
-pytest --cov=src --cov-report=html
-
-# Run specific test
-pytest tests/test_api.py::test_health_check -v
-
-# Run security tests only
-pytest tests/test_security.py -v
-```
-
-### Frontend Testing
-
-```bash
-cd frontend
-
-# Install Playwright (first time)
-npx playwright install
-
-# Run E2E tests
-npm run test:e2e
-
-# Run with UI (interactive)
-npm run test:e2e:ui
-
-# Run in headed mode (see browser)
-npm run test:e2e:headed
-
-# Run specific test
-npx playwright test tests/e2e/weather.spec.ts
-```
-
-### Integration Testing
-
-```bash
-# Start the API first
-python api.py  # or ./bootstrap-dev.sh start
-
-# Run integration tests
-pytest tests/test_integration.py -v
-```
-
-## Adding Features
-
-### Adding a Backend Feature
-
-1. **Write the code**
-   ```python
-   # src/msn_weather_wrapper/client.py
-   def new_feature(self):
-       """New feature implementation."""
-       pass
-   ```
-
-2. **Add tests**
-   ```python
-   # tests/test_client.py
-   def test_new_feature():
-       client = WeatherClient()
-       result = client.new_feature()
-       assert result is not None
-   ```
-
-3. **Update types**
-   ```python
-   # src/msn_weather_wrapper/models.py
-   class NewModel(BaseModel):
-       field: str
-   ```
-
-4. **Add API endpoint** (if needed)
-   ```python
-   # api.py
-   @app.route('/api/v1/new-endpoint')
-   def new_endpoint():
-       return jsonify({"status": "ok"})
-   ```
-
-5. **Update documentation**
-   - Update `docs/API.md` for new endpoints
-   - Update `README.md` with usage examples
-   - Update `CHANGELOG.md`
-
-### Adding a Frontend Feature
-
-1. **Create component**
-   ```typescript
-   // frontend/src/components/NewComponent.tsx
-   export function NewComponent() {
-       return <div>New Feature</div>;
-   }
-   ```
-
-2. **Add types**
-   ```typescript
-   // frontend/src/types.ts
-   export interface NewType {
-       field: string;
-   }
-   ```
-
-3. **Add E2E test**
-   ```typescript
-   // frontend/tests/e2e/new-feature.spec.ts
-   test('new feature works', async ({ page }) => {
-       await page.goto('/');
-       // Test implementation
-   });
-   ```
-
-4. **Update styles**
-   ```css
-   /* frontend/src/components/NewComponent.css */
-   .new-component {
-       /* Styles */
-   }
-   ```
-
-## Dependency Management
-
-### Python Dependencies
-
-**Add production dependency:**
-```bash
-# Edit pyproject.toml, add to dependencies = [...]
-pip install -e .
-
-# Or install directly
-pip install package-name
-```
-
-**Add development dependency:**
-```bash
-# Edit pyproject.toml, add to [project.optional-dependencies] dev = [...]
-pip install -e ".[dev]"
-```
-
-### Node.js Dependencies
-
-**Add production dependency:**
-```bash
-cd frontend
-npm install package-name
-```
-
-**Add development dependency:**
-```bash
-cd frontend
-npm install --save-dev package-name
-```
-
-## Debugging
-
-### Backend Debugging
-
-**Using print statements:**
-```python
-print(f"Debug: {variable}")
-```
-
-**Using logging:**
-```python
-import structlog
-logger = structlog.get_logger()
-logger.info("debug message", variable=value)
-```
-
-**Using ipdb:**
-```python
-import ipdb; ipdb.set_trace()
-```
-
-**In container:**
-```bash
-./bootstrap-dev.sh shell-api
-ipython  # Interactive Python
-```
-
-### Frontend Debugging
-
-**Browser DevTools:**
-- Open DevTools (F12)
-- Console tab for logs
-- Network tab for API calls
-- React DevTools extension
-
-**TypeScript errors:**
-```bash
-npm run type-check
-```
-
-**Vite issues:**
-```bash
-# Clear Vite cache
-rm -rf frontend/node_modules/.vite
-npm run dev
-```
-
-## Common Tasks
-
-### Update Dependencies
-
-**Python:**
-```bash
-# Update all dependencies
-pip install --upgrade -e ".[dev]"
-
-# Update specific package
-pip install --upgrade package-name
-```
-
-**Node.js:**
-```bash
-cd frontend
-npm update
-```
-
-### Add Pre-commit Hook
-
-```bash
-# Install pre-commit hooks
-pre-commit install
-
-# Update hooks
-pre-commit autoupdate
-
-# Run manually
-pre-commit run --all-files
-```
-
-### Generate Documentation
-
-```bash
-# Install MkDocs
-pip install mkdocs-material
-
-# Serve locally
-mkdocs serve
-
-# Build static site
-mkdocs build
-
-# Deploy to GitHub Pages
-mkdocs gh-deploy
-```
-
-### Generate SBOM
-
-```bash
-# Generate all SBOMs
-./tools/generate_sbom.sh
-
-# View summary
-cat sbom_output/SBOM_SUMMARY_*.md
-```
-
-## Containerized Development Details
-
-### Container Architecture
-
-**API Container:**
-- Base: Python 3.12 slim
-- Port: 5000
-- Includes: Flask, pytest, ipython, all dev tools
-- Volume: `./src` mounted to `/app/src`
-
-**Frontend Container:**
-- Base: Node 20 Alpine
-- Port: 5173
-- Includes: Vite, React, Playwright
-- Volume: `./frontend/src` mounted to `/app/src`
-
-### Volume Mounts
-
-All source code is mounted for hot reload:
-```
-./src → /app/src
-./api.py → /app/api.py
-./tests → /app/tests
-./frontend/src → /app/src (frontend)
-./frontend/tests → /app/tests (frontend)
-```
-
-### Environment Variables
-
-**API Container:**
-- `FLASK_ENV=development`
-- `FLASK_DEBUG=1`
-- `PYTHONUNBUFFERED=1`
-
-**Frontend Container:**
-- `NODE_ENV=development`
-
-## Troubleshooting
-
-### Common Issues
-
-**Issue: Tests fail with import errors**
-```bash
-# Solution: Reinstall in editable mode
-pip install -e ".[dev]"
-```
-
-**Issue: Frontend won't start**
-```bash
-# Solution: Reinstall dependencies
-cd frontend
-rm -rf node_modules package-lock.json
-npm install
-```
-
-**Issue: Container won't build**
-```bash
-# Solution: Clean rebuild
-./bootstrap-dev.sh clean
-./bootstrap-dev.sh setup
-```
-
-**Issue: Port already in use**
-```bash
-# Find process using port
-lsof -i :5000  # or :5173
-
-# Kill process
-kill -9 <PID>
-
-# Or change port in podman-compose.dev.yml
-```
-
-**Issue: Changes not reflected**
-```bash
-# Container dev: Check volume mounts
-podman inspect msn-weather-api-dev | grep Mounts
-
-# Local dev: Restart servers
-# Ctrl+C and restart python api.py or npm run dev
-```
-
-## Contributing
-
-### Before Submitting PR
-
-1. ✅ All tests pass: `pytest`
-2. ✅ Code formatted: `ruff format .`
-3. ✅ No lint errors: `ruff check .`
-4. ✅ Types valid: `mypy src/`
-5. ✅ Coverage maintained: `pytest --cov=src`
-6. ✅ Frontend tests pass: `npm run test:e2e`
-7. ✅ Documentation updated
-8. ✅ CHANGELOG.md updated
-
-### PR Guidelines
-
-- Clear title describing the change
-- Description explaining what and why
-- Link related issues
-- Include tests for new features
-- Update documentation
-- Keep commits focused and atomic
-
-### Code Style
-
-**Python:**
-- Follow PEP 8
-- Use type hints
-- Max line length: 100 characters
-- Use ruff for formatting and linting
-
-**TypeScript:**
-- Follow TypeScript best practices
-- Use strict type checking
-- Use functional components
-- Prefer named exports
-
-## Resources
-
-- [Project README](../README.md)
-- [API Documentation](API.md)
-- [Testing Guide](TESTING.md)
-- [Security Guide](SECURITY.md)
-- [SBOM Guide](SYFT_GUIDE.md)
-- [Changelog](CHANGELOG.md)
-
-## Getting Help
-
-- 🐛 [Report Issues](https://github.com/yourusername/msn-weather-wrapper/issues)
-- 💬 [Discussions](https://github.com/yourusername/msn-weather-wrapper/discussions)
-- 📖 [Full Documentation](https://yourusername.github.io/msn-weather-wrapper/)
 
 ---
 
-Last updated: December 2, 2025
+## Resources
+
+- [Full Documentation](https://jim-wyatt.github.io/msn-weather-wrapper/)
+- [API Reference](API.md)
+- [Testing Guide](TESTING.md)
+- [Security Guide](SECURITY.md)
+- [Container Dev Setup](CONTAINER_DEV_SETUP.md)
+
+---
+
+**Need Help?**
+- 🐛 [Report Issues](https://github.com/jim-wyatt/msn-weather-wrapper/issues)
+- 💬 [Discussions](https://github.com/jim-wyatt/msn-weather-wrapper/discussions)

@@ -11,7 +11,7 @@ Comprehensive security vulnerability scanning results from CI/CD pipeline.
 | **High Vulnerabilities** | 0 |
 | **Medium Vulnerabilities** | 0 |
 | **Low Vulnerabilities** | 0 |
-| **Last Scan** | {{ generated_timestamp }} |
+| **Last Scan** | 2025-12-02 16:43:23 UTC |
 
 ![Security](https://img.shields.io/badge/security-passing-brightgreen)
 
@@ -21,11 +21,11 @@ Comprehensive security vulnerability scanning results from CI/CD pipeline.
 
 | Tool | Purpose | Status | Last Run |
 |------|---------|--------|----------|
-| **Bandit** | Python static analysis | ✅ Clean | {{ generated_timestamp }} |
-| **Safety** | Dependency vulnerability check | ✅ No issues | {{ generated_timestamp }} |
-| **pip-audit** | PyPI CVE scanning | ✅ No issues | {{ generated_timestamp }} |
-| **Grype** | SBOM vulnerability scanning | ✅ No issues | {{ generated_timestamp }} |
-| **Trivy** | Container image scanning | ✅ No issues | {{ generated_timestamp }} |
+| **Bandit** | Python static analysis | ✅ Clean | 2025-12-02 16:43:23 UTC |
+| **Safety** | Dependency vulnerability check | ✅ No issues | 2025-12-02 16:43:23 UTC |
+| **pip-audit** | PyPI CVE scanning | ✅ No issues | 2025-12-02 16:43:23 UTC |
+| **Grype** | SBOM vulnerability scanning | ✅ No issues | 2025-12-02 16:43:23 UTC |
+| **Trivy** | Container image scanning | ✅ No issues | 2025-12-02 16:43:23 UTC |
 
 ## 📊 Bandit Static Analysis
 
@@ -77,7 +77,7 @@ All code follows security best practices:
 
 **Dependencies Scanned**: 22 packages  
 **Vulnerabilities Found**: 0  
-**Last Database Update**: {{ generated_timestamp }}
+**Last Database Update**: 2025-12-02 16:43:23 UTC
 
 ```
 All dependencies are secure:
@@ -315,11 +315,11 @@ Strict-Transport-Security: max-age=31536000
 
 ## 🔗 Related Documentation
 
-- [Security Overview](../security/index.md)
-- [Security Testing Methodology](../security/testing.md)
-- [Vulnerability Scan Results](../security/scan-results.md)
-- [Input Validation](../security/validation.md)
-- [Security Best Practices](../security/best-practices.md)
+- [Security Overview](../SECURITY.md)
+- [Security Testing Methodology](../SECURITY.md)
+- [Vulnerability Scan Results](security-report.md)
+- [Input Validation](../SECURITY.md)
+- [Security Best Practices](../SECURITY.md)
 
 ## 📈 Security Metrics
 
@@ -336,6 +336,6 @@ Strict-Transport-Security: max-age=31536000
 ---
 
 *Report generated automatically by CI/CD pipeline*  
-*Last Updated: {{ generated_timestamp }}*  
+*Last Updated: 2025-12-02 16:43:23 UTC*  
 *Next Scheduled Scan: Daily at 00:00 UTC*  
 *Security Contact: security@example.com*

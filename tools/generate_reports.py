@@ -34,12 +34,14 @@ def parse_junit_xml(xml_path: Path) -> dict[str, Any]:
 
         test_cases = []
         for testcase in root.findall(".//testcase"):
-            test_cases.append({
-                "name": testcase.get("name"),
-                "classname": testcase.get("classname"),
-                "time": float(testcase.get("time", 0)),
-                "status": "failed" if testcase.find("failure") is not None else "passed"
-            })
+            test_cases.append(
+                {
+                    "name": testcase.get("name"),
+                    "classname": testcase.get("classname"),
+                    "time": float(testcase.get("time", 0)),
+                    "status": "failed" if testcase.find("failure") is not None else "passed",
+                }
+            )
 
         return {
             "total": total,
@@ -48,7 +50,7 @@ def parse_junit_xml(xml_path: Path) -> dict[str, Any]:
             "errors": errors,
             "skipped": skipped,
             "duration": time,
-            "test_cases": test_cases
+            "test_cases": test_cases,
         }
     except Exception as e:
         print(f"Error parsing JUnit XML {xml_path}: {e}", file=sys.stderr)
@@ -66,7 +68,7 @@ def parse_coverage_json(json_path: Path) -> dict[str, Any]:
             "lines_total": data.get("totals", {}).get("num_statements", 0),
             "lines_covered": data.get("totals", {}).get("covered_lines", 0),
             "lines_missing": data.get("totals", {}).get("missing_lines", 0),
-            "files": data.get("files", {})
+            "files": data.get("files", {}),
         }
     except Exception as e:
         print(f"Error parsing coverage JSON {json_path}: {e}", file=sys.stderr)
@@ -88,7 +90,7 @@ def parse_bandit_json(json_path: Path) -> dict[str, Any]:
             "medium": len([i for i in issues if i.get("issue_severity") == "MEDIUM"]),
             "low": len([i for i in issues if i.get("issue_severity") == "LOW"]),
             "issues": issues,
-            "metrics": metrics
+            "metrics": metrics,
         }
     except Exception as e:
         print(f"Error parsing Bandit JSON {json_path}: {e}", file=sys.stderr)
@@ -156,9 +158,9 @@ def generate_test_report(input_dir: Path, output_path: Path) -> None:
     for i, result in enumerate(all_results, 1):
         content += f"""### Test Run {i}
 
-- **Tests**: {result['total']}
-- **Passed**: {result['passed']} ✅
-- **Duration**: {result['duration']:.2f}s
+- **Tests**: {result["total"]}
+- **Passed**: {result["passed"]} ✅
+- **Duration**: {result["duration"]:.2f}s
 
 """
 
@@ -198,9 +200,9 @@ def generate_coverage_report(input_dir: Path, output_path: Path) -> None:
 | **Lines Covered** | {lines_covered} / {lines_total} |
 | **Lines Missing** | {lines_missing} |
 
-![Coverage](https://img.shields.io/badge/coverage-{int(coverage)}%25-{(
-    'brightgreen' if coverage >= 90 else 'green' if coverage >= 80 else 'yellow'
-)})
+![Coverage](https://img.shields.io/badge/coverage-{int(coverage)}%25-{
+        ("brightgreen" if coverage >= 90 else "green" if coverage >= 80 else "yellow")
+    })
 
 ## 📦 Module Coverage
 
@@ -237,13 +239,13 @@ def generate_security_report(input_dir: Path, output_path: Path) -> None:
 
 | Metric | Value |
 |--------|-------|
-| **Overall Status** | {(
-    '✅ Passing' if bandit_data.get('total_issues', 0) == 0 else '⚠️ Issues Found'
-)} |
+| **Overall Status** | {
+        ("✅ Passing" if bandit_data.get("total_issues", 0) == 0 else "⚠️ Issues Found")
+    } |
 | **Critical Vulnerabilities** | 0 |
-| **High Vulnerabilities** | {bandit_data.get('high', 0)} |
-| **Medium Vulnerabilities** | {bandit_data.get('medium', 0)} |
-| **Low Vulnerabilities** | {bandit_data.get('low', 0)} |
+| **High Vulnerabilities** | {bandit_data.get("high", 0)} |
+| **Medium Vulnerabilities** | {bandit_data.get("medium", 0)} |
+| **Low Vulnerabilities** | {bandit_data.get("low", 0)} |
 | **Last Scan** | {timestamp} |
 
 """
@@ -251,13 +253,13 @@ def generate_security_report(input_dir: Path, output_path: Path) -> None:
     if bandit_data.get("total_issues", 0) > 0:
         content += "## ⚠️ Security Issues\n\n"
         for issue in bandit_data.get("issues", [])[:10]:  # Show first 10
-            content += f"""### {issue.get('test_name', 'Unknown')}
+            content += f"""### {issue.get("test_name", "Unknown")}
 
-- **Severity**: {issue.get('issue_severity', 'Unknown')}
-- **Confidence**: {issue.get('issue_confidence', 'Unknown')}
-- **File**: `{issue.get('filename', 'Unknown')}`
-- **Line**: {issue.get('line_number', 'Unknown')}
-- **Issue**: {issue.get('issue_text', 'Unknown')}
+- **Severity**: {issue.get("issue_severity", "Unknown")}
+- **Confidence**: {issue.get("issue_confidence", "Unknown")}
+- **File**: `{issue.get("filename", "Unknown")}`
+- **Line**: {issue.get("line_number", "Unknown")}
+- **Issue**: {issue.get("issue_text", "Unknown")}
 
 """
     else:
