@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-# Developer Bootstrap Script for MSN Weather Wrapper
+# Developer Environment Manager for MSN Weather Wrapper
 # This script sets up a complete containerized development environment using Podman
 #
-# Usage: ./bootstrap-dev.sh [command]
+# Usage: ./dev.sh [command]
 # Commands:
 #   setup     - Initial setup (build images, install dependencies)
 #   start     - Start all development containers
@@ -87,9 +87,9 @@ setup_dev_env() {
     log_success "Development environment setup complete!"
     echo ""
     echo "Next steps:"
-    echo "  ./bootstrap-dev.sh start    - Start the development environment"
-    echo "  ./bootstrap-dev.sh logs     - View logs"
-    echo "  ./bootstrap-dev.sh test     - Run tests"
+    echo "  ./dev.sh start    - Start the development environment"
+    echo "  ./dev.sh logs     - View logs"
+    echo "  ./dev.sh test     - Run tests"
 }
 
 start_dev() {
@@ -103,7 +103,7 @@ start_dev() {
     echo "  API:       http://localhost:5000"
     echo "  Health:    http://localhost:5000/api/v1/health/ready"
     echo ""
-    echo "View logs with: ./bootstrap-dev.sh logs"
+    echo "View logs with: ./dev.sh logs"
 }
 
 stop_dev() {
@@ -237,7 +237,7 @@ Automated reports generated from test execution, code coverage, security scans, 
 Reports are automatically generated during CI/CD pipeline execution and can be regenerated locally using:
 
 ```bash
-./bootstrap-dev.sh docs
+./dev.sh docs
 ```
 
 All reports are timestamped and reflect the current state of the codebase.
@@ -354,9 +354,9 @@ EOF
 
 show_usage() {
     cat << EOF
-Developer Bootstrap Script for MSN Weather Wrapper
+Developer Environment Manager for MSN Weather Wrapper
 
-Usage: ./bootstrap-dev.sh [command]
+Usage: ./dev.sh [command]
 
 Commands:
   setup             Initial setup (build images, install dependencies)
@@ -373,11 +373,11 @@ Commands:
   help              Show this help message
 
 Examples:
-  ./bootstrap-dev.sh setup        # First-time setup
-  ./bootstrap-dev.sh start        # Start development
-  ./bootstrap-dev.sh logs         # Watch logs
-  ./bootstrap-dev.sh test         # Run tests
-  ./bootstrap-dev.sh docs         # Generate reports & serve docs
+  ./dev.sh setup        # First-time setup
+  ./dev.sh start        # Start development
+  ./dev.sh logs         # Watch logs
+  ./dev.sh test         # Run tests
+  ./dev.sh docs         # Generate reports & serve docs
 
 EOF
 }

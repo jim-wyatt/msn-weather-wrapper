@@ -5,10 +5,10 @@ Develop entirely in containers with Podman - consistent environment, easy setup,
 ## Quick Start
 
 ```bash
-./bootstrap-dev.sh setup   # One-time setup
-./bootstrap-dev.sh start   # Start development
-./bootstrap-dev.sh logs    # View logs
-./bootstrap-dev.sh test    # Run all tests
+./dev.sh setup   # One-time setup
+./dev.sh start   # Start development
+./dev.sh logs    # View logs
+./dev.sh test    # Run all tests
 ```
 
 **Services available at:**
@@ -38,24 +38,24 @@ podman machine init && podman machine start
 
 ### Setup & Management
 ```bash
-./bootstrap-dev.sh setup     # Build containers, install dependencies
-./bootstrap-dev.sh start     # Start all services
-./bootstrap-dev.sh stop      # Stop all services
-./bootstrap-dev.sh restart   # Restart services
-./bootstrap-dev.sh clean     # Remove everything
-./bootstrap-dev.sh rebuild   # Clean rebuild
+./dev.sh setup     # Build containers, install dependencies
+./dev.sh start     # Start all services
+./dev.sh stop      # Stop all services
+./dev.sh restart   # Restart services
+./dev.sh clean     # Remove everything
+./dev.sh rebuild   # Clean rebuild
 ```
 
 ### Development
 ```bash
-./bootstrap-dev.sh logs            # Follow all logs
-./bootstrap-dev.sh shell-api       # API container shell
-./bootstrap-dev.sh shell-frontend  # Frontend container shell
+./dev.sh logs            # Follow all logs
+./dev.sh shell-api       # API container shell
+./dev.sh shell-frontend  # Frontend container shell
 ```
 
 ### Testing
 ```bash
-./bootstrap-dev.sh test    # All tests
+./dev.sh test    # All tests
 ```
 
 In API container shell:
@@ -85,7 +85,7 @@ All source code is mounted as volumes - changes reflect immediately.
 
 **Python:**
 1. Edit `pyproject.toml`
-2. Run `./bootstrap-dev.sh rebuild`
+2. Run `./dev.sh rebuild`
 
 **Node.js:**
 1. Edit `frontend/package.json`
@@ -93,10 +93,10 @@ All source code is mounted as volumes - changes reflect immediately.
 
 Or install temporarily in container:
 ```bash
-./bootstrap-dev.sh shell-api
+./dev.sh shell-api
 pip install package-name
 
-./bootstrap-dev.sh shell-frontend
+./dev.sh shell-frontend
 npm install package-name
 ```
 
@@ -124,7 +124,7 @@ All changes immediately reflected in containers (hot reload enabled).
 ```bash
 podman ps -a                        # Check status
 podman logs msn-weather-api-dev     # View logs
-./bootstrap-dev.sh restart          # Try restart
+./dev.sh restart          # Try restart
 ```
 
 ### Port conflicts
@@ -135,17 +135,17 @@ lsof -i :5000  # Check what's using port
 
 ### Tests failing
 ```bash
-./bootstrap-dev.sh shell-api
+./dev.sh shell-api
 pytest -vv --tb=short              # Verbose output
 
-./bootstrap-dev.sh shell-frontend
+./dev.sh shell-frontend
 npm run test:e2e:headed            # See browser
 ```
 
 ### Clean slate
 ```bash
-./bootstrap-dev.sh clean           # Nuclear option
-./bootstrap-dev.sh setup           # Fresh start
+./dev.sh clean           # Nuclear option
+./dev.sh setup           # Fresh start
 ```
 
 ## Benefits

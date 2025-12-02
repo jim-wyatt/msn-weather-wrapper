@@ -57,8 +57,8 @@ with WeatherClient() as client:
 ### 🧪 Development Environment
 
 ```bash
-./bootstrap-dev.sh setup   # One-time setup
-./bootstrap-dev.sh start   # Start dev servers
+./dev.sh setup   # One-time setup
+./dev.sh start   # Start dev servers
 # Frontend: http://localhost:5173
 # API: http://localhost:5000
 ```
@@ -149,10 +149,10 @@ npm run dev  # http://localhost:5173
 
 ```bash
 # Setup & Run
-./bootstrap-dev.sh setup   # One-time setup
-./bootstrap-dev.sh start   # Start dev environment
-./bootstrap-dev.sh test    # Run tests
-./bootstrap-dev.sh logs    # View logs
+./dev.sh setup   # One-time setup
+./dev.sh start   # Start dev environment
+./dev.sh test    # Run tests
+./dev.sh logs    # View logs
 
 # Code Quality
 ruff format .                    # Format

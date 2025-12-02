@@ -313,7 +313,7 @@ npx playwright install --with-deps
 **Debug**:
 ```bash
 # Run in container (matches CI)
-./bootstrap-dev.sh shell-api
+./dev.sh shell-api
 pytest -vv --tb=short
 ```
 

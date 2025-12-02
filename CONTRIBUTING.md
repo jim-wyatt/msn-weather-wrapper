@@ -63,16 +63,16 @@ For a fully isolated development environment:
 
 ```bash
 # Initial setup
-./bootstrap-dev.sh setup
+./dev.sh setup
 
 # Start development environment
-./bootstrap-dev.sh start
+./dev.sh start
 
 # View logs
-./bootstrap-dev.sh logs
+./dev.sh logs
 
 # Run tests
-./bootstrap-dev.sh test
+./dev.sh test
 ```
 
 See [Container Development Setup](docs/CONTAINER_DEV_SETUP.md) for detailed documentation.
@@ -360,7 +360,7 @@ open htmlcov/index.html
 
 - **Use logging**: The project uses `structlog` for structured logging
 - **Test in isolation**: Use `pytest -xvs` to stop on first failure
-- **Container debugging**: Use `./bootstrap-dev.sh shell-api` for container access
+- **Container debugging**: Use `./dev.sh shell-api` for container access
 
 ### Common Issues
 

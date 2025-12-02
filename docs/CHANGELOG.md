@@ -75,7 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Health check endpoints for orchestration
 
 - **Development Tools**
-  - Containerized development environment (bootstrap-dev.sh)
+  - Containerized development environment (dev.sh)
   - Hot reload for backend (Flask) and frontend (Vite HMR)
   - Pre-commit hooks (ruff, mypy, pytest)
   - Comprehensive test suite (86 tests, 89% coverage)

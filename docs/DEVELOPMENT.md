@@ -15,10 +15,10 @@ git clone https://github.com/jim-wyatt/msn-weather-wrapper.git
 cd msn-weather-wrapper
 
 # One-time setup
-./bootstrap-dev.sh setup
+./dev.sh setup
 
 # Start development
-./bootstrap-dev.sh start
+./dev.sh start
 
 # Access services:
 # - Frontend: http://localhost:5173 (Vite dev server with HMR)
@@ -54,19 +54,19 @@ npm run dev
 
 ```bash
 # Daily workflow
-./bootstrap-dev.sh start    # Start all services
-./bootstrap-dev.sh logs     # Watch logs
-./bootstrap-dev.sh stop     # Stop all services
-./bootstrap-dev.sh restart  # Restart services
+./dev.sh start    # Start all services
+./dev.sh logs     # Watch logs
+./dev.sh stop     # Stop all services
+./dev.sh restart  # Restart services
 
 # Testing
-./bootstrap-dev.sh test     # Run all tests
-./bootstrap-dev.sh shell-api      # Backend shell
-./bootstrap-dev.sh shell-frontend # Frontend shell
+./dev.sh test     # Run all tests
+./dev.sh shell-api      # Backend shell
+./dev.sh shell-frontend # Frontend shell
 
 # Maintenance
-./bootstrap-dev.sh rebuild  # Rebuild from scratch
-./bootstrap-dev.sh clean    # Remove everything
+./dev.sh rebuild  # Rebuild from scratch
+./dev.sh clean    # Remove everything
 ```
 
 ### Making Code Changes
@@ -220,7 +220,7 @@ logger.info("debug message", variable=value)
 import ipdb; ipdb.set_trace()
 
 # In container
-./bootstrap-dev.sh shell-api
+./dev.sh shell-api
 ipython
 ```
 
@@ -293,8 +293,8 @@ npm install
 
 ### Container won't build
 ```bash
-./bootstrap-dev.sh clean
-./bootstrap-dev.sh setup
+./dev.sh clean
+./dev.sh setup
 ```
 
 ### Port already in use
