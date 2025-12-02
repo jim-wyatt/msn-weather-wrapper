@@ -262,7 +262,7 @@ jobs:
       - name: Wait for API to be ready
         run: |
           for i in {1..30}; do
-            if curl -f http://localhost:5000/api/health; then
+            if curl -f http://localhost:8080/api/health; then
               echo "API is ready"
               break
             fi
