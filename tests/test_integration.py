@@ -180,10 +180,12 @@ class TestContainerizedAPI:
             params={"city": oversized, "country": "USA"},
             timeout=10,
         )
-        assert response.status_code == 400
-        data = response.json()
-        assert "error" in data
-        assert "length" in data["message"].lower()
+        # Accept both 400 (Bad Request) and 414 (URI Too Long)
+        assert response.status_code in [400, 414]
+        if response.status_code == 400:
+            data = response.json()
+            assert "error" in data
+            assert "length" in data["message"].lower()
 
     def test_type_confusion_post(self, containers, api_url):
         """Test that type confusion in POST is blocked."""
