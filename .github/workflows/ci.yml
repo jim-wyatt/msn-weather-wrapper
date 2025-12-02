@@ -453,6 +453,14 @@ jobs:
           path: docs/assets/
         continue-on-error: true
 
+      - name: Verify reports are present
+        run: |
+          echo "=== Reports Directory Contents ==="
+          ls -la ${{ env.REPORTS_DIR }}/ || echo "Reports directory not found"
+          echo ""
+          echo "=== Docs Structure ==="
+          find docs -type f -name "*.md" | head -20
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
