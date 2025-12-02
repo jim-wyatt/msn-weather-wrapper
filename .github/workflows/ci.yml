@@ -1,0 +1,624 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: '3.12'
+  NODE_VERSION: '20'
+  REPORTS_DIR: 'docs/reports'
+
+jobs:
+  # Job 1: Code Quality and Linting
+  code-quality:
+    name: Code Quality & Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run Ruff format check
+        run: ruff format --check .
+
+      - name: Run Ruff linting
+        run: ruff check .
+
+      - name: Run mypy type checking
+        run: mypy src/msn_weather_wrapper --strict
+
+  # Job 2: Security Scanning
+  security:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          pip install bandit safety pip-audit pip-licenses
+
+      - name: Run Bandit security scan
+        run: |
+          bandit -r src/ -f json -o bandit-report.json || true
+          bandit -r src/ -f txt -o bandit-report.txt || true
+        continue-on-error: true
+
+      - name: Run Safety dependency check
+        run: |
+          safety check --json --output safety-report.json || true
+          safety check --output safety-report.txt || true
+        continue-on-error: true
+
+      - name: Run pip-audit
+        run: |
+          pip-audit --format json --output pip-audit-report.json || true
+          pip-audit --format markdown --output pip-audit-report.md || true
+        continue-on-error: true
+
+      - name: Generate license report
+        run: |
+          pip-licenses --format=json --output-file=licenses.json
+          pip-licenses --format=markdown --output-file=licenses.md
+          pip-licenses --format=html --output-file=licenses.html
+
+      - name: Upload security reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-reports
+          path: |
+            bandit-report.json
+            bandit-report.txt
+            safety-report.json
+            safety-report.txt
+            pip-audit-report.json
+            pip-audit-report.md
+            licenses.json
+            licenses.md
+            licenses.html
+
+  # Job 3: Unit Tests (Python 3.9-3.12)
+  unit-tests:
+    name: Unit Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run unit tests
+        run: pytest tests/test_client.py tests/test_models.py tests/test_api.py -v --tb=short --junitxml=junit-${{ matrix.python-version }}.xml
+
+      - name: Run security tests
+        run: pytest tests/test_security.py -v --tb=short --junitxml=junit-security-${{ matrix.python-version }}.xml
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.python-version }}
+          path: junit-*.xml
+
+  # Job 4: Coverage Report
+  coverage:
+    name: Test Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run tests with coverage
+        run: |
+          pytest tests/test_client.py tests/test_models.py tests/test_api.py tests/test_security.py \
+            --cov=src/msn_weather_wrapper --cov-report=xml --cov-report=html --cov-report=term --cov-report=json
+
+      - name: Generate coverage badge
+        run: |
+          pip install coverage-badge
+          coverage-badge -o coverage.svg -f
+
+      - name: Generate coverage markdown report
+        run: |
+          pip install pycobertura
+          pycobertura show --format markdown coverage.xml > coverage-report.md || echo "Coverage: See HTML report" > coverage-report.md
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            htmlcov/
+            coverage.xml
+            coverage.json
+            coverage.svg
+            coverage-report.md
+
+  # Job 5: Build and Test Docker Images
+  docker-build:
+    name: Build & Test Docker Images
+    runs-on: ubuntu-latest
+    needs: [code-quality, unit-tests]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build unified container image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Containerfile
+          push: false
+          tags: msn-weather-app:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          load: true
+
+      - name: Test unified container
+        run: |
+          docker run -d --name test-app -p 8080:80 msn-weather-app:test
+          sleep 15
+          curl -f http://localhost:8080/api/health || exit 1
+          curl -f http://localhost:8080/ || exit 1
+          docker stop test-app
+
+  # Job 6: Integration Tests
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [docker-build]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Start services with docker-compose
+        run: |
+          docker-compose up -d
+          sleep 15
+
+      - name: Wait for API to be ready
+        run: |
+          for i in {1..30}; do
+            if curl -f http://localhost:5000/api/health; then
+              echo "API is ready"
+              break
+            fi
+            echo "Waiting for API... ($i/30)"
+            sleep 2
+          done
+
+      - name: Run integration tests
+        run: pytest tests/test_integration.py -v --tb=short
+
+      - name: Show container logs on failure
+        if: failure()
+        run: docker-compose logs
+
+      - name: Stop services
+        if: always()
+        run: docker-compose down
+
+  # Job 7: SBOM Generation
+  sbom:
+    name: Generate SBOM
+    runs-on: ubuntu-latest
+    needs: [docker-build]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Syft
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Generate Source SBOM
+        run: |
+          mkdir -p sbom_output
+          syft dir:. -o spdx-json > sbom_output/source_sbom.json
+          syft dir:. -o cyclonedx-json > sbom_output/source_cyclonedx.json
+
+      - name: Upload SBOM artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-reports
+          path: sbom_output/
+
+      - name: Scan for vulnerabilities with Grype
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+          grype sbom:sbom_output/source_sbom.json --fail-on high
+        continue-on-error: true
+
+  # Job 8: Build Documentation
+  docs:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install MkDocs
+        run: |
+          pip install mkdocs-material
+
+      - name: Build documentation
+        run: mkdocs build --strict
+
+      - name: Upload documentation
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: site/
+
+  # Job 9: Generate Report Documentation
+  generate-reports:
+    name: Generate Report Documentation
+    runs-on: ubuntu-latest
+    needs: [coverage, security, unit-tests]
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download coverage reports
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-reports
+          path: artifacts/coverage/
+        continue-on-error: true
+
+      - name: Download security reports
+        uses: actions/download-artifact@v4
+        with:
+          name: security-reports
+          path: artifacts/security/
+        continue-on-error: true
+
+      - name: Download test results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: test-results-*
+          path: artifacts/tests/
+          merge-multiple: true
+        continue-on-error: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install report generation tools
+        run: |
+          pip install jinja2 junit2html pyyaml
+
+      - name: Create reports directory
+        run: mkdir -p ${{ env.REPORTS_DIR }}
+
+      - name: Generate test report
+        run: |
+          python tools/generate_reports.py --type test \
+            --input artifacts/tests/ \
+            --output ${{ env.REPORTS_DIR }}/test-report.md
+        continue-on-error: true
+
+      - name: Generate coverage report
+        run: |
+          python tools/generate_reports.py --type coverage \
+            --input artifacts/coverage/ \
+            --output ${{ env.REPORTS_DIR }}/coverage-report.md
+        continue-on-error: true
+
+      - name: Generate security report
+        run: |
+          python tools/generate_reports.py --type security \
+            --input artifacts/security/ \
+            --output ${{ env.REPORTS_DIR }}/security-report.md
+        continue-on-error: true
+
+      - name: Generate license report
+        run: |
+          python tools/generate_reports.py --type license \
+            --input artifacts/security/ \
+            --output ${{ env.REPORTS_DIR }}/license-report.md
+        continue-on-error: true
+
+      - name: Generate CI/CD summary
+        run: |
+          python tools/generate_reports.py --type cicd \
+            --output ${{ env.REPORTS_DIR }}/ci-cd.md
+        continue-on-error: true
+
+      - name: Upload report documentation
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-documentation
+          path: ${{ env.REPORTS_DIR }}/
+
+  # Job 10: Deploy Documentation (only on main branch)
+  deploy-docs:
+    name: Deploy Documentation
+    runs-on: ubuntu-latest
+    needs: [docs, integration-tests, generate-reports]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download report documentation
+        uses: actions/download-artifact@v4
+        with:
+          name: report-documentation
+          path: ${{ env.REPORTS_DIR }}/
+        continue-on-error: true
+
+      - name: Download coverage reports (for badges)
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-reports
+          path: docs/assets/
+        continue-on-error: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install MkDocs
+        run: pip install mkdocs-material
+
+      - name: Configure Git
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email github-actions[bot]@users.noreply.github.com
+
+      - name: Deploy to GitHub Pages
+        run: mkdocs gh-deploy --force
+
+  # Job 11: Build Python Package
+  build-package:
+    name: Build Python Package
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests]
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install build tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version: $VERSION"
+
+      - name: Verify version matches pyproject.toml
+        run: |
+          PYPROJECT_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+          TAG_VERSION=${{ steps.version.outputs.version }}
+          echo "Tag version: $TAG_VERSION"
+          echo "pyproject.toml version: $PYPROJECT_VERSION"
+          if [ "$TAG_VERSION" != "$PYPROJECT_VERSION" ]; then
+            echo "Error: Version mismatch!"
+            echo "Git tag: v$TAG_VERSION"
+            echo "pyproject.toml: $PYPROJECT_VERSION"
+            echo "Please update pyproject.toml version to match the tag"
+            exit 1
+          fi
+
+      - name: Build package
+        run: python -m build
+
+      - name: Check package
+        run: twine check dist/*
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package
+          path: dist/
+
+  # Job 12: Publish to PyPI
+  publish-pypi:
+    name: Publish to PyPI
+    runs-on: ubuntu-latest
+    needs: [build-package]
+    if: startsWith(github.ref, 'refs/tags/v')
+    environment:
+      name: pypi
+      url: https://pypi.org/p/msn-weather-wrapper
+    permissions:
+      id-token: write
+    steps:
+      - name: Download package
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          print-hash: true
+
+  # Job 13: Create GitHub Release
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [build-package, sbom, generate-reports, publish-pypi]
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract version info
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          # Check if this is a prerelease (contains alpha, beta, rc)
+          if [[ $VERSION =~ (alpha|beta|rc) ]]; then
+            echo "prerelease=true" >> $GITHUB_OUTPUT
+          else
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts/
+
+      - name: Create release notes
+        run: |
+          cat > release-notes.md << 'EOF'
+          ## MSN Weather Wrapper v${{ steps.version.outputs.version }}
+
+          ### Installation
+
+          **PyPI:**
+          ```bash
+          pip install msn-weather-wrapper==${{ steps.version.outputs.version }}
+          ```
+
+          **Container:**
+          ```bash
+          docker pull ghcr.io/${{ github.repository }}:${{ steps.version.outputs.version }}
+          ```
+
+          ### What's Included
+
+          - 📦 Python wheel and source distribution
+          - 🐳 Multi-platform container images (amd64, arm64)
+          - 📋 SBOM (Software Bill of Materials)
+          - 🔒 Security scan reports
+          - ✅ Test coverage reports
+
+          ### Documentation
+
+          - 📖 [Full Documentation](https://github.com/${{ github.repository }})
+          - 🌐 [API Reference](https://github.com/${{ github.repository }}/blob/main/docs/API.md)
+          - 🔒 [Security](https://github.com/${{ github.repository }}/blob/main/docs/SECURITY.md)
+
+          ---
+          EOF
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: release-notes.md
+          files: |
+            release-artifacts/python-package/*
+            release-artifacts/sbom-reports/*
+            release-artifacts/coverage-reports/coverage.xml
+            release-artifacts/coverage-reports/coverage.svg
+            release-artifacts/security-reports/*.json
+            release-artifacts/security-reports/*.md
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ steps.version.outputs.prerelease }}
+          make_latest: ${{ steps.version.outputs.prerelease == 'false' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

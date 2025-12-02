@@ -1,0 +1,28 @@
+# Development Containerfile for Frontend
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install development tools
+RUN apk add --no-cache \
+    git \
+    curl \
+    bash
+
+# Copy package files
+COPY package.json ./
+
+# Install dependencies including Playwright
+RUN npm install
+
+# Install Playwright browsers
+RUN npx playwright install --with-deps chromium
+
+# Copy source code (will be overridden by volume in compose)
+COPY . .
+
+# Expose Vite dev server port
+EXPOSE 5173
+
+# Default command (can be overridden in compose)
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
