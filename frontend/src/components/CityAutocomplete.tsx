@@ -71,7 +71,11 @@ export default function CityAutocomplete({ onCitySelect }: CityAutocompleteProps
 
   return (
     <div className="autocomplete-wrapper" ref={wrapperRef}>
+      <label htmlFor="city-search" className="sr-only">
+        Search for a city
+      </label>
       <input
+        id="city-search"
         type="text"
         className="city-input"
         placeholder="Search for a city..."
@@ -83,16 +87,32 @@ export default function CityAutocomplete({ onCitySelect }: CityAutocompleteProps
             setShowSuggestions(true);
           }
         }}
+        role="combobox"
+        aria-expanded={showSuggestions && filteredCities.length > 0}
+        aria-controls="city-suggestions"
+        aria-activedescendant={
+          selectedIndex >= 0 ? `city-option-${selectedIndex}` : undefined
+        }
+        aria-autocomplete="list"
+        aria-label="Search for a city to get weather information"
       />
 
       {showSuggestions && filteredCities.length > 0 && (
-        <ul className="suggestions-list">
+        <ul 
+          id="city-suggestions"
+          className="suggestions-list"
+          role="listbox"
+          aria-label="City suggestions"
+        >
           {filteredCities.map((city: City, index: number) => (
             <li
+              id={`city-option-${index}`}
               key={`${city.name}-${city.country}`}
               className={`suggestion-item ${index === selectedIndex ? 'selected' : ''}`}
               onClick={() => handleCitySelect(city)}
               onMouseEnter={() => setSelectedIndex(index)}
+              role="option"
+              aria-selected={index === selectedIndex}
             >
               <span className="city-name">{city.name}</span>
               <span className="city-country">{city.country}</span>

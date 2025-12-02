@@ -169,59 +169,70 @@ function App() {
   return (
     <div className="app">
       <div className="container">
-        <header className="header">
-          <h1 className="title">🌤️ MSN Weather</h1>
+        <header className="header" role="banner">
+          <h1 className="title">
+            <span aria-hidden="true">🌤️</span>
+            <span>MSN Weather</span>
+          </h1>
           <p className="subtitle">Get real-time weather information for any city</p>
         </header>
 
-        <div className="search-section">
+        <div className="search-section" role="search" aria-label="Weather search">
           <CityAutocomplete onCitySelect={fetchWeatherWithRetry} />
           <button 
             className="location-button" 
             onClick={fetchWeatherByLocation}
             disabled={loadingLocation}
-            title="Use my location"
+            aria-label="Get weather for my current location"
+            aria-busy={loadingLocation}
           >
-            {loadingLocation ? '⏳' : '📍'} Use My Location
+            <span aria-hidden="true">{loadingLocation ? '⏳' : '📍'}</span>
+            <span>Use My Location</span>
           </button>
         </div>
 
         {recentSearches.length > 0 && (
-          <div className="recent-searches">
+          <section className="recent-searches" aria-label="Recent weather searches">
             <div className="recent-searches-header">
-              <h3>Recent Searches</h3>
+              <h3 id="recent-searches-heading">Recent Searches</h3>
               <button 
                 className="clear-button" 
                 onClick={clearRecentSearches}
-                title="Clear all recent searches"
+                aria-label="Clear all recent searches"
               >
                 Clear
               </button>
             </div>
-            <div className="recent-searches-list">
+            <div 
+              className="recent-searches-list" 
+              role="list"
+              aria-labelledby="recent-searches-heading"
+            >
               {recentSearches.map((search, index) => (
                 <button
                   key={index}
                   className="recent-search-item"
                   onClick={() => handleRecentSearchClick(search)}
+                  role="listitem"
+                  aria-label={`View weather for ${search.city}, ${search.country}`}
                 >
                   {search.city}, {search.country}
                 </button>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
         {loading && (
-          <div className="loading">
-            <div className="spinner"></div>
+          <div className="loading" role="status" aria-live="polite" aria-busy="true">
+            <div className="spinner" aria-hidden="true"></div>
             <p>Fetching weather data...</p>
           </div>
         )}
 
         {error && (
-          <div className="error-card">
-            <span className="error-icon">⚠️</span>
+          <div className="error-card" role="alert" aria-live="assertive">
+            <span className="error-icon" aria-hidden="true">⚠️</span>
             <div className="error-content">
               <h3>Error</h3>
               <p>{error}</p>
@@ -230,54 +241,66 @@ function App() {
         )}
 
         {weather && !loading && (
-          <div className="weather-card">
+          <article 
+            className="weather-card" 
+            role="region" 
+            aria-label={`Weather information for ${weather.location.city}, ${weather.location.country}`}
+          >
             <div className="weather-header">
               <div className="location-info">
-                <h2 className="location-name">{weather.location.city}</h2>
+                <h2 className="location-name" id="weather-location">{weather.location.city}</h2>
                 <p className="location-country">{weather.location.country}</p>
               </div>
-              <div className="weather-icon-large">
+              <div className="weather-icon-large" aria-hidden="true">
                 {getWeatherIcon(weather.condition)}
               </div>
             </div>
 
             <div className="temperature-section">
               <div className="temperature-main">
-                {Math.round(convertTemp(weather.temperature, unit))}°{unit}
+                <span aria-label={`Temperature: ${Math.round(convertTemp(weather.temperature, unit))} degrees ${unit === 'C' ? 'Celsius' : 'Fahrenheit'}`}>
+                  {Math.round(convertTemp(weather.temperature, unit))}°{unit}
+                </span>
                 <button 
                   className="unit-toggle" 
                   onClick={toggleUnit}
-                  title={`Switch to °${unit === 'C' ? 'F' : 'C'}`}
+                  aria-label={`Switch temperature unit to ${unit === 'C' ? 'Fahrenheit' : 'Celsius'}`}
                 >
                   °{unit === 'C' ? 'F' : 'C'}
                 </button>
               </div>
-              <div className="condition">{weather.condition}</div>
+              <div className="condition" aria-label={`Condition: ${weather.condition}`}>
+                {weather.condition}
+              </div>
             </div>
 
-            <div className="weather-details">
-              <div className="detail-item">
-                <span className="detail-icon">💧</span>
+            <div className="weather-details" role="list" aria-label="Weather details">
+              <div className="detail-item" role="listitem">
+                <span className="detail-icon" aria-hidden="true">💧</span>
                 <div className="detail-content">
-                  <span className="detail-label">Humidity</span>
-                  <span className="detail-value">{weather.humidity}%</span>
+                  <span className="detail-label" id="humidity-label">Humidity</span>
+                  <span className="detail-value" aria-labelledby="humidity-label">
+                    {weather.humidity}%
+                  </span>
                 </div>
               </div>
 
-              <div className="detail-item">
-                <span className="detail-icon">💨</span>
+              <div className="detail-item" role="listitem">
+                <span className="detail-icon" aria-hidden="true">💨</span>
                 <div className="detail-content">
-                  <span className="detail-label">Wind Speed</span>
-                  <span className="detail-value">{weather.wind_speed.toFixed(1)} km/h</span>
+                  <span className="detail-label" id="wind-label">Wind Speed</span>
+                  <span className="detail-value" aria-labelledby="wind-label">
+                    {weather.wind_speed.toFixed(1)} kilometers per hour
+                  </span>
                 </div>
               </div>
             </div>
-          </div>
+          </article>
         )}
 
         {!weather && !loading && !error && (
-          <div className="empty-state">
-            <div className="empty-icon">🔍</div>
+          <div className="empty-state" role="status" aria-live="polite">
+            <div className="empty-icon" aria-hidden="true">🔍</div>
             <h3>Search for a city</h3>
             <p>Start typing in the search box above to get weather information</p>
           </div>
