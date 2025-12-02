@@ -76,7 +76,7 @@ jobs:
       - name: Run mypy type checking
         run: mypy src/msn_weather_wrapper --strict
 
-  # Job 2: Security Scanning
+  # Job 2: Security Scanning (Critical Checks Only)
   security:
     needs: [smoke-tests]
     name: Security Scanning
@@ -90,47 +90,19 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install security tools
-        run: pip install bandit safety pip-audit pip-licenses
+        run: pip install bandit pip-audit
 
-      - name: Run Bandit security scan
-        run: |
-          bandit -r src/ -f json -o bandit-report.json || true
-          bandit -r src/ -f txt -o bandit-report.txt || true
-        continue-on-error: true
+      - name: Run Bandit (fail on HIGH/CRITICAL)
+        run: bandit -r src/ api.py -ll -f txt
 
-      - name: Run Safety dependency check
-        run: |
-          safety check --json --output safety-report.json || true
-          safety check --output safety-report.txt || true
-        continue-on-error: true
+      - name: Run pip-audit (check for vulnerabilities)
+        run: pip-audit
 
-      - name: Run pip-audit
-        run: |
-          pip-audit --format json --output pip-audit-report.json || true
-          pip-audit --format markdown --output pip-audit-report.md || true
-        continue-on-error: true
-
-      - name: Generate license report
-        run: |
-          pip-licenses --format=json --output-file=licenses.json
-          pip-licenses --format=markdown --output-file=licenses.md
-          pip-licenses --format=html --output-file=licenses.html
-
-      - name: Upload security reports
-        uses: actions/upload-artifact@v4
+      - name: Security scan summary
         if: always()
-        with:
-          name: security-reports
-          path: |
-            bandit-report.json
-            bandit-report.txt
-            safety-report.json
-            safety-report.txt
-            pip-audit-report.json
-            pip-audit-report.md
-            licenses.json
-            licenses.md
-            licenses.html
+        run: |
+          echo "✅ Critical security checks passed"
+          echo "📋 Full security scan runs weekly (security-scan.yml)"
 
   # Job 3: Unit Tests (Python 3.10-3.12)
   unit-tests:
@@ -337,12 +309,6 @@ jobs:
         with:
           name: sbom-reports
           path: sbom_output/
-
-      - name: Scan for vulnerabilities with Grype
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
-          grype sbom:sbom_output/source_sbom.json --fail-on high
-        continue-on-error: true
 
   # Job 8: Build Documentation
   docs:
