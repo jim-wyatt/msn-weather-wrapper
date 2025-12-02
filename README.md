@@ -2,11 +2,14 @@
 
 > A modern, production-ready Python wrapper for MSN Weather with Flask REST API, React frontend, and comprehensive security.
 
+[![PyPI version](https://img.shields.io/pypi/v/msn-weather-wrapper.svg)](https://pypi.org/project/msn-weather-wrapper/)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-77%20passing-success)](tests/)
-[![Coverage](https://img.shields.io/badge/coverage-90%25-success)](tests/)
-[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=github-actions&logoColor=white)](.github/workflows/)
+[![Tests](https://img.shields.io/badge/tests-67%20passing-success)](tests/)
+[![Coverage](https://img.shields.io/badge/coverage-89%25-success)](tests/)
+[![CI/CD](https://img.shields.io/github/actions/workflow/status/jim-wyatt/msn-weather-wrapper/ci.yml?branch=main&label=CI%2FCD)](https://github.com/jim-wyatt/msn-weather-wrapper/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://jim-wyatt.github.io/msn-weather-wrapper/)
+[![Container](https://img.shields.io/badge/container-ghcr.io-blue)](https://github.com/jim-wyatt/msn-weather-wrapper/pkgs/container/msn-weather-wrapper)
 
 ---
 
