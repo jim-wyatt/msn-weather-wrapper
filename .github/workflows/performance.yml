@@ -3,6 +3,11 @@ name: Performance Testing
 on:
   pull_request:
     branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'api.py'
+      - 'tests/**'
+      - '.github/workflows/performance.yml'
   workflow_dispatch:
 
 concurrency:
