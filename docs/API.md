@@ -413,6 +413,235 @@ Simply copy the component into your React project and import it after starting t
 | GET | `/api/v1/recent-searches` | Get recent searches | v1 |
 | DELETE | `/api/v1/recent-searches` | Clear recent searches | v1 |
 
+## Error Codes
+
+The API uses standard HTTP status codes and returns consistent error response format:
+
+### HTTP Status Codes
+
+| Code | Status | Description |
+|------|--------|-------------|
+| 200 | OK | Request successful |
+| 400 | Bad Request | Invalid or missing parameters |
+| 404 | Not Found | Endpoint not found |
+| 429 | Too Many Requests | Rate limit exceeded |
+| 500 | Internal Server Error | Server error occurred |
+| 503 | Service Unavailable | Service temporarily unavailable |
+
+### Error Response Format
+
+All errors follow this JSON structure:
+
+```json
+{
+  "error": "Short error category",
+  "message": "Detailed explanation of the error"
+}
+```
+
+### Common Error Examples
+
+**Missing Parameters (400):**
+```json
+{
+  "error": "Missing required parameters",
+  "message": "Both 'city' and 'country' parameters are required"
+}
+```
+
+**Invalid Input (400):**
+```json
+{
+  "error": "city contains invalid characters",
+  "message": "Only letters, spaces, hyphens, and Unicode characters are allowed"
+}
+```
+
+**Rate Limit Exceeded (429):**
+```json
+{
+  "error": "Rate limit exceeded",
+  "message": "Too many requests. Please try again later."
+}
+```
+
+**Geocoding Failed (400):**
+```json
+{
+  "error": "Geocoding failed",
+  "message": "Could not find location for coordinates"
+}
+```
+
+**Server Error (500):**
+```json
+{
+  "error": "Failed to fetch weather data",
+  "message": "Connection timeout to weather service"
+}
+```
+
+## Rate Limiting
+
+The API implements rate limiting to prevent abuse and ensure fair usage:
+
+### Limits
+
+- **Per IP Address**: 30 requests per minute
+- **Total Server**: 200 requests per hour
+- **Recent Searches**: 10 searches maximum per session
+
+### Rate Limit Headers
+
+Check remaining quota using response headers:
+
+```bash
+curl -i "http://localhost:5000/api/weather?city=Seattle&country=USA"
+```
+
+```
+HTTP/1.1 200 OK
+X-RateLimit-Limit: 30
+X-RateLimit-Remaining: 29
+X-RateLimit-Reset: 1734045600
+```
+
+### Handling Rate Limits
+
+When rate limited (429 response):
+
+1. **Respect the limit**: Wait before retrying
+2. **Check X-RateLimit-Reset**: Unix timestamp when limit resets
+3. **Implement backoff**: Exponential backoff for retries
+4. **Cache responses**: Store results locally (5 min cache recommended)
+
+**Example with retry logic:**
+
+```python
+import time
+import requests
+
+def get_weather_with_retry(city, country, max_retries=3):
+    for attempt in range(max_retries):
+        response = requests.get(
+            "http://localhost:5000/api/weather",
+            params={"city": city, "country": country}
+        )
+        
+        if response.status_code == 200:
+            return response.json()
+        
+        if response.status_code == 429:
+            reset_time = int(response.headers.get('X-RateLimit-Reset', 0))
+            wait_time = max(reset_time - time.time(), 0) + 1
+            print(f"Rate limited. Waiting {wait_time}s...")
+            time.sleep(wait_time)
+            continue
+        
+        response.raise_for_status()
+    
+    raise Exception("Max retries exceeded")
+```
+
+### Caching
+
+The API caches responses for 5 minutes to improve performance:
+
+- **Cache Key**: `{city}:{country}` or `{lat}:{lon}`
+- **Cache Duration**: 300 seconds (5 minutes)
+- **Cache Hit**: Returns cached data (90%+ faster)
+- **Cache Miss**: Fetches fresh data from MSN Weather
+
+**Benefits:**
+- Reduces load on MSN Weather
+- Faster responses for repeated requests
+- Lower rate limit consumption
+
+## Input Validation
+
+All inputs are validated for security and data integrity:
+
+### City/Country Names
+
+- **Allowed**: Letters, spaces, hyphens, apostrophes, periods, Unicode characters
+- **Max Length**: 100 characters
+- **Blocked**: Special characters `<>;&|$\`
+- **Trimmed**: Leading/trailing whitespace removed
+
+### Coordinates
+
+- **Latitude**: -90 to 90 (decimal degrees)
+- **Longitude**: -180 to 180 (decimal degrees)
+- **Format**: Float or integer
+
+### Security Features
+
+- ✅ SQL injection prevention
+- ✅ XSS attack prevention
+- ✅ Path traversal protection
+- ✅ Command injection blocking
+- ✅ Null byte filtering
+- ✅ Input length limits
+- ✅ Type validation
+
+See [SECURITY.md](SECURITY.md) for complete security documentation.
+
+## CORS Configuration
+
+Cross-Origin Resource Sharing (CORS) is enabled for web applications:
+
+```python
+# CORS Headers
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS
+Access-Control-Allow-Headers: Content-Type
+```
+
+**Environment Variables:**
+
+```bash
+# Restrict to specific origin
+CORS_ORIGINS=https://yourapp.com
+
+# Allow multiple origins
+CORS_ORIGINS=https://app1.com,https://app2.com
+
+# Allow all origins (default, less secure)
+CORS_ORIGINS=*
+```
+
+## Logging
+
+Structured JSON logging with request tracking:
+
+```json
+{
+  "timestamp": "2025-12-02T15:30:45.123Z",
+  "level": "info",
+  "event": "weather_request",
+  "request_id": "abc123",
+  "ip": "192.168.1.1",
+  "city": "Seattle",
+  "country": "USA",
+  "duration_ms": 245
+}
+```
+
+**Log Levels:**
+- `INFO`: Normal requests
+- `WARNING`: Rate limits, validation errors
+- `ERROR`: Server errors, exceptions
+
+**Configure logging:**
+
+```bash
+# Set log level
+export LOG_LEVEL=INFO  # DEBUG, INFO, WARNING, ERROR
+
+# Enable/disable logging
+export ENABLE_LOGGING=true
+```
+
 ## See Also
 
 - [Frontend E2E Tests](../frontend/tests/e2e/) - Playwright test suite
