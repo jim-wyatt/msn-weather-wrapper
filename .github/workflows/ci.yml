@@ -50,7 +50,7 @@ jobs:
       - name: Quick validation
         run: |
           python -c "import msn_weather_wrapper; print(f'Version: {msn_weather_wrapper.__version__}')"
-          python -c "from msn_weather_wrapper import MSNWeatherClient; print('Client import OK')"
+          python -c "from msn_weather_wrapper import WeatherClient; print('Client import OK')"
           ruff check src/ --select E,F  # Syntax errors only
           mypy src/msn_weather_wrapper --no-strict-optional --no-error-summary
 
