@@ -280,4 +280,5 @@ class TestAPIRateLimiting:
         """Test multiple invalid requests are handled gracefully."""
         for _ in range(10):
             response = client.get("/api/weather?city=<script>&country=alert")
-            assert response.status_code == 400
+            # Should be 400 for invalid input, but may be 429 if rate limited
+            assert response.status_code in (400, 429)
