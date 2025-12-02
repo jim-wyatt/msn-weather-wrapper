@@ -31,7 +31,9 @@ def containers() -> Generator[None, None, None]:
         except FileNotFoundError:
             continue
     else:
-        pytest.skip("Container not running. Start with: docker compose up -d or podman-compose up -d")
+        pytest.skip(
+            "Container not running. Start with: docker compose up -d or podman-compose up -d"
+        )
 
     # Wait for API to be ready
     max_retries = 15
