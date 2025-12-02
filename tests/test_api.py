@@ -128,6 +128,10 @@ def test_post_weather_success(mock_get_client, client):
 @patch("api.get_client")
 def test_get_weather_client_error(mock_get_client, client):
     """Test GET weather endpoint when client raises an error."""
+    # Clear the cache to ensure mock is used
+    from api import get_cached_weather
+    get_cached_weather.cache_clear()
+    
     # Setup mock to raise exception
     mock_client = MagicMock()
     mock_get_client.return_value = mock_client
@@ -143,6 +147,10 @@ def test_get_weather_client_error(mock_get_client, client):
 @patch("api.get_client")
 def test_post_weather_client_error(mock_get_client, client):
     """Test POST weather endpoint when client raises an error."""
+    # Clear the cache to ensure mock is used
+    from api import get_cached_weather
+    get_cached_weather.cache_clear()
+    
     # Setup mock to raise exception
     mock_client = MagicMock()
     mock_get_client.return_value = mock_client
