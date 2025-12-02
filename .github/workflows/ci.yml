@@ -246,9 +246,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
-      - name: Start services with docker-compose
+      - name: Start services with docker compose
         run: |
-          docker-compose up -d
+          docker compose up -d
           sleep 15
 
       - name: Wait for API to be ready
@@ -267,11 +267,11 @@ jobs:
 
       - name: Show container logs on failure
         if: failure()
-        run: docker-compose logs
+        run: docker compose logs
 
       - name: Stop services
         if: always()
-        run: docker-compose down
+        run: docker compose down
 
   # Job 7: SBOM Generation
   sbom:
