@@ -51,11 +51,10 @@ End-to-end API functionality and container health.
 
 ## 🐍 Multi-Version Testing
 
-Tests executed across Python versions 3.9-3.12:
+Tests executed across Python versions 3.10-3.12:
 
 | Python Version | Status | Notes |
-|----------------|--------|-------|
-| 3.9 | ✅ Passed | All tests passing |
+|---------------|---------|--------|
 | 3.10 | ✅ Passed | All tests passing |
 | 3.11 | ✅ Passed | All tests passing |
 | 3.12 | ✅ Passed | All tests passing |
@@ -190,7 +189,7 @@ Tests are executed automatically on:
 
 ### Test Environment
 - **OS**: Ubuntu Latest (GitHub Actions)
-- **Python Versions**: 3.9, 3.10, 3.11, 3.12
+- **Python Versions**: 3.10, 3.11, 3.12
 - **Container Runtime**: Podman
 - **Database**: N/A (stateless API)
 
@@ -199,7 +198,7 @@ Tests are executed automatically on:
 All quality gates passed:
 - ✅ All tests passing (77/77)
 - ✅ Zero test failures
-- ✅ Multi-version compatibility (Python 3.9-3.12)
+- ✅ Multi-version compatibility (Python 3.10-3.12)
 - ✅ Security tests passing (25/25)
 - ✅ Integration tests passing (17/17)
 

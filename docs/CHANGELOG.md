@@ -112,7 +112,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - All tests passing (69 unit/integration, 17 container tests)
 
 #### Technology Stack
-- **Backend**: Python 3.9-3.12, Flask 3.1+, Gunicorn 23.0+, Pydantic 2.12+
+- **Backend**: Python 3.10-3.12, Flask 3.1+, Gunicorn 23.0+, Pydantic 2.12+
 - **Frontend**: React 19.2, Vite 7.2, TypeScript 5.7+, CSS3
 - **Testing**: pytest 9.0+, Playwright 1.49+, 86 tests with 89% coverage
 - **Quality**: ruff 0.14+, mypy 1.19+, pre-commit 4.5+, bandit 1.9+

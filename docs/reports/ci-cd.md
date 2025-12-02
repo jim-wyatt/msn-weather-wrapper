@@ -25,7 +25,7 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 │                                                           │
 │  1. Code Quality ────────────┐                          │
 │  2. Security Scanning ───────┤                          │
-│  3. Unit Tests (3.9-3.12) ───├──→ 5. Container Build       │
+│  3. Unit Tests (3.10-3.12) ───├──→ 5. Container Build       │
 │  4. Coverage Report ─────────┘       ↓                   │
 │                                  6. Integration Tests    │
 │                                      ↓                    │
@@ -82,7 +82,7 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 ### Job 3: Unit Tests
 **Purpose**: Validate functionality across Python versions
 
-**Matrix Strategy**: Python 3.9, 3.10, 3.11, 3.12
+**Matrix Strategy**: Python 3.10, 3.11, 3.12
 
 **Steps**:
 - Checkout code
@@ -330,7 +330,7 @@ REPORTS_DIR: 'docs/reports'
 
 **Python Version Matrix**:
 ```yaml
-python-version: ['3.9', '3.10', '3.11', '3.12']
+python-version: ['3.10', '3.11', '3.12']
 ```
 
 ### Caching Strategy

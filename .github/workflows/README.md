@@ -15,7 +15,7 @@ This directory contains the GitHub Actions workflows for automated testing, buil
 
 1. **code-quality** - Runs Ruff formatting/linting and mypy type checking
 2. **security** - Runs Bandit security scanning and Safety dependency checks
-3. **unit-tests** - Runs unit and security tests on Python 3.9-3.12 (matrix)
+3. **unit-tests** - Runs unit and security tests on Python 3.10-3.12 (matrix)
 4. **coverage** - Generates test coverage reports and uploads to Codecov
 5. **container-build** - Builds and tests unified Podman container image
 6. **integration-tests** - Runs full integration tests with podman-compose
@@ -136,7 +136,7 @@ Recommended settings for `main` branch:
 - ✅ Require pull request reviews (1 approver)
 - ✅ Require status checks to pass:
   - `code-quality`
-  - `unit-tests (3.9, 3.10, 3.11, 3.12)`
+  - `unit-tests (3.10, 3.11, 3.12)`
   - `coverage`
   - `container-build`
   - `integration-tests`

@@ -26,7 +26,7 @@ Reports are automatically generated on every CI/CD pipeline run:
 - **Total Tests**: 77 tests (35 unit, 25 security, 17 integration)
 - **Pass Rate**: 100%
 - **Execution Time**: ~5 seconds
-- **Python Versions**: 3.9, 3.10, 3.11, 3.12
+- **Python Versions**: 3.10, 3.11, 3.12
 
 ### Code Quality
 - **Coverage**: 90% overall (100% security code)

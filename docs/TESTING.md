@@ -221,7 +221,7 @@ Automated testing on:
 - Manual workflow dispatch
 
 Tests run on:
-- Python 3.9, 3.10, 3.11, 3.12
+- Python 3.10, 3.11, 3.12
 - Ubuntu latest
 - Container builds
 

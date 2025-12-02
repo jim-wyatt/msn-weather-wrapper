@@ -2,7 +2,7 @@
 
 Modern Python wrapper for MSN Weather with Flask API, React frontend, and production-ready containerized deployment.
 
-[![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://img.shields.io/badge/tests-77%20passing-success)](../tests/)
 [![Coverage](https://img.shields.io/badge/coverage-89%25-success)](TESTING.md)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](../LICENSE)
@@ -79,7 +79,7 @@ Modern Python wrapper for MSN Weather with Flask API, React frontend, and produc
 
 ## Technology Stack
 
-- **Backend**: Python 3.9+, Flask 3.1+, Pydantic 2.12+, Gunicorn 23.0+
+- **Backend**: Python 3.10+, Flask 3.1+, Pydantic 2.12+, Gunicorn 23.0+
 - **Frontend**: React 19.2, Vite 7.2, TypeScript 5.7+
 - **Testing**: pytest 9.0+, Playwright, 77 tests
 - **Quality**: ruff 0.14+, mypy 1.19+, pre-commit hooks

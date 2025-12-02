@@ -3,7 +3,7 @@
 > A modern, production-ready Python wrapper for MSN Weather with Flask REST API and React frontend.
 
 [![PyPI version](https://img.shields.io/pypi/v/msn-weather-wrapper.svg)](https://pypi.org/project/msn-weather-wrapper/)
-[![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://img.shields.io/badge/tests-67%20passing-success)](tests/)
 [![Coverage](https://img.shields.io/badge/coverage-89%25-success)](tests/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -93,7 +93,7 @@ with WeatherClient() as client:
 - 🔐 Zero known vulnerabilities
 
 ### Technology Stack
-- **Backend**: Python 3.9+, Flask 3.1+, Pydantic 2.12+, Gunicorn 23.0+
+- **Backend**: Python 3.10+, Flask 3.1+, Pydantic 2.12+, Gunicorn 23.0+
 - **Frontend**: React 19.2, Vite 7.2, TypeScript 5.7+
 - **Testing**: pytest 9.0+, Playwright, 77 tests
 - **Quality**: ruff 0.14+, mypy 1.19+, pre-commit hooks
@@ -104,7 +104,7 @@ with WeatherClient() as client:
 ## Installation
 
 ### Prerequisites
-- Python 3.9 or higher
+- Python 3.10 or higher
 - Node.js 20+ (for frontend development)
 - Podman or Docker (for containerized deployment)
 
