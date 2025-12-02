@@ -11,11 +11,11 @@ from typing import Any
 
 import structlog
 from dotenv import load_dotenv
+from flasgger import Swagger
 from flask import Flask, jsonify, request, session
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-
 from msn_weather_wrapper import Location, WeatherClient
 
 # Load environment variables from .env file
@@ -86,6 +86,60 @@ limiter = Limiter(
     default_limits=[f"{rate_limit_global} per hour"],
     storage_uri="memory://",
 )
+
+# Configure Swagger/OpenAPI documentation
+swagger_config = {
+    "headers": [],
+    "specs": [
+        {
+            "endpoint": "apispec",
+            "route": "/apispec.json",
+            "rule_filter": lambda rule: True,
+            "model_filter": lambda tag: True,
+        }
+    ],
+    "static_url_path": "/flasgger_static",
+    "swagger_ui": True,
+    "specs_route": "/apidocs/",
+}
+
+swagger_template = {
+    "swagger": "2.0",
+    "info": {
+        "title": "MSN Weather Wrapper API",
+        "description": (
+            "A Flask API wrapper for MSN Weather providing weather data, "
+            "forecasts, and location search functionality"
+        ),
+        "version": "1.0.0",
+        "contact": {
+            "name": "API Support",
+            "url": "https://github.com/jim-wyatt/msn-weather-wrapper",
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT",
+        },
+    },
+    "host": os.getenv("API_HOST", "localhost:5000"),
+    "basePath": "/",
+    "schemes": ["http", "https"],
+    "securityDefinitions": {
+        "SessionCookie": {
+            "type": "apiKey",
+            "name": "session",
+            "in": "cookie",
+            "description": "Session-based authentication for recent searches",
+        }
+    },
+    "tags": [
+        {"name": "health", "description": "Health check and readiness endpoints"},
+        {"name": "weather", "description": "Weather data and forecast endpoints"},
+        {"name": "searches", "description": "Recent search history management"},
+    ],
+}
+
+swagger = Swagger(app, config=swagger_config, template=swagger_template)
 
 # In-memory storage for recent searches (per session)
 # In production, consider using Redis or a database
@@ -245,9 +299,26 @@ def add_request_id_header(response):  # type: ignore[no-untyped-def]
 @app.route("/api/v1/health", methods=["GET"])
 def health_check() -> tuple[dict[str, str], int]:
     """Health check endpoint (basic).
-
-    Returns:
-        JSON response with status
+    ---
+    tags:
+      - health
+    summary: Basic health check
+    description: Returns the health status of the API service
+    responses:
+      200:
+        description: Service is healthy
+        schema:
+          type: object
+          properties:
+            status:
+              type: string
+              example: ok
+            service:
+              type: string
+              example: MSN Weather Wrapper API
+            version:
+              type: string
+              example: '1.0'
     """
     return jsonify({"status": "ok", "service": "MSN Weather Wrapper API", "version": "1.0"}), 200
 
@@ -255,9 +326,20 @@ def health_check() -> tuple[dict[str, str], int]:
 @app.route("/api/v1/health/live", methods=["GET"])
 def liveness_check() -> tuple[dict[str, str], int]:
     """Liveness probe endpoint.
-
-    Returns:
-        JSON response indicating the service is alive
+    ---
+    tags:
+      - health
+    summary: Kubernetes liveness probe
+    description: Indicates if the application is running (used by Kubernetes)
+    responses:
+      200:
+        description: Application is alive
+        schema:
+          type: object
+          properties:
+            status:
+              type: string
+              example: alive
     """
     return jsonify({"status": "alive", "service": "MSN Weather Wrapper API"}), 200
 
@@ -265,11 +347,36 @@ def liveness_check() -> tuple[dict[str, str], int]:
 @app.route("/api/v1/health/ready", methods=["GET"])
 def readiness_check() -> tuple[dict[str, str | bool], int]:
     """Readiness probe endpoint.
-
-    Checks if the service and its dependencies are ready to serve requests.
-
-    Returns:
-        JSON response with readiness status and dependency checks
+    ---
+    tags:
+      - health
+    summary: Kubernetes readiness probe
+    description: Indicates if the application is ready to accept traffic
+    responses:
+      200:
+        description: Application is ready
+        schema:
+          type: object
+          properties:
+            status:
+              type: string
+              example: ready
+            checks:
+              type: object
+              properties:
+                weather_service:
+                  type: boolean
+                  example: true
+      503:
+        description: Application is not ready
+        schema:
+          type: object
+          properties:
+            status:
+              type: string
+              example: not_ready
+            checks:
+              type: object
     """
     checks: dict[str, bool] = {}
     overall_ready = True
@@ -311,16 +418,65 @@ def readiness_check() -> tuple[dict[str, str | bool], int]:
 @limiter.limit(f"{rate_limit_per_ip} per minute")
 def get_weather() -> tuple[dict[str, str | float | int | dict[str, str]], int]:
     """Get weather data for a location.
-
-    Query Parameters:
-        city (str): City name (required)
-        country (str): Country name (required)
-
-    Returns:
-        JSON response with weather data or error message
-
-    Example:
-        GET /api/weather?city=Seattle&country=USA
+    ---
+    tags:
+      - weather
+    summary: Get weather by city and country
+    description: Retrieves current weather data and forecast for a specific location
+    parameters:
+      - name: city
+        in: query
+        type: string
+        required: true
+        description: City name (e.g., Seattle, London, Tokyo)
+        example: Seattle
+      - name: country
+        in: query
+        type: string
+        required: true
+        description: Country name or code (e.g., USA, UK, Japan)
+        example: USA
+    responses:
+      200:
+        description: Weather data retrieved successfully
+        schema:
+          type: object
+          properties:
+            city:
+              type: string
+            country:
+              type: string
+            temperature:
+              type: number
+            condition:
+              type: string
+            forecast:
+              type: array
+              items:
+                type: object
+      400:
+        description: Invalid input parameters
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+      404:
+        description: Location not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+      429:
+        description: Rate limit exceeded
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+      500:
+        description: Internal server error
     """
     # Get query parameters
     city = request.args.get("city")
@@ -403,15 +559,40 @@ def get_weather() -> tuple[dict[str, str | float | int | dict[str, str]], int]:
 @limiter.limit(f"{rate_limit_per_ip} per minute")
 def get_weather_post() -> tuple[dict[str, str | float | int | dict[str, str]], int]:
     """Get weather data for a location (POST method).
-
-    Request Body (JSON):
-        {
-            "city": "Seattle",
-            "country": "USA"
-        }
-
-    Returns:
-        JSON response with weather data or error message
+    ---
+    tags:
+      - weather
+    summary: Get weather by city and country (POST)
+    description: Retrieves current weather data and forecast using JSON body
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - city
+            - country
+          properties:
+            city:
+              type: string
+              description: City name
+              example: Seattle
+            country:
+              type: string
+              description: Country name or code
+              example: USA
+    responses:
+      200:
+        description: Weather data retrieved successfully
+      400:
+        description: Invalid input or missing required fields
+      404:
+        description: Location not found
+      429:
+        description: Rate limit exceeded
+      500:
+        description: Internal server error
     """
     # Get JSON data from request body
     try:
@@ -541,16 +722,35 @@ def _add_to_recent_searches(city: str, country: str) -> None:
 @limiter.limit(f"{rate_limit_per_ip} per minute")
 def get_weather_by_coordinates() -> tuple[dict[str, Any], int]:
     """Get weather data by latitude and longitude.
-
-    Query Parameters:
-        lat (float): Latitude (required)
-        lon (float): Longitude (required)
-
-    Returns:
-        JSON response with weather data or error message
-
-    Example:
-        GET /api/v1/weather/coordinates?lat=47.6062&lon=-122.3321
+    ---
+    tags:
+      - weather
+    summary: Get weather by coordinates
+    description: Retrieves weather data for specific latitude and longitude
+    parameters:
+      - name: lat
+        in: query
+        type: number
+        required: true
+        description: Latitude (-90 to 90)
+        example: 47.6062
+      - name: lon
+        in: query
+        type: number
+        required: true
+        description: Longitude (-180 to 180)
+        example: -122.3321
+    responses:
+      200:
+        description: Weather data retrieved successfully
+      400:
+        description: Invalid coordinates
+      404:
+        description: Location not found
+      429:
+        description: Rate limit exceeded
+      500:
+        description: Internal server error
     """
     lat_str = request.args.get("lat")
     lon_str = request.args.get("lon")
@@ -643,9 +843,30 @@ def get_weather_by_coordinates() -> tuple[dict[str, Any], int]:
 @app.route("/api/v1/recent-searches", methods=["GET"])
 def get_recent_searches() -> tuple[dict[str, list[dict[str, str]]], int]:
     """Get recent weather searches for the current session.
-
-    Returns:
-        JSON response with list of recent searches
+    ---
+    tags:
+      - searches
+    summary: Get recent searches
+    description: Retrieves the list of recent weather searches from the user session
+    security:
+      - SessionCookie: []
+    responses:
+      200:
+        description: Recent searches retrieved successfully
+        schema:
+          type: object
+          properties:
+            searches:
+              type: array
+              items:
+                type: object
+                properties:
+                  city:
+                    type: string
+                    example: Seattle
+                  country:
+                    type: string
+                    example: USA
     """
     session_id = session.get("id")
     if not session_id or session_id not in recent_searches:
@@ -658,9 +879,22 @@ def get_recent_searches() -> tuple[dict[str, list[dict[str, str]]], int]:
 @app.route("/api/v1/recent-searches", methods=["DELETE"])
 def clear_recent_searches() -> tuple[dict[str, str], int]:
     """Clear recent weather searches for the current session.
-
-    Returns:
-        JSON response confirming deletion
+    ---
+    tags:
+      - searches
+    summary: Clear recent searches
+    description: Removes all recent search history for the user session
+    security:
+      - SessionCookie: []
+    responses:
+      200:
+        description: Recent searches cleared successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Recent searches cleared
     """
     session_id = session.get("id")
     if session_id and session_id in recent_searches:
