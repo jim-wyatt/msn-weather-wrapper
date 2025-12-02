@@ -19,7 +19,11 @@ from flask_limiter.util import get_remote_address
 from msn_weather_wrapper import Location, WeatherClient
 
 # Load environment variables from .env file
-load_dotenv()
+# Try production env file first, then local .env
+if os.path.exists("/app/.env.production"):
+    load_dotenv("/app/.env.production")
+else:
+    load_dotenv()
 
 # Configure structured logging
 structlog.configure(
