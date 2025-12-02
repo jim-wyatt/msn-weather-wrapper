@@ -16,6 +16,7 @@ from flask import Flask, jsonify, request, session
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+
 from msn_weather_wrapper import Location, WeatherClient
 
 # Load environment variables from .env file
