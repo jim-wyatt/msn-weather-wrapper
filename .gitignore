@@ -102,3 +102,4 @@ Thumbs.db
 sbom_output/
 *.sbom.json
 *.sbom.xml
+.env

@@ -1,6 +1,5 @@
 """Data models for weather information."""
 
-
 from pydantic import BaseModel, Field
 
 

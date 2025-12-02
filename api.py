@@ -1,6 +1,8 @@
 """Flask API for MSN Weather Wrapper."""
 
+import os
 import re
+import secrets
 import uuid
 from collections import deque
 from datetime import datetime
@@ -8,12 +10,16 @@ from functools import lru_cache
 from typing import Any
 
 import structlog
+from dotenv import load_dotenv
 from flask import Flask, jsonify, request, session
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 from msn_weather_wrapper import Location, WeatherClient
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Configure structured logging
 structlog.configure(
@@ -35,15 +41,45 @@ structlog.configure(
 
 logger = structlog.get_logger()
 
+# Security constants
+DEFAULT_SECRET_KEY_PLACEHOLDER = "change-this-to-a-secure-random-key-in-production"
+
 app = Flask(__name__)
-app.secret_key = "msn-weather-secret-key-change-in-production"  # For session management
-CORS(app, supports_credentials=True)  # Enable CORS for React frontend
+
+# Load secret key from environment with validation
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
+if not app.secret_key or app.secret_key == DEFAULT_SECRET_KEY_PLACEHOLDER:  # nosec B105
+    # In development, generate a temporary key
+    if os.getenv("FLASK_ENV") == "development" or os.getenv("FLASK_DEBUG") == "1":
+        app.secret_key = secrets.token_hex(32)
+        logger.warning(
+            "Using auto-generated secret key for development. Set FLASK_SECRET_KEY in production!"
+        )
+    else:
+        raise ValueError(
+            "FLASK_SECRET_KEY must be set in production. "
+            "Generate one with: python -c 'import secrets; print(secrets.token_hex(32))'"
+        )
+
+# Configure CORS with environment-based origins
+cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173")
+if cors_origins == "*":
+    logger.warning("CORS configured to allow all origins. Not recommended for production!")
+
+CORS(
+    app,
+    origins=cors_origins.split(",") if cors_origins != "*" else "*",
+    supports_credentials=True,
+)
 
 # Configure rate limiting (in-memory storage, no Redis needed)
+rate_limit_per_ip = os.getenv("RATE_LIMIT_PER_IP", "30")
+rate_limit_global = os.getenv("RATE_LIMIT_GLOBAL", "200")
+
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
-    default_limits=["200 per hour"],
+    default_limits=[f"{rate_limit_global} per hour"],
     storage_uri="memory://",
 )
 
@@ -51,15 +87,19 @@ limiter = Limiter(
 # In production, consider using Redis or a database
 recent_searches: dict[str, deque[dict[str, str]]] = {}
 
-# Input validation constants
-MAX_CITY_LENGTH = 100
-MAX_COUNTRY_LENGTH = 100
+# Input validation constants (configurable via environment)
+MAX_CITY_LENGTH = int(os.getenv("MAX_INPUT_LENGTH", "100"))
+MAX_COUNTRY_LENGTH = int(os.getenv("MAX_INPUT_LENGTH", "100"))
 # Allow letters (including international), spaces, hyphens, apostrophes, periods, and commas
 # but not dangerous patterns like semicolons, backticks, angle brackets, etc.
 VALID_NAME_PATTERN = re.compile(
-    r"^[a-zA-Z\s\-\.,'àáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ðА-Яа-яЁё\u4e00-\u9fff\u0600-\u06FF]+$",
+    r"^[a-zA-Z\s\-\.,àáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ðА-Яа-яЁё\u4e00-\u9fff\u0600-\u06FF]+$",
     re.UNICODE,
 )
+
+# Cache configuration
+CACHE_SIZE = int(os.getenv("CACHE_SIZE", "1000"))
+CACHE_DURATION_MINUTES = int(os.getenv("CACHE_DURATION", "300")) // 60  # Convert seconds to minutes
 
 
 def validate_input(
@@ -103,11 +143,12 @@ def validate_input(
 def get_client() -> WeatherClient:
     """Get or create a weather client instance."""
     if not hasattr(app, "weather_client"):
-        app.weather_client = WeatherClient(timeout=15)
+        timeout = int(os.getenv("REQUEST_TIMEOUT", "15"))
+        app.weather_client = WeatherClient(timeout=timeout)
     return app.weather_client
 
 
-@lru_cache(maxsize=1000)
+@lru_cache(maxsize=CACHE_SIZE)
 def get_cached_weather(
     city: str, country: str, minute_bucket: int
 ) -> tuple[dict[str, str | float | int], int]:
@@ -263,7 +304,7 @@ def readiness_check() -> tuple[dict[str, str | bool], int]:
 
 @app.route("/api/weather", methods=["GET"])
 @app.route("/api/v1/weather", methods=["GET"])
-@limiter.limit("30 per minute")
+@limiter.limit(f"{rate_limit_per_ip} per minute")
 def get_weather() -> tuple[dict[str, str | float | int | dict[str, str]], int]:
     """Get weather data for a location.
 
@@ -325,8 +366,10 @@ def get_weather() -> tuple[dict[str, str | float | int | dict[str, str]], int]:
         country=country,
     )
 
-    # Use 5-minute cache buckets (0, 5, 10, 15, etc.)
-    minute_bucket = datetime.now().minute // 5
+    # Use configurable cache buckets
+    minute_bucket = (
+        datetime.now().minute // CACHE_DURATION_MINUTES if CACHE_DURATION_MINUTES > 0 else 0
+    )
     weather_data, status_code = get_cached_weather(city, country, minute_bucket)
 
     if status_code == 200:
@@ -353,7 +396,7 @@ def get_weather() -> tuple[dict[str, str | float | int | dict[str, str]], int]:
 
 @app.route("/api/weather", methods=["POST"])
 @app.route("/api/v1/weather", methods=["POST"])
-@limiter.limit("30 per minute")
+@limiter.limit(f"{rate_limit_per_ip} per minute")
 def get_weather_post() -> tuple[dict[str, str | float | int | dict[str, str]], int]:
     """Get weather data for a location (POST method).
 
@@ -438,8 +481,10 @@ def get_weather_post() -> tuple[dict[str, str | float | int | dict[str, str]], i
         country=country,
     )
 
-    # Use 5-minute cache buckets (0, 5, 10, 15, etc.)
-    minute_bucket = datetime.now().minute // 5
+    # Use configurable cache buckets
+    minute_bucket = (
+        datetime.now().minute // CACHE_DURATION_MINUTES if CACHE_DURATION_MINUTES > 0 else 0
+    )
     weather_data, status_code = get_cached_weather(city, country, minute_bucket)
 
     if status_code == 200:
@@ -489,7 +534,7 @@ def _add_to_recent_searches(city: str, country: str) -> None:
 
 
 @app.route("/api/v1/weather/coordinates", methods=["GET"])
-@limiter.limit("30 per minute")
+@limiter.limit(f"{rate_limit_per_ip} per minute")
 def get_weather_by_coordinates() -> tuple[dict[str, Any], int]:
     """Get weather data by latitude and longitude.
 
@@ -628,4 +673,8 @@ def cleanup(error: Exception | None = None) -> None:
 
 
 if __name__ == "__main__":
-    app.run(debug=False, host="0.0.0.0", port=5000)
+    # Only run directly in development, use gunicorn in production
+    host = os.getenv("HOST", "0.0.0.0")  # nosec B104
+    port = int(os.getenv("PORT", "5000"))
+    debug = os.getenv("FLASK_DEBUG", "0") == "1"
+    app.run(debug=debug, host=host, port=port)
