@@ -113,3 +113,9 @@ strict_equality = true
 [[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_defs = false
+
+[tool.mutmut]
+paths_to_mutate = "src/"
+backup = false
+runner = "pytest -x --tb=no -q"
+tests_dir = "tests/"
