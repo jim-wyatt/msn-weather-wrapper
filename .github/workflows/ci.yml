@@ -451,13 +451,22 @@ jobs:
           path: docs/assets/
         continue-on-error: true
 
-      - name: Verify reports are present
+      - name: Verify and merge reports
         run: |
-          echo "=== Reports Directory Contents ==="
-          ls -la ${{ env.REPORTS_DIR }}/ || echo "Reports directory not found"
+          echo "=== Generated Reports (from CI) ==="
+          ls -la ${{ env.REPORTS_DIR }}/ || echo "No generated reports found"
           echo ""
-          echo "=== Docs Structure ==="
-          find docs -type f -name "*.md" | head -20
+          echo "=== Existing Reports (from repo) ==="
+          git ls-files ${{ env.REPORTS_DIR }}/ || echo "No existing reports in repo"
+          echo ""
+          # Copy generated reports over existing ones if they exist
+          if [ -d "${{ env.REPORTS_DIR }}" ] && [ "$(ls -A artifacts/reports 2>/dev/null)" ]; then
+            echo "Merging CI-generated reports into docs..."
+            cp -f artifacts/reports/*.md ${{ env.REPORTS_DIR }}/ 2>/dev/null || true
+          fi
+          echo ""
+          echo "=== Final Reports for Deployment ==="
+          find docs/reports -type f -name "*.md" | sort
 
       - name: Set up Python
         uses: actions/setup-python@v5

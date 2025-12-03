@@ -14,11 +14,17 @@ Welcome to the automated reports section. This area contains comprehensive repor
 
 ## 🔄 Report Generation
 
-Reports are automatically generated on every CI/CD pipeline run:
+Reports are automatically generated during every CI/CD pipeline run:
 
 - **Trigger Events**: Push to main/develop, pull requests, manual workflow dispatch
-- **Update Frequency**: On-demand (per commit/PR)
-- **Retention**: Latest reports available in documentation, historical data in artifacts
+- **Generation Process**:
+  1. CI pipeline runs tests, coverage analysis, and security scans
+  2. Artifacts are collected from all pipeline jobs
+  3. `tools/generate_reports.py` processes artifacts into markdown
+  4. Reports are deployed to GitHub Pages with updated timestamps
+- **Update Frequency**: Real-time (on every commit to main branch)
+- **Timestamp Format**: Each report includes generation timestamp at bottom
+- **Retention**: Latest reports in documentation site, historical data in CI artifacts
 
 ## 📈 Key Metrics
 
@@ -136,4 +142,4 @@ The CI/CD pipeline will fail if:
 ---
 
 *Reports generated automatically by GitHub Actions CI/CD pipeline*
-*Last Updated: December 2, 2025 20:10:00 UTC*
+*Timestamps updated on every pipeline run*
