@@ -241,7 +241,10 @@ class TestContainerizedAPI:
 
     def test_cors_headers_present(self, containers, api_url):
         """Test that CORS headers are present."""
-        response = requests.get(f"{api_url}/api/health", timeout=10)
+        # Send Origin header to trigger CORS response headers
+        response = requests.get(
+            f"{api_url}/api/health", headers={"Origin": "http://localhost:3000"}, timeout=10
+        )
         assert response.status_code == 200
         assert "Access-Control-Allow-Origin" in response.headers
 
