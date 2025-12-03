@@ -190,6 +190,9 @@ jobs:
     steps:
       - name: Download all reports
         uses: actions/download-artifact@v6
+        with:
+          pattern: '*-reports'
+          merge-multiple: false
 
       - name: Generate summary
         run: |
