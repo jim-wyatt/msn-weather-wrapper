@@ -52,6 +52,7 @@ dev = [
     "bandit>=1.7.0",
     "safety>=3.0.0",
     "pip-licenses>=4.3.0",
+    "python-semantic-release>=9.0.0",
 ]
 
 [project.urls]
@@ -119,3 +120,46 @@ paths_to_mutate = "src/"
 backup = false
 runner = "pytest -x --tb=no -q"
 tests_dir = "tests/"
+
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+version_variables = ["src/msn_weather_wrapper/__init__.py:__version__"]
+branch = "main"
+changelog_file = "CHANGELOG.md"
+build_command = "pip install build && python -m build"
+dist_path = "dist/"
+upload_to_vcs_release = true
+
+[tool.semantic_release.commit_parser_options]
+allowed_tags = [
+    "build",
+    "chore",
+    "ci",
+    "docs",
+    "feat",
+    "fix",
+    "perf",
+    "style",
+    "refactor",
+    "test",
+]
+major_tags = ["breaking"]
+minor_tags = ["feat"]
+patch_tags = ["fix", "perf"]
+
+[tool.semantic_release.changelog]
+template_dir = "templates"
+exclude_commit_patterns = [
+    "^Merge",
+    "^Bump version",
+]
+
+[tool.semantic_release.changelog.environment]
+block_start_string = "{%"
+block_end_string = "%}"
+variable_start_string = "{{"
+variable_end_string = "}}"
+comment_start_string = "{#"
+comment_end_string = "#}"
+trim_blocks = false
+lstrip_blocks = false

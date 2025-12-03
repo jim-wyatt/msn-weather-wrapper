@@ -1,0 +1,176 @@
+name: Automated Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      force-level:
+        description: 'Force semantic release level (leave empty for auto)'
+        required: false
+        type: choice
+        options:
+          - ''
+          - 'patch'
+          - 'minor'
+          - 'major'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  PYTHON_VERSION: '3.12'
+
+jobs:
+  release:
+    name: Semantic Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+    outputs:
+      released: ${{ steps.release.outputs.released }}
+      version: ${{ steps.release.outputs.version }}
+      tag: ${{ steps.release.outputs.tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Python Semantic Release
+        run: pip install python-semantic-release
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Run Python Semantic Release
+        id: release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Run semantic-release version to bump version and create changelog
+          if [ -n "${{ inputs.force-level }}" ]; then
+            echo "Forcing release level: ${{ inputs.force-level }}"
+            semantic-release version --${{ inputs.force-level }} --commit --tag --changelog --vcs-release
+          else
+            semantic-release version --commit --tag --changelog --vcs-release
+          fi
+
+          # Check if a release was created
+          if [ $? -eq 0 ]; then
+            VERSION=$(semantic-release version --print)
+            if [ -n "$VERSION" ]; then
+              echo "released=true" >> $GITHUB_OUTPUT
+              echo "version=$VERSION" >> $GITHUB_OUTPUT
+              echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+              echo "✅ Released version $VERSION"
+            else
+              echo "released=false" >> $GITHUB_OUTPUT
+              echo "ℹ️ No release needed - no relevant changes detected"
+            fi
+          else
+            echo "released=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No release needed - no relevant changes detected"
+          fi
+
+      - name: Push changes
+        if: steps.release.outputs.released == 'true'
+        run: |
+          git push origin main --follow-tags
+          echo "✅ Pushed version ${{ steps.release.outputs.version }} and tag ${{ steps.release.outputs.tag }}"
+
+  trigger-ci:
+    name: Trigger Full CI/CD Pipeline
+    needs: release
+    if: needs.release.outputs.released == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for tag to propagate
+        run: |
+          echo "Waiting for tag ${{ needs.release.outputs.tag }} to be available..."
+          sleep 5
+
+      - name: Trigger CI workflow
+        uses: actions/github-script@v7
+        with:
+          script: |
+            console.log('Release created: v${{ needs.release.outputs.version }}');
+            console.log('Tag ${{ needs.release.outputs.tag }} will trigger the CI/CD pipeline automatically');
+            console.log('This includes:');
+            console.log('  - Building Python package');
+            console.log('  - Publishing to PyPI');
+            console.log('  - Building container images');
+            console.log('  - Creating GitHub release');
+
+  summary:
+    name: Release Summary
+    needs: [release, trigger-ci]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate summary
+        run: |
+          if [ "${{ needs.release.outputs.released }}" == "true" ]; then
+            cat >> $GITHUB_STEP_SUMMARY << EOF
+          # 🚀 Release v${{ needs.release.outputs.version }} Created!
+
+          ## Release Details
+          - **Version**: ${{ needs.release.outputs.version }}
+          - **Tag**: ${{ needs.release.outputs.tag }}
+          - **Workflow**: [View Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+          ## Next Steps
+          The CI/CD pipeline has been triggered and will:
+          1. ✅ Run full test suite
+          2. 📦 Build Python package
+          3. 🐍 Publish to PyPI
+          4. 🐳 Build and push container images
+          5. 📝 Create GitHub Release with artifacts
+          6. 🔒 Generate SBOM and security reports
+
+          ## Installation
+          Once the CI/CD pipeline completes, the new version will be available:
+
+          **PyPI:**
+          \`\`\`bash
+          pip install msn-weather-wrapper==${{ needs.release.outputs.version }}
+          \`\`\`
+
+          **Container:**
+          \`\`\`bash
+          docker pull ghcr.io/${{ github.repository }}:${{ needs.release.outputs.version }}
+          \`\`\`
+
+          ## Changelog
+          View the changelog: [CHANGELOG.md](/${{ github.repository }}/blob/main/CHANGELOG.md)
+          EOF
+          else
+            cat >> $GITHUB_STEP_SUMMARY << EOF
+          # ℹ️ No Release Created
+
+          No relevant changes were detected that would warrant a new release.
+
+          ## Why?
+          - No commits with conventional commit types (feat, fix, etc.) since last release
+          - Or only commits that don't affect versioning (docs, ci, chore, etc.)
+
+          ## To force a release:
+          Use the workflow dispatch with a force level:
+          - **patch**: Bug fixes (x.y.Z)
+          - **minor**: New features (x.Y.0)
+          - **major**: Breaking changes (X.0.0)
+          EOF
+          fi
