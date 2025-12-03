@@ -47,6 +47,10 @@ coverage.xml
 junit-*.xml
 coverage.json
 
+# Mutation testing
+mutants/
+.mutmut-cache
+
 # Generated documentation
 site/
 
@@ -106,3 +110,5 @@ sbom_output/
 
 # Playwright screenshots (too large for git)
 frontend/tests/e2e/**/*-snapshots/
+frontend/test-results/
+frontend/playwright-report/

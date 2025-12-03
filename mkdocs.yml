@@ -73,6 +73,7 @@ nav:
 
   - Testing & Quality:
       - Testing Guide: TESTING.md
+      - Phase 3 Completion: PHASE_3_COMPLETION.md
 
   - Reports:
       - Overview: reports/index.md
@@ -141,7 +142,7 @@ plugins:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/yourusername/msn-weather-wrapper
+      link: https://github.com/jim-wyatt/msn-weather-wrapper
       name: GitHub Repository
     - icon: fontawesome/brands/python
       link: https://pypi.org/project/msn-weather-wrapper/

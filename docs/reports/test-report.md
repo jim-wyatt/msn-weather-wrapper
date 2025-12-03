@@ -221,6 +221,6 @@ All quality gates passed:
 
 ---
 
-*Report generated automatically by CI/CD pipeline*  
-*Last Updated: 2025-12-02 16:43:23 UTC*  
-*Pipeline Run: [View on GitHub Actions](https://github.com/yourusername/msn-weather-wrapper/actions)*
+*Report generated automatically by CI/CD pipeline*
+*Last Updated: December 2, 2025 20:10:00 UTC*
+*Pipeline Run: [View on GitHub Actions](https://github.com/jim-wyatt/msn-weather-wrapper/actions)*

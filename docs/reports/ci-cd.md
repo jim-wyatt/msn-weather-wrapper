@@ -10,7 +10,7 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 | **Jobs** | 11 |
 | **Average Runtime** | ~8 minutes |
 | **Success Rate** | 98.5% |
-| **Last Run** | 2025-12-02 16:43:23 UTC |
+| **Last Run** | December 2, 2025 20:10:00 UTC |
 
 ![Pipeline](https://img.shields.io/badge/pipeline-passing-brightgreen)
 
@@ -54,7 +54,7 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 - Run Ruff linting
 - Run mypy type checking (strict mode)
 
-**Duration**: ~45 seconds  
+**Duration**: ~45 seconds
 **Fail Conditions**: Format violations, linting errors, type errors
 
 ### Job 2: Security Scanning
@@ -70,7 +70,7 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 - Generate license report
 - Upload security reports as artifacts
 
-**Duration**: ~1 minute  
+**Duration**: ~1 minute
 **Fail Conditions**: Critical/high vulnerabilities (continues on medium/low)
 
 **Artifacts Generated**:
@@ -93,7 +93,7 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 - Generate JUnit XML reports
 - Upload test results
 
-**Duration**: ~50 seconds per version  
+**Duration**: ~50 seconds per version
 **Fail Conditions**: Any test failure
 
 **Artifacts Generated**:
@@ -113,7 +113,7 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 - Upload to Codecov
 - Upload coverage reports
 
-**Duration**: ~1 minute  
+**Duration**: ~1 minute
 **Fail Conditions**: Coverage below 85% (warning only)
 
 **Artifacts Generated**:
@@ -138,7 +138,7 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 - Test frontend accessibility (/)
 - Stop container
 
-**Duration**: ~2 minutes  
+**Duration**: ~2 minutes
 **Fail Conditions**: Build failure, health check failure
 
 ### Job 6: Integration Tests
@@ -156,7 +156,7 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 - Upload container logs on failure
 - Stop services
 
-**Duration**: ~1.5 minutes  
+**Duration**: ~1.5 minutes
 **Fail Conditions**: Integration test failure
 
 ### Job 7: SBOM Generation
@@ -174,7 +174,7 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 - Upload SBOM artifacts
 - Scan for vulnerabilities with Grype
 
-**Duration**: ~40 seconds  
+**Duration**: ~40 seconds
 **Fail Conditions**: High/critical vulnerabilities (continues on lower)
 
 **Artifacts Generated**:
@@ -191,7 +191,7 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 - Build documentation (strict mode)
 - Upload documentation site
 
-**Duration**: ~30 seconds  
+**Duration**: ~30 seconds
 **Fail Conditions**: Build errors, broken links
 
 **Artifacts Generated**:
@@ -216,7 +216,7 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 - Generate CI/CD summary
 - Upload report documentation
 
-**Duration**: ~1 minute  
+**Duration**: ~1 minute
 **Fail Conditions**: None (continues on error)
 
 **Artifacts Generated**:
@@ -229,7 +229,7 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 ### Job 10: Deploy Documentation
 **Purpose**: Deploy docs to GitHub Pages
 
-**Dependencies**: docs, integration-tests, generate-reports  
+**Dependencies**: docs, integration-tests, generate-reports
 **Conditions**: Only on main branch pushes
 
 **Steps**:
@@ -241,13 +241,13 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 - Configure Git user
 - Deploy to GitHub Pages
 
-**Duration**: ~45 seconds  
+**Duration**: ~45 seconds
 **Fail Conditions**: Deployment failure
 
 ### Job 11: Create Release
 **Purpose**: Create GitHub release with artifacts
 
-**Dependencies**: integration-tests, sbom, generate-reports  
+**Dependencies**: integration-tests, sbom, generate-reports
 **Conditions**: Only on version tags (v*)
 
 **Steps**:
@@ -259,7 +259,7 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 - Attach security reports
 - Generate release notes
 
-**Duration**: ~30 seconds  
+**Duration**: ~30 seconds
 **Fail Conditions**: Release creation failure
 
 ## 🎯 Pipeline Triggers
@@ -445,7 +445,7 @@ Pipeline will fail if:
 
 ---
 
-*Documentation generated from CI/CD pipeline configuration*  
-*Last Updated: 2025-12-02 16:43:23 UTC*  
-*Pipeline Version: 2.0*  
+*Documentation generated from CI/CD pipeline configuration*
+*Last Updated: December 2, 2025 20:10:00 UTC*
+*Pipeline Version: 2.0*
 *GitHub Actions Runner: ubuntu-latest*
