@@ -96,7 +96,7 @@ podman run --rm --network test-net \
 - Optional fields
 
 #### API Tests (10 tests)
-- Health check endpoint
+- Health check endpoint (`/api/v1/health`)
 - GET request handling
 - POST request handling
 - Error responses

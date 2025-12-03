@@ -42,7 +42,9 @@ podman machine init && podman machine start
 ./dev.sh start     # Start all services
 ./dev.sh stop      # Stop all services
 ./dev.sh restart   # Restart services
-./dev.sh clean     # Remove everything
+./dev.sh status    # Check service health
+./dev.sh clean     # Remove containers and volumes
+./dev.sh clean --gitignore  # Also remove gitignored files (with preview)
 ./dev.sh rebuild   # Clean rebuild
 ```
 
@@ -118,6 +120,23 @@ npm install package-name
 
 All changes immediately reflected in containers (hot reload enabled).
 
+### Networking
+
+**Docker Service Names:**
+- API accessible at `api:5000` within Docker network
+- Frontend uses Vite proxy configured with `DOCKER_ENV=true`
+- Proxy automatically uses service names in containers, localhost outside
+
+**Vite Proxy Configuration:**
+```javascript
+// Automatically detects Docker environment
+proxy: {
+  '/api': {
+    target: process.env.DOCKER_ENV ? 'http://api:5000' : 'http://localhost:5000'
+  }
+}
+```
+
 ## Troubleshooting
 
 ### Containers won't start
@@ -144,9 +163,17 @@ npm run test:e2e:headed            # See browser
 
 ### Clean slate
 ```bash
-./dev.sh clean           # Nuclear option
-./dev.sh setup           # Fresh start
+./dev.sh clean                  # Remove containers & volumes
+./dev.sh clean --gitignore      # Preview gitignored files to remove
+./dev.sh clean -g               # Short form of --gitignore
+./dev.sh setup                  # Fresh start
 ```
+
+**Gitignore Cleanup:**
+- Shows preview of files to be removed (using `git clean -ndX`)
+- Prompts for confirmation before deletion
+- Safely removes only git-ignored files like `__pycache__`, `node_modules`, etc.
+- Useful for clearing build artifacts and caches
 
 ## Benefits
 
