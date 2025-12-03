@@ -273,7 +273,7 @@ class TestAPIRateLimiting:
     def test_multiple_valid_requests(self, client):
         """Test multiple valid requests don't crash the server."""
         for _ in range(10):
-            response = client.get("/api/health")
+            response = client.get("/api/v1/health")
             assert response.status_code == 200
 
     def test_multiple_invalid_requests(self, client):
@@ -297,7 +297,7 @@ class TestHTTPErrorHandlers:
     def test_405_method_not_allowed(self, client):
         """Test 405 error for unsupported HTTP methods."""
         # Health endpoint only supports GET
-        response = client.post("/api/health")
+        response = client.post("/api/v1/health")
         assert response.status_code == 405
 
         # Try other unsupported methods
@@ -428,9 +428,9 @@ class TestHTTPErrorHandlers:
     def test_trailing_slash_handling(self, client):
         """Test endpoint behavior with trailing slashes."""
         # Test both with and without trailing slash
-        response1 = client.get("/api/health")
-        response2 = client.get("/api/health/")
-        # Flask strict_slashes behavior: /api/health works, /api/health/ may 404
+        response1 = client.get("/api/v1/health")
+        response2 = client.get("/api/v1/health/")
+        # Flask strict_slashes behavior: /api/v1/health works, /api/v1/health/ may 404
         assert response1.status_code == 200
         # response2 may be 200 or 404 depending on Flask config
         assert response2.status_code in (200, 404)
@@ -479,6 +479,6 @@ class TestHTTPErrorHandlers:
 
     def test_response_headers_present(self, client):
         """Test that security-related headers are present."""
-        response = client.get("/api/health")
+        response = client.get("/api/v1/health")
         # Check for X-Request-ID (added by our middleware)
         assert "X-Request-ID" in response.headers

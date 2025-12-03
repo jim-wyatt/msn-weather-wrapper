@@ -39,7 +39,7 @@ def containers() -> Generator[None, None, None]:
     max_retries = 15
     for _ in range(max_retries):
         try:
-            response = requests.get("http://localhost:8080/api/health", timeout=2)
+            response = requests.get("http://localhost:8080/api/v1/health", timeout=2)
             if response.status_code == 200:
                 break
         except (requests.ConnectionError, requests.Timeout):
@@ -59,7 +59,7 @@ class TestContainerizedAPI:
 
     def test_health_endpoint(self, containers, api_url):
         """Test that health endpoint returns 200."""
-        response = requests.get(f"{api_url}/api/health", timeout=10)
+        response = requests.get(f"{api_url}/api/v1/health", timeout=10)
         assert response.status_code == 200
         data = response.json()
         assert data["status"] == "ok"
@@ -243,7 +243,7 @@ class TestContainerizedAPI:
         """Test that CORS headers are present."""
         # Send Origin header to trigger CORS response headers
         response = requests.get(
-            f"{api_url}/api/health", headers={"Origin": "http://localhost:3000"}, timeout=10
+            f"{api_url}/api/v1/health", headers={"Origin": "http://localhost:3000"}, timeout=10
         )
         assert response.status_code == 200
         assert "Access-Control-Allow-Origin" in response.headers
@@ -253,7 +253,7 @@ class TestContainerizedAPI:
         import concurrent.futures
 
         def make_request():
-            return requests.get(f"{api_url}/api/health", timeout=10)
+            return requests.get(f"{api_url}/api/v1/health", timeout=10)
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
             futures = [executor.submit(make_request) for _ in range(10)]
@@ -283,7 +283,7 @@ class TestContainerizedAPI:
     def test_api_logs_no_errors(self, containers, api_url):
         """Test that API logs don't contain critical errors."""
         # Make a valid request first
-        requests.get(f"{api_url}/api/health", timeout=10)
+        requests.get(f"{api_url}/api/v1/health", timeout=10)
 
         # Check logs
         for cmd in ["docker", "podman"]:

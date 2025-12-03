@@ -30,6 +30,9 @@ COPY src/ src/
 COPY api.py .
 COPY tests/ tests/
 
+# Ensure package is installed in editable mode
+RUN pip install -e .
+
 # Expose Flask port
 EXPOSE 5000
 

@@ -19,7 +19,7 @@ def client():
 
 def test_health_check(client):
     """Test the health check endpoint."""
-    response = client.get("/api/health")
+    response = client.get("/api/v1/health")
     assert response.status_code == 200
     data = json.loads(response.data)
     assert data["status"] == "ok"
@@ -387,7 +387,7 @@ def test_invalid_http_method(client):
 
 def test_x_request_id_header(client):
     """Test that X-Request-ID header is added to responses."""
-    response = client.get("/api/health")
+    response = client.get("/api/v1/health")
     assert response.status_code == 200
     assert "X-Request-ID" in response.headers
 

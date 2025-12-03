@@ -63,8 +63,10 @@ with WeatherClient() as client:
 ```bash
 ./dev.sh setup   # One-time setup
 ./dev.sh start   # Start dev servers
+./dev.sh status  # Check health
 # Frontend: http://localhost:5173
 # API: http://localhost:5000
+# Health: http://localhost:5000/api/v1/health
 ```
 
 ---

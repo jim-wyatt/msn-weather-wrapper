@@ -23,7 +23,7 @@ cd msn-weather-wrapper
 # Access services:
 # - Frontend: http://localhost:5173 (Vite dev server with HMR)
 # - Backend API: http://localhost:5000
-# - Health Check: http://localhost:5000/api/v1/health/ready
+# - Health Check: http://localhost:5000/api/v1/health
 ```
 
 ### Local Development
@@ -55,6 +55,7 @@ npm run dev
 ```bash
 # Daily workflow
 ./dev.sh start    # Start all services
+./dev.sh status   # Check service health
 ./dev.sh logs     # Watch logs
 ./dev.sh stop     # Stop all services
 ./dev.sh restart  # Restart services
@@ -66,7 +67,9 @@ npm run dev
 
 # Maintenance
 ./dev.sh rebuild  # Rebuild from scratch
-./dev.sh clean    # Remove everything
+./dev.sh clean    # Remove containers & volumes
+./dev.sh clean --gitignore  # Also clean git-ignored files (preview first)
+./dev.sh docs     # Build & serve documentation
 ```
 
 ### Making Code Changes
