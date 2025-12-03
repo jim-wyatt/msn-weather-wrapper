@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "msn-weather-wrapper"
 version = "1.1.4"
-description = "A Python wrapper for MSN Weather services"
+description = "A Python wrapper for MSN Weather services with automatic versioning"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
