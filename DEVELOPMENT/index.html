@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://jim-wyatt.github.io/msn-weather-wrapper/DEVELOPMENT/">
       
       
-        <link rel="prev" href="../reports/ci-cd/">
+        <link rel="prev" href="../reports/performance-report/">
       
       
         <link rel="next" href="../CONTAINER_DEV_SETUP/">
@@ -363,6 +363,25 @@
         </a>
       </li>
     
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../reports/performance-report/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Performance Report
+
+      </a>
+    </li>
   
 
       
@@ -1714,6 +1733,33 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../reports/performance-report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance Report
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -1747,10 +1793,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
             
   
   
@@ -1768,8 +1814,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2464,10 +2510,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
   
@@ -2485,8 +2531,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2555,10 +2601,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
         
           
-          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
             
   
   
@@ -2576,8 +2622,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -3166,7 +3212,7 @@
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1"># Access services:</span>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># - Frontend: http://localhost:5173 (Vite dev server with HMR)</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="c1"># - Backend API: http://localhost:5000</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="c1"># - Health Check: http://localhost:5000/api/v1/health/ready</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="c1"># - Health Check: http://localhost:5000/api/v1/health</span>
 </span></code></pre></div>
 <h3 id="local-development">Local Development<a class="headerlink" href="#local-development" title="Permanent link">&para;</a></h3>
 <p>For direct local development without containers:</p>
@@ -3189,18 +3235,21 @@
 <h3 id="container-development-commands">Container Development Commands<a class="headerlink" href="#container-development-commands" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Daily workflow</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>./dev.sh<span class="w"> </span>start<span class="w">    </span><span class="c1"># Start all services</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>./dev.sh<span class="w"> </span>logs<span class="w">     </span><span class="c1"># Watch logs</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>./dev.sh<span class="w"> </span>stop<span class="w">     </span><span class="c1"># Stop all services</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>./dev.sh<span class="w"> </span>restart<span class="w">  </span><span class="c1"># Restart services</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Testing</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>./dev.sh<span class="w"> </span><span class="nb">test</span><span class="w">     </span><span class="c1"># Run all tests</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>./dev.sh<span class="w"> </span>shell-api<span class="w">      </span><span class="c1"># Backend shell</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>./dev.sh<span class="w"> </span>shell-frontend<span class="w"> </span><span class="c1"># Frontend shell</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="c1"># Maintenance</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>./dev.sh<span class="w"> </span>rebuild<span class="w">  </span><span class="c1"># Rebuild from scratch</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>./dev.sh<span class="w"> </span>clean<span class="w">    </span><span class="c1"># Remove everything</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>./dev.sh<span class="w"> </span>status<span class="w">   </span><span class="c1"># Check service health</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>./dev.sh<span class="w"> </span>logs<span class="w">     </span><span class="c1"># Watch logs</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>./dev.sh<span class="w"> </span>stop<span class="w">     </span><span class="c1"># Stop all services</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>./dev.sh<span class="w"> </span>restart<span class="w">  </span><span class="c1"># Restart services</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="c1"># Testing</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>./dev.sh<span class="w"> </span><span class="nb">test</span><span class="w">     </span><span class="c1"># Run all tests</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>./dev.sh<span class="w"> </span>shell-api<span class="w">      </span><span class="c1"># Backend shell</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>./dev.sh<span class="w"> </span>shell-frontend<span class="w"> </span><span class="c1"># Frontend shell</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="c1"># Maintenance</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>./dev.sh<span class="w"> </span>rebuild<span class="w">  </span><span class="c1"># Rebuild from scratch</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>./dev.sh<span class="w"> </span>clean<span class="w">    </span><span class="c1"># Remove containers &amp; volumes</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>./dev.sh<span class="w"> </span>clean<span class="w"> </span>--gitignore<span class="w">  </span><span class="c1"># Also clean git-ignored files (preview first)</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>./dev.sh<span class="w"> </span>docs<span class="w">     </span><span class="c1"># Build &amp; serve documentation</span>
 </span></code></pre></div>
 <h3 id="making-code-changes">Making Code Changes<a class="headerlink" href="#making-code-changes" title="Permanent link">&para;</a></h3>
 <h4 id="backend-changes">Backend Changes<a class="headerlink" href="#backend-changes" title="Permanent link">&para;</a></h4>
@@ -3525,7 +3574,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../reports/ci-cd/" class="md-footer__link md-footer__link--prev" aria-label="Previous: CI/CD Pipeline">
+          <a href="../reports/performance-report/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Performance Report">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -3535,7 +3584,7 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                CI/CD Pipeline
+                Performance Report
               </div>
             </div>
           </a>

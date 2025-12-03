@@ -373,6 +373,25 @@
   
   
   
+    <li class="md-tabs__item">
+      <a href="performance-report/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Performance Report
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
     
     
       <li class="md-tabs__item">
@@ -1207,6 +1226,33 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="performance-report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance Report
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
     
     
       
@@ -1233,10 +1279,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
             
   
   
@@ -1254,8 +1300,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1436,10 +1482,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
   
@@ -1457,8 +1503,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1527,10 +1573,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
         
           
-          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
             
   
   
@@ -1548,8 +1594,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1681,6 +1727,17 @@
     <span class="md-ellipsis">
       
         Security Posture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance Metrics
       
     </span>
   </a>
@@ -1820,6 +1877,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#performance-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance Report
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1917,6 +1985,11 @@
 <td>Pipeline execution details and metrics</td>
 <td><img alt="Pipeline" src="https://img.shields.io/badge/pipeline-active-blue" /></td>
 </tr>
+<tr>
+<td><a href="performance-report/">Performance Testing</a></td>
+<td>Load testing and benchmark results</td>
+<td><img alt="Performance" src="https://img.shields.io/badge/performance-passing-brightgreen" /></td>
+</tr>
 </tbody>
 </table>
 <h2 id="report-generation">🔄 Report Generation<a class="headerlink" href="#report-generation" title="Permanent link">&para;</a></h2>
@@ -1954,6 +2027,14 @@
 <li><strong>Static Analysis</strong>: Clean (Bandit)</li>
 <li><strong>Container Scanning</strong>: Grype + Trivy</li>
 </ul>
+<h3 id="performance-metrics">Performance Metrics<a class="headerlink" href="#performance-metrics" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Load Test Success Rate</strong>: 100%</li>
+<li><strong>Total Requests Tested</strong>: 334</li>
+<li><strong>Average Response Time</strong>: 22ms</li>
+<li><strong>Concurrent Users</strong>: 20</li>
+<li><strong>Throughput</strong>: 5.61 requests/second</li>
+</ul>
 <h2 id="quality-standards">🎯 Quality Standards<a class="headerlink" href="#quality-standards" title="Permanent link">&para;</a></h2>
 <p>Our CI/CD pipeline enforces these quality gates:</p>
 <ul>
@@ -1963,6 +2044,7 @@
 <li>✅ Type checking passes in strict mode</li>
 <li>✅ Code formatting compliant (Ruff)</li>
 <li>✅ All licenses compatible with MIT</li>
+<li>✅ Load tests complete with &lt;1% failure rate</li>
 </ul>
 <h2 id="viewing-reports">🔍 Viewing Reports<a class="headerlink" href="#viewing-reports" title="Permanent link">&para;</a></h2>
 <h3 id="latest-reports">Latest Reports<a class="headerlink" href="#latest-reports" title="Permanent link">&para;</a></h3>
@@ -2019,13 +2101,22 @@
 - Build times and performance
 - Artifact generation summary
 - Deployment status</p>
+<h3 id="performance-report">Performance Report<a class="headerlink" href="#performance-report" title="Permanent link">&para;</a></h3>
+<p>Load testing and benchmark results:
+- Load test execution results
+- API endpoint response times
+- Throughput and concurrency metrics
+- Performance trend analysis
+- Benchmark comparisons (when available)</p>
 <h2 id="alerts-and-notifications">🚨 Alerts and Notifications<a class="headerlink" href="#alerts-and-notifications" title="Permanent link">&para;</a></h2>
 <p>The CI/CD pipeline will fail if:
 - Tests fail (any Python version)
 - Coverage drops below 85%
 - Critical/high security vulnerabilities detected
 - Type checking errors
-- Code formatting issues</p>
+- Code formatting issues
+- Load test request failure rate exceeds 1%
+- Server crashes during performance testing</p>
 <h2 id="related-documentation">🔗 Related Documentation<a class="headerlink" href="#related-documentation" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../SECURITY/">Security Overview</a></li>
