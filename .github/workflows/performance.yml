@@ -36,7 +36,8 @@ jobs:
       - name: Start API server
         run: |
           # Start API server in background with logging to file
-          gunicorn -w 2 -b 0.0.0.0:5000 --timeout 300 --log-level debug --access-logfile - --error-logfile - api:app > gunicorn.log 2>&1 &
+          # Set FLASK_DEBUG=1 to allow auto-generated secret key for testing
+          FLASK_DEBUG=1 gunicorn -w 2 -b 0.0.0.0:5000 --timeout 300 --log-level debug --access-logfile - --error-logfile - api:app > gunicorn.log 2>&1 &
           GUNICORN_PID=$!
           echo "Gunicorn started with PID: $GUNICORN_PID"
           echo "$GUNICORN_PID" > gunicorn.pid
