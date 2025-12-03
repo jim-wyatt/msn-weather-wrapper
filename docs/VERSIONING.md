@@ -16,6 +16,36 @@ MAJOR.MINOR.PATCH[-PRERELEASE][+BUILD]
 
 ## Release Process
 
+### Automated Release (Recommended)
+
+1. **Run the Automated Release Workflow**
+   - Go to Actions → Automated Release → Run workflow
+   - Or use the CLI:
+     ```bash
+     gh workflow run release.yml
+     ```
+
+2. **Review and Merge the PR**
+   - The workflow creates a PR with version bump and changelog
+   - Review the changes
+   - Merge the PR
+
+3. **Automatic Tag Creation**
+   - The `auto-tag-release.yml` workflow automatically detects the merge
+   - Extracts version from `pyproject.toml`
+   - Creates and pushes the git tag (e.g., `v1.2.3`)
+
+4. **CI/CD Pipeline Runs Automatically**
+   - Build Python package
+   - Publish to PyPI
+   - Build container images
+   - Generate SBOM
+   - Create GitHub Release with artifacts
+
+### Manual Release Process
+
+If you need to release manually:
+
 ### 1. Update Version
 
 Edit `pyproject.toml`:
@@ -53,7 +83,9 @@ git commit -m "chore: bump version to 1.2.3"
 git push origin main
 ```
 
-### 4. Create Release Tag
+### 4. Create Release Tag (Manual Process Only)
+
+**Note**: This step is automated when using the Automated Release workflow.
 
 ```bash
 # Create annotated tag
@@ -63,7 +95,7 @@ git tag -a v1.2.3 -m "Release version 1.2.3"
 git push origin v1.2.3
 ```
 
-### 5. Automated Release
+### 5. Automated CI/CD Pipeline
 
 The CI/CD pipeline will automatically:
 
