@@ -13,6 +13,8 @@ on:
       - 'frontend/**'
       - '.github/workflows/ci.yml'
       - '.github/actions/**'
+    tags:
+      - 'v*.*.*'
   pull_request:
     branches: [ main, develop ]
     paths:
