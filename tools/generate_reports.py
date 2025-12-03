@@ -121,8 +121,13 @@ def generate_test_report(input_dir: Path, output_path: Path) -> None:
 
     # Find all JUnit XML files
     xml_files = list(input_dir.glob("junit-*.xml"))
+    print(f"Searching for test files in: {input_dir}", file=sys.stderr)
+    print(f"Found {len(xml_files)} JUnit XML files: {[f.name for f in xml_files]}", file=sys.stderr)
+
     if not xml_files:
         print("No JUnit XML files found", file=sys.stderr)
+        contents = list(input_dir.glob("*")) if input_dir.exists() else "Directory does not exist"
+        print(f"Directory contents: {contents}", file=sys.stderr)
         return
 
     # Parse all test results
