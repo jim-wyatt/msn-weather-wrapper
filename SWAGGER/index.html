@@ -12,13 +12,13 @@
         <meta name="author" content="Jim Wyatt">
       
       
-        <link rel="canonical" href="https://jim-wyatt.github.io/msn-weather-wrapper/CONTAINER_DEV_SETUP/">
+        <link rel="canonical" href="https://jim-wyatt.github.io/msn-weather-wrapper/SWAGGER/">
       
       
-        <link rel="prev" href="../DEVELOPMENT/">
+        <link rel="prev" href="../API/">
       
       
-        <link rel="next" href="../VERSIONING/">
+        <link rel="next" href="../SECURITY/">
       
       
         
@@ -29,7 +29,7 @@
     
     
       
-        <title>Container Setup - MSN Weather Wrapper</title>
+        <title>Interactive Swagger UI - MSN Weather Wrapper</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#containerized-development" class="md-skip">
+        <a href="#interactive-api-documentation-swagger-ui" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Container Setup
+              Interactive Swagger UI
             
           </span>
         </div>
@@ -282,10 +282,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../API/" class="md-tabs__link">
           
   
@@ -370,12 +372,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../DEVELOPMENT/" class="md-tabs__link">
           
   
@@ -673,8 +673,10 @@
       
   
   
+    
   
   
+  
     
     
       
@@ -686,19 +688,22 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -716,7 +721,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -759,10 +764,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../SWAGGER/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interactive Swagger UI
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -778,6 +810,403 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#accessing-swagger-ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Accessing Swagger UI
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Accessing Swagger UI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#local-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Local Development
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#container-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Container Deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Production
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Features
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#complete-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Complete Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interactive-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Interactive Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#organized-by-category" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏷️ Organized by Category
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schema-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 Schema Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#openapi-specification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenAPI Specification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available Endpoints
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Available Endpoints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#health-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Health Endpoints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weather-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Weather Endpoints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#search-history-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search History Endpoints
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-swagger-ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using Swagger UI
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using Swagger UI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-explore-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Explore Endpoints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-test-an-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Test an Endpoint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-example-test-weather-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Example: Test Weather API
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rate-limiting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rate Limiting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#benefits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Benefits
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Benefits">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#for-developers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For Developers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swagger-ui-not-loading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Swagger UI Not Loading
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#404-not-found" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        404 Not Found
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#missing-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Missing Endpoints
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Documentation
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1200,10 +1629,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -1217,22 +1644,19 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
   
@@ -1250,7 +1674,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1293,37 +1717,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Container Setup
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../CONTAINER_DEV_SETUP/" class="md-nav__link">
         
   
   
@@ -1339,326 +1736,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#quick-start" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Quick Start
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Prerequisites
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Prerequisites">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#install-podman-podman-compose" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Install Podman &amp; podman-compose
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#commands-reference" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Commands Reference
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Commands Reference">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#setup-management" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Setup &amp; Management
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#development" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Development
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Testing
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#development-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Development Workflow
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Development Workflow">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#making-changes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Making Changes
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#adding-dependencies" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Adding Dependencies
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#architecture" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Architecture
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Architecture">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#containers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Containers
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#volume-mounts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Volume Mounts
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#troubleshooting" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Troubleshooting
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Troubleshooting">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#containers-wont-start" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Containers won't start
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#port-conflicts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Port conflicts
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tests-failing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tests failing
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#clean-slate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Clean slate
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#benefits" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Benefits
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#advanced-usage" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Advanced Usage
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Advanced Usage">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#run-specific-service" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Run specific service
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#view-specific-logs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        View specific logs
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-resources" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Check resources
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        See Also
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1908,10 +1985,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#quick-start" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quick Start
+        Overview
       
     </span>
   </a>
@@ -1919,22 +1996,44 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
+  <a href="#accessing-swagger-ui" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Prerequisites
+        Accessing Swagger UI
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Prerequisites">
+    <nav class="md-nav" aria-label="Accessing Swagger UI">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#install-podman-podman-compose" class="md-nav__link">
+  <a href="#local-development" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Install Podman &amp; podman-compose
+        Local Development
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#container-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Container Deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Production
       
     </span>
   </a>
@@ -1947,22 +2046,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#commands-reference" class="md-nav__link">
+  <a href="#features" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Commands Reference
+        Features
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Commands Reference">
+    <nav class="md-nav" aria-label="Features">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#setup-management" class="md-nav__link">
+  <a href="#complete-documentation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Setup &amp; Management
+        📖 Complete Documentation
       
     </span>
   </a>
@@ -1970,10 +2069,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#development" class="md-nav__link">
+  <a href="#interactive-testing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Development
+        🧪 Interactive Testing
       
     </span>
   </a>
@@ -1981,10 +2080,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#testing" class="md-nav__link">
+  <a href="#organized-by-category" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Testing
+        🏷️ Organized by Category
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schema-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 Schema Validation
       
     </span>
   </a>
@@ -1997,22 +2107,33 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#development-workflow" class="md-nav__link">
+  <a href="#openapi-specification" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Development Workflow
+        OpenAPI Specification
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Development Workflow">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available Endpoints
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Available Endpoints">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#making-changes" class="md-nav__link">
+  <a href="#health-endpoints" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Making Changes
+        Health Endpoints
       
     </span>
   </a>
@@ -2020,10 +2141,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#adding-dependencies" class="md-nav__link">
+  <a href="#weather-endpoints" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Adding Dependencies
+        Weather Endpoints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#search-history-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search History Endpoints
       
     </span>
   </a>
@@ -2036,22 +2168,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#architecture" class="md-nav__link">
+  <a href="#using-swagger-ui" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Architecture
+        Using Swagger UI
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Architecture">
+    <nav class="md-nav" aria-label="Using Swagger UI">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#containers" class="md-nav__link">
+  <a href="#1-explore-endpoints" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Containers
+        1. Explore Endpoints
       
     </span>
   </a>
@@ -2059,10 +2191,104 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#volume-mounts" class="md-nav__link">
+  <a href="#2-test-an-endpoint" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Volume Mounts
+        2. Test an Endpoint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-example-test-weather-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Example: Test Weather API
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rate-limiting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rate Limiting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#benefits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Benefits
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Benefits">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#for-developers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For Developers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For Documentation
       
     </span>
   </a>
@@ -2087,10 +2313,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#containers-wont-start" class="md-nav__link">
+  <a href="#swagger-ui-not-loading" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Containers won't start
+        Swagger UI Not Loading
       
     </span>
   </a>
@@ -2098,10 +2324,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#port-conflicts" class="md-nav__link">
+  <a href="#404-not-found" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Port conflicts
+        404 Not Found
       
     </span>
   </a>
@@ -2109,21 +2335,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#tests-failing" class="md-nav__link">
+  <a href="#missing-endpoints" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Tests failing
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#clean-slate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Clean slate
+        Missing Endpoints
       
     </span>
   </a>
@@ -2136,71 +2351,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#benefits" class="md-nav__link">
+  <a href="#related-documentation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Benefits
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#advanced-usage" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Advanced Usage
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Advanced Usage">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#run-specific-service" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Run specific service
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#view-specific-logs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        View specific logs
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-resources" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Check resources
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        See Also
+        Related Documentation
       
     </span>
   </a>
@@ -2224,7 +2378,7 @@
 
 
   
-    <a href="https://github.com/jim-wyatt/msn-weather-wrapper/edit/main/docs/CONTAINER_DEV_SETUP.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/jim-wyatt/msn-weather-wrapper/edit/main/docs/SWAGGER.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z"/></svg>
     </a>
@@ -2233,183 +2387,261 @@
     
       
     
-    <a href="https://github.com/jim-wyatt/msn-weather-wrapper/raw/main/docs/CONTAINER_DEV_SETUP.md" title="View source of this page" class="md-content__button md-icon">
+    <a href="https://github.com/jim-wyatt/msn-weather-wrapper/raw/main/docs/SWAGGER.md" title="View source of this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"/></svg>
     </a>
   
 
 
-<h1 id="containerized-development">Containerized Development<a class="headerlink" href="#containerized-development" title="Permanent link">&para;</a></h1>
-<p>Develop entirely in containers with Podman - consistent environment, easy setup, instant hot reload.</p>
-<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>./dev.sh<span class="w"> </span>setup<span class="w">   </span><span class="c1"># One-time setup</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>./dev.sh<span class="w"> </span>start<span class="w">   </span><span class="c1"># Start development</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>./dev.sh<span class="w"> </span>logs<span class="w">    </span><span class="c1"># View logs</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>./dev.sh<span class="w"> </span><span class="nb">test</span><span class="w">    </span><span class="c1"># Run all tests</span>
-</span></code></pre></div>
-<p><strong>Services available at:</strong>
-- Frontend: http://localhost:5173 (Vite HMR)
-- API: http://localhost:5000
-- Health: http://localhost:5000/api/v1/health/ready</p>
-<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
-<h3 id="install-podman-podman-compose">Install Podman &amp; podman-compose<a class="headerlink" href="#install-podman-podman-compose" title="Permanent link">&para;</a></h3>
-<p><strong>Linux:</strong>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>podman<span class="w">  </span><span class="c1"># Ubuntu/Debian</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>podman<span class="w">      </span><span class="c1"># Fedora</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>pip3<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>podman-compose
+<h1 id="interactive-api-documentation-swagger-ui">Interactive API Documentation (Swagger UI)<a class="headerlink" href="#interactive-api-documentation-swagger-ui" title="Permanent link">&para;</a></h1>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>MSN Weather Wrapper provides <strong>interactive API documentation</strong> powered by Swagger UI (Flasgger). This allows you to explore, test, and understand the API directly from your browser.</p>
+<h2 id="accessing-swagger-ui">Accessing Swagger UI<a class="headerlink" href="#accessing-swagger-ui" title="Permanent link">&para;</a></h2>
+<h3 id="local-development">Local Development<a class="headerlink" href="#local-development" title="Permanent link">&para;</a></h3>
+<p>When running the API locally:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>http://localhost:5000/apidocs/
 </span></code></pre></div></p>
-<p><strong>macOS:</strong>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>brew<span class="w"> </span>install<span class="w"> </span>podman
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>pip3<span class="w"> </span>install<span class="w"> </span>podman-compose
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>podman<span class="w"> </span>machine<span class="w"> </span>init<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>podman<span class="w"> </span>machine<span class="w"> </span>start
+<h3 id="container-deployment">Container Deployment<a class="headerlink" href="#container-deployment" title="Permanent link">&para;</a></h3>
+<p>When running via Docker/Podman:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>http://localhost:8080/apidocs/
 </span></code></pre></div></p>
-<h2 id="commands-reference">Commands Reference<a class="headerlink" href="#commands-reference" title="Permanent link">&para;</a></h2>
-<h3 id="setup-management">Setup &amp; Management<a class="headerlink" href="#setup-management" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>./dev.sh<span class="w"> </span>setup<span class="w">     </span><span class="c1"># Build containers, install dependencies</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>./dev.sh<span class="w"> </span>start<span class="w">     </span><span class="c1"># Start all services</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>./dev.sh<span class="w"> </span>stop<span class="w">      </span><span class="c1"># Stop all services</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>./dev.sh<span class="w"> </span>restart<span class="w">   </span><span class="c1"># Restart services</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>./dev.sh<span class="w"> </span>clean<span class="w">     </span><span class="c1"># Remove everything</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>./dev.sh<span class="w"> </span>rebuild<span class="w">   </span><span class="c1"># Clean rebuild</span>
-</span></code></pre></div>
-<h3 id="development">Development<a class="headerlink" href="#development" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>./dev.sh<span class="w"> </span>logs<span class="w">            </span><span class="c1"># Follow all logs</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>./dev.sh<span class="w"> </span>shell-api<span class="w">       </span><span class="c1"># API container shell</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>./dev.sh<span class="w"> </span>shell-frontend<span class="w">  </span><span class="c1"># Frontend container shell</span>
-</span></code></pre></div>
-<h3 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>./dev.sh<span class="w"> </span><span class="nb">test</span><span class="w">    </span><span class="c1"># All tests</span>
-</span></code></pre></div>
-<p>In API container shell:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pytest<span class="w"> </span>tests/test_api.py<span class="w"> </span>-v<span class="w">           </span><span class="c1"># Specific tests</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>pytest<span class="w"> </span>--cov<span class="o">=</span>src<span class="w"> </span>--cov-report<span class="o">=</span>html<span class="w">    </span><span class="c1"># With coverage</span>
+<h3 id="production">Production<a class="headerlink" href="#production" title="Permanent link">&para;</a></h3>
+<p>Replace <code>localhost</code> with your domain:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>https://your-domain.com/apidocs/
 </span></code></pre></div></p>
-<p>In frontend container shell:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>npm<span class="w"> </span>run<span class="w"> </span>test:e2e<span class="w">          </span><span class="c1"># E2E tests</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>npm<span class="w"> </span>run<span class="w"> </span>test:e2e:ui<span class="w">       </span><span class="c1"># Interactive mode</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>npm<span class="w"> </span>run<span class="w"> </span>type-check<span class="w">        </span><span class="c1"># TypeScript check</span>
-</span></code></pre></div></p>
-<h2 id="development-workflow">Development Workflow<a class="headerlink" href="#development-workflow" title="Permanent link">&para;</a></h2>
-<h3 id="making-changes">Making Changes<a class="headerlink" href="#making-changes" title="Permanent link">&para;</a></h3>
-<p><strong>Backend:</strong> Edit files in <code>src/</code> or <code>api.py</code> → Flask auto-reloads<br />
-<strong>Frontend:</strong> Edit files in <code>frontend/src/</code> → Vite HMR updates instantly<br />
-<strong>Tests:</strong> Edit test files → re-run tests</p>
-<p>All source code is mounted as volumes - changes reflect immediately.</p>
-<h3 id="adding-dependencies">Adding Dependencies<a class="headerlink" href="#adding-dependencies" title="Permanent link">&para;</a></h3>
-<p><strong>Python:</strong>
-1. Edit <code>pyproject.toml</code>
-2. Run <code>./dev.sh rebuild</code></p>
-<p><strong>Node.js:</strong>
-1. Edit <code>frontend/package.json</code>
-2. Rebuild: <code>podman-compose -f podman-compose.dev.yml build frontend</code></p>
-<p>Or install temporarily in container:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>./dev.sh<span class="w"> </span>shell-api
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>pip<span class="w"> </span>install<span class="w"> </span>package-name
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>./dev.sh<span class="w"> </span>shell-frontend
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>npm<span class="w"> </span>install<span class="w"> </span>package-name
-</span></code></pre></div></p>
-<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
-<h3 id="containers">Containers<a class="headerlink" href="#containers" title="Permanent link">&para;</a></h3>
+<h2 id="features">Features<a class="headerlink" href="#features" title="Permanent link">&para;</a></h2>
+<h3 id="complete-documentation">📖 Complete Documentation<a class="headerlink" href="#complete-documentation" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>API</strong>: Python 3.12 slim + Flask + dev tools (port 5000)</li>
-<li><strong>Frontend</strong>: Node 20 Alpine + Vite + Playwright (port 5173)</li>
-<li><strong>Test Runner</strong>: On-demand test execution</li>
+<li>All 11 endpoints documented with detailed descriptions</li>
+<li>Request parameter specifications (query, body, headers)</li>
+<li>Response schemas with examples</li>
+<li>Error response documentation</li>
 </ul>
-<h3 id="volume-mounts">Volume Mounts<a class="headerlink" href="#volume-mounts" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>./src → /app/src                    (API)
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>./api.py → /app/api.py              (API)
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>./tests → /app/tests                (API)
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>./frontend/src → /app/src           (Frontend)
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>./frontend/tests → /app/tests       (Frontend)
-</span></code></pre></div>
-<p>All changes immediately reflected in containers (hot reload enabled).</p>
-<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
-<h3 id="containers-wont-start">Containers won't start<a class="headerlink" href="#containers-wont-start" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>podman<span class="w"> </span>ps<span class="w"> </span>-a<span class="w">                        </span><span class="c1"># Check status</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>podman<span class="w"> </span>logs<span class="w"> </span>msn-weather-api-dev<span class="w">     </span><span class="c1"># View logs</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>./dev.sh<span class="w"> </span>restart<span class="w">          </span><span class="c1"># Try restart</span>
-</span></code></pre></div>
-<h3 id="port-conflicts">Port conflicts<a class="headerlink" href="#port-conflicts" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>lsof<span class="w"> </span>-i<span class="w"> </span>:5000<span class="w">  </span><span class="c1"># Check what&#39;s using port</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="c1"># Edit podman-compose.dev.yml to change ports</span>
-</span></code></pre></div>
-<h3 id="tests-failing">Tests failing<a class="headerlink" href="#tests-failing" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>./dev.sh<span class="w"> </span>shell-api
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>pytest<span class="w"> </span>-vv<span class="w"> </span>--tb<span class="o">=</span>short<span class="w">              </span><span class="c1"># Verbose output</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>./dev.sh<span class="w"> </span>shell-frontend
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>npm<span class="w"> </span>run<span class="w"> </span>test:e2e:headed<span class="w">            </span><span class="c1"># See browser</span>
-</span></code></pre></div>
-<h3 id="clean-slate">Clean slate<a class="headerlink" href="#clean-slate" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>./dev.sh<span class="w"> </span>clean<span class="w">           </span><span class="c1"># Nuclear option</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>./dev.sh<span class="w"> </span>setup<span class="w">           </span><span class="c1"># Fresh start</span>
-</span></code></pre></div>
-<h2 id="benefits">Benefits<a class="headerlink" href="#benefits" title="Permanent link">&para;</a></h2>
+<h3 id="interactive-testing">🧪 Interactive Testing<a class="headerlink" href="#interactive-testing" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Try it out</strong>: Execute API calls directly from the browser</li>
+<li><strong>Real-time responses</strong>: See actual API responses</li>
+<li><strong>Parameter validation</strong>: Test with different inputs</li>
+<li><strong>Authentication support</strong>: Session-based auth for recent searches</li>
+</ul>
+<h3 id="organized-by-category">🏷️ Organized by Category<a class="headerlink" href="#organized-by-category" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Health</strong>: Health checks, liveness, readiness probes</li>
+<li><strong>Weather</strong>: Weather data retrieval endpoints</li>
+<li><strong>Searches</strong>: Recent search history management</li>
+</ul>
+<h3 id="schema-validation">🔍 Schema Validation<a class="headerlink" href="#schema-validation" title="Permanent link">&para;</a></h3>
+<ul>
+<li>OpenAPI 2.0 compliant specification</li>
+<li>Type-safe request/response schemas</li>
+<li>Automatic validation feedback</li>
+</ul>
+<h2 id="openapi-specification">OpenAPI Specification<a class="headerlink" href="#openapi-specification" title="Permanent link">&para;</a></h2>
+<p>The raw OpenAPI specification is available at:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>http://localhost:5000/apispec.json
+</span></code></pre></div></p>
+<p>This can be imported into:
+- Postman
+- Insomnia
+- API testing tools
+- Code generators</p>
+<h2 id="available-endpoints">Available Endpoints<a class="headerlink" href="#available-endpoints" title="Permanent link">&para;</a></h2>
+<h3 id="health-endpoints">Health Endpoints<a class="headerlink" href="#health-endpoints" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Feature</th>
-<th>Container Dev</th>
-<th>Local Dev</th>
+<th>Endpoint</th>
+<th>Method</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Setup Time</td>
-<td>5-10 minutes</td>
-<td>15-30 minutes</td>
+<td><code>/api/health</code></td>
+<td>GET</td>
+<td>Basic health check</td>
 </tr>
 <tr>
-<td>Consistency</td>
-<td>✅ Identical everywhere</td>
-<td>❌ System dependent</td>
+<td><code>/api/v1/health</code></td>
+<td>GET</td>
+<td>Versioned health check</td>
 </tr>
 <tr>
-<td>Dependencies</td>
-<td>✅ Isolated</td>
-<td>❌ Can conflict</td>
+<td><code>/api/v1/health/live</code></td>
+<td>GET</td>
+<td>Kubernetes liveness probe</td>
 </tr>
 <tr>
-<td>Cleanup</td>
-<td>✅ One command</td>
-<td>❌ Manual</td>
-</tr>
-<tr>
-<td>Hot Reload</td>
-<td>✅ Works</td>
-<td>✅ Works</td>
-</tr>
-<tr>
-<td>CI/CD Match</td>
-<td>✅ Same environment</td>
-<td>⚠️ May differ</td>
+<td><code>/api/v1/health/ready</code></td>
+<td>GET</td>
+<td>Kubernetes readiness probe</td>
 </tr>
 </tbody>
 </table>
-<h2 id="advanced-usage">Advanced Usage<a class="headerlink" href="#advanced-usage" title="Permanent link">&para;</a></h2>
-<h3 id="run-specific-service">Run specific service<a class="headerlink" href="#run-specific-service" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>podman-compose<span class="w"> </span>-f<span class="w"> </span>podman-compose.dev.yml<span class="w"> </span>up<span class="w"> </span>api
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>podman-compose<span class="w"> </span>-f<span class="w"> </span>podman-compose.dev.yml<span class="w"> </span>up<span class="w"> </span>frontend
+<h3 id="weather-endpoints">Weather Endpoints<a class="headerlink" href="#weather-endpoints" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/api/weather</code></td>
+<td>GET</td>
+<td>Get weather by city (query params)</td>
+</tr>
+<tr>
+<td><code>/api/v1/weather</code></td>
+<td>GET</td>
+<td>Versioned weather by city</td>
+</tr>
+<tr>
+<td><code>/api/weather</code></td>
+<td>POST</td>
+<td>Get weather by city (JSON body)</td>
+</tr>
+<tr>
+<td><code>/api/v1/weather</code></td>
+<td>POST</td>
+<td>Versioned weather by city (POST)</td>
+</tr>
+<tr>
+<td><code>/api/v1/weather/coordinates</code></td>
+<td>GET</td>
+<td>Get weather by latitude/longitude</td>
+</tr>
+</tbody>
+</table>
+<h3 id="search-history-endpoints">Search History Endpoints<a class="headerlink" href="#search-history-endpoints" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/api/v1/recent-searches</code></td>
+<td>GET</td>
+<td>Get recent search history</td>
+</tr>
+<tr>
+<td><code>/api/v1/recent-searches</code></td>
+<td>DELETE</td>
+<td>Clear search history</td>
+</tr>
+</tbody>
+</table>
+<h2 id="using-swagger-ui">Using Swagger UI<a class="headerlink" href="#using-swagger-ui" title="Permanent link">&para;</a></h2>
+<h3 id="1-explore-endpoints">1. Explore Endpoints<a class="headerlink" href="#1-explore-endpoints" title="Permanent link">&para;</a></h3>
+<p>Click on any endpoint to view:
+- Description and purpose
+- Required/optional parameters
+- Request/response examples
+- Authentication requirements</p>
+<h3 id="2-test-an-endpoint">2. Test an Endpoint<a class="headerlink" href="#2-test-an-endpoint" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Click <strong>"Try it out"</strong> button</li>
+<li>Fill in required parameters</li>
+<li>Click <strong>"Execute"</strong></li>
+<li>View the response below</li>
+</ol>
+<h3 id="3-example-test-weather-api">3. Example: Test Weather API<a class="headerlink" href="#3-example-test-weather-api" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>1. Navigate to: http://localhost:5000/apidocs/
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>2. Find &quot;GET /api/weather&quot; under &quot;weather&quot; tag
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>3. Click &quot;Try it out&quot;
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>4. Enter:
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>   - city: Seattle
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>   - country: USA
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>5. Click &quot;Execute&quot;
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>6. See the live weather response!
 </span></code></pre></div>
-<h3 id="view-specific-logs">View specific logs<a class="headerlink" href="#view-specific-logs" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>podman-compose<span class="w"> </span>-f<span class="w"> </span>podman-compose.dev.yml<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>api
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>podman-compose<span class="w"> </span>-f<span class="w"> </span>podman-compose.dev.yml<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>frontend
-</span></code></pre></div>
-<h3 id="check-resources">Check resources<a class="headerlink" href="#check-resources" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>podman<span class="w"> </span>stats
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>podman<span class="w"> </span>ps
-</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>podman<span class="w"> </span>images
-</span></code></pre></div>
-<h2 id="see-also">See Also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
+<h2 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">&para;</a></h2>
+<p>For endpoints requiring session authentication (recent searches):
+1. Make a weather request first to establish a session
+2. The session cookie will be automatically included
+3. Recent searches endpoints will now work</p>
+<h2 id="rate-limiting">Rate Limiting<a class="headerlink" href="#rate-limiting" title="Permanent link">&para;</a></h2>
+<p>Rate limits are enforced:
+- <strong>Weather endpoints</strong>: 30 requests/minute per IP
+- <strong>Global</strong>: 200 requests/hour</p>
+<p>Exceeding limits returns HTTP 429 (Too Many Requests).</p>
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
+<p>Swagger UI configuration in <code>api.py</code>:
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">swagger_config</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="s2">&quot;specs_route&quot;</span><span class="p">:</span> <span class="s2">&quot;/apidocs/&quot;</span><span class="p">,</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="s2">&quot;swagger_ui&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="c1"># ... other settings</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<p>OpenAPI template includes:
+- API metadata (title, description, version)
+- Security definitions
+- Tag descriptions
+- License information</p>
+<h2 id="benefits">Benefits<a class="headerlink" href="#benefits" title="Permanent link">&para;</a></h2>
+<h3 id="for-developers">For Developers<a class="headerlink" href="#for-developers" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../DEVELOPMENT/">Development Guide</a> - Full development documentation</li>
-<li><a href="../TESTING/">Testing Guide</a> - Testing best practices</li>
-<li><a href="../API/">API Documentation</a> - API reference</li>
+<li>✅ No need to read lengthy documentation</li>
+<li>✅ Test APIs without writing code</li>
+<li>✅ Understand request/response structure instantly</li>
+<li>✅ Export OpenAPI spec for code generation</li>
+</ul>
+<h3 id="for-testing">For Testing<a class="headerlink" href="#for-testing" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ Manual integration testing</li>
+<li>✅ Validate API behavior</li>
+<li>✅ Debug request/response issues</li>
+<li>✅ Share API capabilities with team</li>
+</ul>
+<h3 id="for-documentation">For Documentation<a class="headerlink" href="#for-documentation" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ Always up-to-date with code</li>
+<li>✅ Interactive examples</li>
+<li>✅ Self-service API exploration</li>
+<li>✅ Reduces support questions</li>
+</ul>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<h3 id="swagger-ui-not-loading">Swagger UI Not Loading<a class="headerlink" href="#swagger-ui-not-loading" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Check if Flask is running</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>curl<span class="w"> </span>http://localhost:5000/api/health
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Verify Swagger route</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>curl<span class="w"> </span>http://localhost:5000/apispec.json
+</span></code></pre></div>
+<h3 id="404-not-found">404 Not Found<a class="headerlink" href="#404-not-found" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Ensure Flasgger is installed: <code>pip install flasgger</code></li>
+<li>Verify the API is running on the expected port</li>
+<li>Check for proxy configuration issues</li>
+</ul>
+<h3 id="missing-endpoints">Missing Endpoints<a class="headerlink" href="#missing-endpoints" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Endpoints must have OpenAPI docstrings to appear</li>
+<li>Verify YAML formatting in docstrings</li>
+<li>Check server logs for parsing errors</li>
+</ul>
+<h2 id="related-documentation">Related Documentation<a class="headerlink" href="#related-documentation" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../API/">API Reference</a> - Complete REST API documentation</li>
+<li><a href="../DEVELOPMENT/">Development Guide</a> - Setup and development workflow</li>
+<li><a href="../SECURITY/">Security</a> - API security features</li>
 </ul>
 <hr />
-<p>Last updated: December 2, 2025</p>
+<p><strong>Quick Start:</strong>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Start the API</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>python<span class="w"> </span>api.py
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Open your browser to:</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>http://localhost:5000/apidocs/
+</span></code></pre></div></p>
+<p>Enjoy exploring the API! 🚀</p>
 
 
 
@@ -2497,7 +2729,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../DEVELOPMENT/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Installation Guide">
+          <a href="../API/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Usage Examples">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2507,20 +2739,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Installation Guide
+                Usage Examples
               </div>
             </div>
           </a>
         
         
           
-          <a href="../VERSIONING/" class="md-footer__link md-footer__link--next" aria-label="Next: Versioning">
+          <a href="../SECURITY/" class="md-footer__link md-footer__link--next" aria-label="Next: Security Overview">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Versioning
+                Security Overview
               </div>
             </div>
             <div class="md-footer__button md-icon">
