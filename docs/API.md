@@ -2,6 +2,24 @@
 
 Flask REST API for fetching weather data from MSN Weather.
 
+## Interactive API Documentation
+
+**Swagger UI** is available for interactive API exploration and testing:
+
+- **Local Development**: [http://localhost:5000/apidocs/](http://localhost:5000/apidocs/)
+- **Container Deployment**: [http://localhost:8080/apidocs/](http://localhost:8080/apidocs/)
+
+The Swagger UI provides:
+- 📖 Complete API documentation with request/response examples
+- 🧪 Interactive endpoint testing directly from your browser
+- 🔍 Request/response schema validation
+- 🏷️ Organized endpoints by category (health, weather, searches)
+- 🔐 Session-based authentication support for recent searches
+
+**OpenAPI Specification**: Available at `/apispec.json` for API clients and tools
+
+---
+
 ## API Endpoints
 
 ### Health Check
@@ -276,11 +294,11 @@ async function getWeather(city: string, country: string) {
   const response = await fetch(
     `http://localhost:5000/api/weather?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`
   );
-  
+
   if (!response.ok) {
     throw new Error('Failed to fetch weather');
   }
-  
+
   return await response.json();
 }
 
@@ -305,11 +323,11 @@ async function getWeather(city: string, country: string) {
     credentials: 'include',  // Important for session cookies
     body: JSON.stringify({ city, country }),
   });
-  
+
   if (!response.ok) {
     throw new Error('Failed to fetch weather');
   }
-  
+
   return await response.json();
 }
 ```
@@ -527,19 +545,19 @@ def get_weather_with_retry(city, country, max_retries=3):
             "http://localhost:5000/api/weather",
             params={"city": city, "country": country}
         )
-        
+
         if response.status_code == 200:
             return response.json()
-        
+
         if response.status_code == 429:
             reset_time = int(response.headers.get('X-RateLimit-Reset', 0))
             wait_time = max(reset_time - time.time(), 0) + 1
             print(f"Rate limited. Waiting {wait_time}s...")
             time.sleep(wait_time)
             continue
-        
+
         response.raise_for_status()
-    
+
     raise Exception("Max retries exceeded")
 ```
 
@@ -588,27 +606,37 @@ See [SECURITY.md](SECURITY.md) for complete security documentation.
 
 ## CORS Configuration
 
-Cross-Origin Resource Sharing (CORS) is enabled for web applications:
+Cross-Origin Resource Sharing (CORS) is enabled for web applications with full support in both development and production environments:
 
 ```python
-# CORS Headers
-Access-Control-Allow-Origin: *
+# CORS Headers (automatically added)
+Access-Control-Allow-Origin: <requesting-origin>
 Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS
-Access-Control-Allow-Headers: Content-Type
+Access-Control-Allow-Headers: Content-Type, Authorization
+Access-Control-Allow-Credentials: true
+Access-Control-Max-Age: 3600
 ```
+
+**Key Features:**
+- ✅ Dynamic origin handling (no wildcards in production)
+- ✅ Credentials support for session-based authentication
+- ✅ Preflight request (OPTIONS) handling
+- ✅ Both Flask (dev) and Nginx (production) CORS support
 
 **Environment Variables:**
 
 ```bash
-# Restrict to specific origin
+# Restrict to specific origin (recommended for production)
 CORS_ORIGINS=https://yourapp.com
 
 # Allow multiple origins
 CORS_ORIGINS=https://app1.com,https://app2.com
 
-# Allow all origins (default, less secure)
+# Allow all origins (default for development, less secure)
 CORS_ORIGINS=*
 ```
+
+**Production Deployment:** When using the containerized deployment, Nginx automatically handles CORS headers at the proxy level while preserving Flask's CORS configuration for API-level control.
 
 ## Logging
 

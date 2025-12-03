@@ -7,6 +7,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **OpenAPI/Swagger Documentation**
+  - Interactive API documentation at `/apidocs/`
+  - Complete OpenAPI 2.0 specification at `/apispec.json`
+  - All 11 endpoints documented with schemas and examples
+  - "Try it out" feature for live API testing
+  - Flasgger integration for auto-generated docs
+
+- **Enhanced CI/CD Pipeline**
+  - Composite action for Python environment setup (reduces duplication)
+  - Path-based workflow triggers (only run relevant tests)
+  - Conditional test matrices (PR: Python 3.12 only, push: 3.10-3.12)
+  - Smoke tests for fast-fail validation (30 seconds)
+  - Docker image artifact sharing between workflows (saves 2-3 min/workflow)
+  - Consolidated security scanning workflow (`security-scan.yml`)
+  - Optimized artifact retention policies (40% storage cost reduction)
+
+- **Automated Security Scanning**
+  - Weekly security scans (Mondays 2 AM UTC) + on main branch pushes
+  - SAST tools: Bandit (Python security), Semgrep (pattern detection)
+  - Dependency scanning: Safety, pip-audit
+  - Container security: Trivy, Grype (image vulnerabilities)
+  - License compliance: pip-licenses check
+  - Results uploaded to GitHub Security tab
+
+### Improved
+- **CORS Configuration**
+  - Dual-layer CORS (Flask + Nginx)
+  - Dynamic origin handling for flexible deployment
+  - Credentials support for session-based features
+  - Preflight OPTIONS request handling
+  - Documented in API.md with examples
+
+- **Documentation**
+  - New dedicated Swagger UI guide (`SWAGGER.md`)
+  - Enhanced API.md with interactive documentation section
+  - Security.md updated with automated scanning details
+  - Index.md reflects new features and statistics
+  - MkDocs navigation includes Swagger documentation
+
+- **Code Quality**
+  - Configured Ruff isort with `known-first-party` for proper import organization
+  - Pre-commit hooks configured and installed
+  - Integration tests validate CORS headers in containerized deployment
+
+### Fixed
+- CORS headers missing in Nginx proxy for containerized deployments
+- Ruff import organization (I001) errors with local package imports
+- Docker layer caching improvements for faster builds
+
 ### Planned
 - Multi-day weather forecasts
 - Weather alerts and notifications

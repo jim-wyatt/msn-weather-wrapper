@@ -27,11 +27,11 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
-  
+
   font:
     text: Roboto
     code: Roboto Mono
-  
+
   features:
     - announce.dismiss
     - content.action.edit
@@ -50,7 +50,7 @@ theme:
     - search.share
     - search.suggest
     - toc.follow
-  
+
   icon:
     repo: fontawesome/brands/github
     edit: material/pencil
@@ -59,20 +59,21 @@ theme:
 nav:
   - Home:
       - Overview: index.md
-  
+
   - Getting Started:
       - Installation Guide: DEVELOPMENT.md
       - Usage Examples: API.md
-  
+
   - API Reference:
       - API Documentation: API.md
-  
+      - Interactive Swagger UI: SWAGGER.md
+
   - Security:
       - Security Overview: SECURITY.md
-  
+
   - Testing & Quality:
       - Testing Guide: TESTING.md
-  
+
   - Reports:
       - Overview: reports/index.md
       - Test Report: reports/test-report.md
@@ -80,15 +81,15 @@ nav:
       - Security Report: reports/security-report.md
       - License Report: reports/license-report.md
       - CI/CD Pipeline: reports/ci-cd.md
-  
+
   - Development:
       - Development Guide: DEVELOPMENT.md
       - Container Setup: CONTAINER_DEV_SETUP.md
       - Versioning: VERSIONING.md
-  
+
   - Deployment:
       - SBOM Generation: SYFT_GUIDE.md
-  
+
   - About:
       - Changelog: CHANGELOG.md
 
@@ -145,10 +146,10 @@ extra:
     - icon: fontawesome/brands/python
       link: https://pypi.org/project/msn-weather-wrapper/
       name: PyPI Package
-  
+
   version:
     provider: mike
-  
+
   analytics:
     feedback:
       title: Was this page helpful?

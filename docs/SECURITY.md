@@ -37,6 +37,37 @@ Please do not open public issues for security vulnerabilities.
 
 ## Security Testing
 
+### Automated Security Scanning
+
+The project uses a **comprehensive security scanning workflow** that runs weekly and on every push to main:
+
+**SAST (Static Application Security Testing):**
+- **Bandit**: Python security linting
+- **Semgrep**: Advanced SAST with community rules
+
+**Dependency Vulnerability Scanning:**
+- **Safety**: PyPI known vulnerabilities database
+- **pip-audit**: OSV database vulnerability check
+
+**Container Security:**
+- **Trivy**: Multi-layer container vulnerability scanning with SARIF upload to GitHub Security
+- **Grype**: SBOM-based vulnerability detection
+
+**License Compliance:**
+- **pip-licenses**: Dependency license checking
+- **Automated GPL/AGPL detection**
+
+**Workflow Schedule:**
+- 🔄 Weekly automated scan (Mondays 2 AM UTC)
+- 🚀 On every push to main branch
+- 📋 30-day artifact retention for audit trails
+
+**CI/CD Integration:**
+- Critical security checks run on every PR
+- Full comprehensive scans weekly
+- Results uploaded to GitHub Security tab
+- Automated reports generated
+
 ### Test Coverage
 - **25 Security Tests**: All passing ✅
 - **Fuzzing Coverage**: 23+ attack vectors tested

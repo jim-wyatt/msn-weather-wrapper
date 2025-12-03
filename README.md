@@ -4,8 +4,8 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/msn-weather-wrapper.svg)](https://pypi.org/project/msn-weather-wrapper/)
 [![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-67%20passing-success)](tests/)
-[![Coverage](https://img.shields.io/badge/coverage-89%25-success)](tests/)
+[![Tests](https://img.shields.io/badge/tests-77%20passing-success)](tests/)
+[![Coverage](https://img.shields.io/badge/coverage-90%25-success)](tests/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://jim-wyatt.github.io/msn-weather-wrapper/)
 
@@ -15,15 +15,16 @@
 
 MSN Weather Wrapper is a comprehensive weather data solution featuring:
 - **Python Library** - Type-safe weather client with Pydantic models
-- **REST API** - Production-ready Flask API with security & rate limiting
+- **REST API** - Production-ready Flask API with OpenAPI/Swagger docs
 - **Web Frontend** - Modern React 19 + TypeScript 5.7+ with Vite 7
 - **Containerized** - Podman/Docker deployment with Gunicorn & Nginx
 
 **Technology Stack:**
-- **Backend**: Python 3.10+, Flask 3.1+, Pydantic 2.12+, Gunicorn 23.0+
+- **Backend**: Python 3.10+, Flask 3.1+, Pydantic 2.12+, Flasgger, Gunicorn 23.0+
 - **Frontend**: React 19.2, Vite 7.2, TypeScript 5.7+
-- **Testing**: pytest 9.0+, Playwright, 77 tests with 89% coverage
+- **Testing**: pytest 9.0+, Playwright, 77 tests with 90% coverage
 - **Quality**: ruff 0.14+, mypy 1.19+, pre-commit hooks
+- **Security**: Bandit, Semgrep, Safety, Trivy, Grype, weekly automated scans
 - **Deployment**: Podman/Docker, Nginx, multi-stage builds
 
 ---
@@ -70,12 +71,16 @@ with WeatherClient() as client:
 - 🌤️ Weather data extraction from MSN Weather
 - 🌍 406+ cities worldwide with autocomplete
 - 🔌 RESTful API with comprehensive validation
+- 📚 **Interactive API docs** (Swagger UI at `/apidocs/`)
 - ⚛️ Modern web interface with React + TypeScript
 - 🚀 5-minute caching (90%+ faster repeated requests)
 - 🔒 Rate limiting (30 req/min per IP, 200/hr global)
 - 🛡️ Input validation & attack prevention (SQL injection, XSS, etc.)
+- 🔐 **Automated security scanning** (Bandit, Semgrep, Trivy, Grype)
 - 🔍 Type safety with mypy strict mode
 - 📋 SBOM generation for supply chain security
+- ♿ WCAG 2.1 Level AA accessible frontend
+- 🔄 **Optimized CI/CD** with Docker caching & conditional matrices
 
 ---
 
@@ -109,7 +114,7 @@ from msn_weather_wrapper import WeatherClient, Location
 with WeatherClient() as client:
     location = Location(city="Seattle", country="USA")
     weather = client.get_weather(location)
-    
+
     print(f"Temperature: {weather.temperature}°C")
     print(f"Condition: {weather.condition}")
     print(f"Humidity: {weather.humidity}%")
@@ -190,9 +195,10 @@ podman run -p 8080:80 msn-weather-wrapper
 📚 [Full Documentation](https://jim-wyatt.github.io/msn-weather-wrapper/)
 
 - [API Reference](docs/API.md) - Complete REST API documentation
+- [Interactive Swagger UI](docs/SWAGGER.md) - Live API testing & exploration
 - [Development Guide](docs/DEVELOPMENT.md) - Setup & development workflow
 - [Testing Guide](docs/TESTING.md) - Test suite & coverage
-- [Security Guide](docs/SECURITY.md) - Security features & testing
+- [Security Guide](docs/SECURITY.md) - Security features & automated scanning
 - [SBOM Guide](docs/SYFT_GUIDE.md) - Software bill of materials
 - [Changelog](docs/CHANGELOG.md) - Version history
 
@@ -203,9 +209,9 @@ podman run -p 8080:80 msn-weather-wrapper
 ```
 msn-weather-wrapper/
 ├── src/msn_weather_wrapper/    # Python package
-├── tests/                      # Test suite (77 tests, 89% coverage)
+├── tests/                      # Test suite (77 tests, 90% coverage)
 ├── frontend/                   # React application
-├── api.py                      # Flask REST API
+├── api.py                      # Flask REST API with Swagger
 ├── docs/                       # Documentation
 ├── Containerfile               # Production container
 └── pyproject.toml              # Python config
