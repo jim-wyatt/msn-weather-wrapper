@@ -3,9 +3,9 @@
 Modern Python wrapper for MSN Weather with Flask API, React frontend, and production-ready containerized deployment.
 
 [![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-77%20passing-success)](../tests/)
-[![Coverage](https://img.shields.io/badge/coverage-89%25-success)](TESTING.md)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](../LICENSE)
+[![Tests](https://img.shields.io/badge/tests-142%20passing-success)](TESTING.md)
+[![Coverage](https://img.shields.io/badge/coverage-92%25-success)](TESTING.md)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/jim-wyatt/msn-weather-wrapper/blob/main/LICENSE)
 
 ---
 

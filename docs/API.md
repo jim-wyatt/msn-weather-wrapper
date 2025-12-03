@@ -672,7 +672,6 @@ export ENABLE_LOGGING=true
 
 ## See Also
 
-- [Frontend E2E Tests](../frontend/tests/e2e/) - Playwright test suite
 - [Security Documentation](SECURITY.md) - Input validation and security
 - [Testing Guide](TESTING.md) - Comprehensive testing guide
 - [Development Guide](DEVELOPMENT.md) - Local development setup

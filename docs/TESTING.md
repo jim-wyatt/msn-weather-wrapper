@@ -77,8 +77,6 @@ podman run --rm --network test-net \
   msn-weather-playwright:latest npx playwright test
 ```
 
-See [Frontend Testing Guide](../frontend/TESTING.md) for detailed setup.
-
 ## Test Breakdown
 
 ### Unit Tests (35 tests)
