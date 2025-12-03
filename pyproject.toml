@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "msn-weather-wrapper"
-version = "1.2.1"
+version = "1.2.2"
 description = "A production-ready Python wrapper for MSN Weather with automatic versioning and CI/CD"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -114,6 +114,10 @@ strict_equality = true
 [[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = "msn_weather_wrapper.client"
+warn_unused_ignores = false
 
 [tool.mutmut]
 paths_to_mutate = "src/"
