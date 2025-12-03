@@ -81,6 +81,7 @@ nav:
       - Security Report: reports/security-report.md
       - License Report: reports/license-report.md
       - CI/CD Pipeline: reports/ci-cd.md
+  - Performance Report: reports/performance-report.md
 
   - Development:
       - Development Guide: DEVELOPMENT.md

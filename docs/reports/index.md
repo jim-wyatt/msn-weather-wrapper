@@ -11,6 +11,7 @@ Welcome to the automated reports section. This area contains comprehensive repor
 | [Security Scan](security-report.md) | Security vulnerability scanning results | ![Security](https://img.shields.io/badge/security-passing-brightgreen) |
 | [License Report](license-report.md) | Dependency licensing information | ![License](https://img.shields.io/badge/license-compliant-brightgreen) |
 | [CI/CD Pipeline](ci-cd.md) | Pipeline execution details and metrics | ![Pipeline](https://img.shields.io/badge/pipeline-active-blue) |
+| [Performance Testing](performance-report.md) | Load testing and benchmark results | ![Performance](https://img.shields.io/badge/performance-passing-brightgreen) |
 
 ## 🔄 Report Generation
 
@@ -46,6 +47,13 @@ Reports are automatically generated during every CI/CD pipeline run:
 - **Static Analysis**: Clean (Bandit)
 - **Container Scanning**: Grype + Trivy
 
+### Performance Metrics
+- **Load Test Success Rate**: 100%
+- **Total Requests Tested**: 334
+- **Average Response Time**: 22ms
+- **Concurrent Users**: 20
+- **Throughput**: 5.61 requests/second
+
 ## 🎯 Quality Standards
 
 Our CI/CD pipeline enforces these quality gates:
@@ -56,6 +64,7 @@ Our CI/CD pipeline enforces these quality gates:
 - ✅ Type checking passes in strict mode
 - ✅ Code formatting compliant (Ruff)
 - ✅ All licenses compatible with MIT
+- ✅ Load tests complete with <1% failure rate
 
 ## 🔍 Viewing Reports
 
@@ -123,6 +132,14 @@ Pipeline execution details:
 - Artifact generation summary
 - Deployment status
 
+### Performance Report
+Load testing and benchmark results:
+- Load test execution results
+- API endpoint response times
+- Throughput and concurrency metrics
+- Performance trend analysis
+- Benchmark comparisons (when available)
+
 ## 🚨 Alerts and Notifications
 
 The CI/CD pipeline will fail if:
@@ -131,6 +148,8 @@ The CI/CD pipeline will fail if:
 - Critical/high security vulnerabilities detected
 - Type checking errors
 - Code formatting issues
+- Load test request failure rate exceeds 1%
+- Server crashes during performance testing
 
 ## 🔗 Related Documentation
 
