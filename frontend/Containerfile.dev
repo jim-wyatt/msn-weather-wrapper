@@ -1,13 +1,14 @@
 # Development Containerfile for Frontend
-FROM node:20-alpine
+FROM node:20-slim
 
 WORKDIR /app
 
-# Install development tools
-RUN apk add --no-cache \
+# Install development tools and Playwright dependencies
+RUN apt-get update && apt-get install -y \
     git \
     curl \
-    bash
+    bash \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy package files
 COPY package.json ./

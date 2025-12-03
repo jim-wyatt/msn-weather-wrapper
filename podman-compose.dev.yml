@@ -6,6 +6,8 @@ services:
       context: .
       dockerfile: Containerfile.dev
     container_name: msn-weather-api-dev
+    stdin_open: true
+    tty: true
     ports:
       - "5000:5000"
     volumes:
@@ -19,7 +21,7 @@ services:
       - PYTHONUNBUFFERED=1
     command: python api.py
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/api/v1/health/ready"]
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -30,6 +32,8 @@ services:
       context: ./frontend
       dockerfile: Containerfile.dev
     container_name: msn-weather-frontend-dev
+    stdin_open: true
+    tty: true
     ports:
       - "5173:5173"
     volumes:
