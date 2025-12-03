@@ -302,20 +302,20 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pull image from registry
-        if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
           docker pull ghcr.io/${{ github.repository }}:${{ github.ref_name }}
           docker tag ghcr.io/${{ github.repository }}:${{ github.ref_name }} msn-weather-app:test
 
       - name: Download Docker image artifact
-        if: github.event_name == 'pull_request' || (github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/v'))
+        if: github.event_name == 'pull_request' || github.ref != 'refs/heads/main'
         uses: actions/download-artifact@v6
         with:
           name: docker-image
           path: /tmp
 
       - name: Load Docker image from artifact
-        if: github.event_name == 'pull_request' || (github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/v'))
+        if: github.event_name == 'pull_request' || github.ref != 'refs/heads/main'
         run: |
           gunzip /tmp/docker-image.tar.gz
           docker load -i /tmp/docker-image.tar
