@@ -56,11 +56,14 @@ jobs:
           import random
 
           cities = [
-              "New York,NY,USA",
-              "Los Angeles,CA,USA",
-              "Chicago,IL,USA",
-              "Houston,TX,USA",
-              "Phoenix,AZ,USA"
+              ("New York", "USA"),
+              ("Los Angeles", "USA"),
+              ("Chicago", "USA"),
+              ("Houston", "USA"),
+              ("Phoenix", "USA"),
+              ("Seattle", "USA"),
+              ("London", "UK"),
+              ("Tokyo", "Japan")
           ]
 
           class WeatherUser(HttpUser):
@@ -68,8 +71,8 @@ jobs:
 
               @task(3)
               def get_weather(self):
-                  city = random.choice(cities)
-                  self.client.get(f"/api/weather?location={city}")
+                  city, country = random.choice(cities)
+                  self.client.get(f"/api/v1/weather?city={city}&country={country}")
 
               @task(1)
               def health_check(self):
@@ -116,7 +119,8 @@ jobs:
 
       - name: Run benchmarks
         run: |
-          pytest tests/ -v --benchmark-only --benchmark-json=benchmark.json || true
+          # Create empty benchmark file if no benchmarks exist
+          pytest tests/ -v --benchmark-only --benchmark-json=benchmark.json || echo '{"benchmarks": []}' > benchmark.json
 
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
