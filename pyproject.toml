@@ -66,12 +66,11 @@ packages = ["src/msn_weather_wrapper"]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
-# Temporarily commented out - requires pytest-cov
-# addopts = [
-#     "--cov=msn_weather_wrapper",
-#     "--cov-report=term-missing",
-#     "--cov-report=html",
-# ]
+addopts = [
+    "--cov=msn_weather_wrapper",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+]
 markers = [
     "integration: marks tests as integration tests (may require network)",
 ]
