@@ -130,20 +130,20 @@ def generate_test_report(input_dir: Path, output_path: Path) -> None:
         print(f"Directory contents: {contents}", file=sys.stderr)
         return
 
-    # Parse all test results
-    all_results = []
+    # Parse all test results and map to filenames
+    results_map = {}
     for xml_file in xml_files:
         result = parse_junit_xml(xml_file)
         if result:
-            all_results.append(result)
+            results_map[xml_file] = result
 
     # Aggregate results
-    total_tests = sum(r["total"] for r in all_results)
-    total_passed = sum(r["passed"] for r in all_results)
-    total_failures = sum(r["failures"] for r in all_results)
-    total_errors = sum(r["errors"] for r in all_results)
-    total_skipped = sum(r["skipped"] for r in all_results)
-    total_duration = sum(r["duration"] for r in all_results)
+    total_tests = sum(r["total"] for r in results_map.values())
+    total_passed = sum(r["passed"] for r in results_map.values())
+    total_failures = sum(r["failures"] for r in results_map.values())
+    total_errors = sum(r["errors"] for r in results_map.values())
+    total_skipped = sum(r["skipped"] for r in results_map.values())
+    total_duration = sum(r["duration"] for r in results_map.values())
     success_rate = (total_passed / total_tests * 100) if total_tests > 0 else 0
 
     # Generate markdown
@@ -166,17 +166,55 @@ def generate_test_report(input_dir: Path, output_path: Path) -> None:
 | **Success Rate** | {success_rate:.1f}% |
 | **Total Duration** | {total_duration:.2f}s |
 
-## 📝 Detailed Results
+## 📝 Test Results by Python Version
 
 """
 
-    for i, result in enumerate(all_results, 1):
-        content += f"""### Test Run {i}
+    # Group and display results by Python version
+    for xml_file in sorted(results_map.keys()):
+        result = results_map[xml_file]
 
-- **Tests**: {result["total"]}
-- **Passed**: {result["passed"]} ✅
-- **Duration**: {result["duration"]:.2f}s
+        # Extract Python version from filename (e.g., junit-3.12.xml or junit-security-3.11.xml)
+        filename = xml_file.stem
+        if "security" in filename:
+            version = filename.split("-")[-1]
+            test_type = "Security Tests"
+        else:
+            version = filename.split("-")[-1]
+            test_type = "Unit Tests"
 
+        content += f"""### {test_type} (Python {version})
+
+**Summary**: {result["passed"]}/{result["total"]} passed • Duration: {result["duration"]:.2f}s
+
+"""
+
+        # Group tests by module
+        tests_by_module: dict[str, list[dict[str, Any]]] = {}
+        for test in result.get("test_cases", []):
+            module = test.get("classname", "Unknown").split(".")[-1]
+            if module not in tests_by_module:
+                tests_by_module[module] = []
+            tests_by_module[module].append(test)
+
+        # Output tests grouped by module
+        for module, tests in sorted(tests_by_module.items()):
+            content += f"#### {module}\n\n"
+            for test in tests:
+                status_icon = "✅" if test["status"] == "passed" else "❌"
+                content += f"- {status_icon} `{test['name']}` ({test['time']:.3f}s)\n"
+            content += "\n"
+
+    content += """
+## 🔗 Related Documentation
+
+- [Coverage Report](coverage-report.md) - Detailed code coverage analysis
+- [Security Report](security-report.md) - Security scan results
+- [CI/CD Pipeline](ci-cd.md) - Pipeline execution details
+
+---
+
+*Report auto-generated from CI/CD pipeline execution*
 """
 
     # Write output

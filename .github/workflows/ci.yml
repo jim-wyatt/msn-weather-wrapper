@@ -94,17 +94,36 @@ jobs:
       - name: Install security tools
         run: pip install bandit pip-audit
 
+      - name: Create security reports directory
+        run: mkdir -p security-reports
+
       - name: Run Bandit (fail on HIGH/CRITICAL)
-        run: bandit -r src/ api.py -ll -f txt
+        run: |
+          bandit -r src/ api.py -ll -f txt
+          bandit -r src/ api.py -f json -o security-reports/bandit-report.json || true
 
       - name: Run pip-audit (check for vulnerabilities)
         run: pip-audit
+
+      - name: Generate pip-licenses report
+        run: |
+          pip install pip-licenses
+          pip-licenses --format=json --output-file=security-reports/licenses.json
+
+      - name: Upload security reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-reports
+          path: security-reports/
+          retention-days: 7
 
       - name: Security scan summary
         if: always()
         run: |
           echo "✅ Critical security checks passed"
-          echo "📋 Full security scan runs weekly (security-scan.yml)"
+          echo "📋 Reports generated and uploaded as artifacts"
+          echo "📋 Full security scan with Trivy/Semgrep runs weekly (security-scan.yml)"
 
   # Job 3: Unit Tests (Python 3.10-3.12)
   unit-tests:
