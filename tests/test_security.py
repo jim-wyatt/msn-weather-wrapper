@@ -282,3 +282,194 @@ class TestAPIRateLimiting:
             response = client.get("/api/weather?city=<script>&country=alert")
             # Should be 400 for invalid input, but may be 429 if rate limited
             assert response.status_code in (400, 429)
+
+
+class TestHTTPErrorHandlers:
+    """Test HTTP error handlers and edge cases."""
+
+    def test_404_not_found(self, client):
+        """Test 404 error handler for non-existent endpoints."""
+        response = client.get("/api/nonexistent")
+        assert response.status_code == 404
+        # Flask returns HTML for 404 by default, not JSON
+        assert response.status_code == 404
+
+    def test_405_method_not_allowed(self, client):
+        """Test 405 error for unsupported HTTP methods."""
+        # Health endpoint only supports GET
+        response = client.post("/api/health")
+        assert response.status_code == 405
+
+        # Try other unsupported methods
+        response = client.delete("/api/weather?city=London&country=UK")
+        assert response.status_code == 405
+
+    def test_413_payload_too_large(self, client):
+        """Test handling of extremely large payloads."""
+        huge_payload = {"city": "X" * 1_000_000, "country": "Y" * 1_000_000}
+        response = client.post(
+            "/api/weather",
+            data=json.dumps(huge_payload),
+            content_type="application/json",
+        )
+        # Should be rejected (400 from validation or 413 from server)
+        assert response.status_code in (400, 413)
+
+    def test_400_bad_request_missing_required_fields(self, client):
+        """Test 400 error for missing required fields."""
+        test_cases = [
+            {},  # Empty body
+            {"city": "London"},  # Missing country
+            {"country": "UK"},  # Missing city
+            {"invalid": "field"},  # Invalid fields
+        ]
+        for payload in test_cases:
+            response = client.post(
+                "/api/weather",
+                json=payload,
+            )
+            assert response.status_code == 400
+            data = json.loads(response.data)
+            assert "error" in data
+
+    def test_415_unsupported_media_type(self, client):
+        """Test 415 error for unsupported content types."""
+        # Try sending XML when JSON is expected
+        response = client.post(
+            "/api/weather",
+            data="<xml><city>London</city></xml>",
+            content_type="application/xml",
+        )
+        # Should be 400 or 415
+        assert response.status_code in (400, 415)
+
+    def test_invalid_json_syntax(self, client):
+        """Test handling of malformed JSON syntax."""
+        malformed_jsons = [
+            "{city: London}",  # Missing quotes
+            '{"city": "London",}',  # Trailing comma
+            '{"city": "London" "country": "UK"}',  # Missing comma
+            '{city: "London", country: "UK"}',  # Unquoted keys
+        ]
+        for malformed in malformed_jsons:
+            response = client.post(
+                "/api/weather",
+                data=malformed,
+                content_type="application/json",
+            )
+            assert response.status_code == 400
+
+    def test_content_type_without_charset(self, client):
+        """Test handling of content-type without charset."""
+        response = client.post(
+            "/api/weather",
+            data='{"city": "London", "country": "UK"}',
+            content_type="application/json",  # No charset specified
+        )
+        # Should work or fail gracefully (may be 500 if backend unavailable)
+        assert response.status_code in (200, 400, 500)
+
+    def test_empty_request_body_post(self, client):
+        """Test POST with completely empty body."""
+        response = client.post(
+            "/api/weather",
+            data="",
+            content_type="application/json",
+        )
+        assert response.status_code == 400
+
+    def test_null_bytes_in_input(self, client):
+        """Test handling of null bytes in input."""
+        response = client.get("/api/weather?city=London\x00&country=UK")
+        assert response.status_code == 400
+
+    def test_very_long_query_string(self, client):
+        """Test handling of extremely long query strings."""
+        long_city = "A" * 10000
+        response = client.get(f"/api/weather?city={long_city}&country=UK")
+        assert response.status_code == 400
+
+    def test_unicode_normalization_attack(self, client):
+        """Test handling of unicode normalization attacks."""
+        # Unicode characters that might be normalized differently
+        response = client.get("/api/weather?city=\u0041\u030a&country=UK")  # Å as combining chars
+        # Should either work or fail gracefully with 400
+        assert response.status_code in (200, 400)
+
+    def test_header_injection_attempts(self, client):
+        """Test that header injection attempts don't succeed."""
+        # Try to inject headers via input
+        response = client.get("/api/weather?city=London\r\nX-Injected: true&country=UK")
+        assert response.status_code == 400
+        # Ensure injected header is not present
+        assert "X-Injected" not in response.headers
+
+    def test_multiple_content_types(self, client):
+        """Test handling of multiple content-type headers."""
+        response = client.post(
+            "/api/weather",
+            data='{"city": "London", "country": "UK"}',
+            headers={
+                "Content-Type": "application/json, text/plain",
+            },
+        )
+        # Should handle gracefully
+        assert response.status_code in (200, 400, 415)
+
+    def test_case_sensitive_endpoints(self, client):
+        """Test that endpoint paths are case-sensitive."""
+        # These should not match
+        response = client.get("/API/weather?city=London&country=UK")
+        assert response.status_code == 404
+
+        response = client.get("/api/WEATHER?city=London&country=UK")
+        assert response.status_code == 404
+
+    def test_trailing_slash_handling(self, client):
+        """Test endpoint behavior with trailing slashes."""
+        # Test both with and without trailing slash
+        response1 = client.get("/api/health")
+        response2 = client.get("/api/health/")
+        # Flask strict_slashes behavior: /api/health works, /api/health/ may 404
+        assert response1.status_code == 200
+        # response2 may be 200 or 404 depending on Flask config
+        assert response2.status_code in (200, 404)
+
+    def test_double_slash_in_path(self, client):
+        """Test handling of double slashes in URL path."""
+        response = client.get("//api//weather?city=London&country=UK")
+        # Should normalize or return 404
+        assert response.status_code in (200, 404)
+
+    def test_url_encoding_in_parameters(self, client):
+        """Test proper handling of URL-encoded parameters."""
+        # Spaces encoded as +
+        response = client.get("/api/weather?city=New+York&country=USA")
+        assert response.status_code in (200, 400)
+
+        # Spaces encoded as %20
+        response = client.get("/api/weather?city=New%20York&country=USA")
+        assert response.status_code in (200, 400)
+
+    def test_repeated_parameters(self, client):
+        """Test handling of repeated query parameters."""
+        response = client.get("/api/weather?city=London&city=Paris&country=UK")
+        # Should use first value, reject, or fail if backend unavailable
+        assert response.status_code in (200, 400, 500)
+
+    def test_parameter_without_value(self, client):
+        """Test handling of parameters without values."""
+        response = client.get("/api/weather?city=&country=UK")
+        assert response.status_code == 400
+
+    def test_cors_preflight_request(self, client):
+        """Test CORS preflight OPTIONS request."""
+        response = client.options("/api/weather")
+        # Should return 200 or 204 for OPTIONS
+        assert response.status_code in (200, 204)
+
+    def test_response_headers_present(self, client):
+        """Test that security-related headers are present."""
+        response = client.get("/api/health")
+        # Check for X-Request-ID (added by our middleware)
+        assert "X-Request-ID" in response.headers
