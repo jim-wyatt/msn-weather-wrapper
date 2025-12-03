@@ -5,7 +5,7 @@ import re
 from urllib.parse import quote
 
 import requests
-from bs4 import BeautifulSoup  # type: ignore[import-untyped]
+from bs4 import BeautifulSoup
 from geopy.geocoders import Nominatim  # type: ignore[import-not-found]
 
 from msn_weather_wrapper.models import Location, WeatherData

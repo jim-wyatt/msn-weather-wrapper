@@ -21,6 +21,6 @@ repos:
     rev: v1.7.1
     hooks:
       - id: mypy
-        additional_dependencies: [pydantic>=2.5.0, types-requests>=2.31.0]
+        additional_dependencies: [pydantic>=2.5.0, types-requests>=2.31.0, types-beautifulsoup4>=4.12.0]
         args: [--strict]
         exclude: ^(api\.py|tests/.*)
