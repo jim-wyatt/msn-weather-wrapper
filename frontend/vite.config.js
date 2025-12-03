@@ -9,7 +9,9 @@ export default defineConfig({
     allowedHosts: ['frontend-srv', 'localhost'],
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: process.env.NODE_ENV === 'development' && process.env.DOCKER_ENV
+          ? 'http://api:5000'
+          : 'http://localhost:5000',
         changeOrigin: true,
       }
     }
