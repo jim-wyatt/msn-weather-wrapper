@@ -369,25 +369,6 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="../reports/performance-report/" class="md-tabs__link">
-        
-  
-  
-    
-  
-  Performance Report
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
     
     
       <li class="md-tabs__item">
@@ -1012,6 +993,8 @@
       
         
       
+        
+      
     
     
     
@@ -1185,6 +1168,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../reports/performance-report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance Report
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../reports/ci-cd/" class="md-nav__link">
         
   
@@ -1209,33 +1220,6 @@
           </ul>
         </nav>
       
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reports/performance-report/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Performance Report
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -1272,10 +1256,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
   
@@ -1293,8 +1277,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1475,10 +1459,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
-          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
             
   
   
@@ -1496,8 +1480,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1571,10 +1555,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
-          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
             
   
   
@@ -1592,8 +1576,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_10">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2109,6 +2093,7 @@
 <li>Service health status checking with <code>dev.sh status</code> command</li>
 <li>Automatic health checks and readiness reporting in dev environment</li>
 <li>Enhanced error handling for missing MSN API credentials</li>
+<li>Dynamic README badges: PyPI downloads, Python versions, GitHub stars, and issues</li>
 </ul>
 <h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
 <ul>
@@ -2119,6 +2104,8 @@
 <li>Gunicorn configuration: 2 workers (down from 4), 300s timeout (up from 120s)</li>
 <li>Dev.sh now checks port availability before starting services</li>
 <li>Enhanced setup validation and error messages</li>
+<li>Documentation: Performance Report moved under Reports section in navigation</li>
+<li>README badges now use dynamic PyPI and GitHub sources for auto-updates</li>
 </ul>
 <h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
 <ul>
@@ -2127,6 +2114,9 @@
 <li>Load tests crashing API due to missing credentials and excessive concurrency</li>
 <li>Port conflict detection and reporting in development environment</li>
 <li>Health endpoint consistency across all components (tests, CI/CD, compose files)</li>
+<li>Frontend E2E tests: incorrect CSS selectors (<code>.autocomplete-item</code> → <code>.suggestion-item</code>)</li>
+<li>Frontend E2E tests: test workflows expecting non-existent "Get Weather" button</li>
+<li>Frontend E2E tests: tests using Enter key instead of clicking dropdown suggestions</li>
 </ul>
 <p>The format is based on <a href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>,
 and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
