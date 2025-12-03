@@ -126,16 +126,63 @@ restart_dev() {
 }
 
 clean_dev() {
-    log_warning "This will remove all containers, images, and volumes!"
-    read -p "Are you sure? (y/N) " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        log_info "Cleaning up..."
-        podman-compose -f "$COMPOSE_FILE" down -v
-        podman rmi $(podman images | grep $PROJECT_NAME | awk '{print $3}') 2>/dev/null || true
-        log_success "Cleanup complete"
+    local clean_gitignore=false
+
+    # Parse arguments
+    if [[ "${1:-}" == "--gitignore" ]] || [[ "${1:-}" == "-g" ]]; then
+        clean_gitignore=true
+    fi
+
+    if [ "$clean_gitignore" = true ]; then
+        log_warning "This will remove all files matching patterns in .gitignore!"
+        echo "Files to be removed:"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        git clean -ndX | sed 's/^Would remove /  - /'
+        echo ""
+        read -p "Are you sure? (y/N) " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            log_info "Removing gitignored files..."
+            git clean -fdX
+            log_success "Gitignored files removed"
+        else
+            log_info "Cleanup cancelled"
+        fi
     else
-        log_info "Cleanup cancelled"
+        log_warning "This will remove all containers, images, and volumes!"
+        read -p "Are you sure? (y/N) " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            log_info "Cleaning up containers..."
+            podman-compose -f "$COMPOSE_FILE" down -v
+            podman rmi $(podman images | grep $PROJECT_NAME | awk '{print $3}') 2>/dev/null || true
+            log_success "Container cleanup complete"
+
+            # Ask about gitignored files
+            echo ""
+            log_info "Would you also like to remove gitignored files?"
+            read -p "Remove gitignored files? (y/N) " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                echo "Files to be removed:"
+                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                git clean -ndX | sed 's/^Would remove /  - /'
+                echo ""
+                read -p "Proceed with removal? (y/N) " -n 1 -r
+                echo
+                if [[ $REPLY =~ ^[Yy]$ ]]; then
+                    log_info "Removing gitignored files..."
+                    git clean -fdX
+                    log_success "Gitignored files removed"
+                else
+                    log_info "Gitignore cleanup skipped"
+                fi
+            else
+                log_info "Gitignore cleanup skipped"
+            fi
+        else
+            log_info "Cleanup cancelled"
+        fi
     fi
 }
 
@@ -473,7 +520,9 @@ Commands:
   stop              Stop all containers
   restart           Restart all containers
   status            Show container status and health checks
-  clean             Remove all containers, images, and volumes
+  clean [--gitignore]
+                    Remove all containers, images, and volumes
+                    --gitignore, -g: Remove only gitignored files
   test [--watch]    Run all tests (backend + frontend)
                     --watch, -w: Run tests in watch mode
   docs              Generate all reports and serve documentation site
@@ -484,13 +533,15 @@ Commands:
   help              Show this help message
 
 Examples:
-  ./dev.sh setup           # First-time setup
-  ./dev.sh start           # Start development
-  ./dev.sh status          # Check container status
-  ./dev.sh logs            # Watch logs
-  ./dev.sh test            # Run tests once
-  ./dev.sh test --watch    # Run tests in watch mode
-  ./dev.sh docs            # Generate reports & serve docs
+  ./dev.sh setup              # First-time setup
+  ./dev.sh start              # Start development
+  ./dev.sh status             # Check container status
+  ./dev.sh logs               # Watch logs
+  ./dev.sh test               # Run tests once
+  ./dev.sh test --watch       # Run tests in watch mode
+  ./dev.sh clean              # Remove containers and optionally gitignored files
+  ./dev.sh clean --gitignore  # Remove only gitignored files
+  ./dev.sh docs               # Generate reports & serve docs
 
 EOF
 }
@@ -513,7 +564,8 @@ case "${1:-help}" in
         show_status
         ;;
     clean)
-        clean_dev
+        shift  # Remove 'clean' from arguments
+        clean_dev "$@"
         ;;
     test)
         shift  # Remove 'test' from arguments
