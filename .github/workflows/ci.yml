@@ -3,16 +3,6 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ main, develop ]
-    paths:
-      - 'src/**'
-      - 'api.py'
-      - 'tests/**'
-      - 'tools/**'
-      - 'pyproject.toml'
-      - 'Containerfile*'
-      - 'frontend/**'
-      - '.github/workflows/ci.yml'
-      - '.github/actions/**'
     tags:
       - 'v*.*.*'
   pull_request:
