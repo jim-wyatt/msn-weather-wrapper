@@ -33,11 +33,22 @@ def parse_junit_xml(xml_path: Path) -> dict[str, Any]:
         tree = ET.parse(xml_path)
         root = tree.getroot()
 
-        total = int(root.get("tests", 0))
-        failures = int(root.get("failures", 0))
-        errors = int(root.get("errors", 0))
-        skipped = int(root.get("skipped", 0))
-        time = float(root.get("time", 0))
+        # Handle both <testsuite> and <testsuites> root elements
+        if root.tag == "testsuites":
+            # If root is testsuites, get stats from first testsuite child
+            testsuite = root.find("testsuite")
+            if testsuite is not None:
+                stats_element = testsuite
+            else:
+                stats_element = root
+        else:
+            stats_element = root
+
+        total = int(stats_element.get("tests", 0))
+        failures = int(stats_element.get("failures", 0))
+        errors = int(stats_element.get("errors", 0))
+        skipped = int(stats_element.get("skipped", 0))
+        time = float(stats_element.get("time", 0))
 
         test_cases = []
         for testcase in root.findall(".//testcase"):
