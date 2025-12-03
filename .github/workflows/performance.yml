@@ -119,19 +119,17 @@ jobs:
 
       - name: Run benchmarks
         id: run_benchmarks
+        continue-on-error: true
         run: |
-          # Run benchmarks and check if any were found
-          if pytest tests/ -v --benchmark-only --benchmark-json=benchmark.json 2>&1 | tee benchmark_output.log; then
+          # Try to run benchmarks - will exit with code 5 if no benchmarks found
+          pytest tests/ -v --benchmark-only --benchmark-json=benchmark.json || true
+          # Check if benchmark.json was created and has content
+          if [ -f benchmark.json ] && [ -s benchmark.json ]; then
             echo "has_benchmarks=true" >> $GITHUB_OUTPUT
           else
-            # Check if no tests were collected (exit code 5) vs actual failure
-            if grep -q "no tests ran" benchmark_output.log || grep -q "no benchmarks" benchmark_output.log; then
-              echo "has_benchmarks=false" >> $GITHUB_OUTPUT
-              echo '{"benchmarks": []}' > benchmark.json
-            else
-              echo "has_benchmarks=false" >> $GITHUB_OUTPUT
-              echo '{"benchmarks": []}' > benchmark.json
-            fi
+            echo "has_benchmarks=false" >> $GITHUB_OUTPUT
+            # Create minimal valid JSON for artifacts
+            echo '{"benchmarks": []}' > benchmark.json
           fi
 
       - name: Store benchmark result
