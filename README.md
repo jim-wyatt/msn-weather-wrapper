@@ -5,7 +5,6 @@
 [![CI/CD Pipeline](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/ci.yml/badge.svg)](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/ci.yml)
 [![Security Scan](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/security-scan.yml/badge.svg)](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/security-scan.yml)
 [![PyPI version](https://img.shields.io/pypi/v/msn-weather-wrapper.svg)](https://pypi.org/project/msn-weather-wrapper/)
-[![PyPI downloads](https://img.shields.io/pypi/dm/msn-weather-wrapper.svg)](https://pypi.org/project/msn-weather-wrapper/)
 [![Python](https://img.shields.io/pypi/pyversions/msn-weather-wrapper.svg)](https://pypi.org/project/msn-weather-wrapper/)
 [![License](https://img.shields.io/github/license/jim-wyatt/msn-weather-wrapper.svg)](LICENSE)
 [![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://jim-wyatt.github.io/msn-weather-wrapper/)
@@ -13,7 +12,6 @@
 [![Checked with mypy](https://img.shields.io/badge/mypy-checked-blue)](http://mypy-lang.org/)
 [![Container](https://img.shields.io/badge/container-ghcr.io-blue)](https://github.com/jim-wyatt/msn-weather-wrapper/pkgs/container/msn-weather-wrapper)
 [![GitHub stars](https://img.shields.io/github/stars/jim-wyatt/msn-weather-wrapper.svg)](https://github.com/jim-wyatt/msn-weather-wrapper/stargazers)
-[![GitHub issues](https://img.shields.io/github/issues/jim-wyatt/msn-weather-wrapper.svg)](https://github.com/jim-wyatt/msn-weather-wrapper/issues)
 
 ---
 
@@ -89,6 +87,7 @@ with WeatherClient() as client:
 - 📋 SBOM generation for supply chain security
 - ♿ WCAG 2.1 Level AA accessible frontend
 - 🔄 **Optimized CI/CD** with Docker caching & conditional matrices
+- 🏷️ **Automated semantic versioning** - Every PR auto-publishes to PyPI
 
 ---
 

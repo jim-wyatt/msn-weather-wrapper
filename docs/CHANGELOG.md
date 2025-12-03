@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Automatic health checks and readiness reporting in dev environment
 - Enhanced error handling for missing MSN API credentials
 - Dynamic README badges: PyPI downloads, Python versions, GitHub stars, and issues
+- **Automated semantic versioning**: All merged PRs now auto-increment version based on change type
 
 ### Changed
 - **BREAKING**: All health check endpoints migrated to versioned API path `/api/v1/health`
@@ -21,6 +22,7 @@ All notable changes to this project will be documented in this file.
 - Enhanced setup validation and error messages
 - Documentation: Performance Report moved under Reports section in navigation
 - README badges now use dynamic PyPI and GitHub sources for auto-updates
+- **Release workflow**: Now triggers automatically for all merged PRs with semantic version bumping
 
 ### Fixed
 - Frontend unable to connect to API in Docker environment (service name resolution)
