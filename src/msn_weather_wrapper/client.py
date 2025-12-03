@@ -5,8 +5,8 @@ import re
 from urllib.parse import quote
 
 import requests
-from bs4 import BeautifulSoup
-from geopy.geocoders import Nominatim  # type: ignore[import-untyped]
+from bs4 import BeautifulSoup  # type: ignore[import-untyped]
+from geopy.geocoders import Nominatim  # type: ignore[import-not-found]
 
 from msn_weather_wrapper.models import Location, WeatherData
 
@@ -231,7 +231,7 @@ class WeatherClient:
                 text = element.get_text(strip=True)
                 # Filter out numbers and very short strings
                 if text and len(text) > 2 and not text.isdigit():
-                    return text
+                    return str(text)
 
         # Fallback to searching for common weather terms
         weather_terms = [
