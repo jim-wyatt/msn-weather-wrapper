@@ -35,20 +35,34 @@ jobs:
 
       - name: Start API server
         run: |
-          # Start API server with extended timeout and logging
-          gunicorn -w 2 -b 0.0.0.0:5000 --timeout 300 --log-level debug api:app --daemon
+          # Start API server in background with logging to file
+          gunicorn -w 2 -b 0.0.0.0:5000 --timeout 300 --log-level debug --access-logfile - --error-logfile - api:app > gunicorn.log 2>&1 &
+          GUNICORN_PID=$!
+          echo "Gunicorn started with PID: $GUNICORN_PID"
+          echo "$GUNICORN_PID" > gunicorn.pid
           sleep 5
 
       - name: Wait for API
         run: |
           for i in {1..30}; do
-            if curl -f http://localhost:5000/api/v1/health; then
+            if curl -f http://localhost:5000/api/v1/health 2>/dev/null; then
               echo "API is ready"
               break
             fi
             echo "Waiting for API... ($i/30)"
             sleep 2
           done
+
+          # Check if gunicorn is still running
+          if [ -f gunicorn.pid ]; then
+            GUNICORN_PID=$(cat gunicorn.pid)
+            if ! ps -p $GUNICORN_PID > /dev/null 2>&1; then
+              echo "ERROR: Gunicorn process died during startup!"
+              echo "Last 50 lines of gunicorn.log:"
+              tail -50 gunicorn.log
+              exit 1
+            fi
+          fi
 
       - name: Create Locust test file
         run: |
@@ -100,13 +114,38 @@ jobs:
             --html locust-report.html \
             --csv locust-results
 
+      - name: Check Gunicorn status
+        if: always()
+        run: |
+          echo "=== Gunicorn Process Status ==="
+          if [ -f gunicorn.pid ]; then
+            GUNICORN_PID=$(cat gunicorn.pid)
+            if ps -p $GUNICORN_PID > /dev/null 2>&1; then
+              echo "Gunicorn is still running (PID: $GUNICORN_PID)"
+            else
+              echo "Gunicorn process died (PID: $GUNICORN_PID)"
+            fi
+          else
+            echo "No gunicorn.pid file found"
+          fi
+
+          echo ""
+          echo "=== Last 100 lines of Gunicorn logs ==="
+          if [ -f gunicorn.log ]; then
+            tail -100 gunicorn.log
+          else
+            echo "No gunicorn.log file found"
+          fi
+
       - name: Upload load test results
+        if: always()
         uses: actions/upload-artifact@v5
         with:
           name: load-test-results
           path: |
             locust-report.html
             locust-results*.csv
+            gunicorn.log
           retention-days: 7
 
   benchmark:
