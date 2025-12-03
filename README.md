@@ -1,3 +1,5 @@
+n## New Feature
+- Adds a minor documentation note to test automated minor release.
 # MSN Weather Wrapper
 
 > A modern, production-ready Python wrapper for MSN Weather with Flask REST API and React frontend.
