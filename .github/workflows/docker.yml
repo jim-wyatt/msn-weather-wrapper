@@ -133,10 +133,12 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          format: 'sarif'
-          output: 'trivy-results.sarif'
+          format: 'json'
+          output: 'trivy-results.json'
 
-      - name: Upload Trivy results
-        uses: github/codeql-action/upload-sarif@v4
+      - name: Upload Trivy results as artifact
+        uses: actions/upload-artifact@v4
         with:
-          sarif_file: 'trivy-results.sarif'
+          name: trivy-scan-results
+          path: 'trivy-results.json'
+          retention-days: 30
