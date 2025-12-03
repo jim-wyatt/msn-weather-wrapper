@@ -5,12 +5,15 @@
 [![CI/CD Pipeline](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/ci.yml/badge.svg)](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/ci.yml)
 [![Security Scan](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/security-scan.yml/badge.svg)](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/security-scan.yml)
 [![PyPI version](https://img.shields.io/pypi/v/msn-weather-wrapper.svg)](https://pypi.org/project/msn-weather-wrapper/)
-[![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![PyPI downloads](https://img.shields.io/pypi/dm/msn-weather-wrapper.svg)](https://pypi.org/project/msn-weather-wrapper/)
+[![Python](https://img.shields.io/pypi/pyversions/msn-weather-wrapper.svg)](https://pypi.org/project/msn-weather-wrapper/)
+[![License](https://img.shields.io/github/license/jim-wyatt/msn-weather-wrapper.svg)](LICENSE)
 [![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://jim-wyatt.github.io/msn-weather-wrapper/)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
 [![Checked with mypy](https://img.shields.io/badge/mypy-checked-blue)](http://mypy-lang.org/)
 [![Container](https://img.shields.io/badge/container-ghcr.io-blue)](https://github.com/jim-wyatt/msn-weather-wrapper/pkgs/container/msn-weather-wrapper)
+[![GitHub stars](https://img.shields.io/github/stars/jim-wyatt/msn-weather-wrapper.svg)](https://github.com/jim-wyatt/msn-weather-wrapper/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/jim-wyatt/msn-weather-wrapper.svg)](https://github.com/jim-wyatt/msn-weather-wrapper/issues)
 
 ---
 

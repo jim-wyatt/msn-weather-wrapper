@@ -80,8 +80,8 @@ nav:
       - Coverage Report: reports/coverage-report.md
       - Security Report: reports/security-report.md
       - License Report: reports/license-report.md
+      - Performance Report: reports/performance-report.md
       - CI/CD Pipeline: reports/ci-cd.md
-  - Performance Report: reports/performance-report.md
 
   - Development:
       - Development Guide: DEVELOPMENT.md

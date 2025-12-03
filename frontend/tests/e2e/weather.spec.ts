@@ -69,14 +69,10 @@ test.describe('Weather Search', () => {
     // Wait for autocomplete dropdown to appear
     await page.waitForTimeout(500);
 
-    // Click on the first suggestion (or simulate selection)
-    const firstSuggestion = page.locator('.autocomplete-item').first();
-    if (await firstSuggestion.isVisible()) {
-      await firstSuggestion.click();
-    } else {
-      // If autocomplete doesn't show, press Enter
-      await searchInput.press('Enter');
-    }
+    // Click on the first suggestion
+    const firstSuggestion = page.locator('.suggestion-item').first();
+    await expect(firstSuggestion).toBeVisible({ timeout: 2000 });
+    await firstSuggestion.click();
 
     // Wait for weather data to load
     await expect(page.getByText('Seattle')).toBeVisible({ timeout: 5000 });
@@ -108,11 +104,17 @@ test.describe('Weather Search', () => {
     await page.goto('/');
 
     const searchInput = page.getByPlaceholder(/Search for a city/i);
-    await searchInput.fill('InvalidCity');
-    await searchInput.press('Enter');
+    await searchInput.fill('Seattle');
+    await page.waitForTimeout(500);
+
+    // Click on the first suggestion to trigger the weather fetch
+    const firstSuggestion = page.locator('.suggestion-item').first();
+    await expect(firstSuggestion).toBeVisible({ timeout: 2000 });
+    await firstSuggestion.click();
 
     // Wait for error message
-    await expect(page.getByText(/Failed to fetch weather/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('alert')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/Failed to fetch weather/i)).toBeVisible();
   });
 });
 
@@ -146,7 +148,12 @@ test.describe('Temperature Unit Conversion', () => {
     // Search for a city
     const searchInput = page.getByPlaceholder(/Search for a city/i);
     await searchInput.fill('Seattle');
-    await searchInput.press('Enter');
+    await page.waitForTimeout(500);
+
+    // Click on the first suggestion
+    const firstSuggestion = page.locator('.suggestion-item').first();
+    await expect(firstSuggestion).toBeVisible({ timeout: 2000 });
+    await firstSuggestion.click();
 
     // Wait for weather to load
     await page.waitForSelector('.temperature-main', { timeout: 5000 });
@@ -196,7 +203,11 @@ test.describe('Temperature Unit Conversion', () => {
     // Search and toggle to Fahrenheit
     const searchInput = page.getByPlaceholder(/Search for a city/i);
     await searchInput.fill('Seattle');
-    await searchInput.press('Enter');
+    await page.waitForTimeout(500);
+
+    const firstSuggestion = page.locator('.suggestion-item').first();
+    await expect(firstSuggestion).toBeVisible({ timeout: 2000 });
+    await firstSuggestion.click();
 
     await page.waitForSelector('.unit-toggle', { timeout: 5000 });
     await page.locator('.unit-toggle').click();
@@ -206,7 +217,11 @@ test.describe('Temperature Unit Conversion', () => {
 
     // Search again
     await searchInput.fill('Seattle');
-    await searchInput.press('Enter');
+    await page.waitForTimeout(500);
+
+    const secondSuggestion = page.locator('.suggestion-item').first();
+    await expect(secondSuggestion).toBeVisible({ timeout: 2000 });
+    await secondSuggestion.click();
 
     await page.waitForSelector('.temperature-main', { timeout: 5000 });
 
@@ -248,7 +263,11 @@ test.describe('Recent Searches', () => {
     // Perform a search
     const searchInput = page.getByPlaceholder(/Search for a city/i);
     await searchInput.fill('Seattle');
-    await searchInput.press('Enter');
+    await page.waitForTimeout(500);
+
+    const firstSuggestion = page.locator('.suggestion-item').first();
+    await expect(firstSuggestion).toBeVisible({ timeout: 2000 });
+    await firstSuggestion.click();
 
     // Wait for weather to load
     await page.waitForSelector('.weather-card', { timeout: 5000 });
