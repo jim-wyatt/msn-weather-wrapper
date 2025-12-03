@@ -115,6 +115,10 @@ strict_equality = true
 module = "tests.*"
 disallow_untyped_defs = false
 
+[[tool.mypy.overrides]]
+module = "msn_weather_wrapper.client"
+warn_unused_ignores = false
+
 [tool.mutmut]
 paths_to_mutate = "src/"
 backup = false
