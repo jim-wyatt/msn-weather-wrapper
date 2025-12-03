@@ -98,12 +98,18 @@ test.describe('Accessibility Tests', () => {
   });
 
   test('should be accessible after weather data loads', async ({ page }) => {
-    // Enter city and get weather
-    await page.fill('input[type="text"]', 'London');
-    await page.click('button:has-text("Get Weather")');
+    // Enter city and select from dropdown
+    const searchInput = page.getByPlaceholder(/Search for a city/i);
+    await searchInput.fill('London');
+    await page.waitForTimeout(500);
+
+    // Click first suggestion
+    const firstSuggestion = page.locator('.suggestion-item').first();
+    await expect(firstSuggestion).toBeVisible({ timeout: 2000 });
+    await firstSuggestion.click();
 
     // Wait for results
-    await page.waitForSelector('.weather-result', { timeout: 5000 });
+    await page.waitForSelector('.weather-card', { timeout: 5000 });
 
     // Check accessibility of results
     const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
@@ -128,9 +134,23 @@ test.describe('Accessibility Tests', () => {
   });
 
   test('should have accessible error messages', async ({ page }) => {
-    // Trigger an error by searching for invalid data
-    await page.fill('input[type="text"]', '!!!invalid!!!');
-    await page.click('button:has-text("Get Weather")');
+    // Mock API error
+    await page.route('**/api/v1/weather*', async (route) => {
+      await route.fulfill({
+        status: 500,
+        contentType: 'application/json',
+        body: JSON.stringify({ error: 'Internal server error' }),
+      });
+    });
+
+    // Trigger an error by searching
+    const searchInput = page.getByPlaceholder(/Search for a city/i);
+    await searchInput.fill('Seattle');
+    await page.waitForTimeout(500);
+
+    const firstSuggestion = page.locator('.suggestion-item').first();
+    await expect(firstSuggestion).toBeVisible({ timeout: 2000 });
+    await firstSuggestion.click();
 
     // Wait for error message
     await page.waitForSelector('[role="alert"]', { timeout: 5000 }).catch(() => {
