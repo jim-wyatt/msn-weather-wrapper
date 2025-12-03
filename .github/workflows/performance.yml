@@ -118,11 +118,24 @@ jobs:
           pip install pytest-benchmark
 
       - name: Run benchmarks
+        id: run_benchmarks
         run: |
-          # Create empty benchmark file if no benchmarks exist
-          pytest tests/ -v --benchmark-only --benchmark-json=benchmark.json || echo '{"benchmarks": []}' > benchmark.json
+          # Run benchmarks and check if any were found
+          if pytest tests/ -v --benchmark-only --benchmark-json=benchmark.json 2>&1 | tee benchmark_output.log; then
+            echo "has_benchmarks=true" >> $GITHUB_OUTPUT
+          else
+            # Check if no tests were collected (exit code 5) vs actual failure
+            if grep -q "no tests ran" benchmark_output.log || grep -q "no benchmarks" benchmark_output.log; then
+              echo "has_benchmarks=false" >> $GITHUB_OUTPUT
+              echo '{"benchmarks": []}' > benchmark.json
+            else
+              echo "has_benchmarks=false" >> $GITHUB_OUTPUT
+              echo '{"benchmarks": []}' > benchmark.json
+            fi
+          fi
 
       - name: Store benchmark result
+        if: steps.run_benchmarks.outputs.has_benchmarks == 'true'
         uses: benchmark-action/github-action-benchmark@v1
         with:
           tool: 'pytest'
@@ -134,6 +147,7 @@ jobs:
           fail-on-alert: false
 
       - name: Upload benchmark results
+        if: always() && steps.run_benchmarks.outputs.has_benchmarks == 'true'
         uses: actions/upload-artifact@v5
         with:
           name: benchmark-results
