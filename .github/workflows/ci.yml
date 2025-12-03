@@ -581,19 +581,13 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Building version: $VERSION"
 
-      - name: Verify version matches pyproject.toml
+      - name: Update version in pyproject.toml
         run: |
-          PYPROJECT_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
           TAG_VERSION=${{ steps.version.outputs.version }}
-          echo "Tag version: $TAG_VERSION"
-          echo "pyproject.toml version: $PYPROJECT_VERSION"
-          if [ "$TAG_VERSION" != "$PYPROJECT_VERSION" ]; then
-            echo "Error: Version mismatch!"
-            echo "Git tag: v$TAG_VERSION"
-            echo "pyproject.toml: $PYPROJECT_VERSION"
-            echo "Please update pyproject.toml version to match the tag"
-            exit 1
-          fi
+          echo "Setting version to: $TAG_VERSION"
+          sed -i "s/^version = .*/version = \"$TAG_VERSION\"/" pyproject.toml
+          echo "Updated pyproject.toml version:"
+          grep '^version = ' pyproject.toml
 
       - name: Build package
         run: python -m build
