@@ -111,7 +111,7 @@ jobs:
           pip-licenses --format=json --output-file=security-reports/licenses.json
 
       - name: Upload security reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: always()
         with:
           name: security-reports
@@ -150,7 +150,7 @@ jobs:
         run: pytest tests/test_security.py -v --tb=short --junitxml=junit-security-${{ matrix.python-version }}.xml
 
       - name: Upload test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: always()
         with:
           name: test-results-${{ matrix.python-version }}
@@ -194,7 +194,7 @@ jobs:
           fail_ci_if_error: false
 
       - name: Upload coverage reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: coverage-reports
           path: |
@@ -272,7 +272,7 @@ jobs:
 
       - name: Upload Docker image artifact
         if: github.event_name == 'pull_request' || (github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/v'))
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: docker-image
           path: /tmp/docker-image.tar.gz
@@ -374,7 +374,7 @@ jobs:
           syft dir:. -o cyclonedx-json > sbom_output/source_cyclonedx.json
 
       - name: Upload SBOM artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: sbom-reports
           path: sbom_output/
@@ -400,7 +400,7 @@ jobs:
         run: mkdocs build --strict
 
       - name: Upload documentation
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: documentation
           path: site/
@@ -485,7 +485,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload report documentation
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: report-documentation
           path: ${{ env.REPORTS_DIR }}/
@@ -597,7 +597,7 @@ jobs:
         run: twine check dist/*
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: python-package
           path: dist/
