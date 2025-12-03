@@ -98,10 +98,10 @@ Modern Python wrapper for MSN Weather with Flask API, React frontend, and produc
 
 ---
 
-<div align="center">
+<div align="center" markdown="1">
 
 **MSN Weather Wrapper** - Modern, Secure, Production-Ready
 
-[Get Started](DEVELOPMENT.md#quick-start) · [GitHub](https://github.com/jim-wyatt/msn-weather-wrapper)
+[Get Started](DEVELOPMENT.md#quick-start){ .md-button .md-button--primary } · [GitHub](https://github.com/jim-wyatt/msn-weather-wrapper){ .md-button }
 
 </div>
