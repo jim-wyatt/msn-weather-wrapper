@@ -20,10 +20,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
@@ -37,13 +37,13 @@ jobs:
         run: |
           # Get current versions
           pip list --format=freeze > before.txt
-          
+
           # Update all packages to latest
           pip install --upgrade -e ".[dev]"
-          
+
           # Get new versions
           pip list --format=freeze > after.txt
-          
+
           # Check if there are differences
           if ! diff -q before.txt after.txt > /dev/null; then
             echo "has_updates=true" >> $GITHUB_OUTPUT
@@ -62,7 +62,7 @@ jobs:
 
       - name: Create Pull Request
         if: steps.update.outputs.has_updates == 'true'
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'chore: update dependencies'
@@ -77,7 +77,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
@@ -92,10 +92,10 @@ jobs:
         run: |
           # Backup current package.json
           cp package.json package.json.bak
-          
+
           # Update dependencies
           npm update
-          
+
           # Check if there are changes
           if ! diff -q package.json package.json.bak > /dev/null; then
             echo "has_updates=true" >> $GITHUB_OUTPUT
@@ -113,7 +113,7 @@ jobs:
 
       - name: Create Pull Request
         if: steps.update.outputs.has_updates == 'true'
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'chore: update frontend dependencies'
@@ -128,10 +128,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
@@ -150,7 +150,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload audit reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: security-audit
           path: |
@@ -163,7 +163,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload npm audit
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: npm-security-audit
           path: frontend/npm-audit-report.json
