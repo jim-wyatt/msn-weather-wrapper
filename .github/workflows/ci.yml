@@ -165,7 +165,7 @@ jobs:
           pycobertura show --format markdown coverage.xml > coverage-report.md || echo "Coverage: See HTML report" > coverage-report.md
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           file: ./coverage.xml
           flags: unittests
