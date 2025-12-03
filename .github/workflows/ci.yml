@@ -441,7 +441,7 @@ jobs:
         uses: actions/download-artifact@v4.1.3
         with:
           name: report-documentation
-          path: ${{ env.REPORTS_DIR }}/
+          path: ci-reports/
         continue-on-error: true
 
       - name: Download coverage reports (for badges)
@@ -454,15 +454,15 @@ jobs:
       - name: Verify and merge reports
         run: |
           echo "=== Generated Reports (from CI) ==="
-          ls -la ${{ env.REPORTS_DIR }}/ || echo "No generated reports found"
+          ls -la ci-reports/ || echo "No generated reports found"
           echo ""
           echo "=== Existing Reports (from repo) ==="
           git ls-files ${{ env.REPORTS_DIR }}/ || echo "No existing reports in repo"
           echo ""
           # Copy generated reports over existing ones if they exist
-          if [ -d "${{ env.REPORTS_DIR }}" ] && [ "$(ls -A artifacts/reports 2>/dev/null)" ]; then
+          if [ -d "ci-reports" ] && [ "$(ls -A ci-reports 2>/dev/null)" ]; then
             echo "Merging CI-generated reports into docs..."
-            cp -f artifacts/reports/*.md ${{ env.REPORTS_DIR }}/ 2>/dev/null || true
+            cp -f ci-reports/*.md ${{ env.REPORTS_DIR }}/ 2>/dev/null || true
           fi
           echo ""
           echo "=== Final Reports for Deployment ==="
