@@ -14,7 +14,7 @@ Develop entirely in containers with Podman - consistent environment, easy setup,
 **Services available at:**
 - Frontend: http://localhost:5173 (Vite HMR)
 - API: http://localhost:5000
-- Health: http://localhost:5000/api/v1/health/ready
+- Health: http://localhost:5000/api/v1/health
 
 ## Prerequisites
 
@@ -75,8 +75,8 @@ npm run type-check        # TypeScript check
 
 ### Making Changes
 
-**Backend:** Edit files in `src/` or `api.py` → Flask auto-reloads  
-**Frontend:** Edit files in `frontend/src/` → Vite HMR updates instantly  
+**Backend:** Edit files in `src/` or `api.py` → Flask auto-reloads
+**Frontend:** Edit files in `frontend/src/` → Vite HMR updates instantly
 **Tests:** Edit test files → re-run tests
 
 All source code is mounted as volumes - changes reflect immediately.

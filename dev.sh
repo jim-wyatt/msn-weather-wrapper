@@ -107,7 +107,7 @@ start_dev() {
     echo "Services available at:"
     echo "  Frontend:  http://localhost:5173"
     echo "  API:       http://localhost:5000"
-    echo "  Health:    http://localhost:5000/api/health"
+    echo "  Health:    http://localhost:5000/api/v1/health"
     echo ""
     echo "View logs with: ./dev.sh logs"
     echo "Check status with: ./dev.sh status"
@@ -206,7 +206,7 @@ show_status() {
     if podman ps | grep -q "msn-weather-api-dev"; then
         echo "Service Health:"
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        if curl -s http://localhost:5000/api/health > /dev/null 2>&1; then
+        if curl -s http://localhost:5000/api/v1/health > /dev/null 2>&1; then
             log_success "API:       http://localhost:5000 - HEALTHY"
         else
             log_warning "API:       http://localhost:5000 - NOT RESPONDING"
@@ -466,7 +466,7 @@ services:
       - PYTHONUNBUFFERED=1
     command: python api.py
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/v1/health"]
       interval: 30s
       timeout: 10s
       retries: 3
