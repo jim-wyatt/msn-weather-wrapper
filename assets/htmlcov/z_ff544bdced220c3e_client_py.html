@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_ff544bdced220c3e_models_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.12.0">coverage.py v7.12.0</a>,
-            created at 2025-12-03 17:09 +0000
+            created at 2025-12-03 17:56 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -88,7 +88,7 @@
     <p class="pln"><span class="n"><a id="t6" href="#t6">6</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t7" href="#t7">7</a></span><span class="t"><span class="key">import</span> <span class="nam">requests</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t8" href="#t8">8</a></span><span class="t"><span class="key">from</span> <span class="nam">bs4</span> <span class="key">import</span> <span class="nam">BeautifulSoup</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t9" href="#t9">9</a></span><span class="t"><span class="key">from</span> <span class="nam">geopy</span><span class="op">.</span><span class="nam">geocoders</span> <span class="key">import</span> <span class="nam">Nominatim</span>  <span class="com"># type: ignore[import-untyped]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t9" href="#t9">9</a></span><span class="t"><span class="key">from</span> <span class="nam">geopy</span><span class="op">.</span><span class="nam">geocoders</span> <span class="key">import</span> <span class="nam">Nominatim</span>  <span class="com"># type: ignore[import-not-found, import-untyped]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t10" href="#t10">10</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t11" href="#t11">11</a></span><span class="t"><span class="key">from</span> <span class="nam">msn_weather_wrapper</span><span class="op">.</span><span class="nam">models</span> <span class="key">import</span> <span class="nam">Location</span><span class="op">,</span> <span class="nam">WeatherData</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t12" href="#t12">12</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -313,7 +313,7 @@
     <p class="run"><span class="n"><a id="t231" href="#t231">231</a></span><span class="t">                <span class="nam">text</span> <span class="op">=</span> <span class="nam">element</span><span class="op">.</span><span class="nam">get_text</span><span class="op">(</span><span class="nam">strip</span><span class="op">=</span><span class="key">True</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t232" href="#t232">232</a></span><span class="t">                <span class="com"># Filter out numbers and very short strings</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t233" href="#t233">233</a></span><span class="t">                <span class="key">if</span> <span class="nam">text</span> <span class="key">and</span> <span class="nam">len</span><span class="op">(</span><span class="nam">text</span><span class="op">)</span> <span class="op">></span> <span class="num">2</span> <span class="key">and</span> <span class="key">not</span> <span class="nam">text</span><span class="op">.</span><span class="nam">isdigit</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t234" href="#t234">234</a></span><span class="t">                    <span class="key">return</span> <span class="nam">text</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t234" href="#t234">234</a></span><span class="t">                    <span class="key">return</span> <span class="nam">str</span><span class="op">(</span><span class="nam">text</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t235" href="#t235">235</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t236" href="#t236">236</a></span><span class="t">        <span class="com"># Fallback to searching for common weather terms</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t237" href="#t237">237</a></span><span class="t">        <span class="nam">weather_terms</span> <span class="op">=</span> <span class="op">[</span>&nbsp;</span><span class="r"></span></p>
@@ -399,7 +399,7 @@
             <a class="nav" href="z_ff544bdced220c3e_models_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.12.0">coverage.py v7.12.0</a>,
-            created at 2025-12-03 17:09 +0000
+            created at 2025-12-03 17:56 +0000
         </p>
     </div>
 </footer>
