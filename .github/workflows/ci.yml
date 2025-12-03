@@ -664,10 +664,32 @@ jobs:
             echo "prerelease=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Download all artifacts
+      - name: Download Python package
         uses: actions/download-artifact@v6
         with:
-          path: release-artifacts/
+          name: python-package
+          path: release-artifacts/python-package/
+
+      - name: Download SBOM reports
+        uses: actions/download-artifact@v6
+        with:
+          name: sbom-reports
+          path: release-artifacts/sbom-reports/
+        continue-on-error: true
+
+      - name: Download coverage reports
+        uses: actions/download-artifact@v6
+        with:
+          name: coverage-reports
+          path: release-artifacts/coverage-reports/
+        continue-on-error: true
+
+      - name: Download security reports
+        uses: actions/download-artifact@v6
+        with:
+          name: security-reports
+          path: release-artifacts/security-reports/
+        continue-on-error: true
 
       - name: Create release notes
         run: |
