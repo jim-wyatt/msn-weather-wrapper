@@ -2,7 +2,8 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Visual Regression Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:5173');
+    await page.goto('/', { waitUntil: 'load' });
+    await page.waitForSelector('h1:has-text("MSN Weather")', { timeout: 10000 });
   });
 
   test('should match homepage screenshot', async ({ page }) => {

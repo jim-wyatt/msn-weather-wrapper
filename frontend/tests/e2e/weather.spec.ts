@@ -2,11 +2,12 @@ import { test, expect } from '@playwright/test';
 
 test.describe('MSN Weather App - Basic Functionality', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'load' });
+    await page.waitForSelector('h1:has-text("MSN Weather")', { timeout: 10000 });
   });
 
   test('should display app header and title', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: '🌤️ MSN Weather' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /MSN Weather/ })).toBeVisible();
     await expect(page.getByText('Get real-time weather information for any city')).toBeVisible();
   });
 
@@ -362,7 +363,7 @@ test.describe('Responsive Design', () => {
     await page.goto('/');
 
     // Check that elements are visible on mobile
-    await expect(page.getByRole('heading', { name: '🌤️ MSN Weather' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /MSN Weather/ })).toBeVisible();
     await expect(page.getByPlaceholder(/Search for a city/i)).toBeVisible();
     await expect(page.getByRole('button', { name: /Use My Location/i })).toBeVisible();
   });

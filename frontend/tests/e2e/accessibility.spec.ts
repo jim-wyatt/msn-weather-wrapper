@@ -4,7 +4,8 @@ import AxeBuilder from '@axe-core/playwright';
 test.describe('Accessibility Tests', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to the application before each test
-    await page.goto('http://localhost:5173');
+    await page.goto('/', { waitUntil: 'load' });
+    await page.waitForSelector('h1:has-text("MSN Weather")', { timeout: 10000 });
   });
 
   test('should not have any automatically detectable accessibility issues on homepage', async ({ page }) => {

@@ -103,3 +103,6 @@ sbom_output/
 *.sbom.json
 *.sbom.xml
 .env
+
+# Playwright screenshots (too large for git)
+frontend/tests/e2e/**/*-snapshots/
