@@ -1,3 +1,5 @@
+n## New Feature
+- Adds a minor documentation note to test automated minor release.
 # MSN Weather Wrapper
 
 > A modern, production-ready Python wrapper for MSN Weather with Flask REST API and React frontend.
@@ -268,3 +270,6 @@ This project is an unofficial wrapper for MSN Weather data and is provided for e
 [Get Started](#quick-start) · [Documentation](https://jim-wyatt.github.io/msn-weather-wrapper/) · [GitHub](https://github.com/jim-wyatt/msn-weather-wrapper)
 
 </div>
+
+## New Feature
+- Adds a minor documentation note to test automated minor release.
