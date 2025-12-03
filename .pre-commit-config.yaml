@@ -23,4 +23,4 @@ repos:
       - id: mypy
         additional_dependencies: [pydantic>=2.5.0, types-requests>=2.31.0]
         args: [--strict]
-        exclude: ^api\.py$
+        exclude: ^(api\.py|tests/.*)

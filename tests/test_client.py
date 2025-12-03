@@ -351,3 +351,137 @@ def test_mph_to_kmh_conversion() -> None:
     expected = 10 * 1.60934  # mph to km/h
     assert abs(wind_speed - expected) < 0.1
     client.close()
+
+
+def test_ms_to_kmh_conversion() -> None:
+    """Test wind speed conversion from m/s to km/h."""
+    html = "<div>Wind: 10 m/s</div>"
+    soup = BeautifulSoup(html, "lxml")
+    client = WeatherClient()
+    wind_speed = client._extract_wind_speed(soup)
+    expected = 10 * 3.6  # m/s to km/h
+    assert abs(wind_speed - expected) < 0.1
+    client.close()
+
+
+def test_extract_weather_json_empty_forecast() -> None:
+    """Test JSON extraction when forecast array is empty."""
+    html = """
+    <html>
+        <script type="application/json">
+        {
+            "WeatherData": {
+                "_@STATE@_": {
+                    "forecast": []
+                }
+            }
+        }
+        </script>
+    </html>
+    """
+    client = WeatherClient()
+    result = client._extract_weather_from_json(html)
+    assert result is None
+    client.close()
+
+
+def test_extract_weather_json_no_hourly() -> None:
+    """Test JSON extraction when hourly data is missing."""
+    html = """
+    <html>
+        <script type="application/json">
+        {
+            "WeatherData": {
+                "_@STATE@_": {
+                    "forecast": [{"daily": "data"}]
+                }
+            }
+        }
+        </script>
+    </html>
+    """
+    client = WeatherClient()
+    result = client._extract_weather_from_json(html)
+    assert result is None
+    client.close()
+
+
+def test_extract_weather_json_empty_hourly() -> None:
+    """Test JSON extraction when hourly array is empty."""
+    html = """
+    <html>
+        <script type="application/json">
+        {
+            "WeatherData": {
+                "_@STATE@_": {
+                    "forecast": [{"hourly": []}]
+                }
+            }
+        }
+        </script>
+    </html>
+    """
+    client = WeatherClient()
+    result = client._extract_weather_from_json(html)
+    assert result is None
+    client.close()
+
+
+def test_extract_weather_json_exception() -> None:
+    """Test JSON extraction handles invalid data gracefully by returning defaults."""
+    html = """
+    <html>
+        <script type="application/json">
+        {
+            "WeatherData": {
+                "_@STATE@_": {
+                    "forecast": [{"hourly": [{"temp": "invalid"}]}]
+                }
+            }
+        }
+        </script>
+    </html>
+    """
+    client = WeatherClient()
+    result = client._extract_weather_from_json(html)
+    # Should return data with defaults when parsing fails
+    assert result is not None
+    assert result["condition"] == "Unknown"
+    assert result["humidity"] == 50
+    client.close()
+
+
+def test_humidity_extraction_with_parent_element() -> None:
+    """Test humidity extraction when found in parent element."""
+    html = "<div class='humidity'>75%</div>"
+    soup = BeautifulSoup(html, "lxml")
+    client = WeatherClient()
+    humidity = client._extract_humidity(soup)
+    assert humidity == 75
+    client.close()
+
+
+@patch("msn_weather_wrapper.client.Nominatim")
+def test_get_weather_by_coordinates_geocode_failure(mock_nominatim: Mock) -> None:
+    """Test get_weather_by_coordinates when geocoding fails."""
+    mock_geocoder = Mock()
+    mock_geocoder.reverse.return_value = None
+    mock_nominatim.return_value = mock_geocoder
+
+    client = WeatherClient()
+    with pytest.raises(ValueError, match="Could not determine location for coordinates"):
+        client.get_weather_by_coordinates(51.5074, -0.1278)
+    client.close()
+
+
+@patch("msn_weather_wrapper.client.Nominatim")
+def test_get_weather_by_coordinates_geocode_exception(mock_nominatim: Mock) -> None:
+    """Test get_weather_by_coordinates when geocoding raises exception."""
+    mock_geocoder = Mock()
+    mock_geocoder.reverse.side_effect = Exception("Geocoding API error")
+    mock_nominatim.return_value = mock_geocoder
+
+    client = WeatherClient()
+    with pytest.raises(ValueError, match="Failed to reverse geocode coordinates"):
+        client.get_weather_by_coordinates(51.5074, -0.1278)
+    client.close()
