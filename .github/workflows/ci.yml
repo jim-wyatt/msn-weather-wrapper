@@ -418,6 +418,36 @@ jobs:
     needs: [coverage, security, unit-tests]
     if: always()
     steps:
+      # Wait for performance tests to complete if they're running
+      - name: Wait for performance tests
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Checking for running performance tests..."
+          COMMIT_SHA="${{ github.sha }}"
+
+          # Wait up to 5 minutes for performance tests to appear and complete
+          for i in {1..30}; do
+            PERF_RUN=$(gh run list --workflow=performance.yml --commit $COMMIT_SHA --json status,conclusion,databaseId --limit 1)
+
+            if [ "$(echo "$PERF_RUN" | jq length)" -gt 0 ]; then
+              STATUS=$(echo "$PERF_RUN" | jq -r '.[0].status')
+              if [ "$STATUS" = "completed" ]; then
+                echo "Performance tests completed"
+                break
+              elif [ "$STATUS" = "in_progress" ] || [ "$STATUS" = "queued" ]; then
+                RUN_ID=$(echo "$PERF_RUN" | jq -r '.[0].databaseId')
+                echo "Performance tests running (ID: $RUN_ID), waiting..."
+                sleep 10
+              fi
+            else
+              echo "No performance tests found yet, waiting... (attempt $i/30)"
+              sleep 10
+            fi
+          done
+        continue-on-error: true
+
       - name: Checkout code
         uses: actions/checkout@v6
 
