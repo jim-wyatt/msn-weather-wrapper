@@ -228,8 +228,9 @@ jobs:
           # Wait a moment for tag to be fully processed
           sleep 5
 
-          # Trigger publish-release workflow
-          gh workflow run publish-release.yml
+          # Trigger publish-release workflow with the new version tag
+          gh workflow run publish-release.yml \
+            -f tag="v$NEW_VERSION"
 
           echo "🚀 Triggered publish-release workflow for v$NEW_VERSION"
 
