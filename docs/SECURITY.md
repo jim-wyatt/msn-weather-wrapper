@@ -21,45 +21,44 @@ Please do not open public issues for security vulnerabilities.
 ### Security Defense Layers
 
 ```mermaid
-graph LR
-    subgraph "Input Defense"
-        A1["🔍 Input Received"] --> A2["✂️ Whitespace Trim"]
-        A2 --> A3["🚫 Empty Check"]
+graph TD
+    subgraph Layer1["🔍 Layer 1: Input Reception"]
+        L1["Input Received<br/>(user parameter)"]
     end
 
-    subgraph "Content Filtering"
-        B1["🔒 Sanitize<br/>Remove dangerous chars"] --> B2["📏 Length Limit<br/>Max 100 chars"]
-        B2 --> B3["🏷️ Type Check<br/>String only"]
+    subgraph Layer2["✂️ Layer 2: Data Cleaning"]
+        L2["Trim Whitespace<br/>Normalize input"]
     end
 
-    subgraph "Attack Prevention"
-        C1["SQL Keywords<br/>Blocked"] -.-> C2["🛡️ Safe<br/>Execution"]
-        C3["XSS Tags<br/>Blocked"] -.-> C2
-        C4["Path Traversal<br/>Blocked"] -.-> C2
-        C5["Shell Commands<br/>Blocked"] -.-> C2
+    subgraph Layer3["📏 Layer 3: Validation"]
+        L3["Empty Check<br/>Length Limit ≤ 100 chars<br/>Type Validation (string only)"]
     end
 
-    subgraph "Rate Limiting"
-        D1["30 req/min<br/>per IP"] --> D2["⛔ DoS<br/>Protection"]
-        E1["200 req/hour<br/>Global"] --> D2
+    subgraph Layer4["🔒 Layer 4: Sanitization"]
+        L4["Block Dangerous Chars<br/>Remove: ; &lt;&gt; ` $ | &amp; /"]
     end
 
-    A3 --> B1
-    B3 --> C1
-    B3 --> C3
-    B3 --> C4
-    B3 --> C5
-    C2 --> D1
+    subgraph Layer5["🛡️ Layer 5: Attack Prevention"]
+        L5["SQL Injection<br/>XSS Prevention<br/>Path Traversal<br/>Command Injection<br/>Null Byte Blocking"]
+    end
 
-    style A1 fill:#e8f5e9
-    style A2 fill:#c8e6c9
-    style A3 fill:#a5d6a7
-    style B1 fill:#bbdefb
-    style B2 fill:#90caf9
-    style B3 fill:#64b5f6
-    style C2 fill:#ffe0b2
-    style D1 fill:#ffccbc
-    style D2 fill:#ff9800,color:#fff
+    subgraph Layer6["⛔ Layer 6: Rate Limiting"]
+        L6["30 req/min per IP<br/>200 req/hour global<br/>DoS/DDoS Protection"]
+    end
+
+    subgraph Layer7["✅ Layer 7: Safe Execution"]
+        L7["Process Request<br/>Return Response"]
+    end
+
+    L1 --> L2 --> L3 --> L4 --> L5 --> L6 --> L7
+
+    style L1 fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#000
+    style L2 fill:#C8E6C9,stroke:#2E7D32,stroke-width:2px,color:#000
+    style L3 fill:#A5D6A7,stroke:#2E7D32,stroke-width:2px,color:#000
+    style L4 fill:#81C784,stroke:#2E7D32,stroke-width:2px,color:#fff
+    style L5 fill:#4CAF50,stroke:#2E7D32,stroke-width:2px,color:#fff
+    style L6 fill:#F57C00,stroke:#E65100,stroke-width:2px,color:#fff
+    style L7 fill:#2E7D32,stroke:#1B5E20,stroke-width:2px,color:#fff
 ```
 
 ### Attack Prevention
