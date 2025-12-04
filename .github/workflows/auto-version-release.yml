@@ -205,17 +205,21 @@ jobs:
           git checkout main
           git pull origin main
 
+          # Get the latest commit SHA on main
+          COMMIT_SHA=$(git rev-parse HEAD)
+          echo "📍 Tagging commit: $COMMIT_SHA"
+
           # Create and push tag
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git tag -a "v$NEW_VERSION" \
+          git tag -a "v$NEW_VERSION" "$COMMIT_SHA" \
                   -m "Release v$NEW_VERSION" \
                   -m "Auto-generated from PR #${{ github.event.inputs.pr_number }}: ${{ github.event.inputs.pr_title }}" \
                   -m "Bump type: ${{ steps.bump_type.outputs.bump_type }}"
 
           git push origin "v$NEW_VERSION"
-          echo "🏷️  Created and pushed tag v$NEW_VERSION"
+          echo "🏷️  Created and pushed tag v$NEW_VERSION at commit $COMMIT_SHA"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
