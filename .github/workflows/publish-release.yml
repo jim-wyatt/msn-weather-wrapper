@@ -1,10 +1,17 @@
 name: Publish Release
 
 # Triggered automatically when a version tag is created (v*.*.*)
+# or manually via workflow_dispatch for fallback/testing
 on:
   push:
     tags:
       - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to publish (e.g., v1.6.3)'
+        required: false
+        type: string
 
 env:
   PYTHON_VERSION: '3.12'
@@ -32,8 +39,15 @@ jobs:
       - name: Extract version from tag
         id: version
         run: |
-          # Extract version from tag (GITHUB_REF is refs/tags/vX.X.X for tag push events)
-          VERSION=${GITHUB_REF#refs/tags/v}
+          # Support both tag push and workflow_dispatch triggers
+          if [[ -n "${{ github.event.inputs.tag }}" ]]; then
+            # Manual workflow_dispatch trigger
+            VERSION="${{ github.event.inputs.tag }}"
+            VERSION=${VERSION#v}  # Remove leading 'v' if present
+          else
+            # Automatic tag push trigger (GITHUB_REF is refs/tags/vX.X.X)
+            VERSION=${GITHUB_REF#refs/tags/v}
+          fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Building version: $VERSION"
 
