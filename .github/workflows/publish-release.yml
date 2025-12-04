@@ -109,7 +109,15 @@ jobs:
       - name: Extract version info
         id: version
         run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
+          # Support both tag push and workflow_dispatch triggers
+          if [[ -n "${{ github.event.inputs.tag }}" ]]; then
+            # Manual workflow_dispatch trigger
+            VERSION="${{ github.event.inputs.tag }}"
+            VERSION=${VERSION#v}  # Remove leading 'v' if present
+          else
+            # Automatic tag push trigger (GITHUB_REF is refs/tags/vX.X.X)
+            VERSION=${GITHUB_REF#refs/tags/v}
+          fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           # Check if this is a prerelease (contains alpha, beta, rc)
           if [[ $VERSION =~ (alpha|beta|rc) ]]; then
