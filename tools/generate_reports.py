@@ -439,57 +439,6 @@ for detailed information.
     print(f"CI/CD report generated: {output_path}")
 
 
-def main() -> None:
-    """Main entry point."""
-    parser = argparse.ArgumentParser(description="Generate CI/CD reports for documentation")
-    parser.add_argument(
-        "--type",
-        required=True,
-        choices=["test", "coverage", "security", "license", "cicd", "performance"],
-        help="Type of report to generate",
-    )
-    parser.add_argument("--input", type=Path, help="Input directory containing artifacts")
-    parser.add_argument("--output", type=Path, required=True, help="Output markdown file")
-
-    args = parser.parse_args()
-
-    try:
-        if args.type == "test":
-            if not args.input:
-                print("--input required for test reports", file=sys.stderr)
-                sys.exit(1)
-            generate_test_report(args.input, args.output)
-        elif args.type == "coverage":
-            if not args.input:
-                print("--input required for coverage reports", file=sys.stderr)
-                sys.exit(1)
-            generate_coverage_report(args.input, args.output)
-        elif args.type == "security":
-            if not args.input:
-                print("--input required for security reports", file=sys.stderr)
-                sys.exit(1)
-            generate_security_report(args.input, args.output)
-        elif args.type == "license":
-            if not args.input:
-                print("--input required for license reports", file=sys.stderr)
-                sys.exit(1)
-            generate_license_report(args.input, args.output)
-        elif args.type == "cicd":
-            generate_cicd_report(args.output)
-        elif args.type == "performance":
-            generate_performance_report(args.output, args.input)
-
-        print(f"✅ Report generation complete: {args.output}")
-
-    except Exception as e:
-        print(f"❌ Error generating report: {e}", file=sys.stderr)
-        sys.exit(1)
-
-
-if __name__ == "__main__":
-    main()
-
-
 def generate_performance_report(output_path: Path, input_path: Path | None = None) -> None:
     """Generate performance report placeholder with timestamp.
 
@@ -596,3 +545,54 @@ It includes Locust load-test stats and pytest-benchmark summaries.
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(content)
     print(f"Performance report generated: {output_path}")
+
+
+def main() -> None:
+    """Main entry point."""
+    parser = argparse.ArgumentParser(description="Generate CI/CD reports for documentation")
+    parser.add_argument(
+        "--type",
+        required=True,
+        choices=["test", "coverage", "security", "license", "cicd", "performance"],
+        help="Type of report to generate",
+    )
+    parser.add_argument("--input", type=Path, help="Input directory containing artifacts")
+    parser.add_argument("--output", type=Path, required=True, help="Output markdown file")
+
+    args = parser.parse_args()
+
+    try:
+        if args.type == "test":
+            if not args.input:
+                print("--input required for test reports", file=sys.stderr)
+                sys.exit(1)
+            generate_test_report(args.input, args.output)
+        elif args.type == "coverage":
+            if not args.input:
+                print("--input required for coverage reports", file=sys.stderr)
+                sys.exit(1)
+            generate_coverage_report(args.input, args.output)
+        elif args.type == "security":
+            if not args.input:
+                print("--input required for security reports", file=sys.stderr)
+                sys.exit(1)
+            generate_security_report(args.input, args.output)
+        elif args.type == "license":
+            if not args.input:
+                print("--input required for license reports", file=sys.stderr)
+                sys.exit(1)
+            generate_license_report(args.input, args.output)
+        elif args.type == "cicd":
+            generate_cicd_report(args.output)
+        elif args.type == "performance":
+            generate_performance_report(args.output, args.input)
+
+        print(f"✅ Report generation complete: {args.output}")
+
+    except Exception as e:
+        print(f"❌ Error generating report: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
