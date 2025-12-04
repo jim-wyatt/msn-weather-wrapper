@@ -2,6 +2,20 @@
 
 This project follows [Semantic Versioning 2.0.0](https://semver.org/).
 
+## Automated Versioning (Primary Method)
+
+**The project uses automated PR-based versioning** where every merged pull request automatically increments the version and publishes to PyPI. See [AUTOMATED_VERSIONING.md](AUTOMATED_VERSIONING.md) for the complete guide.
+
+**Quick summary:**
+- PR labels, title, or branch prefix determine version bump type
+- Major (breaking changes): `major`, `breaking` labels or `feat!:` title
+- Minor (new features): `minor`, `feature` labels or `feat:` title
+- Patch (bug fixes): `patch`, `fix` labels or `fix:` title (default)
+
+## Manual Release Process (Alternative)
+
+If you need to release manually without the automated system:
+
 ## Version Format
 
 ```
@@ -16,24 +30,21 @@ MAJOR.MINOR.PATCH[-PRERELEASE][+BUILD]
 
 ## Release Process
 
-### Automated Release (Recommended)
+### Automated Release (Primary Method)
 
-1. **Run the Automated Release Workflow**
-   - Go to Actions → Automated Release → Run workflow
-   - Or use the CLI:
-     ```bash
-     gh workflow run release.yml
-     ```
+The project uses automated PR-based versioning. When a PR is merged to main:
 
-2. **Review and Merge the PR**
-   - The workflow creates a PR with version bump and changelog
-   - Review the changes
-   - Merge the PR
+1. **Auto-Version Workflow Triggers**
+   - `auto-version-release.yml` automatically runs
+   - Determines version bump from PR labels, title, or branch prefix
+
+2. **Version Bump PR Created**
+   - The workflow creates a PR with version updates
+   - Updates `pyproject.toml` and `CHANGELOG.md`
+   - Auto-merge is enabled
 
 3. **Automatic Tag Creation**
-   - The `auto-tag-release.yml` workflow automatically detects the merge
-   - Extracts version from `pyproject.toml`
-   - Creates and pushes the git tag (e.g., `v1.2.3`)
+   - When the version bump PR merges, a git tag is created (e.g., `v1.2.3`)
 
 4. **CI/CD Pipeline Runs Automatically**
    - Build Python package
@@ -41,6 +52,8 @@ MAJOR.MINOR.PATCH[-PRERELEASE][+BUILD]
    - Build container images
    - Generate SBOM
    - Create GitHub Release with artifacts
+
+See [AUTOMATED_VERSIONING.md](AUTOMATED_VERSIONING.md) for complete details.
 
 ### Manual Release Process
 

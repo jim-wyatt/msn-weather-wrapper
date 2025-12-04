@@ -87,8 +87,7 @@ nav:
       - Development Guide: DEVELOPMENT.md
       - Container Setup: CONTAINER_DEV_SETUP.md
       - Versioning Guide: VERSIONING.md
-      - Automatic Versioning: AUTOMATIC_VERSIONING.md
-      - Quick Start: VERSIONING_QUICKSTART.md
+      - Automated Versioning: AUTOMATED_VERSIONING.md
 
   - Deployment:
       - SBOM Generation: SYFT_GUIDE.md
