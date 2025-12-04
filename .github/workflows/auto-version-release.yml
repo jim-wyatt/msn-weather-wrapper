@@ -11,8 +11,50 @@ permissions:
   pull-requests: write
 
 jobs:
+  wait-for-ci:
+    name: Wait for CI/CD to Pass
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for CI/CD Pipeline to succeed
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          COMMIT_SHA=${{ github.event.pull_request.merge_commit_sha }}
+
+          echo "Waiting for CI/CD Pipeline to complete for commit $COMMIT_SHA..."
+
+          # Poll for CI/CD status (max 10 minutes)
+          for i in {1..60}; do
+            # Get the most recent run of CI/CD Pipeline on this commit
+            RUN_STATUS=$(gh run list \
+              --workflow ci.yml \
+              --json status,conclusion,createdAt \
+              --limit 5 \
+              -q '.[] | select(.createdAt >= "2025-12-04T") | .conclusion' \
+              2>/dev/null | head -1 || echo "")
+
+            if [[ "$RUN_STATUS" == "success" ]]; then
+              echo "✓ CI/CD Pipeline passed"
+              exit 0
+            elif [[ "$RUN_STATUS" == "failure" ]]; then
+              echo "✗ CI/CD Pipeline failed"
+              exit 1
+            fi
+
+            if [[ $i -eq 60 ]]; then
+              echo "⏱ Timeout: CI/CD Pipeline did not complete within 10 minutes"
+              exit 1
+            fi
+
+            echo "[$i/60] Waiting for CI/CD Pipeline... (current status: $RUN_STATUS)"
+            sleep 10
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   auto-version:
     name: Auto Version Bump and Tag
+    needs: wait-for-ci
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
