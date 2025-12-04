@@ -562,27 +562,31 @@ It includes Locust load-test stats and pytest-benchmark summaries.
 
 ## 📊 Load Test (Locust)
 
-{(
-    'No Locust stats found'
-    if locust_stats is None
-    else (
-        f"Requests: {locust_stats['requests']} | "
-        f"Failures: {locust_stats['failures']} | "
-        f"Median RT: {locust_stats['median_response_time']} | "
-        f"Avg RT: {locust_stats['average_response_time']}"
-    )
-)}
+{
+        (
+            "No Locust stats found"
+            if locust_stats is None
+            else (
+                f"Requests: {locust_stats['requests']} | "
+                f"Failures: {locust_stats['failures']} | "
+                f"Median RT: {locust_stats['median_response_time']} | "
+                f"Avg RT: {locust_stats['average_response_time']}"
+            )
+        )
+    }
 
 ## 🧪 Benchmarks (pytest-benchmark)
 
-{(
-    'No benchmark results found'
-    if benchmark_summary is None
-    else (
-        f"Benchmarks: {benchmark_summary['count']} | "
-        f"Examples: {', '.join(benchmark_summary['examples'])}"
-    )
-)}
+{
+        (
+            "No benchmark results found"
+            if benchmark_summary is None
+            else (
+                f"Benchmarks: {benchmark_summary['count']} | "
+                f"Examples: {', '.join(benchmark_summary['examples'])}"
+            )
+        )
+    }
 
 ---
 
