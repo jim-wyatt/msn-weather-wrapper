@@ -6,22 +6,22 @@ Complete testing documentation for MSN Weather Wrapper, including test coverage,
 
 | Category | Count | Status |
 |----------|-------|--------|
-| **Backend Tests** | 109 | ✅ Passing |
-| **Frontend E2E Tests** | 33 | ✅ Passing (containerized) |
-| **Total Tests** | 142 | ✅ All passing |
+| **Backend Tests** | 65 | ✅ Passing |
+| **Frontend E2E Tests** | 40 | ✅ Passing (containerized) |
+| **Total Tests** | 105 | ✅ All passing |
 | **Code Coverage** | 92% | ✅ Exceeds target (85%) |
 
 ### Backend Coverage Breakdown
-- **Unit Tests**: 35 (client, models, API)
-- **Security Tests**: 43 (input validation, attack prevention, HTTP errors)
-- **Cache Tests**: 12 (TTL, concurrency, edge cases)
-- **Integration Tests**: 17 (live API testing)
-- **Coverage**: 92% overall (90% API, 96% client, 100% models)
+- **Client Tests**: 28 (weather data, parsing, conversions, geolocation)
+- **API Tests**: 33 (endpoints, validation, caching, health checks, coordinates, recent searches)
+- **Models**: 4 (Pydantic validation)
+- **Coverage**: 92% overall
 
 ### Frontend Test Coverage
-- **Accessibility Tests**: 13 (WCAG 2.1 Level AA)
-- **Visual Regression Tests**: 15 (7 viewports, 10+ states)
-- **Functional E2E Tests**: 5 (weather search, autocomplete)
+- **End-to-End Tests**: 40 total (Playwright)
+- **Accessibility Tests**: WCAG 2.1 Level AA compliance
+- **Visual Regression Tests**: Multiple viewports and states
+- **Functional Tests**: Weather search, autocomplete, geolocation
 - **Tool**: Playwright with @axe-core/playwright
 
 ## Quick Start
@@ -77,11 +77,11 @@ podman run --rm --network test-net \
   msn-weather-playwright:latest npx playwright test
 ```
 
-## Test Breakdown
+### Test Breakdown
 
-### Unit Tests (35 tests)
+### Backend Tests (65 tests)
 
-#### Client Tests (21 tests)
+#### Client Tests (28 tests)
 - Weather data fetching
 - Error handling
 - HTTP request validation
@@ -95,8 +95,8 @@ podman run --rm --network test-net \
 - Required fields
 - Optional fields
 
-#### API Tests (10 tests)
-- Health check endpoint (`/api/v1/health`)
+#### API Tests (33 tests)
+- Health check endpoints (`/api/v1/health`, `/api/v1/health/live`, `/api/v1/health/ready`)
 - GET request handling
 - POST request handling
 - Error responses

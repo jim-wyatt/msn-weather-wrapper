@@ -3,7 +3,7 @@
 Modern Python wrapper for MSN Weather with Flask API, React frontend, and production-ready containerized deployment.
 
 [![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-142%20passing-success)](TESTING.md)
+[![Tests](https://img.shields.io/badge/tests-105%20passing-success)](TESTING.md)
 [![Coverage](https://img.shields.io/badge/coverage-92%25-success)](TESTING.md)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/jim-wyatt/msn-weather-wrapper/blob/main/LICENSE)
 
@@ -73,7 +73,7 @@ Modern Python wrapper for MSN Weather with Flask API, React frontend, and produc
 | 📖 **Swagger UI** | Interactive API documentation | [Interactive Docs](API.md#interactive-api-documentation) |
 | ⚛️ **React Frontend** | React 19 + TypeScript 5.7 | [Frontend](API.md) |
 | 🐳 **Containerized** | Podman deployment | [Container Dev](CONTAINER_DEV_SETUP.md) |
-| ✅ **Tested** | 77 tests, 89% coverage | [Testing](TESTING.md) |
+| ✅ **Tested** | 105 tests (65 backend, 40 frontend), 92% coverage | [Testing](TESTING.md) |
 | 🔒 **Secure** | Enhanced security scanning | [Security](SECURITY.md) |
 | 📋 **SBOM** | Supply chain security | [SBOM Guide](SYFT_GUIDE.md) |
 
@@ -83,7 +83,7 @@ Modern Python wrapper for MSN Weather with Flask API, React frontend, and produc
 
 - **Backend**: Python 3.10+, Flask 3.1+, Flasgger (Swagger/OpenAPI), Pydantic 2.12+, Gunicorn 23.0+
 - **Frontend**: React 19.2, Vite 7.2, TypeScript 5.7+
-- **Testing**: pytest 9.0+, Playwright, 77 tests
+- **Testing**: pytest 8.0+, Playwright, 105 tests
 - **Quality**: ruff 0.14+, mypy 1.19+, pre-commit hooks
 - **Deployment**: Podman/Docker, Nginx, multi-stage builds
 

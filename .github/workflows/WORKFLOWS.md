@@ -56,15 +56,14 @@ refactor: simplify client logic           → 0.0.X (patch)
 | **`auto-version-release.yml`** | PR merged to main | Automatic version bumping and tagging |
 | **`publish-release.yml`** | Tag push (v*.*.*) | Build package, publish to PyPI, create GitHub Release |
 | **`ci.yml`** | Push, PR | Full CI/CD pipeline (test, build, docs) |
-| **`release.yml`** | Manual (workflow_dispatch) | Manual release creation with semantic-release (alternative) |
 
 ### Supplementary Workflows
 
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
-| **`security-scan.yml`** | Weekly schedule | Comprehensive security scanning (Trivy, Semgrep, Grype) |
+| **`security-scan.yml`** | Push/PR to main | Comprehensive security scanning (Bandit, Semgrep) |
 | **`dependencies.yml`** | Weekly schedule | Dependency updates via Dependabot |
-| **`performance.yml`** | PR to main | Performance benchmarking and regression testing |
+| **`performance.yml`** | PR to main | Performance benchmarking and load testing |
 
 ## 🔄 CI/CD Pipeline (`ci.yml`)
 
@@ -101,42 +100,25 @@ This workflow runs **independently** from CI to keep release operations separate
 
 ## 🛡️ Security Workflows
 
-### `security-scan.yml` (Weekly)
+### `security-scan.yml`
 
-Comprehensive security scanning:
+Runs on push to main and pull requests:
 
-- **Trivy**: Vulnerability scanning for containers and dependencies
+- **Bandit**: Python security linting
 - **Semgrep**: Static application security testing (SAST)
-- **Grype**: Vulnerability scanning for Docker images
-- **SBOM**: Generate and scan software bill of materials
-
-### `security` job in `ci.yml` (Every run)
-
-Fast critical security checks:
-
-- **Bandit**: Python security linting (fail on HIGH/CRITICAL)
-- **pip-audit**: Check for known vulnerabilities in dependencies
-- **License Compliance**: Generate license reports
-
-## 🔧 Manual Release (`release.yml`)
-
-For manual control over releases:
-
-1. Go to **Actions** → **Automated Release**
-2. Click **Run workflow**
-3. Optionally force a specific bump level (patch/minor/major)
-4. The workflow creates a release PR with changelog
-5. Review and merge the PR
-6. Auto-versioning workflow handles the rest
+- **Safety & pip-audit**: Dependency vulnerability scanning
+- **Trivy**: Container vulnerability scanning
+- **Grype**: SBOM-based vulnerability detection
+- **License Compliance**: Automated license checking
 
 ## 📊 Performance Testing (`performance.yml`)
 
-Runs on PRs to main:
+Runs on pull requests to main:
 
 - API endpoint performance benchmarking
 - Response time regression detection
-- Load testing with locust
-- Memory profiling
+- Load testing with Locust
+- Results compared against baseline
 
 ## 🔄 Dependency Management (`dependencies.yml`)
 
@@ -163,7 +145,7 @@ Weekly automated updates:
    - No secrets needed! GitHub token is auto-provided
    - PyPI uses trusted publishing (OIDC), no token storage required
 3. **Auto-Merge**: Version bump PRs use auto-merge for convenience
-4. **Manual Override**: Use `release.yml` for controlled releases when needed
+4. **Monitoring**: Watch workflow runs for any failures or issues
 
 ## ✨ Fully Automated Release Flow
 
@@ -222,7 +204,7 @@ The complete release process is now **fully automated** end-to-end:
 2. Is the PR closing event being received? Check PR logs in GitHub
 3. Are there any GITHUB_TOKEN permission issues?
 
-**Solution**: Run `release.yml` manually as a fallback
+**Solution**: Manually create a version bump PR or trigger `auto-version-release.yml` via workflow_dispatch
 
 ### PyPI publishing fails
 

@@ -4,6 +4,14 @@ CI/CD Report Generation Script
 
 Converts CI/CD pipeline artifacts (JUnit XML, coverage data, security scans, etc.)
 into markdown format for inclusion in the documentation site.
+
+Safety Features:
+- Preserves existing reports when no new data is available
+- Prevents overwriting if artifact parsing fails
+- Provides informative logging for troubleshooting
+
+This ensures documentation site always has valid reports even if some
+CI/CD jobs fail or produce no artifacts.
 """
 
 import argparse
@@ -139,6 +147,9 @@ def generate_test_report(input_dir: Path, output_path: Path) -> None:
         print("No JUnit XML files found", file=sys.stderr)
         contents = list(input_dir.glob("*")) if input_dir.exists() else "Directory does not exist"
         print(f"Directory contents: {contents}", file=sys.stderr)
+        # Don't overwrite existing report if no new data
+        if output_path.exists():
+            print(f"Preserving existing report: {output_path}")
         return
 
     # Parse all test results and map to filenames
@@ -241,10 +252,17 @@ def generate_coverage_report(input_dir: Path, output_path: Path) -> None:
     json_path = input_dir / "coverage.json"
     if not json_path.exists():
         print(f"Coverage JSON not found: {json_path}", file=sys.stderr)
+        # Don't overwrite existing report if no new data
+        if output_path.exists():
+            print(f"Preserving existing report: {output_path}")
         return
 
     data = parse_coverage_json(json_path)
     if not data:
+        print("Failed to parse coverage data", file=sys.stderr)
+        # Don't overwrite existing report if parsing failed
+        if output_path.exists():
+            print(f"Preserving existing report: {output_path}")
         return
 
     coverage = data["coverage"]
@@ -297,6 +315,13 @@ def generate_security_report(input_dir: Path, output_path: Path) -> None:
     bandit_data = {}
     if bandit_path.exists():
         bandit_data = parse_bandit_json(bandit_path)
+
+    # If no bandit data and path doesn't exist, preserve existing report
+    if not bandit_data and not bandit_path.exists():
+        print(f"Bandit report not found: {bandit_path}", file=sys.stderr)
+        if output_path.exists():
+            print(f"Preserving existing report: {output_path}")
+        return
 
     content = f"""# Security Scan Report
 
@@ -351,10 +376,17 @@ def generate_license_report(input_dir: Path, output_path: Path) -> None:
     json_path = input_dir / "licenses.json"
     if not json_path.exists():
         print(f"Licenses JSON not found: {json_path}", file=sys.stderr)
+        # Don't overwrite existing report if no new data
+        if output_path.exists():
+            print(f"Preserving existing report: {output_path}")
         return
 
     licenses = parse_licenses_json(json_path)
     if not licenses:
+        print("Failed to parse license data", file=sys.stderr)
+        # Don't overwrite existing report if parsing failed
+        if output_path.exists():
+            print(f"Preserving existing report: {output_path}")
         return
 
     # Count license types

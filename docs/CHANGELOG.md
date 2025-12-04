@@ -2,38 +2,6 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
-
-### Added
-- Gitignore cleanup option to `dev.sh clean` command with preview and confirmation
-- Service health status checking with `dev.sh status` command
-- Automatic health checks and readiness reporting in dev environment
-- Enhanced error handling for missing MSN API credentials
-- Dynamic README badges: PyPI downloads, Python versions, GitHub stars, and issues
-- **Automated semantic versioning**: All merged PRs now auto-increment version based on change type
-
-### Changed
-- **BREAKING**: All health check endpoints migrated to versioned API path `/api/v1/health`
-- Improved Vite proxy configuration to use Docker service names (`api:5000`) when running in containers
-- Performance workflow optimized: reduced load (50→20 users), shorter duration (2m→1m)
-- Performance tests now resilient to API failures (accept 500 errors when credentials missing)
-- Gunicorn configuration: 2 workers (down from 4), 300s timeout (up from 120s)
-- Dev.sh now checks port availability before starting services
-- Enhanced setup validation and error messages
-- Documentation: Performance Report moved under Reports section in navigation
-- README badges now use dynamic PyPI and GitHub sources for auto-updates
-- **Release workflow**: Now triggers automatically for all merged PRs with semantic version bumping
-
-### Fixed
-- Frontend unable to connect to API in Docker environment (service name resolution)
-- Benchmark workflow failing when no benchmark tests exist
-- Load tests crashing API due to missing credentials and excessive concurrency
-- Port conflict detection and reporting in development environment
-- Health endpoint consistency across all components (tests, CI/CD, compose files)
-- Frontend E2E tests: incorrect CSS selectors (`.autocomplete-item` → `.suggestion-item`)
-- Frontend E2E tests: test workflows expecting non-existent "Get Weather" button
-- Frontend E2E tests: tests using Enter key instead of clicking dropdown suggestions
-
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 

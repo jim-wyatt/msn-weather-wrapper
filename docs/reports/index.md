@@ -30,13 +30,14 @@ Reports are automatically generated during every CI/CD pipeline run:
 ## 📈 Key Metrics
 
 ### Test Suite Performance
-- **Total Tests**: 77 tests (35 unit, 25 security, 17 integration)
+- **Total Tests**: 105 tests (65 backend, 40 frontend E2E)
+- **Backend Tests**: 28 client, 33 API, 4 models
 - **Pass Rate**: 100%
-- **Execution Time**: ~5 seconds
+- **Execution Time**: ~5 seconds (backend)
 - **Python Versions**: 3.10, 3.11, 3.12
 
 ### Code Quality
-- **Coverage**: 90% overall (100% security code)
+- **Coverage**: 92% overall
 - **Linting**: Ruff (PEP 8 compliant)
 - **Type Checking**: mypy strict mode
 - **Security Scans**: Bandit, Safety, pip-audit
