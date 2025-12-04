@@ -39,7 +39,15 @@ jobs:
       - name: Extract version from tag
         id: version
         run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
+          # Support both tag push and workflow_dispatch triggers
+          if [[ -n "${{ github.event.inputs.tag }}" ]]; then
+            # Manual workflow_dispatch trigger
+            VERSION="${{ github.event.inputs.tag }}"
+            VERSION=${VERSION#v}  # Remove leading 'v' if present
+          else
+            # Automatic tag push trigger
+            VERSION=${GITHUB_REF#refs/tags/v}
+          fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Building version: $VERSION"
 
@@ -47,7 +55,7 @@ jobs:
         run: |
           TAG_VERSION=${{ steps.version.outputs.version }}
           echo "Setting version to: $TAG_VERSION"
-          sed -i "s/^version = .*/version = \"$TAG_VERSION\"/" pyproject.toml
+          sed -i "s|^version = .*|version = \"$TAG_VERSION\"|" pyproject.toml
           echo "Updated pyproject.toml version:"
           grep '^version = ' pyproject.toml
 
