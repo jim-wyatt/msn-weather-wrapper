@@ -18,6 +18,50 @@ Please do not open public issues for security vulnerabilities.
 - **Type Checking**: Enforces string types, rejects integers/booleans/arrays
 - **Whitespace Handling**: Trims and rejects empty/whitespace-only inputs
 
+### Security Defense Layers
+
+```mermaid
+graph LR
+    subgraph "Input Defense"
+        A1["🔍 Input Received"] --> A2["✂️ Whitespace Trim"]
+        A2 --> A3["🚫 Empty Check"]
+    end
+
+    subgraph "Content Filtering"
+        B1["🔒 Sanitize<br/>Remove dangerous chars"] --> B2["📏 Length Limit<br/>Max 100 chars"]
+        B2 --> B3["🏷️ Type Check<br/>String only"]
+    end
+
+    subgraph "Attack Prevention"
+        C1["SQL Keywords<br/>Blocked"] -.-> C2["🛡️ Safe<br/>Execution"]
+        C3["XSS Tags<br/>Blocked"] -.-> C2
+        C4["Path Traversal<br/>Blocked"] -.-> C2
+        C5["Shell Commands<br/>Blocked"] -.-> C2
+    end
+
+    subgraph "Rate Limiting"
+        D1["30 req/min<br/>per IP"] --> D2["⛔ DoS<br/>Protection"]
+        E1["200 req/hour<br/>Global"] --> D2
+    end
+
+    A3 --> B1
+    B3 --> C1
+    B3 --> C3
+    B3 --> C4
+    B3 --> C5
+    C2 --> D1
+
+    style A1 fill:#e8f5e9
+    style A2 fill:#c8e6c9
+    style A3 fill:#a5d6a7
+    style B1 fill:#bbdefb
+    style B2 fill:#90caf9
+    style B3 fill:#64b5f6
+    style C2 fill:#ffe0b2
+    style D1 fill:#ffccbc
+    style D2 fill:#ff9800,color:#fff
+```
+
 ### Attack Prevention
 
 | Attack Type | Protection | Status |

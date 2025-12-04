@@ -2,6 +2,48 @@
 
 Flask REST API for fetching weather data from MSN Weather.
 
+## API Request Flow
+
+```mermaid
+sequenceDiagram
+    actor Client
+    participant API as API Gateway
+    participant Valid as Validation
+    participant Cache as LRU Cache
+    participant MSN as MSN Service
+    participant Response as Response
+
+    Client->>API: GET /api/weather<br/>?city=Seattle&country=USA
+    activate API
+
+    API->>Valid: Sanitize input
+    activate Valid
+    Valid->>Valid: Check length < 100
+    Valid->>Valid: Remove bad chars
+    Valid->>Valid: Verify string type
+    Valid-->>API: ✓ Valid
+    deactivate Valid
+
+    API->>Cache: Check cache<br/>TTL bucket
+    activate Cache
+    alt Cache Hit
+        Cache-->>API: Return cached data
+        API-->>Response: 200 OK (cached)
+    else Cache Miss
+        Cache-->>API: No cache entry
+        deactivate Cache
+        API->>MSN: Fetch from MSN
+        activate MSN
+        MSN-->>API: Weather data
+        deactivate MSN
+        API->>Cache: Store in cache
+        API-->>Response: 200 OK (fresh)
+    end
+
+    deactivate API
+    Response-->>Client: JSON response
+```
+
 ## Interactive API Documentation
 
 **Swagger UI** is available for interactive API exploration and testing:
