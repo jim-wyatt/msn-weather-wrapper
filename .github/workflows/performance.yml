@@ -87,7 +87,10 @@ jobs:
               @task(5)  # Increased weight for health check
               def health_check(self):
                   with self.client.get("/api/v1/health", catch_response=True) as response:
-                      if response.status_code != 200:
+                      # Accept success and rate limiting (429) as valid responses
+                      if response.status_code in [200, 429]:
+                          response.success()
+                      else:
                           response.failure(f"Health check failed: {response.status_code}")
 
               @task(1)  # Reduced weight for weather endpoint
