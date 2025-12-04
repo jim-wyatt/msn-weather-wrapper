@@ -74,21 +74,23 @@ nav:
   - Testing & Quality:
       - Testing Guide: TESTING.md
 
+  - CI/CD & Workflows:
+      - Workflow Architecture: WORKFLOW_DIAGRAM.md
+      - Automated Versioning: AUTOMATED_VERSIONING.md
+      - Versioning Guide: VERSIONING.md
+
   - Reports:
       - Overview: reports/index.md
+      - CI/CD Status: reports/ci-cd.md
       - Test Report: reports/test-report.md
       - Coverage Report: reports/coverage-report.md
       - Security Report: reports/security-report.md
-      - License Report: reports/license-report.md
       - Performance Report: reports/performance-report.md
-      - CI/CD Pipeline: reports/ci-cd.md
+      - License Report: reports/license-report.md
 
   - Development:
       - Development Guide: DEVELOPMENT.md
       - Container Setup: CONTAINER_DEV_SETUP.md
-      - Versioning Guide: VERSIONING.md
-      - Automated Versioning: AUTOMATED_VERSIONING.md
-      - Workflow Architecture: WORKFLOW_DIAGRAM.md
 
   - Deployment:
       - SBOM Generation: SYFT_GUIDE.md

@@ -7,7 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.0] - 2025-12-04
+
 ### Added
+- **Modular CI/CD Workflow Architecture**
+  - Refactored monolithic `ci.yml` (662 lines) into modular reusable workflows
+  - Created `test.yml` for all testing phases (smoke, unit, coverage, integration)
+  - Created `security.yml` for security scanning (basic and full scan modes)
+  - Created `build.yml` for Docker builds, SBOM generation, and documentation
+  - Created `deploy.yml` for report generation and GitHub Pages deployment
+  - Updated `performance.yml` to support workflow_call for reusability
+  - Main `ci.yml` now orchestrates workflows (reduced to ~120 lines)
+  - Improved maintainability, modularity, and separation of concerns
+  - Enhanced workflow diagram documentation with modular architecture
+
 - **OpenAPI/Swagger Documentation**
   - Interactive API documentation at `/apidocs/`
   - Complete OpenAPI 2.0 specification at `/apispec.json`
