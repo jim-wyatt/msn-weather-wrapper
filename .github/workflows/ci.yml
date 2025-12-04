@@ -62,6 +62,7 @@ jobs:
     with:
       python-version: '3.12'
       run-integration: true
+      artifact-suffix: '-integration'
 
   # Performance Tests: Run performance benchmarks and load tests
   performance:
