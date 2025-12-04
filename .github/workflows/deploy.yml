@@ -8,9 +8,6 @@ on:
         required: false
         type: string
         default: '3.12'
-    secrets:
-      GITHUB_TOKEN:
-        required: true
 
 env:
   PYTHON_VERSION: ${{ inputs.python-version }}
