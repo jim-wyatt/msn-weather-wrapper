@@ -117,7 +117,7 @@ jobs:
         run: |
           NEW_VERSION="${{ steps.version.outputs.new }}"
           sed -i "s/^version = \".*\"/version = \"$NEW_VERSION\"/" pyproject.toml
-          echo "✏️  Updated pyproject.toml to version $NEW_VERSION (locally, will not commit)"
+          echo "✏️  Updated pyproject.toml to version $NEW_VERSION"
 
       - name: Configure Git
         if: steps.check_tag.outputs.exists == 'false'
@@ -125,11 +125,25 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Commit version bump to main
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+          NEW_VERSION="${{ steps.version.outputs.new }}"
+          git add pyproject.toml
+          git commit -m "chore: bump version to $NEW_VERSION [skip ci]" \
+                     -m "Auto-generated version bump" \
+                     -m "PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}" \
+                     -m "Bump type: ${{ steps.bump_type.outputs.bump_type }}"
+
+          # Push directly to main (requires appropriate permissions)
+          git push origin main
+          echo "📝 Committed and pushed version bump to main"
+
       - name: Create and push tag
         if: steps.check_tag.outputs.exists == 'false'
         run: |
           NEW_VERSION="${{ steps.version.outputs.new }}"
-          # Tag the merge commit (not a new commit with version bump)
+          # Tag the version bump commit
           git tag -a "v$NEW_VERSION" \
                   -m "Release v$NEW_VERSION" \
                   -m "Auto-generated from PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}" \
@@ -138,7 +152,6 @@ jobs:
                   -m "Previous version: ${{ steps.version.outputs.current }}"
           git push origin "v$NEW_VERSION"
           echo "🏷️  Created and pushed tag v$NEW_VERSION"
-          echo "⚠️  Note: pyproject.toml will be updated by the CI/CD pipeline"
 
       - name: Generate summary
         if: always()
@@ -174,6 +187,8 @@ jobs:
           - 🐳 Build and push container images
           - 📋 Generate SBOM reports
           - 🚀 Create GitHub Release with all artifacts
+
+          **Note**: The version in pyproject.toml has been updated and committed to main.
 
           ## Monitor Progress
           - [View CI/CD Runs](https://github.com/${{ github.repository }}/actions/workflows/ci.yml)
