@@ -13,7 +13,7 @@ n## New Feature
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
 [![Checked with mypy](https://img.shields.io/badge/mypy-checked-blue)](http://mypy-lang.org/)
 [![Container](https://img.shields.io/badge/container-ghcr.io-blue)](https://github.com/jim-wyatt/msn-weather-wrapper/pkgs/container/msn-weather-wrapper)
-[![GitHub stars](https://img.shields.io/github/stars/jim-wyatt/msn-weather-wrapper.svg)](https://github.com/jim-wyatt/msn-weather-wrapper/stargazers)
+
 
 ---
 

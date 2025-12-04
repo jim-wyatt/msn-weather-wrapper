@@ -489,6 +489,30 @@ jobs:
             --output ${{ env.REPORTS_DIR }}/ci-cd.md
         continue-on-error: true
 
+      - name: Prepare performance artifacts directory
+        run: mkdir -p artifacts/performance
+
+      - name: Download load test results
+        uses: actions/download-artifact@v6
+        with:
+          name: load-test-results
+          path: artifacts/performance/
+        continue-on-error: true
+
+      - name: Download benchmark results
+        uses: actions/download-artifact@v6
+        with:
+          name: benchmark-results
+          path: artifacts/performance/
+        continue-on-error: true
+
+      - name: Generate performance report
+        run: |
+          python tools/generate_reports.py --type performance \
+            --input artifacts/performance/ \
+            --output ${{ env.REPORTS_DIR }}/performance-report.md
+        continue-on-error: true
+
       - name: Upload report documentation
         uses: actions/upload-artifact@v5
         with:

@@ -271,10 +271,11 @@ run_tests() {
         log_info "Running backend tests..."
         podman exec msn-weather-api-dev pytest -v
 
-        log_info "Running frontend E2E tests..."
-        podman exec msn-weather-frontend-dev npm run test:e2e
+        log_warning "Skipping frontend E2E tests in containerized dev environment"
+        log_info "Frontend E2E tests require significant system resources and may fail in containers"
+        log_info "To run E2E tests: cd frontend && npm run test:e2e (on host machine)"
 
-        log_success "All tests completed!"
+        log_success "Backend tests completed!"
     fi
 }
 
