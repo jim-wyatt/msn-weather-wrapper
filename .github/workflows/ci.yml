@@ -423,25 +423,28 @@ jobs:
 
       # Wait for performance tests to complete if they're running
       - name: Wait for performance tests
+        id: wait-performance
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Checking for running performance tests..."
           COMMIT_SHA="${{ github.sha }}"
+          PERF_RUN_ID=""
 
           # Wait up to 5 minutes for performance tests to appear and complete
           for i in {1..30}; do
             PERF_RUN=$(gh run list --workflow=performance.yml --commit $COMMIT_SHA --json status,conclusion,databaseId --limit 1)
 
             if [ "$(echo "$PERF_RUN" | jq length)" -gt 0 ]; then
+              PERF_RUN_ID=$(echo "$PERF_RUN" | jq -r '.[0].databaseId')
               STATUS=$(echo "$PERF_RUN" | jq -r '.[0].status')
               if [ "$STATUS" = "completed" ]; then
-                echo "Performance tests completed"
+                echo "Performance tests completed (ID: $PERF_RUN_ID)"
+                echo "perf-run-id=$PERF_RUN_ID" >> $GITHUB_OUTPUT
                 break
               elif [ "$STATUS" = "in_progress" ] || [ "$STATUS" = "queued" ]; then
-                RUN_ID=$(echo "$PERF_RUN" | jq -r '.[0].databaseId')
-                echo "Performance tests running (ID: $RUN_ID), waiting..."
+                echo "Performance tests running (ID: $PERF_RUN_ID), waiting..."
                 sleep 10
               fi
             else
@@ -449,6 +452,11 @@ jobs:
               sleep 10
             fi
           done
+
+          # If no run found, output empty
+          if [ -z "$PERF_RUN_ID" ]; then
+            echo "perf-run-id=" >> $GITHUB_OUTPUT
+          fi
         continue-on-error: true
 
       - name: Download coverage reports
@@ -523,17 +531,25 @@ jobs:
         run: mkdir -p artifacts/performance
 
       - name: Download load test results
+        if: steps.wait-performance.outputs.perf-run-id != ''
         uses: actions/download-artifact@v6
         with:
           name: load-test-results
           path: artifacts/performance/
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: ${{ steps.wait-performance.outputs.perf-run-id }}
         continue-on-error: true
 
       - name: Download benchmark results
+        if: steps.wait-performance.outputs.perf-run-id != ''
         uses: actions/download-artifact@v6
         with:
           name: benchmark-results
           path: artifacts/performance/
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: ${{ steps.wait-performance.outputs.perf-run-id }}
         continue-on-error: true
 
       - name: Generate performance report
