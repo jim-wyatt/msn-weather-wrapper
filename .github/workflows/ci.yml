@@ -418,6 +418,9 @@ jobs:
     needs: [coverage, security, unit-tests]
     if: always()
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
       # Wait for performance tests to complete if they're running
       - name: Wait for performance tests
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -447,9 +450,6 @@ jobs:
             fi
           done
         continue-on-error: true
-
-      - name: Checkout code
-        uses: actions/checkout@v6
 
       - name: Download coverage reports
         uses: actions/download-artifact@v6
