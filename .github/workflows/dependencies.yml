@@ -71,6 +71,9 @@ jobs:
           branch: dependency-updates
           delete-branch: true
           labels: dependencies, automated
+          add-paths: |
+            pyproject.toml
+            requirements*.txt
 
   update-frontend:
     name: Update Frontend Dependencies
@@ -122,6 +125,9 @@ jobs:
           branch: frontend-dependency-updates
           delete-branch: true
           labels: dependencies, frontend, automated
+          add-paths: |
+            frontend/package.json
+            frontend/package-lock.json
 
   security-audit:
     name: Security Audit

@@ -69,6 +69,12 @@ pip-audit-report.md
 # License reports
 licenses.json
 
+# Dependency update artifacts
+before.txt
+after.txt
+update_summary.md
+frontend_update_summary.md
+
 # Virtual environments
 venv/
 .venv/
