@@ -12,11 +12,13 @@
         <meta name="author" content="Jim Wyatt">
       
       
-        <link rel="canonical" href="https://jim-wyatt.github.io/msn-weather-wrapper/CHANGELOG/">
+        <link rel="canonical" href="https://jim-wyatt.github.io/msn-weather-wrapper/WORKFLOW_DIAGRAM/">
       
       
-        <link rel="prev" href="../SYFT_GUIDE/">
+        <link rel="prev" href="../AUTOMATED_VERSIONING/">
       
+      
+        <link rel="next" href="../SYFT_GUIDE/">
       
       
         
@@ -27,7 +29,7 @@
     
     
       
-        <title>Changelog - MSN Weather Wrapper</title>
+        <title>Workflow Architecture - MSN Weather Wrapper</title>
       
     
     
@@ -82,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#changelog" class="md-skip">
+        <a href="#workflow-architecture-diagram" class="md-skip">
           Skip to content
         </a>
       
@@ -120,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Changelog
+              Workflow Architecture
             
           </span>
         </div>
@@ -368,10 +370,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../DEVELOPMENT/" class="md-tabs__link">
           
   
@@ -412,13 +416,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../CHANGELOG/" class="md-tabs__link">
           
   
   
@@ -1228,8 +1230,10 @@
       
   
   
+    
   
   
+  
     
     
       
@@ -1247,19 +1251,22 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
             
   
   
@@ -1277,7 +1284,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1404,10 +1411,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../WORKFLOW_DIAGRAM/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflow Architecture
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1423,6 +1457,236 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#workflow-flow-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workflow Flow Diagram
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workflow-descriptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workflow Descriptions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Workflow Descriptions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-cicd-pipeline-ciyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. CI/CD Pipeline (ci.yml)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-performance-testing-performanceyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Performance Testing (performance.yml)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-security-scanning-security-scanyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Security Scanning (security-scan.yml)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-auto-version-and-release-auto-version-releaseyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Auto Version and Release (auto-version-release.yml)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-publish-release-publish-releaseyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Publish Release (publish-release.yml)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-dependency-update-dependenciesyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Dependency Update (dependencies.yml)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workflow-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workflow Dependencies
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Features
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automatic-version-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automatic Version Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quality-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quality Gates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deployment-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#concurrency-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Concurrency Control
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workflow-triggers-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workflow Triggers Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#environment-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment Variables
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#secrets-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secrets Required
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cache-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cache Strategy
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1530,10 +1794,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -1543,22 +1805,19 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
-          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
   
@@ -1576,7 +1835,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1591,37 +1850,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Changelog
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../CHANGELOG/" class="md-nav__link">
         
   
   
@@ -1637,154 +1869,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#unreleased" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        [Unreleased]
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="[Unreleased]">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#added" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Added
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#improved" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Improved
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fixed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fixed
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#planned" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Planned
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#100-2025-12-02" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        [1.0.0] - 2025-12-02
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="[1.0.0] - 2025-12-02">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#initial-release" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Initial Release
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#release-notes-guidelines" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Release Notes Guidelines
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Release Notes Guidelines">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#version-format" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Version Format
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#categories" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Categories
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1824,22 +1908,33 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#unreleased" class="md-nav__link">
+  <a href="#workflow-flow-diagram" class="md-nav__link">
     <span class="md-ellipsis">
       
-        [Unreleased]
+        Workflow Flow Diagram
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="[Unreleased]">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workflow-descriptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workflow Descriptions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Workflow Descriptions">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#added" class="md-nav__link">
+  <a href="#1-cicd-pipeline-ciyml" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Added
+        1. CI/CD Pipeline (ci.yml)
       
     </span>
   </a>
@@ -1847,10 +1942,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#improved" class="md-nav__link">
+  <a href="#2-performance-testing-performanceyml" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Improved
+        2. Performance Testing (performance.yml)
       
     </span>
   </a>
@@ -1858,10 +1953,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#fixed" class="md-nav__link">
+  <a href="#3-security-scanning-security-scanyml" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Fixed
+        3. Security Scanning (security-scan.yml)
       
     </span>
   </a>
@@ -1869,10 +1964,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#planned" class="md-nav__link">
+  <a href="#4-auto-version-and-release-auto-version-releaseyml" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Planned
+        4. Auto Version and Release (auto-version-release.yml)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-publish-release-publish-releaseyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Publish Release (publish-release.yml)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-dependency-update-dependenciesyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Dependency Update (dependencies.yml)
       
     </span>
   </a>
@@ -1885,22 +2002,66 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#100-2025-12-02" class="md-nav__link">
+  <a href="#workflow-dependencies" class="md-nav__link">
     <span class="md-ellipsis">
       
-        [1.0.0] - 2025-12-02
+        Workflow Dependencies
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="[1.0.0] - 2025-12-02">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Features
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Features">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#initial-release" class="md-nav__link">
+  <a href="#automatic-version-management" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Initial Release
+        Automatic Version Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quality-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quality Gates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deployment-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#concurrency-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Concurrency Control
       
     </span>
   </a>
@@ -1913,41 +2074,46 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#release-notes-guidelines" class="md-nav__link">
+  <a href="#workflow-triggers-summary" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Release Notes Guidelines
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Release Notes Guidelines">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#version-format" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Version Format
+        Workflow Triggers Summary
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#categories" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#environment-variables" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Categories
+        Environment Variables
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#secrets-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secrets Required
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cache-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cache Strategy
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1968,7 +2134,7 @@
 
 
   
-    <a href="https://github.com/jim-wyatt/msn-weather-wrapper/edit/main/docs/CHANGELOG.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/jim-wyatt/msn-weather-wrapper/edit/main/docs/WORKFLOW_DIAGRAM.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z"/></svg>
     </a>
@@ -1977,253 +2143,359 @@
     
       
     
-    <a href="https://github.com/jim-wyatt/msn-weather-wrapper/raw/main/docs/CHANGELOG.md" title="View source of this page" class="md-content__button md-icon">
+    <a href="https://github.com/jim-wyatt/msn-weather-wrapper/raw/main/docs/WORKFLOW_DIAGRAM.md" title="View source of this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"/></svg>
     </a>
   
 
 
-<h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
-<p>All notable changes to this project will be documented in this file.</p>
-<p>The format is based on <a href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>,
-and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
-<h2 id="unreleased">[Unreleased]<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
-<h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
+<h1 id="workflow-architecture-diagram">Workflow Architecture Diagram<a class="headerlink" href="#workflow-architecture-diagram" title="Permanent link">&para;</a></h1>
+<p>This document provides a comprehensive UML diagram showing all GitHub Actions workflows and their interactions.</p>
+<h2 id="workflow-flow-diagram">Workflow Flow Diagram<a class="headerlink" href="#workflow-flow-diagram" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>sequenceDiagram
+    autonumber
+
+    actor Dev as Developer
+    participant PR as Pull Request
+    participant CI as CI/CD Pipeline
+    participant Perf as Performance Testing
+    participant Sec as Security Scanning
+    participant Main as Main Branch
+    participant Auto as Auto Version &amp; Release
+    participant Pub as Publish Release
+    participant PyPI as PyPI Registry
+    participant GH as GitHub Releases
+    participant Pages as GitHub Pages
+    participant Dep as Dependency Update
+
+    %% Pull Request Flow
+    Note over Dev,Sec: Pull Request Workflow
+    Dev-&gt;&gt;PR: Create PR to main
+    activate PR
+
+    par Run in parallel on PR
+        PR-&gt;&gt;CI: Trigger CI/CD Pipeline
+        activate CI
+        CI-&gt;&gt;CI: Smoke Tests (fast fail)
+        CI-&gt;&gt;CI: Code Quality &amp; Linting
+        CI-&gt;&gt;CI: Unit Tests (3.10, 3.11, 3.12)
+        CI-&gt;&gt;CI: Test Coverage (97%+)
+        CI-&gt;&gt;CI: Build Documentation
+        CI-&gt;&gt;CI: Build &amp; Test Docker Images
+        CI-&gt;&gt;CI: Integration Tests
+        CI-&gt;&gt;CI: Security Scanning (internal)
+        CI-&gt;&gt;CI: Generate SBOM
+        CI-&gt;&gt;CI: Generate Report Documentation
+        CI--&gt;&gt;PR: ✓ Tests Pass / ✗ Tests Fail
+        deactivate CI
+    and
+        PR-&gt;&gt;Perf: Trigger Performance Testing
+        activate Perf
+        Perf-&gt;&gt;Perf: Benchmark Tests
+        Perf-&gt;&gt;Perf: Load Testing (Locust)
+        Perf--&gt;&gt;PR: ✓ Performance OK / ✗ Performance Issue
+        deactivate Perf
+    and
+        PR-&gt;&gt;Sec: Trigger Security Scanning
+        activate Sec
+        Sec-&gt;&gt;Sec: SAST (Bandit, Semgrep)
+        Sec-&gt;&gt;Sec: Dependency Scanning
+        Sec-&gt;&gt;Sec: Container Scanning (Trivy)
+        Sec--&gt;&gt;PR: ✓ Security OK / ✗ Vulnerabilities Found
+        deactivate Sec
+    end
+
+    Dev-&gt;&gt;PR: Review and Merge
+    PR-&gt;&gt;Main: Merge to main
+    deactivate PR
+
+    %% Main Branch Flow
+    Note over Main,Pages: Main Branch Push Workflow
+    activate Main
+    Main-&gt;&gt;CI: Trigger CI/CD Pipeline
+    activate CI
+
+    CI-&gt;&gt;CI: Run All Jobs
+    Note right of CI: Smoke Tests&lt;br/&gt;Code Quality&lt;br/&gt;Unit Tests (3 versions)&lt;br/&gt;Test Coverage&lt;br/&gt;Security Scanning&lt;br/&gt;Docker Build &amp; Push&lt;br/&gt;Integration Tests&lt;br/&gt;Generate SBOM&lt;br/&gt;Generate Reports
+
+    CI-&gt;&gt;Pages: Deploy Documentation
+    activate Pages
+    Pages--&gt;&gt;CI: ✓ Docs Deployed
+    deactivate Pages
+
+    CI-&gt;&gt;Auto: Trigger Auto-Version-Release
+    deactivate CI
+
+    activate Auto
+    Note right of Auto: Workflow Dispatch Trigger
+    Auto-&gt;&gt;Auto: Get Latest Merged PR Info
+    Auto-&gt;&gt;Auto: Determine Version Bump Type
+    Note right of Auto: Analyze PR Title:&lt;br/&gt;feat: → minor&lt;br/&gt;fix: → patch&lt;br/&gt;BREAKING CHANGE: → major&lt;br/&gt;chore/docs: → patch
+
+    Auto-&gt;&gt;Auto: Calculate New Version
+    Auto-&gt;&gt;Auto: Check if Version Exists
+    Auto-&gt;&gt;Auto: Update pyproject.toml
+    Auto-&gt;&gt;Auto: Update __init__.py
+    Auto-&gt;&gt;Main: Create Version Bump PR
+    Auto-&gt;&gt;Main: Auto-merge PR
+    Auto-&gt;&gt;Main: Create Git Tag (v*.*.*)
+    Note right of Auto: Tag triggers&lt;br/&gt;Publish Release
+
+    Auto-&gt;&gt;Pub: Trigger Publish Release
+    deactivate Auto
+    deactivate Main
+
+    %% Publish Release Flow
+    Note over Pub,GH: Publish Release Workflow
+    activate Pub
+    Pub-&gt;&gt;Pub: Build Python Package
+    Note right of Pub: Build wheel &amp; sdist
+
+    Pub-&gt;&gt;PyPI: Publish to PyPI
+    activate PyPI
+    PyPI--&gt;&gt;Pub: ✓ Package Published
+    deactivate PyPI
+
+    Pub-&gt;&gt;GH: Create GitHub Release
+    activate GH
+    Note right of GH: Attach wheel &amp; tarball&lt;br/&gt;Generate release notes&lt;br/&gt;from commit history
+    GH--&gt;&gt;Pub: ✓ Release Created
+    deactivate GH
+
+    Pub--&gt;&gt;Dev: ✓ Release v*.*.* Complete
+    deactivate Pub
+
+    %% Dependency Update Flow (Scheduled)
+    Note over Dep,Main: Scheduled Dependency Updates
+    Dep-&gt;&gt;Dep: Weekly Cron Trigger
+    activate Dep
+    Dep-&gt;&gt;Dep: Update Python Dependencies
+    Dep-&gt;&gt;Dep: Update Node Dependencies
+    Dep-&gt;&gt;Main: Create Update PR
+    deactivate Dep
+    Note right of Dep: PR triggers CI/CD&lt;br/&gt;and requires manual review</code></pre>
+<h2 id="workflow-descriptions">Workflow Descriptions<a class="headerlink" href="#workflow-descriptions" title="Permanent link">&para;</a></h2>
+<h3 id="1-cicd-pipeline-ciyml">1. <strong>CI/CD Pipeline</strong> (<code>ci.yml</code>)<a class="headerlink" href="#1-cicd-pipeline-ciyml" title="Permanent link">&para;</a></h3>
+<p><strong>Triggers:</strong>
+- Push to <code>main</code> branch
+- Pull requests to <code>main</code>
+- Manual dispatch</p>
+<p><strong>Jobs:</strong>
+1. <strong>Smoke Tests</strong> - Fast validation (imports, syntax)
+2. <strong>Code Quality &amp; Linting</strong> - Ruff format check, linting, mypy type checking
+3. <strong>Unit Tests</strong> - Runs on Python 3.10, 3.11, 3.12
+4. <strong>Test Coverage</strong> - Generates coverage reports (target: 97%+)
+5. <strong>Security Scanning</strong> - Bandit, pip-audit, license checks
+6. <strong>Build Documentation</strong> - MkDocs build validation
+7. <strong>Build &amp; Test Docker Images</strong> - Multi-stage container build
+8. <strong>Integration Tests</strong> - Tests against containerized API
+9. <strong>Generate SBOM</strong> - Software Bill of Materials with Syft
+10. <strong>Generate Report Documentation</strong> - Consolidated test/coverage/security reports
+11. <strong>Deploy Documentation</strong> - Push to GitHub Pages (main branch only)
+12. <strong>Trigger Auto-Version-Release</strong> - Starts versioning workflow (main branch only)</p>
+<h3 id="2-performance-testing-performanceyml">2. <strong>Performance Testing</strong> (<code>performance.yml</code>)<a class="headerlink" href="#2-performance-testing-performanceyml" title="Permanent link">&para;</a></h3>
+<p><strong>Triggers:</strong>
+- Pull requests to <code>main</code></p>
+<p><strong>Jobs:</strong>
+1. <strong>Benchmark Tests</strong> - Performance baseline measurements
+2. <strong>Load Testing</strong> - Locust-based load testing (20 concurrent users, 10 req/s)
+   - Health check endpoint testing
+   - Weather endpoint testing
+   - Rate limiting validation (accepts 429 responses)</p>
+<h3 id="3-security-scanning-security-scanyml">3. <strong>Security Scanning</strong> (<code>security-scan.yml</code>)<a class="headerlink" href="#3-security-scanning-security-scanyml" title="Permanent link">&para;</a></h3>
+<p><strong>Triggers:</strong>
+- Pull requests to <code>main</code>
+- Manual dispatch</p>
+<p><strong>Jobs:</strong>
+1. <strong>SAST</strong> - Bandit and Semgrep static analysis
+2. <strong>Dependency Scanning</strong> - pip-audit vulnerability checks
+3. <strong>Container Scanning</strong> - Trivy image scanning</p>
+<h3 id="4-auto-version-and-release-auto-version-releaseyml">4. <strong>Auto Version and Release</strong> (<code>auto-version-release.yml</code>)<a class="headerlink" href="#4-auto-version-and-release-auto-version-releaseyml" title="Permanent link">&para;</a></h3>
+<p><strong>Triggers:</strong>
+- Workflow dispatch from CI/CD Pipeline (after successful main branch build)</p>
+<p><strong>Process:</strong>
+1. Analyzes merged PR title to determine version bump type:
+   - <code>feat:</code> → minor version bump
+   - <code>fix:</code> → patch version bump
+   - <code>BREAKING CHANGE:</code> → major version bump
+   - <code>chore:</code>, <code>docs:</code> → patch version bump
+2. Calculates new version
+3. Updates <code>pyproject.toml</code> and <code>src/msn_weather_wrapper/__init__.py</code>
+4. Creates version bump PR
+5. Auto-merges the PR
+6. Creates git tag (format: <code>v*.*.*</code>)
+7. Triggers Publish Release workflow</p>
+<h3 id="5-publish-release-publish-releaseyml">5. <strong>Publish Release</strong> (<code>publish-release.yml</code>)<a class="headerlink" href="#5-publish-release-publish-releaseyml" title="Permanent link">&para;</a></h3>
+<p><strong>Triggers:</strong>
+- Git tag push (pattern: <code>v*.*.*</code>)
+- Manual dispatch with tag input</p>
+<p><strong>Jobs:</strong>
+1. <strong>Build Package</strong> - Creates wheel and source distribution
+2. <strong>Publish to PyPI</strong> - Uploads package to PyPI registry
+3. <strong>Create GitHub Release</strong> - Creates release with artifacts and generated notes</p>
+<h3 id="6-dependency-update-dependenciesyml">6. <strong>Dependency Update</strong> (<code>dependencies.yml</code>)<a class="headerlink" href="#6-dependency-update-dependenciesyml" title="Permanent link">&para;</a></h3>
+<p><strong>Triggers:</strong>
+- Weekly cron schedule
+- Manual dispatch</p>
+<p><strong>Process:</strong>
+1. Updates Python dependencies in <code>pyproject.toml</code>
+2. Updates Node.js dependencies in <code>frontend/package.json</code>
+3. Creates PR with updates
+4. PR triggers CI/CD Pipeline for validation</p>
+<h2 id="workflow-dependencies">Workflow Dependencies<a class="headerlink" href="#workflow-dependencies" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>graph TB
+    subgraph "Pull Request"
+        PR[Pull Request Created]
+        PR --&gt; CI_PR[CI/CD Pipeline]
+        PR --&gt; PERF[Performance Testing]
+        PR --&gt; SEC[Security Scanning]
+        CI_PR --&gt; APPROVE{All Checks Pass?}
+        PERF --&gt; APPROVE
+        SEC --&gt; APPROVE
+        APPROVE --&gt;|Yes| MERGE[Merge to Main]
+        APPROVE --&gt;|No| FIX[Fix Issues]
+        FIX --&gt; PR
+    end
+
+    subgraph "Main Branch"
+        MERGE --&gt; CI_MAIN[CI/CD Pipeline]
+        CI_MAIN --&gt; DEPLOY[Deploy Docs to Pages]
+        CI_MAIN --&gt; TRIGGER[Trigger Auto-Version]
+    end
+
+    subgraph "Release Process"
+        TRIGGER --&gt; AUTO[Auto Version &amp; Release]
+        AUTO --&gt; VERSION[Calculate Version]
+        VERSION --&gt; BUMP_PR[Create Version Bump PR]
+        BUMP_PR --&gt; AUTO_MERGE[Auto-merge PR]
+        AUTO_MERGE --&gt; TAG[Create Git Tag]
+        TAG --&gt; PUBLISH[Publish Release]
+        PUBLISH --&gt; PYPI[PyPI Package]
+        PUBLISH --&gt; GH_RELEASE[GitHub Release]
+    end
+
+    subgraph "Scheduled"
+        CRON[Weekly Cron] --&gt; DEP_UPDATE[Dependency Update]
+        DEP_UPDATE --&gt; DEP_PR[Create Update PR]
+        DEP_PR --&gt; PR
+    end
+
+    style PR fill:#e1f5ff
+    style MERGE fill:#c8e6c9
+    style TAG fill:#fff9c4
+    style PYPI fill:#ffccbc
+    style GH_RELEASE fill:#ffccbc
+    style CRON fill:#f3e5f5</code></pre>
+<h2 id="key-features">Key Features<a class="headerlink" href="#key-features" title="Permanent link">&para;</a></h2>
+<h3 id="automatic-version-management">Automatic Version Management<a class="headerlink" href="#automatic-version-management" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>OpenAPI/Swagger Documentation</strong></li>
-<li>Interactive API documentation at <code>/apidocs/</code></li>
-<li>Complete OpenAPI 2.0 specification at <code>/apispec.json</code></li>
-<li>All 11 endpoints documented with schemas and examples</li>
-<li>"Try it out" feature for live API testing</li>
-<li>
-<p>Flasgger integration for auto-generated docs</p>
-</li>
-<li>
-<p><strong>Enhanced CI/CD Pipeline</strong></p>
-</li>
-<li>Composite action for Python environment setup (reduces duplication)</li>
-<li>Path-based workflow triggers (only run relevant tests)</li>
-<li>Conditional test matrices (PR: Python 3.12 only, push: 3.10-3.12)</li>
-<li>Smoke tests for fast-fail validation (30 seconds)</li>
-<li>Docker image artifact sharing between workflows (saves 2-3 min/workflow)</li>
-<li>Consolidated security scanning workflow (<code>security-scan.yml</code>)</li>
-<li>
-<p>Optimized artifact retention policies (40% storage cost reduction)</p>
-</li>
-<li>
-<p><strong>Automated Security Scanning</strong></p>
-</li>
-<li>Weekly security scans (Mondays 2 AM UTC) + on main branch pushes</li>
-<li>SAST tools: Bandit (Python security), Semgrep (pattern detection)</li>
-<li>Dependency scanning: Safety, pip-audit</li>
-<li>Container security: Trivy, Grype (image vulnerabilities)</li>
-<li>License compliance: pip-licenses check</li>
-<li>Results uploaded to GitHub Security tab</li>
+<li><strong>Convention-based:</strong> PR titles determine version bump type</li>
+<li><strong>Semantic Versioning:</strong> Follows semver (MAJOR.MINOR.PATCH)</li>
+<li><strong>Automated:</strong> No manual version updates required</li>
+<li><strong>Consistent:</strong> Version synced across all files</li>
 </ul>
-<h3 id="improved">Improved<a class="headerlink" href="#improved" title="Permanent link">&para;</a></h3>
+<h3 id="quality-gates">Quality Gates<a class="headerlink" href="#quality-gates" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>CORS Configuration</strong></li>
-<li>Dual-layer CORS (Flask + Nginx)</li>
-<li>Dynamic origin handling for flexible deployment</li>
-<li>Credentials support for session-based features</li>
-<li>Preflight OPTIONS request handling</li>
-<li>
-<p>Documented in API.md with examples</p>
-</li>
-<li>
-<p><strong>Documentation</strong></p>
-</li>
-<li>New dedicated Swagger UI guide (<code>SWAGGER.md</code>)</li>
-<li>Enhanced API.md with interactive documentation section</li>
-<li>Security.md updated with automated scanning details</li>
-<li>Index.md reflects new features and statistics</li>
-<li>
-<p>MkDocs navigation includes Swagger documentation</p>
-</li>
-<li>
-<p><strong>Code Quality</strong></p>
-</li>
-<li>Configured Ruff isort with <code>known-first-party</code> for proper import organization</li>
-<li>Pre-commit hooks configured and installed</li>
-<li>Integration tests validate CORS headers in containerized deployment</li>
+<li><strong>Fast Fail:</strong> Smoke tests run first to catch obvious issues</li>
+<li><strong>Comprehensive Testing:</strong> Unit, integration, and performance tests</li>
+<li><strong>Security First:</strong> Multiple security scanning layers</li>
+<li><strong>Coverage Requirements:</strong> Maintains 97%+ code coverage</li>
 </ul>
-<h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
+<h3 id="deployment-pipeline">Deployment Pipeline<a class="headerlink" href="#deployment-pipeline" title="Permanent link">&para;</a></h3>
 <ul>
-<li>CORS headers missing in Nginx proxy for containerized deployments</li>
-<li>Ruff import organization (I001) errors with local package imports</li>
-<li>Docker layer caching improvements for faster builds</li>
+<li><strong>Automated Publishing:</strong> PyPI and GitHub Releases</li>
+<li><strong>Documentation:</strong> Auto-deployed to GitHub Pages</li>
+<li><strong>Container Images:</strong> Built and pushed to registry</li>
+<li><strong>SBOM Generation:</strong> Software Bill of Materials for compliance</li>
 </ul>
-<h3 id="planned">Planned<a class="headerlink" href="#planned" title="Permanent link">&para;</a></h3>
+<h3 id="concurrency-control">Concurrency Control<a class="headerlink" href="#concurrency-control" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Multi-day weather forecasts</li>
-<li>Weather alerts and notifications</li>
-<li>User accounts with saved locations</li>
-<li>GraphQL API support</li>
-<li>WebSocket real-time updates</li>
+<li><strong>Cancel in Progress:</strong> Only latest run per PR</li>
+<li><strong>Resource Efficient:</strong> Prevents duplicate workflow runs</li>
+<li><strong>Fast Feedback:</strong> Cancels obsolete runs immediately</li>
 </ul>
-<h2 id="100-2025-12-02">[1.0.0] - 2025-12-02<a class="headerlink" href="#100-2025-12-02" title="Permanent link">&para;</a></h2>
-<h3 id="initial-release">Initial Release<a class="headerlink" href="#initial-release" title="Permanent link">&para;</a></h3>
-<p><strong>MSN Weather Wrapper v1.0.0</strong> is the first production-ready release, featuring a complete weather data solution with Python library, REST API, and modern web interface.</p>
-<h4 id="added_1">Added<a class="headerlink" href="#added_1" title="Permanent link">&para;</a></h4>
+<h2 id="workflow-triggers-summary">Workflow Triggers Summary<a class="headerlink" href="#workflow-triggers-summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Workflow</th>
+<th>PR</th>
+<th>Push to Main</th>
+<th>Tag Push</th>
+<th>Manual</th>
+<th>Cron</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CI/CD Pipeline</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Performance Testing</td>
+<td>✓</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Security Scanning</td>
+<td>✓</td>
+<td>-</td>
+<td>-</td>
+<td>✓</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Auto Version &amp; Release</td>
+<td>-</td>
+<td>✓ (via workflow_dispatch)</td>
+<td>-</td>
+<td>✓</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Publish Release</td>
+<td>-</td>
+<td>-</td>
+<td>✓</td>
+<td>✓</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Dependency Update</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>✓</td>
+<td>✓ (weekly)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="environment-variables">Environment Variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h2>
+<p>All workflows use consistent environment configuration:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">env</span><span class="p">:</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">PYTHON_VERSION</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;3.12&#39;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">NODE_VERSION</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;20&#39;</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">REPORTS_DIR</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;docs/reports&#39;</span>
+</span></code></pre></div>
+<h2 id="secrets-required">Secrets Required<a class="headerlink" href="#secrets-required" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Python Weather Client Library</strong></li>
-<li>Type-safe Pydantic models for weather data</li>
-<li>Context manager support for session management</li>
-<li>Celsius/Fahrenheit temperature conversion</li>
-<li>Automatic HTML and JSON parsing</li>
-<li>
-<p>Comprehensive error handling</p>
-</li>
-<li>
-<p><strong>REST API with Flask</strong></p>
-</li>
-<li>Weather by city (GET/POST): <code>/api/weather</code>, <code>/api/v1/weather</code></li>
-<li>Weather by coordinates with geolocation: <code>/api/weather/coordinates</code></li>
-<li>Health checks: <code>/health</code>, <code>/healthz</code> (liveness), <code>/readyz</code> (readiness)</li>
-<li>Recent searches management: GET, DELETE</li>
-<li>API versioning support (v1)</li>
-<li>5-minute response caching</li>
-<li>Structured JSON logging with structlog</li>
-<li>
-<p>Request ID tracing</p>
-</li>
-<li>
-<p><strong>Modern Web Frontend</strong></p>
-</li>
-<li>React 19.2 + TypeScript 5.7 + Vite 7.2</li>
-<li>City autocomplete (406+ cities worldwide)</li>
-<li>Temperature unit toggle (Celsius/Fahrenheit)</li>
-<li>Geolocation support ("Use My Location" button)</li>
-<li>Recent searches history</li>
-<li>Responsive mobile-friendly design</li>
-<li><strong>Accessibility (WCAG 2.1 Level AA)</strong><ul>
-<li>ARIA labels and roles throughout</li>
-<li>Semantic HTML structure</li>
-<li>Keyboard navigation support</li>
-<li>Screen reader optimized</li>
-<li>High-contrast focus indicators</li>
+<li><code>GITHUB_TOKEN</code> - Automatically provided by GitHub Actions</li>
+<li><code>PYPI_API_TOKEN</code> - PyPI upload authentication (stored in repository secrets)</li>
 </ul>
-</li>
-<li>
-<p><strong>SEO &amp; PWA Features</strong></p>
-<ul>
-<li>Comprehensive meta tags</li>
-<li>Open Graph social sharing</li>
-<li>Twitter Card support</li>
-<li>Custom favicon and icons</li>
-<li>PWA manifest</li>
-</ul>
-</li>
-<li>
-<p><strong>Security Features</strong></p>
-</li>
-<li>Input validation and sanitization</li>
-<li>Protection against SQL injection, XSS, path traversal, command injection</li>
-<li>Rate limiting (30 req/min per IP, 200/hr global)</li>
-<li>CORS configuration</li>
-<li>Comprehensive security test suite (25 tests)</li>
-<li>
-<p><strong>Zero vulnerabilities</strong> (verified with pip-audit, safety, bandit, Grype)</p>
-</li>
-<li>
-<p><strong>Production Deployment</strong></p>
-</li>
-<li>Gunicorn WSGI server (4 workers, 120s timeout)</li>
-<li>Podman/Docker containerized deployment</li>
-<li>Multi-stage builds (reduced image size)</li>
-<li>Multi-platform support (amd64, arm64)</li>
-<li>Nginx reverse proxy configuration</li>
-<li>
-<p>Health check endpoints for orchestration</p>
-</li>
-<li>
-<p><strong>Development Tools</strong></p>
-</li>
-<li>Containerized development environment (dev.sh)</li>
-<li>Hot reload for backend (Flask) and frontend (Vite HMR)</li>
-<li>Pre-commit hooks (ruff, mypy, pytest)</li>
-<li>Comprehensive test suite (86 tests, 89% coverage)</li>
-<li>
-<p>Integration tests for containerized deployments</p>
-</li>
-<li>
-<p><strong>Documentation</strong></p>
-</li>
-<li>Complete API reference with error codes, rate limiting, examples</li>
-<li>Security documentation and best practices</li>
-<li>Testing guide with coverage reporting</li>
-<li>Development guide</li>
-<li>Container development setup</li>
-<li>SBOM generation guide</li>
-<li>MkDocs documentation site with GitHub Pages deployment</li>
-<li>Versioning and release guide</li>
-<li>
-<p>CI/CD pipeline documentation</p>
-</li>
-<li>
-<p><strong>CI/CD Pipeline</strong></p>
-</li>
-<li>GitHub Actions workflows for testing, building, and deployment</li>
-<li>Multi-platform container builds (linux/amd64, linux/arm64)</li>
-<li>SBOM generation with Syft</li>
-<li>Security scanning with Trivy and Grype</li>
-<li>Automated PyPI publishing on release tags</li>
-<li>Semantic versioning enforcement</li>
-<li>Container registry publishing to ghcr.io</li>
-<li>
-<p>Automated GitHub releases with artifacts</p>
-</li>
-<li>
-<p><strong>Quality Assurance</strong></p>
-</li>
-<li>155 dependencies verified MIT-compatible</li>
-<li>License report generated and reviewed</li>
-<li>Zero known security vulnerabilities</li>
-<li>89% test coverage maintained</li>
-<li>Type safety with mypy strict mode</li>
-<li>Code quality with ruff linter</li>
-<li>All tests passing (69 unit/integration, 17 container tests)</li>
-</ul>
-<h4 id="technology-stack">Technology Stack<a class="headerlink" href="#technology-stack" title="Permanent link">&para;</a></h4>
-<ul>
-<li><strong>Backend</strong>: Python 3.10-3.12, Flask 3.1+, Gunicorn 23.0+, Pydantic 2.12+</li>
-<li><strong>Frontend</strong>: React 19.2, Vite 7.2, TypeScript 5.7+, CSS3</li>
-<li><strong>Testing</strong>: pytest 9.0+, Playwright 1.49+, 86 tests with 89% coverage</li>
-<li><strong>Quality</strong>: ruff 0.14+, mypy 1.19+, pre-commit 4.5+, bandit 1.9+</li>
-<li><strong>Security</strong>: pip-audit 2.10+, safety 3.7+, Grype 0.104+, Trivy</li>
-<li><strong>Deployment</strong>: Podman/Docker, multi-stage containers, Nginx, Supervisor</li>
-<li><strong>Documentation</strong>: MkDocs 1.6+ with Material theme 9.7+</li>
-<li><strong>CI/CD</strong>: GitHub Actions, Syft SBOM generation, semantic versioning</li>
-</ul>
-<h4 id="performance">Performance<a class="headerlink" href="#performance" title="Permanent link">&para;</a></h4>
-<ul>
-<li>5-minute response caching (90%+ speedup for repeated queries)</li>
-<li>Optimized frontend bundle: 215.98 KB (66.78 KB gzipped)</li>
-<li>Gunicorn worker configuration tuned for production</li>
-<li>Efficient HTML/JSON parsing with Beautiful Soup 4</li>
-<li>Rate limiting prevents abuse while maintaining usability</li>
-</ul>
-<hr />
-<h2 id="release-notes-guidelines">Release Notes Guidelines<a class="headerlink" href="#release-notes-guidelines" title="Permanent link">&para;</a></h2>
-<h3 id="version-format">Version Format<a class="headerlink" href="#version-format" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>MAJOR.MINOR.PATCH</strong> (e.g., 1.0.0)</li>
-<li>MAJOR: Breaking changes</li>
-<li>MINOR: New features, backward compatible</li>
-<li>PATCH: Bug fixes, backward compatible</li>
-</ul>
-<h3 id="categories">Categories<a class="headerlink" href="#categories" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Added</strong>: New features</li>
-<li><strong>Changed</strong>: Changes in existing functionality</li>
-<li><strong>Deprecated</strong>: Soon-to-be removed features</li>
-<li><strong>Removed</strong>: Removed features</li>
-<li><strong>Fixed</strong>: Bug fixes</li>
-<li><strong>Security</strong>: Security improvements</li>
-</ul>
-<hr />
-<p>Last updated: December 2, 2025</p>
+<h2 id="cache-strategy">Cache Strategy<a class="headerlink" href="#cache-strategy" title="Permanent link">&para;</a></h2>
+<p>Workflows leverage GitHub Actions caching for:
+- Python dependencies (pip cache)
+- Node.js dependencies (npm/yarn cache)
+- Docker layer caching
+- Build artifacts between jobs</p>
 
 
 
@@ -2311,7 +2583,7 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../SYFT_GUIDE/" class="md-footer__link md-footer__link--prev" aria-label="Previous: SBOM Generation">
+          <a href="../AUTOMATED_VERSIONING/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Automated Versioning">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2321,11 +2593,27 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
                 Previous
               </span>
               <div class="md-ellipsis">
-                SBOM Generation
+                Automated Versioning
               </div>
             </div>
           </a>
         
+        
+          
+          <a href="../SYFT_GUIDE/" class="md-footer__link md-footer__link--next" aria-label="Next: SBOM Generation">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                SBOM Generation
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
         
       </nav>
     

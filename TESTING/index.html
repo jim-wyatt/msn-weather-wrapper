@@ -1093,10 +1093,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#backend-tests-65-tests" class="md-nav__link">
+  <a href="#backend-tests-111-tests" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Backend Tests (65 tests)
+        Backend Tests (111 tests)
       
     </span>
   </a>
@@ -2039,6 +2039,8 @@
       
         
       
+        
+      
     
     
     
@@ -2183,6 +2185,34 @@
     
   
     Automated Versioning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../WORKFLOW_DIAGRAM/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflow Architecture
   
 
     
@@ -2496,10 +2526,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#backend-tests-65-tests" class="md-nav__link">
+  <a href="#backend-tests-111-tests" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Backend Tests (65 tests)
+        Backend Tests (111 tests)
       
     </span>
   </a>
@@ -3202,22 +3232,27 @@
 <tbody>
 <tr>
 <td><strong>Backend Tests</strong></td>
-<td>65</td>
+<td>111</td>
+<td>✅ Passing</td>
+</tr>
+<tr>
+<td><strong>Integration Tests</strong></td>
+<td>17</td>
 <td>✅ Passing</td>
 </tr>
 <tr>
 <td><strong>Frontend E2E Tests</strong></td>
-<td>40</td>
+<td>41</td>
 <td>✅ Passing (containerized)</td>
 </tr>
 <tr>
 <td><strong>Total Tests</strong></td>
-<td>105</td>
+<td>169</td>
 <td>✅ All passing</td>
 </tr>
 <tr>
 <td><strong>Code Coverage</strong></td>
-<td>92%</td>
+<td>97%</td>
 <td>✅ Exceeds target (85%)</td>
 </tr>
 </tbody>
@@ -3226,12 +3261,13 @@
 <ul>
 <li><strong>Client Tests</strong>: 28 (weather data, parsing, conversions, geolocation)</li>
 <li><strong>API Tests</strong>: 33 (endpoints, validation, caching, health checks, coordinates, recent searches)</li>
-<li><strong>Models</strong>: 4 (Pydantic validation)</li>
-<li><strong>Coverage</strong>: 92% overall</li>
+<li><strong>Models Tests</strong>: 4 (Pydantic validation)</li>
+<li><strong>Security Tests</strong>: 46 (input validation, attack prevention, rate limiting)</li>
+<li><strong>Coverage</strong>: 97% overall (152 statements, 5 missed)</li>
 </ul>
 <h3 id="frontend-test-coverage">Frontend Test Coverage<a class="headerlink" href="#frontend-test-coverage" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>End-to-End Tests</strong>: 40 total (Playwright)</li>
+<li><strong>End-to-End Tests</strong>: 41 total (Playwright)</li>
 <li><strong>Accessibility Tests</strong>: WCAG 2.1 Level AA compliance</li>
 <li><strong>Visual Regression Tests</strong>: Multiple viewports and states</li>
 <li><strong>Functional Tests</strong>: Weather search, autocomplete, geolocation</li>
@@ -3279,7 +3315,7 @@
 </span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">  </span>msn-weather-playwright:latest<span class="w"> </span>npx<span class="w"> </span>playwright<span class="w"> </span><span class="nb">test</span>
 </span></code></pre></div>
 <h3 id="test-breakdown">Test Breakdown<a class="headerlink" href="#test-breakdown" title="Permanent link">&para;</a></h3>
-<h3 id="backend-tests-65-tests">Backend Tests (65 tests)<a class="headerlink" href="#backend-tests-65-tests" title="Permanent link">&para;</a></h3>
+<h3 id="backend-tests-111-tests">Backend Tests (111 tests)<a class="headerlink" href="#backend-tests-111-tests" title="Permanent link">&para;</a></h3>
 <h4 id="client-tests-28-tests">Client Tests (28 tests)<a class="headerlink" href="#client-tests-28-tests" title="Permanent link">&para;</a></h4>
 <ul>
 <li>Weather data fetching</li>
@@ -3288,6 +3324,15 @@
 <li>Response parsing</li>
 <li>Cache functionality</li>
 <li>Geolocation support</li>
+</ul>
+<h4 id="security-tests-46-tests">Security Tests (46 tests)<a class="headerlink" href="#security-tests-46-tests" title="Permanent link">&para;</a></h4>
+<ul>
+<li>SQL injection prevention</li>
+<li>XSS attack prevention</li>
+<li>Path traversal protection</li>
+<li>Command injection prevention</li>
+<li>Rate limiting validation</li>
+<li>Input sanitization</li>
 </ul>
 <h4 id="model-tests-4-tests">Model Tests (4 tests)<a class="headerlink" href="#model-tests-4-tests" title="Permanent link">&para;</a></h4>
 <ul>
