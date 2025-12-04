@@ -266,19 +266,33 @@ graph TB
 
 ### Reusable Workflow: Security (`security.yml`)
 
-**Purpose:** Performs security scanning at different levels based on context.
+**Purpose:** Performs security scanning at different levels based on context (comprehensive on main/tags, basic on PRs).
 
 **Inputs:**
+
 - `python-version` - Python version to use (default: '3.12')
 - `full-scan` - Whether to run comprehensive security scan (default: false)
 
 **Jobs:**
-1. **Basic Security** - Bandit, pip-audit, license checks (always runs)
-2. **SAST** - Semgrep static analysis (full scan only)
-3. **Dependency Scan** - Safety, pip-audit, dependency tree (full scan only)
-4. **Container Scan** - Trivy, Grype vulnerability scanning (full scan only)
 
-**Called by:** `ci.yml` (full scan on PR, basic on main)
+1. **Basic Security Checks** - Bandit (hardcoded secrets), pip-audit, pip-licenses (always runs)
+2. **SAST** - Static Application Security Testing (full scan only)
+   - Bandit (code analysis & hardcoded secrets)
+   - Semgrep (pattern-based security analysis)
+3. **Dependency Vulnerabilities** - Full dependency scanning (full scan only)
+   - Safety (known vulnerabilities database)
+   - pip-audit (package auditing)
+   - Dependency tree generation
+4. **Container Security Scan** - Image & SBOM analysis (full scan only)
+   - Trivy (container image vulnerabilities)
+   - Grype (SBOM vulnerability analysis)
+
+**Execution Strategy:**
+
+- **Pull Requests:** Basic security checks only (Bandit + licenses) - fast feedback
+- **Main Branch & Tags:** Full comprehensive security suite (all 6 tools) - complete validation
+
+**Called by:** `ci.yml` (full scan on main/tags, basic on PR)
 
 ### Reusable Workflow: Build (`build.yml`)
 
