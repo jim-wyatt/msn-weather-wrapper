@@ -54,8 +54,9 @@ refactor: simplify client logic           → 0.0.X (patch)
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
 | **`auto-version-release.yml`** | PR merged to main | Automatic version bumping and tagging |
-| **`ci.yml`** | Push, PR, tags | Full CI/CD pipeline (test, build, publish) |
-| **`release.yml`** | Manual (workflow_dispatch) | Manual release creation with semantic-release |
+| **`publish-release.yml`** | Tag push (v*.*.*) | Build package, publish to PyPI, create GitHub Release |
+| **`ci.yml`** | Push, PR | Full CI/CD pipeline (test, build, docs) |
+| **`release.yml`** | Manual (workflow_dispatch) | Manual release creation with semantic-release (alternative) |
 
 ### Supplementary Workflows
 
@@ -71,7 +72,6 @@ The main CI/CD pipeline runs on:
 
 - **Push to `main` or `develop`**
 - **Pull Requests to `main` or `develop`**
-- **Tag pushes** (`v*.*.*`)
 
 ### Pipeline Stages
 
@@ -84,16 +84,20 @@ The main CI/CD pipeline runs on:
 7. **Integration Tests** - End-to-end API testing
 8. **Frontend Tests** - React/TypeScript testing
 9. **E2E Tests** - Playwright browser testing
-10. **Build Package** - Build Python wheel and sdist
-11. **SBOM Generation** - Software bill of materials (Syft, CycloneDX)
-12. **📦 Publish to PyPI** - On tag push only
-13. **🚀 Create GitHub Release** - On tag push only
+10. **SBOM Generation** - Software bill of materials (Syft, CycloneDX)
+11. **Build Documentation** - Generate and publish docs to GitHub Pages (on main only)
 
-### Publishing
+**Note**: Release jobs (build package, publish to PyPI, create GitHub Release) have been moved to `publish-release.yml` which triggers on tag push. This keeps the CI pipeline focused on testing and building documentation.
 
-- **PyPI**: Automatic on tag push (`v*.*.*`) using trusted publishing (OIDC)
-- **Container Registry**: Automatic on main branch and tags to `ghcr.io`
-- **GitHub Releases**: Automatic on tag push with all artifacts attached
+## 📦 Release Publishing (`publish-release.yml`)
+
+Automatically triggered when a version tag (`v*.*.*`) is created:
+
+1. **Build Package** - Create wheel and source distribution
+2. **Publish to PyPI** - Upload to PyPI with trusted publishing (OIDC)
+3. **Create GitHub Release** - Create release with package artifacts attached
+
+This workflow runs **independently** from CI to keep release operations separate from the main test/build pipeline.
 
 ## 🛡️ Security Workflows
 
@@ -156,38 +160,79 @@ Weekly automated updates:
 
 1. **Branch Protection**: Keep `main` protected (require PR reviews, status checks)
 2. **Secrets Management**:
-   - `PYPI_API_TOKEN`: For PyPI publishing (use trusted publishing instead)
-   - GitHub token is auto-provided, no secrets needed
+   - No secrets needed! GitHub token is auto-provided
+   - PyPI uses trusted publishing (OIDC), no token storage required
 3. **Auto-Merge**: Version bump PRs use auto-merge for convenience
 4. **Manual Override**: Use `release.yml` for controlled releases when needed
 
+## ✨ Fully Automated Release Flow
+
+The complete release process is now **fully automated** end-to-end:
+
+```bash
+1. Developer creates PR with code changes
+   ↓
+2. PR merged to main
+   ↓
+3. auto-version-release.yml triggers:
+   - Determines version bump (major/minor/patch)
+   - Creates version bump PR
+   - Enables auto-merge
+   ↓
+4. Version bump PR auto-merges
+   ↓
+5. Git tag (v1.2.3) created automatically
+   ↓
+6. publish-release.yml triggers on tag:
+   - Builds Python package
+   - Publishes to PyPI
+   - Creates GitHub Release with artifacts
+   ↓
+7. Release complete ✅
+   - Package available on PyPI
+   - Release notes on GitHub
+   - No manual steps needed!
+```
+
+**Key Advantages:**
+
+- ✅ No manual `gh workflow run` commands needed
+- ✅ `[skip ci]` removed from commits - CI runs automatically on tag creation
+- ✅ Separation of concerns: CI tests/builds, separate workflow handles releases
+- ✅ Reduced complexity and fewer moving parts
+- ✅ Consistent versioning across all releases
+
 ## 🐛 Troubleshooting
 
-### Auto-versioning fails with "Protected branch" error
+### Release not published automatically
 
-**Solution**: The new workflow creates a version bump PR instead of pushing directly. No branch protection bypass needed!
+**Check:**
 
-### Version bump PR not auto-merging
+1. Verify the tag exists: `git tag -l | grep v1.3.2`
+2. Verify tag is on GitHub: `gh release list`
+3. Check `publish-release.yml` workflow run: `gh run list --workflow publish-release.yml`
 
-**Check**:
+**If missing**: Tag may not have been created. Check `auto-version-release.yml` logs for version bump PR.
 
-1. Branch protection requires PR reviews → Approve the PR
-2. Required status checks failing → Fix the failures
-3. Auto-merge not working → Manually merge the PR
+### Version bump PR not created
+
+**Check:**
+
+1. Was the PR merged? The workflow only triggers on `pull_request.merged == true`
+2. Is the PR closing event being received? Check PR logs in GitHub
+3. Are there any GITHUB_TOKEN permission issues?
+
+**Solution**: Run `release.yml` manually as a fallback
 
 ### PyPI publishing fails
 
-**Check**:
+**Check:**
 
 1. Version already exists on PyPI → Versions are immutable
-2. Token expired → Set up trusted publishing (OIDC) instead
+2. Token expired → Verify trusted publishing (OIDC) is configured
 3. Package name conflicts → Ensure unique package name
 
-### Tag already exists
-
-**Solution**: The workflow checks for existing tags and skips if found. This is normal if re-running after a merge.
-
-## 📚 Additional Documentation
+**Solution**: The workflow logs will show the exact error## 📚 Additional Documentation
 
 - [CI/CD Pipeline Details](./README.md)
 - [Security Scanning Guide](../../docs/SECURITY.md)
