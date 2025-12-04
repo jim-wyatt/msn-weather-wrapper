@@ -7,6 +7,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.0] - 2025-12-04
+
+### Added
+- **Modular Workflow Architecture**
+  - Refactored monolithic ci.yml (662 lines) into reusable workflows (120 lines)
+  - New reusable workflows: test.yml, security.yml, build.yml, deploy.yml
+  - Performance.yml updated to support workflow_call trigger
+  - Main ci.yml now orchestrates all workflows with clear separation of concerns
+  - Reduced code duplication and improved maintainability
+
+- **Enhanced Documentation Organization**
+  - Moved workflow documentation to dedicated "CI/CD & Workflows" section
+  - Workflow Architecture (WORKFLOW_DIAGRAM.md) promoted to main documentation
+  - Automated Versioning and Versioning Guide organized under CI/CD section
+  - Reports section reorganized with CI/CD Status at the top
+
+- **Improved Report Generation**
+  - Consistent report formatting across all report types
+  - Standardized headers with auto-generated timestamps
+  - Cross-linking between related reports
+  - Enhanced CI/CD status report with workflow architecture overview
+  - Unified footer format across all reports
+
+### Changed
+- **Workflow Organization**
+  - CI/CD pipeline split into modular, reusable components
+  - Workflows can be called by multiple other workflows
+  - Independent workflows can be tested and triggered manually
+  - Improved parallel execution and resource optimization
+
+- **Documentation Structure**
+  - MkDocs navigation updated with "CI/CD & Workflows" section
+  - Reports page shows CI/CD Status first (was last)
+  - All reports link to related documentation consistently
+
+### Improved
+- **Maintainability**
+  - Simplified main CI/CD workflow (81% reduction in lines)
+  - Clear separation between orchestration and execution
+  - Easier to add new workflow steps or modify existing ones
+  - Better visibility into pipeline structure
+
+- **Developer Experience**
+  - Workflow documentation more prominent in navigation
+  - Easier to understand CI/CD architecture with visual diagrams
+  - Report generation consistent across all types
+
+## [1.7.11] - 2025-12-03
+
 ### Added
 - **OpenAPI/Swagger Documentation**
   - Interactive API documentation at `/apidocs/`

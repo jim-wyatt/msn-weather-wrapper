@@ -1,6 +1,13 @@
 name: Performance Testing
 
 on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: 'Python version for performance tests'
+        required: false
+        type: string
+        default: '3.12'
   push:
     branches: [ main ]
     paths:
@@ -20,6 +27,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  PYTHON_VERSION: ${{ inputs.python-version || '3.12' }}
+
 jobs:
   load-test:
     name: Load Testing
@@ -31,7 +41,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.12'
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install dependencies
         run: |
@@ -168,7 +178,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.12'
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install dependencies
         run: |

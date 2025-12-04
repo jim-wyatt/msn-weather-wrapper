@@ -6,12 +6,12 @@ Welcome to the automated reports section. This area contains comprehensive repor
 
 | Report Type | Description | Latest Status |
 |------------|-------------|---------------|
+| [CI/CD Status](ci-cd.md) | Pipeline execution details and metrics | ![Pipeline](https://img.shields.io/badge/pipeline-active-blue) |
 | [Test Results](test-report.md) | Unit, integration, and security test execution results | ![Tests](https://img.shields.io/badge/tests-passing-brightgreen) |
 | [Coverage Report](coverage-report.md) | Code coverage metrics and analysis | ![Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen) |
 | [Security Scan](security-report.md) | Security vulnerability scanning results | ![Security](https://img.shields.io/badge/security-passing-brightgreen) |
-| [License Report](license-report.md) | Dependency licensing information | ![License](https://img.shields.io/badge/license-compliant-brightgreen) |
-| [CI/CD Pipeline](ci-cd.md) | Pipeline execution details and metrics | ![Pipeline](https://img.shields.io/badge/pipeline-active-blue) |
 | [Performance Testing](performance-report.md) | Load testing and benchmark results | ![Performance](https://img.shields.io/badge/performance-passing-brightgreen) |
+| [License Report](license-report.md) | Dependency licensing information | ![License](https://img.shields.io/badge/license-compliant-brightgreen) |
 
 ## 🔄 Report Generation
 

@@ -2,6 +2,28 @@
 
 Complete testing documentation for MSN Weather Wrapper, including test coverage, methodologies, and execution.
 
+## Test Pyramid
+
+```mermaid
+graph TB
+    subgraph Pyramid[" "]
+        direction TB
+
+        U["<b>Unit Tests</b><br/>111 tests<br/>Fast, isolated, no network<br/><br/>• Client: 28<br/>• Security: 46<br/>• API: 33<br/>• Models: 4"]
+
+        I["<b>Integration Tests</b><br/>17 tests<br/>Full API with live endpoints<br/><br/>• Health checks<br/>• Complete workflows<br/>• Error handling"]
+
+        E["<b>End-to-End Tests</b><br/>41 tests<br/>User workflows via Playwright<br/><br/>• Accessibility: 13<br/>• Visual: 15<br/>• Functional: 13"]
+
+        U --> I --> E
+    end
+
+    style U fill:#4CAF50,color:#fff,stroke:#2E7D32,stroke-width:3px,padding:20px
+    style I fill:#2196F3,color:#fff,stroke:#1565C0,stroke-width:3px,padding:20px
+    style E fill:#FF9800,color:#fff,stroke:#E65100,stroke-width:3px,padding:20px
+    style Pyramid fill:none,stroke:none
+```
+
 ## Test Suite Overview
 
 | Category | Count | Status |

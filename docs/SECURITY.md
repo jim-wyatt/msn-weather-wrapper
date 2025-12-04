@@ -18,6 +18,49 @@ Please do not open public issues for security vulnerabilities.
 - **Type Checking**: Enforces string types, rejects integers/booleans/arrays
 - **Whitespace Handling**: Trims and rejects empty/whitespace-only inputs
 
+### Security Defense Layers
+
+```mermaid
+graph TD
+    subgraph Layer1["🔍 Layer 1: Input Reception"]
+        L1["Input Received<br/>(user parameter)"]
+    end
+
+    subgraph Layer2["✂️ Layer 2: Data Cleaning"]
+        L2["Trim Whitespace<br/>Normalize input"]
+    end
+
+    subgraph Layer3["📏 Layer 3: Validation"]
+        L3["Empty Check<br/>Length Limit ≤ 100 chars<br/>Type Validation (string only)"]
+    end
+
+    subgraph Layer4["🔒 Layer 4: Sanitization"]
+        L4["Block Dangerous Chars<br/>Remove: ; &lt;&gt; ` $ | &amp; /"]
+    end
+
+    subgraph Layer5["🛡️ Layer 5: Attack Prevention"]
+        L5["SQL Injection<br/>XSS Prevention<br/>Path Traversal<br/>Command Injection<br/>Null Byte Blocking"]
+    end
+
+    subgraph Layer6["⛔ Layer 6: Rate Limiting"]
+        L6["30 req/min per IP<br/>200 req/hour global<br/>DoS/DDoS Protection"]
+    end
+
+    subgraph Layer7["✅ Layer 7: Safe Execution"]
+        L7["Process Request<br/>Return Response"]
+    end
+
+    L1 --> L2 --> L3 --> L4 --> L5 --> L6 --> L7
+
+    style L1 fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#000
+    style L2 fill:#C8E6C9,stroke:#2E7D32,stroke-width:2px,color:#000
+    style L3 fill:#A5D6A7,stroke:#2E7D32,stroke-width:2px,color:#000
+    style L4 fill:#81C784,stroke:#2E7D32,stroke-width:2px,color:#fff
+    style L5 fill:#4CAF50,stroke:#2E7D32,stroke-width:2px,color:#fff
+    style L6 fill:#F57C00,stroke:#E65100,stroke-width:2px,color:#fff
+    style L7 fill:#2E7D32,stroke:#1B5E20,stroke-width:2px,color:#fff
+```
+
 ### Attack Prevention
 
 | Attack Type | Protection | Status |
@@ -39,40 +82,48 @@ Please do not open public issues for security vulnerabilities.
 
 ### Automated Security Scanning
 
-The project uses a **comprehensive security scanning workflow** that runs weekly and on every push to main:
+The project uses a **comprehensive security scanning workflow** integrated into CI/CD:
 
 **SAST (Static Application Security Testing):**
-- **Bandit**: Python security linting
-- **Semgrep**: Advanced SAST with community rules
+- **Bandit**: Detects hardcoded passwords, insecure patterns, common security issues
+- **Semgrep**: Advanced pattern-based SAST with community security rules (main branch only)
 
 **Dependency Vulnerability Scanning:**
-- **Safety**: PyPI known vulnerabilities database
-- **pip-audit**: OSV database vulnerability check
+- **Safety**: Checks PyPI known vulnerabilities database (main branch only)
+- **pip-audit**: OSV database vulnerability checking (main branch only)
+- **Dependency Tree**: Complete dependency mapping for audit trails
 
 **Container Security:**
-- **Trivy**: Multi-layer container vulnerability scanning with SARIF upload to GitHub Security
-- **Grype**: SBOM-based vulnerability detection
+- **Trivy**: Multi-layer container image vulnerability scanning with SARIF upload to GitHub Security (main branch only)
+- **Grype**: SBOM-based vulnerability detection and analysis (main branch only)
 
 **License Compliance:**
-- **pip-licenses**: Dependency license checking
-- **Automated GPL/AGPL detection**
+- **pip-licenses**: Dependency license checking on all branches
+- **Automated GPL/AGPL detection** for compliance violations
 
-**Workflow Schedule:**
-- 🔄 Weekly automated scan (Mondays 2 AM UTC)
-- 🚀 On every push to main branch
-- 📋 30-day artifact retention for audit trails
+**Execution Strategy:**
+- **Pull Requests**: Basic security checks (Bandit + licenses) - fast feedback
+- **Main Branch & Tags**: Full comprehensive scanning (all 6 tools) - complete validation
+- **Manual Trigger**: On-demand full scans via workflow dispatch
+
+**Artifact Management:**
+- 7-day retention for PR artifacts
+- 30-day retention for main branch artifacts
+- All reports uploaded to GitHub Security tab
+- Automated markdown reports generated for documentation site
 
 **CI/CD Integration:**
-- Critical security checks run on every PR
-- Full comprehensive scans weekly
-- Results uploaded to GitHub Security tab
-- Automated reports generated
+- Critical security checks run on every PR (fast)
+- Full comprehensive scans on main branch and tags (thorough)
+- Results uploaded to GitHub Security tab with SARIF format
+- Automated reports generated in docs/reports/security-report.md
 
 ### Test Coverage
 - **25 Security Tests**: All passing ✅
 - **Fuzzing Coverage**: 23+ attack vectors tested
 - **90% Code Coverage**: Including security validation paths
 - **Integration Tests**: Security validation on live API
+- **6 Security Tools**: Coverage across SAST, dependencies, and containers
 
 ### Test Methodology
 1. **Unit Tests**: Validate input sanitization logic

@@ -1,21 +1,64 @@
-name: Security Scanning
+name: Security
 
 on:
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
+    inputs:
+      python-version:
+        description: 'Python version for security scans'
+        required: false
+        type: string
+        default: '3.12'
+      full-scan:
+        description: 'Whether to run full security scan (SAST, dependencies, container)'
+        required: false
+        type: boolean
+        default: false
 
 env:
-  PYTHON_VERSION: '3.12'
+  PYTHON_VERSION: ${{ inputs.python-version }}
 
 jobs:
-  # Job 1: Static Application Security Testing (SAST)
+  basic-security:
+    name: Basic Security Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - uses: ./.github/actions/setup-python-env
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install security tools
+        run: pip install bandit pip-audit
+
+      - name: Create security reports directory
+        run: mkdir -p security-reports
+
+      - name: Run Bandit
+        run: |
+          bandit -r src/ api.py -ll -f txt
+          bandit -r src/ api.py -f json -o security-reports/bandit-report.json || true
+
+      - name: Run pip-audit
+        run: pip-audit
+
+      - name: Generate pip-licenses report
+        run: |
+          pip install pip-licenses
+          pip-licenses --format=json --output-file=security-reports/licenses.json
+
+      - name: Upload security reports
+        uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: security-reports
+          path: security-reports/
+          retention-days: 7
+
   sast:
-    name: Static Code Analysis
+    if: inputs.full-scan
+    name: Static Analysis (SAST)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -46,8 +89,8 @@ jobs:
           path: security-reports/
           retention-days: 30
 
-  # Job 2: Dependency Vulnerability Scanning
   dependency-scan:
+    if: inputs.full-scan
     name: Dependency Vulnerabilities
     runs-on: ubuntu-latest
     steps:
@@ -85,9 +128,9 @@ jobs:
           path: security-reports/
           retention-days: 30
 
-  # Job 3: Container Security Scanning
   container-scan:
-    name: Container Vulnerability Scan
+    if: inputs.full-scan
+    name: Container Security Scan
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -145,85 +188,4 @@ jobs:
             trivy-results.json
             grype-results.json
             container-sbom.json
-          retention-days: 30
-
-  # Job 4: License Compliance Check
-  license-check:
-    name: License Compliance
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - uses: ./.github/actions/setup-python-env
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install license checker
-        run: pip install pip-licenses licensecheck
-
-      - name: Generate license report
-        run: |
-          mkdir -p security-reports
-          pip-licenses --format=json --output-file=security-reports/licenses.json
-          pip-licenses --format=markdown --output-file=security-reports/licenses.md
-          pip-licenses --format=csv --output-file=security-reports/licenses.csv
-
-      - name: Check for GPL/AGPL licenses
-        run: |
-          echo "Checking for copyleft licenses..."
-          pip-licenses | grep -E "(GPL|AGPL)" || echo "No copyleft licenses found"
-
-      - name: Upload license reports
-        uses: actions/upload-artifact@v5
-        with:
-          name: license-reports
-          path: security-reports/
-          retention-days: 30
-
-  # Job 5: Security Summary Report
-  security-summary:
-    name: Generate Security Summary
-    runs-on: ubuntu-latest
-    needs: [sast, dependency-scan, container-scan, license-check]
-    steps:
-      - name: Download all reports
-        uses: actions/download-artifact@v6
-        with:
-          pattern: '*-reports'
-          merge-multiple: false
-
-      - name: Generate summary
-        run: |
-          cat > security-summary.md << 'EOF'
-          # Security Scan Report - $(date +%Y-%m-%d)
-
-          ## Scan Results
-
-          ### Static Analysis (SAST)
-          - **Bandit**: Python security linting
-          - **Semgrep**: Advanced SAST rules
-
-          ### Dependency Vulnerabilities
-          - **Safety**: PyPI known vulnerabilities database
-          - **pip-audit**: OSV database vulnerability check
-
-          ### Container Security
-          - **Trivy**: Multi-layer container vulnerability scanning
-          - **Grype**: SBOM-based vulnerability detection
-
-          ### License Compliance
-          - All dependencies checked for license compatibility
-
-          ## Artifacts
-          All detailed reports available in workflow artifacts (30-day retention)
-          EOF
-
-          cat security-summary.md
-
-      - name: Upload summary
-        uses: actions/upload-artifact@v5
-        with:
-          name: security-summary
-          path: security-summary.md
           retention-days: 30

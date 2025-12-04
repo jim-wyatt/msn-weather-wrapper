@@ -87,6 +87,7 @@ with WeatherClient() as client:
 - 🔍 Type safety with mypy strict mode
 - 📋 SBOM generation for supply chain security
 - ♿ WCAG 2.1 Level AA accessible frontend
+- 🔄 **Modular CI/CD workflows** - Reusable, maintainable architecture
 - 🔄 **Optimized CI/CD** with Docker caching & conditional matrices
 - 🏷️ **Automated semantic versioning** - Every PR auto-publishes to PyPI
 
