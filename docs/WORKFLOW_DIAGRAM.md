@@ -188,7 +188,7 @@ graph TB
 
     subgraph "Reusable Workflows"
         TEST[test.yml<br/>Smoke, Unit, Coverage,<br/>Integration Tests]
-        SEC[security.yml<br/>Basic & Full Security Scans]
+        SEC[security.yml<br/>6 Security Tools<br/>Bandit, Semgrep, Safety,<br/>pip-audit, Trivy, Grype]
         BUILD[build.yml<br/>Docker, SBOM, Docs]
         DEPLOY[deploy.yml<br/>Reports & GitHub Pages]
         PERF[performance.yml<br/>Benchmarks & Load Tests]
@@ -293,6 +293,43 @@ graph TB
 - **Main Branch & Tags:** Full comprehensive security suite (all 6 tools) - complete validation
 
 **Called by:** `ci.yml` (full scan on main/tags, basic on PR)
+
+#### Security Tools Architecture
+
+```mermaid
+graph LR
+    SEC["security.yml<br/>Orchestrator"]
+
+    subgraph "Always On (All Branches)"
+        BASIC["Basic Security<br/>✓ Bandit<br/>✓ pip-audit<br/>✓ pip-licenses"]
+    end
+
+    subgraph "Full Scan (Main/Tags Only)"
+        SAST["SAST Scanning<br/>✓ Bandit<br/>✓ Semgrep"]
+        DEP["Dependency Scanning<br/>✓ Safety<br/>✓ pip-audit<br/>✓ Dep Tree"]
+        CONT["Container Scanning<br/>✓ Trivy<br/>✓ Grype"]
+    end
+
+    SEC --> BASIC
+    SEC --> SAST
+    SEC --> DEP
+    SEC --> CONT
+
+    SAST -->|SARIF Upload| GHSEC["GitHub Security Tab"]
+    CONT -->|SARIF Upload| GHSEC
+    BASIC -->|Reports| REPORTS["security-reports artifact"]
+    SAST -->|Reports| REPORTS
+    DEP -->|Reports| REPORTS
+    CONT -->|Reports| REPORTS
+
+    style SEC fill:#FF9800,color:#fff
+    style BASIC fill:#4CAF50,color:#fff
+    style SAST fill:#F44336,color:#fff
+    style DEP fill:#E91E63,color:#fff
+    style CONT fill:#2196F3,color:#fff
+    style GHSEC fill:#00BCD4,color:#fff
+    style REPORTS fill:#9C27B0,color:#fff
+```
 
 ### Reusable Workflow: Build (`build.yml`)
 
