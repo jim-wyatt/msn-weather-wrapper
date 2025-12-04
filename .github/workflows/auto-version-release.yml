@@ -218,6 +218,21 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Trigger publish-release workflow
+        if: steps.check.outputs.skip == 'false' && steps.create_pr.outputs.pull-request-number
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          NEW_VERSION="${{ steps.version.outputs.new }}"
+
+          # Wait a moment for tag to be fully processed
+          sleep 5
+
+          # Trigger publish-release workflow
+          gh workflow run publish-release.yml
+
+          echo "🚀 Triggered publish-release workflow for v$NEW_VERSION"
+
       - name: Generate summary
         if: always()
         run: |
