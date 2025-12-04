@@ -320,22 +320,135 @@ def generate_coverage_report(input_dir: Path, output_path: Path) -> None:
     print(f"Coverage report generated: {output_path}")
 
 
+def parse_semgrep_json(json_path: Path) -> dict[str, Any]:
+    """Parse Semgrep SAST scan JSON."""
+    try:
+        with open(json_path) as f:
+            data = json.load(f)
+
+        results = data.get("results", [])
+
+        return {
+            "total_issues": len(results),
+            "high": len([i for i in results if i.get("extra", {}).get("severity") == "ERROR"]),
+            "medium": len([i for i in results if i.get("extra", {}).get("severity") == "WARNING"]),
+            "low": len([i for i in results if i.get("extra", {}).get("severity") == "INFO"]),
+            "issues": results,
+        }
+    except Exception as e:
+        print(f"Error parsing Semgrep JSON {json_path}: {e}", file=sys.stderr)
+        return {}
+
+
+def parse_safety_json(json_path: Path) -> dict[str, Any]:
+    """Parse Safety dependency check JSON."""
+    try:
+        with open(json_path) as f:
+            data = json.load(f)
+
+        # Safety returns a list of vulnerability objects
+        vulnerabilities = data if isinstance(data, list) else data.get("vulnerabilities", [])
+
+        return {
+            "total_issues": len(vulnerabilities),
+            "vulnerabilities": vulnerabilities,
+        }
+    except Exception as e:
+        print(f"Error parsing Safety JSON {json_path}: {e}", file=sys.stderr)
+        return {}
+
+
+def parse_pip_audit_json(json_path: Path) -> dict[str, Any]:
+    """Parse pip-audit JSON output."""
+    try:
+        with open(json_path) as f:
+            data = json.load(f)
+
+        vulnerabilities = data.get("vulnerabilities", [])
+
+        return {
+            "total_issues": len(vulnerabilities),
+            "vulnerabilities": vulnerabilities,
+        }
+    except Exception as e:
+        print(f"Error parsing pip-audit JSON {json_path}: {e}", file=sys.stderr)
+        return {}
+
+
+def parse_trivy_json(json_path: Path) -> dict[str, Any]:
+    """Parse Trivy container scan JSON."""
+    try:
+        with open(json_path) as f:
+            data = json.load(f)
+
+        results = data.get("Results", [])
+        all_vulnerabilities = []
+
+        for result in results:
+            vulns = result.get("Vulnerabilities", [])
+            all_vulnerabilities.extend(vulns)
+
+        critical = len([v for v in all_vulnerabilities if v.get("Severity") == "CRITICAL"])
+        high = len([v for v in all_vulnerabilities if v.get("Severity") == "HIGH"])
+        medium = len([v for v in all_vulnerabilities if v.get("Severity") == "MEDIUM"])
+
+        return {
+            "total_issues": len(all_vulnerabilities),
+            "critical": critical,
+            "high": high,
+            "medium": medium,
+            "vulnerabilities": all_vulnerabilities,
+        }
+    except Exception as e:
+        print(f"Error parsing Trivy JSON {json_path}: {e}", file=sys.stderr)
+        return {}
+
+
 def generate_security_report(input_dir: Path, output_path: Path) -> None:
-    """Generate security report from Bandit/Safety/pip-audit results."""
+    """Generate comprehensive security report from all security tools."""
     timestamp = generate_timestamp()
 
-    # Parse Bandit results
+    # Parse all available security scan results
     bandit_path = input_dir / "bandit-report.json"
-    bandit_data = {}
-    if bandit_path.exists():
-        bandit_data = parse_bandit_json(bandit_path)
+    semgrep_path = input_dir / "semgrep-report.json"
+    safety_path = input_dir / "safety-report.json"
+    pip_audit_path = input_dir / "pip-audit-report.json"
+    trivy_path = input_dir / "trivy-results.json"
+    grype_path = input_dir / "grype-results.json"
 
-    # If no bandit data and path doesn't exist, preserve existing report
-    if not bandit_data and not bandit_path.exists():
-        print(f"Bandit report not found: {bandit_path}", file=sys.stderr)
+    bandit_data = parse_bandit_json(bandit_path) if bandit_path.exists() else {}
+    semgrep_data = parse_semgrep_json(semgrep_path) if semgrep_path.exists() else {}
+    safety_data = parse_safety_json(safety_path) if safety_path.exists() else {}
+    pip_audit_data = parse_pip_audit_json(pip_audit_path) if pip_audit_path.exists() else {}
+    trivy_data = parse_trivy_json(trivy_path) if trivy_path.exists() else {}
+    grype_data = parse_grype_json(grype_path) if grype_path.exists() else {}
+
+    # If no security data found, preserve existing report
+    if not any([bandit_data, semgrep_data, safety_data, pip_audit_data, trivy_data, grype_data]):
+        print(f"No security reports found in {input_dir}", file=sys.stderr)
         if output_path.exists():
             print(f"Preserving existing report: {output_path}")
         return
+
+    # Calculate total issues
+    total_critical = trivy_data.get("critical", 0) + grype_data.get("critical", 0)
+    total_high = (
+        bandit_data.get("high", 0)
+        + semgrep_data.get("high", 0)
+        + safety_data.get("total_issues", 0)
+        + pip_audit_data.get("total_issues", 0)
+        + trivy_data.get("high", 0)
+        + grype_data.get("high", 0)
+    )
+    total_medium = (
+        bandit_data.get("medium", 0)
+        + semgrep_data.get("medium", 0)
+        + trivy_data.get("medium", 0)
+        + grype_data.get("medium", 0)
+    )
+    total_low = bandit_data.get("low", 0) + semgrep_data.get("low", 0) + grype_data.get("low", 0)
+
+    overall_status = "✅ Passing" if total_critical == 0 and total_high == 0 else "⚠️ Issues Found"
 
     content = f"""# Security Scan Report
 
@@ -348,33 +461,115 @@ def generate_security_report(input_dir: Path, output_path: Path) -> None:
 
 | Metric | Value |
 |--------|-------|
-| **Overall Status** | {
-        ("✅ Passing" if bandit_data.get("total_issues", 0) == 0 else "⚠️ Issues Found")
-    } |
-| **Critical Vulnerabilities** | 0 |
-| **High Vulnerabilities** | {bandit_data.get("high", 0)} |
-| **Medium Vulnerabilities** | {bandit_data.get("medium", 0)} |
-| **Low Vulnerabilities** | {bandit_data.get("low", 0)} |
+| **Overall Status** | {overall_status} |
+| **Critical Vulnerabilities** | {total_critical} |
+| **High Vulnerabilities** | {total_high} |
+| **Medium Vulnerabilities** | {total_medium} |
+| **Low Vulnerabilities** | {total_low} |
 | **Last Scan** | {timestamp} |
 
+## 🔍 Security Tools Status
+
+| Tool | Type | Status | Findings |
+|------|------|--------|----------|
+"""
+    # Build tool status table
+    bandit_status = "✅ Active" if bandit_data else "⏭️ Skipped"
+    semgrep_status = "✅ Active" if semgrep_data else "⏭️ Skipped"
+    safety_status = "✅ Active" if safety_data else "⏭️ Skipped"
+    pip_audit_status = "✅ Active" if pip_audit_data else "⏭️ Skipped"
+    trivy_status = "✅ Active" if trivy_data else "⏭️ Skipped"
+    grype_status = "✅ Active" if grype_data else "⏭️ Skipped"
+
+    content += f"""| **Bandit** | SAST | {bandit_status} | {bandit_data.get("total_issues", 0)} |
+| **Semgrep** | SAST | {semgrep_status} | {semgrep_data.get("total_issues", 0)} |
+| **Safety** | Dependency | {safety_status} | {safety_data.get("total_issues", 0)} |
+| **pip-audit** | Dependency | {pip_audit_status} | {pip_audit_data.get("total_issues", 0)} |
+| **Trivy** | Container | {trivy_status} | {trivy_data.get("total_issues", 0)} |
+| **Grype** | Container | {grype_status} | {grype_data.get("total_issues", 0)} |
+
 """
 
-    if bandit_data.get("total_issues", 0) > 0:
-        content += "## ⚠️ Security Issues\n\n"
-        for issue in bandit_data.get("issues", [])[:10]:  # Show first 10
-            content += f"""### {issue.get("test_name", "Unknown")}
+    # Bandit findings
+    if bandit_data and bandit_data.get("total_issues", 0) > 0:
+        content += (
+            f"""### Bandit - Hardcoded Secrets & Security Issues
 
-- **Severity**: {issue.get("issue_severity", "Unknown")}
-- **Confidence**: {issue.get("issue_confidence", "Unknown")}
-- **File**: `{issue.get("filename", "Unknown")}`
-- **Line**: {issue.get("line_number", "Unknown")}
-- **Issue**: {issue.get("issue_text", "Unknown")}
+**Summary**: {bandit_data.get("high", 0)} High """
+            f"""| {bandit_data.get("medium", 0)} Medium """
+            f"""| {bandit_data.get("low", 0)} Low
 
 """
-    else:
-        content += """## ✅ No Security Issues
+        )
+        for issue in bandit_data.get("issues", [])[:5]:
+            severity = issue.get("issue_severity", "Unknown")
+            test_name = issue.get("test_name", "Unknown")
+            filename = issue.get("filename")
+            line_number = issue.get("line_number")
+            issue_text = issue.get("issue_text", "Unknown")
+            content += f"""- **{test_name}** ({severity})
+  - File: `{filename}` line {line_number}
+  - {issue_text}
 
-All security scans passed with no vulnerabilities detected.
+"""
+
+    # Semgrep findings
+    if semgrep_data and semgrep_data.get("total_issues", 0) > 0:
+        content += (
+            f"""### Semgrep - Pattern-Based Analysis
+
+**Summary**: {semgrep_data.get("high", 0)} High """
+            f"""| {semgrep_data.get("medium", 0)} Medium """
+            f"""| {semgrep_data.get("low", 0)} Low
+
+"""
+        )
+        for issue in semgrep_data.get("issues", [])[:5]:
+            check_id = issue.get("check_id", "Unknown")
+            severity = issue.get("extra", {}).get("severity", "Unknown")
+            message = issue.get("extra", {}).get("message", "Unknown")
+            content += f"""- **{check_id}** ({severity})
+  - {message}
+
+"""
+
+    # Dependency findings
+    if (safety_data and safety_data.get("total_issues", 0) > 0) or (
+        pip_audit_data and pip_audit_data.get("total_issues", 0) > 0
+    ):
+        safety_issues = safety_data.get("total_issues", 0)
+        pip_audit_issues = pip_audit_data.get("total_issues", 0)
+        content += f"""### Dependency Vulnerabilities
+
+**Safety**: {safety_issues} issues | **pip-audit**: {pip_audit_issues} issues
+
+"""
+
+    # Container findings
+    if trivy_data and trivy_data.get("total_issues", 0) > 0:
+        critical = trivy_data.get("critical", 0)
+        high = trivy_data.get("high", 0)
+        medium = trivy_data.get("medium", 0)
+        content += f"""### Container Security - Trivy Scan
+
+**Summary**: {critical} Critical | {high} High | {medium} Medium
+
+"""
+
+    if grype_data and grype_data.get("total_issues", 0) > 0:
+        critical = grype_data.get("critical", 0)
+        high = grype_data.get("high", 0)
+        medium = grype_data.get("medium", 0)
+        content += f"""### Container Security - Grype SBOM Analysis
+
+**Summary**: {critical} Critical | {high} High | {medium} Medium
+
+"""
+
+    if total_critical == 0 and total_high == 0 and total_medium == 0 and total_low == 0:
+        content += """## ✅ Security Assessment
+
+All security scans completed with no vulnerabilities detected.
 """
 
     content += """
@@ -382,6 +577,7 @@ All security scans passed with no vulnerabilities detected.
 
 - [Test Report](test-report.md) - Test execution results
 - [Coverage Report](coverage-report.md) - Code coverage analysis
+- [License Report](license-report.md) - Dependency licenses
 - [CI/CD Status](ci-cd.md) - Pipeline execution details
 
 ---
@@ -394,6 +590,32 @@ All security scans passed with no vulnerabilities detected.
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(content)
     print(f"Security report generated: {output_path}")
+
+
+def parse_grype_json(json_path: Path) -> dict[str, Any]:
+    """Parse Grype SBOM vulnerability JSON."""
+    try:
+        with open(json_path) as f:
+            data = json.load(f)
+
+        matches = data.get("matches", [])
+
+        critical = len(
+            [m for m in matches if m.get("vulnerability", {}).get("severity") == "Critical"]
+        )
+        high = len([m for m in matches if m.get("vulnerability", {}).get("severity") == "High"])
+        medium = len([m for m in matches if m.get("vulnerability", {}).get("severity") == "Medium"])
+
+        return {
+            "total_issues": len(matches),
+            "critical": critical,
+            "high": high,
+            "medium": medium,
+            "matches": matches,
+        }
+    except Exception as e:
+        print(f"Error parsing Grype JSON {json_path}: {e}", file=sys.stderr)
+        return {}
 
 
 def generate_license_report(input_dir: Path, output_path: Path) -> None:
