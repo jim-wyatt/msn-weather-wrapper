@@ -1,61 +1,30 @@
 name: Auto Version and Release
 
-# Triggers when a PR is merged to main
+# Triggered manually by CI/CD Pipeline after tests pass
 on:
-  pull_request:
-    types: [closed]
-    branches: [main]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR Number (if from PR merge)'
+        required: false
+        type: string
+      pr_title:
+        description: 'PR Title'
+        required: false
+        type: string
+      pr_merged:
+        description: 'Was PR merged'
+        required: false
+        type: string
+        default: 'true'
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
-  wait-for-ci:
-    name: Wait for CI/CD to Pass
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    steps:
-      - name: Wait for CI/CD Pipeline to succeed
-        run: |
-          PR_NUMBER=${{ github.event.pull_request.number }}
-          COMMIT_SHA=${{ github.event.pull_request.merge_commit_sha }}
-
-          echo "Waiting for CI/CD Pipeline to complete for commit $COMMIT_SHA..."
-
-          # Poll for CI/CD status (max 10 minutes)
-          for i in {1..60}; do
-            # Get the most recent run of CI/CD Pipeline on this commit
-            RUN_STATUS=$(gh run list \
-              --workflow ci.yml \
-              --json status,conclusion,createdAt \
-              --limit 5 \
-              -q '.[] | select(.createdAt >= "2025-12-04T") | .conclusion' \
-              2>/dev/null | head -1 || echo "")
-
-            if [[ "$RUN_STATUS" == "success" ]]; then
-              echo "✓ CI/CD Pipeline passed"
-              exit 0
-            elif [[ "$RUN_STATUS" == "failure" ]]; then
-              echo "✗ CI/CD Pipeline failed"
-              exit 1
-            fi
-
-            if [[ $i -eq 60 ]]; then
-              echo "⏱ Timeout: CI/CD Pipeline did not complete within 10 minutes"
-              exit 1
-            fi
-
-            echo "[$i/60] Waiting for CI/CD Pipeline... (current status: $RUN_STATUS)"
-            sleep 10
-          done
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   auto-version:
     name: Auto Version Bump and Tag
-    needs: wait-for-ci
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
@@ -75,21 +44,14 @@ jobs:
       - name: Determine version bump type
         id: bump_type
         run: |
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          PR_LABELS='${{ toJson(github.event.pull_request.labels.*.name) }}'
+          PR_TITLE="${{ github.event.inputs.pr_title }}"
 
           echo "PR Title: $PR_TITLE"
-          echo "PR Labels: $PR_LABELS"
 
           BUMP_TYPE="patch"
 
-          # Check labels (highest priority)
-          if echo "$PR_LABELS" | grep -qi '"breaking"\|"major"'; then
-            BUMP_TYPE="major"
-          elif echo "$PR_LABELS" | grep -qi '"feature"\|"enhancement"\|"minor"'; then
-            BUMP_TYPE="minor"
           # Check PR title for conventional commit prefixes
-          elif echo "$PR_TITLE" | grep -qiE "^(breaking|feat|feature)(\(.*\))?!:"; then
+          if echo "$PR_TITLE" | grep -qiE "^(breaking|feat|feature)(\(.*\))?!:"; then
             BUMP_TYPE="major"
           elif echo "$PR_TITLE" | grep -qiE "^(feat|feature)(\(.*\))?:"; then
             BUMP_TYPE="minor"
@@ -184,7 +146,7 @@ jobs:
 
             **Version**: ${{ steps.version.outputs.current }} → **${{ steps.version.outputs.new }}**
             **Bump Type**: ${{ steps.bump_type.outputs.bump_type }}
-            **Triggered by**: PR #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}
+            **Triggered by**: CI/CD Pipeline (PR #${{ github.event.inputs.pr_number }} - ${{ github.event.inputs.pr_title }})
 
             ### Changes
             - Updated `pyproject.toml` version
@@ -200,11 +162,10 @@ jobs:
                - Create GitHub Release
 
             ---
-            *Auto-generated from merged PR #${{ github.event.pull_request.number }}*
+            *Auto-generated from PR #${{ github.event.inputs.pr_number }}*
           labels: |
             automated
             version-bump
-          assignees: ${{ github.event.pull_request.user.login }}
 
       - name: Auto-merge version bump PR
         if: steps.check.outputs.skip == 'false' && steps.create_pr.outputs.pull-request-number
@@ -249,7 +210,7 @@ jobs:
 
           git tag -a "v$NEW_VERSION" \
                   -m "Release v$NEW_VERSION" \
-                  -m "Auto-generated from PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}" \
+                  -m "Auto-generated from PR #${{ github.event.inputs.pr_number }}: ${{ github.event.inputs.pr_title }}" \
                   -m "Bump type: ${{ steps.bump_type.outputs.bump_type }}"
 
           git push origin "v$NEW_VERSION"

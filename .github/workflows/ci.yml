@@ -580,6 +580,47 @@ jobs:
       - name: Deploy to GitHub Pages
         run: mkdocs gh-deploy --force
 
+  # Job: Trigger Auto-Version-Release after CI passes
+  trigger-auto-version:
+    name: Trigger Auto-Version-Release
+    runs-on: ubuntu-latest
+    # Only trigger if this is a push to main from a PR merge (not a tag push)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')
+    needs: [ smoke-tests, code-quality, security, unit-tests, coverage, docker-build, integration-tests, sbom, generate-reports, deploy-docs ]
+    steps:
+      - name: Get latest merged PR info
+        id: pr_info
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the latest PR that was merged to main
+          PR_INFO=$(gh pr list --state merged --base main --limit 1 --json number,title,mergedAt -q '.[] | "\(.number)|\(.title)"')
+
+          if [[ -z "$PR_INFO" ]]; then
+            echo "No recent merged PR found - skipping auto-version"
+            echo "skip=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          PR_NUMBER=$(echo "$PR_INFO" | cut -d'|' -f1)
+          PR_TITLE=$(echo "$PR_INFO" | cut -d'|' -f2)
+
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          echo "pr_title=$PR_TITLE" >> $GITHUB_OUTPUT
+          echo "Found merged PR #$PR_NUMBER: $PR_TITLE"
+
+      - name: Trigger Auto-Version-Release workflow
+        if: steps.pr_info.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run auto-version-release.yml \
+            -f pr_number="${{ steps.pr_info.outputs.pr_number }}" \
+            -f pr_title="${{ steps.pr_info.outputs.pr_title }}" \
+            -f pr_merged="true"
+
+          echo "✓ Triggered auto-version-release workflow for PR #${{ steps.pr_info.outputs.pr_number }}"
+
 
   # Note: Release jobs (build-package, publish-pypi, release) have been moved to
   # publish-release.yml which triggers automatically when a git tag (v*.*.*) is created.
