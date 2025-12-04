@@ -6,19 +6,21 @@ Complete testing documentation for MSN Weather Wrapper, including test coverage,
 
 | Category | Count | Status |
 |----------|-------|--------|
-| **Backend Tests** | 65 | ✅ Passing |
-| **Frontend E2E Tests** | 40 | ✅ Passing (containerized) |
-| **Total Tests** | 105 | ✅ All passing |
-| **Code Coverage** | 92% | ✅ Exceeds target (85%) |
+| **Backend Tests** | 111 | ✅ Passing |
+| **Integration Tests** | 17 | ✅ Passing |
+| **Frontend E2E Tests** | 41 | ✅ Passing (containerized) |
+| **Total Tests** | 169 | ✅ All passing |
+| **Code Coverage** | 97% | ✅ Exceeds target (85%) |
 
 ### Backend Coverage Breakdown
 - **Client Tests**: 28 (weather data, parsing, conversions, geolocation)
 - **API Tests**: 33 (endpoints, validation, caching, health checks, coordinates, recent searches)
-- **Models**: 4 (Pydantic validation)
-- **Coverage**: 92% overall
+- **Models Tests**: 4 (Pydantic validation)
+- **Security Tests**: 46 (input validation, attack prevention, rate limiting)
+- **Coverage**: 97% overall (152 statements, 5 missed)
 
 ### Frontend Test Coverage
-- **End-to-End Tests**: 40 total (Playwright)
+- **End-to-End Tests**: 41 total (Playwright)
 - **Accessibility Tests**: WCAG 2.1 Level AA compliance
 - **Visual Regression Tests**: Multiple viewports and states
 - **Functional Tests**: Weather search, autocomplete, geolocation
@@ -79,7 +81,7 @@ podman run --rm --network test-net \
 
 ### Test Breakdown
 
-### Backend Tests (65 tests)
+### Backend Tests (111 tests)
 
 #### Client Tests (28 tests)
 - Weather data fetching
@@ -88,6 +90,14 @@ podman run --rm --network test-net \
 - Response parsing
 - Cache functionality
 - Geolocation support
+
+#### Security Tests (46 tests)
+- SQL injection prevention
+- XSS attack prevention
+- Path traversal protection
+- Command injection prevention
+- Rate limiting validation
+- Input sanitization
 
 #### Model Tests (4 tests)
 - Pydantic model validation

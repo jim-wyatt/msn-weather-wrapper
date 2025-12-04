@@ -88,6 +88,7 @@ nav:
       - Container Setup: CONTAINER_DEV_SETUP.md
       - Versioning Guide: VERSIONING.md
       - Automated Versioning: AUTOMATED_VERSIONING.md
+      - Workflow Architecture: WORKFLOW_DIAGRAM.md
 
   - Deployment:
       - SBOM Generation: SYFT_GUIDE.md

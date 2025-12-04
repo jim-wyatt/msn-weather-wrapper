@@ -27,7 +27,7 @@ MSN Weather Wrapper is a comprehensive weather data solution featuring:
 
 - **Backend**: Python 3.10+, Flask 3.1+, Pydantic 2.12+, Flasgger, Gunicorn 23.0+
 - **Frontend**: React 19.2, Vite 7.2, TypeScript 5.7+
-- **Testing**: pytest 8.0+, Playwright, 105 tests (65 backend, 40 frontend E2E) with 92% coverage
+- **Testing**: pytest 8.0+, Playwright, 169 tests (128 backend, 41 frontend E2E) with 97% coverage
 - **Quality**: ruff 0.14+, mypy 1.19+, pre-commit hooks
 - **Security**: Bandit, Semgrep, Safety, Trivy, Grype, weekly automated scans
 - **Deployment**: Podman/Docker, Nginx, multi-stage builds
