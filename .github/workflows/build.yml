@@ -17,6 +17,10 @@ on:
 env:
   PYTHON_VERSION: ${{ inputs.python-version }}
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   docker-build:
     name: Build Docker Images

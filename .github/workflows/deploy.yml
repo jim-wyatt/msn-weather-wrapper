@@ -16,6 +16,9 @@ env:
   PYTHON_VERSION: ${{ inputs.python-version }}
   REPORTS_DIR: 'docs/reports'
 
+permissions:
+  contents: write
+
 jobs:
   generate-reports:
     name: Generate Report Documentation

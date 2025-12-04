@@ -53,9 +53,6 @@ jobs:
       python-version: '3.12'
       push-image: ${{ github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
     secrets: inherit
-    permissions:
-      contents: read
-      packages: write
 
   # Integration Tests: Run after build with the Docker image
   integration-tests:
@@ -84,8 +81,6 @@ jobs:
     with:
       python-version: '3.12'
     secrets: inherit
-    permissions:
-      contents: write
 
   # Trigger Auto-Version-Release: After successful CI on main branch
   trigger-auto-version:
