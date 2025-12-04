@@ -119,6 +119,11 @@ disallow_untyped_defs = false
 module = "msn_weather_wrapper.client"
 warn_unused_ignores = false
 
+[[tool.mypy.overrides]]
+module = "api"
+warn_return_any = false
+disallow_untyped_defs = false
+
 [tool.mutmut]
 paths_to_mutate = "src/"
 backup = false
@@ -149,7 +154,7 @@ allowed_tags = [
 ]
 major_tags = ["breaking"]
 minor_tags = ["feat"]
-patch_tags = ["fix", "perf"]
+patch_tags = ["chore", "fix", "perf"]
 
 [tool.semantic_release.changelog]
 template_dir = "templates"

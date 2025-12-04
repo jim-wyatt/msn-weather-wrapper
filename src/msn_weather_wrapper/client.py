@@ -92,13 +92,13 @@ class WeatherClient:
         """
         # Use reverse geocoding to get city and country
         try:
-            location_data = self.geocoder.reverse(f"{latitude}, {longitude}", language="en")
+            location_data = self.geocoder.reverse(f"{latitude}, {longitude}", language="en")  # type: ignore[call-arg, misc]
             if not location_data:
                 raise ValueError(
                     f"Could not determine location for coordinates {latitude}, {longitude}"
                 )
 
-            address = location_data.raw.get("address", {})
+            address = location_data.raw.get("address", {})  # type: ignore[union-attr]
             city = (
                 address.get("city")
                 or address.get("town")
