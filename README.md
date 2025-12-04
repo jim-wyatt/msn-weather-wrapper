@@ -12,18 +12,19 @@
 [![Checked with mypy](https://img.shields.io/badge/mypy-checked-blue)](http://mypy-lang.org/)
 [![Container](https://img.shields.io/badge/container-ghcr.io-blue)](https://github.com/jim-wyatt/msn-weather-wrapper/pkgs/container/msn-weather-wrapper)
 
-
 ---
 
 ## Overview
 
 MSN Weather Wrapper is a comprehensive weather data solution featuring:
+
 - **Python Library** - Type-safe weather client with Pydantic models
 - **REST API** - Production-ready Flask API with OpenAPI/Swagger docs
 - **Web Frontend** - Modern React 19 + TypeScript 5.7+ with Vite 7
 - **Containerized** - Podman/Docker deployment with Gunicorn & Nginx
 
 **Technology Stack:**
+
 - **Backend**: Python 3.10+, Flask 3.1+, Pydantic 2.12+, Flasgger, Gunicorn 23.0+
 - **Frontend**: React 19.2, Vite 7.2, TypeScript 5.7+
 - **Testing**: pytest 9.0+, Playwright, 77 tests with 90% coverage
@@ -94,6 +95,7 @@ with WeatherClient() as client:
 ## Installation
 
 ### Prerequisites
+
 - Python 3.10+
 - Node.js 20+ (for frontend development)
 - Podman or Docker (for containerized deployment)
@@ -213,7 +215,7 @@ podman run -p 8080:80 msn-weather-wrapper
 
 ## Project Structure
 
-```
+```text
 msn-weather-wrapper/
 ├── src/msn_weather_wrapper/    # Python package
 ├── tests/                      # Test suite (77 tests, 90% coverage)
@@ -260,11 +262,3 @@ MIT License - see [LICENSE](LICENSE) for details.
 This project is an unofficial wrapper for MSN Weather data and is provided for educational and personal use only. This software is not affiliated with, endorsed by, or officially connected to Microsoft Corporation or MSN Weather in any way.
 
 ---
-
-<div align="center">
-
-**Built with ❤️ using Python, Flask, and React**
-
-[Get Started](#quick-start) · [Documentation](https://jim-wyatt.github.io/msn-weather-wrapper/) · [GitHub](https://github.com/jim-wyatt/msn-weather-wrapper)
-
-</div>
