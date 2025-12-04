@@ -154,7 +154,7 @@ allowed_tags = [
 ]
 major_tags = ["breaking"]
 minor_tags = ["feat"]
-patch_tags = ["fix", "perf"]
+patch_tags = ["chore", "fix", "perf"]
 
 [tool.semantic_release.changelog]
 template_dir = "templates"
