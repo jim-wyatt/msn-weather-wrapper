@@ -6,35 +6,22 @@ Complete testing documentation for MSN Weather Wrapper, including test coverage,
 
 ```mermaid
 graph TB
-    subgraph E2E["🧪 End-to-End Tests<br/>41 Frontend E2E Tests"]
-        E1["Playwright Tests<br/>41 total"]
-        E2["Accessibility<br/>13 tests"]
-        E3["Visual Regression<br/>15 tests"]
-        E4["Functional<br/>13 tests"]
+    subgraph Pyramid[" "]
+        direction TB
+
+        U["<b>Unit Tests</b><br/>111 tests<br/>Fast, isolated, no network<br/><br/>• Client: 28<br/>• Security: 46<br/>• API: 33<br/>• Models: 4"]
+
+        I["<b>Integration Tests</b><br/>17 tests<br/>Full API with live endpoints<br/><br/>• Health checks<br/>• Complete workflows<br/>• Error handling"]
+
+        E["<b>End-to-End Tests</b><br/>41 tests<br/>User workflows via Playwright<br/><br/>• Accessibility: 13<br/>• Visual: 15<br/>• Functional: 13"]
+
+        U --> I --> E
     end
 
-    subgraph INT["🔗 Integration Tests<br/>17 Tests"]
-        I1["API Testing<br/>Live endpoints"]
-        I2["Health Checks<br/>Liveness/readiness"]
-        I3["Error Handling<br/>Complete flows"]
-    end
-
-    subgraph UNIT["🧩 Unit Tests<br/>111 Backend Tests"]
-        U1["Client Tests<br/>28 tests"]
-        U2["Security Tests<br/>46 tests"]
-        U3["API Tests<br/>33 tests"]
-        U4["Model Tests<br/>4 tests"]
-    end
-
-    INT --> E1
-    UNIT --> INT
-
-    style UNIT fill:#c8e6c9,stroke:#388e3c,stroke-width:3px
-    style INT fill:#bbdefb,stroke:#1976d2,stroke-width:3px
-    style E2E fill:#ffe0b2,stroke:#f57c00,stroke-width:3px
-    style E1 fill:#ffcc80
-    style I1 fill:#64b5f6
-    style U1 fill:#a5d6a7
+    style U fill:#4CAF50,color:#fff,stroke:#2E7D32,stroke-width:3px,padding:20px
+    style I fill:#2196F3,color:#fff,stroke:#1565C0,stroke-width:3px,padding:20px
+    style E fill:#FF9800,color:#fff,stroke:#E65100,stroke-width:3px,padding:20px
+    style Pyramid fill:none,stroke:none
 ```
 
 ## Test Suite Overview
