@@ -1,6 +1,13 @@
 name: Performance Testing
 
 on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'api.py'
+      - 'tests/**'
+      - '.github/workflows/performance.yml'
   pull_request:
     branches: [ main ]
     paths:
