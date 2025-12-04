@@ -16,166 +16,62 @@ The CI/CD system has been refactored to use a **modular architecture** where the
 - **auto-version-release.yml** - Standalone version management
 - **publish-release.yml** - Standalone release publishing
 
-## Workflow Flow Diagram
+## Workflow Flow Diagram - Pull Request
 
 ```mermaid
 sequenceDiagram
-    autonumber
-
     actor Dev as Developer
     participant PR as Pull Request
-    participant CI as CI/CD Pipeline (ci.yml)
-    participant Test as Test Workflow
-    participant Sec as Security Workflow
-    participant Build as Build Workflow
-    participant Int as Integration Tests
-    participant Perf as Performance Workflow
-    participant Deploy as Deploy Workflow
-    participant Main as Main Branch
-    participant Auto as Auto Version & Release
-    participant Pub as Publish Release
-    participant PyPI as PyPI Registry
-    participant GH as GitHub Releases
-    participant Pages as GitHub Pages
+    participant CI as CI/CD Pipeline
+    participant Test as Test
+    participant Sec as Security
+    participant Build as Build
 
-    %% Pull Request Flow
-    Note over Dev,Sec: Pull Request Workflow
     Dev->>PR: Create PR to main
-    activate PR
+    PR->>CI: Trigger CI/CD
 
-    PR->>CI: Trigger CI/CD Pipeline
-    activate CI
+    CI->>Test: Run tests
+    Test-->>CI: ✓ Pass
 
-    CI->>Test: Call test.yml
-    activate Test
-    Test->>Test: Smoke Tests (fast fail)
-    Test->>Test: Code Quality & Linting
-    Test->>Test: Unit Tests (Python 3.10-3.12)
-    Test->>Test: Test Coverage (97%+)
-    Test-->>CI: ✓ Tests Complete
-    deactivate Test
+    CI->>Sec: Run security scan
+    Sec-->>CI: ✓ Pass
 
-    CI->>Sec: Call security.yml (full-scan)
-    activate Sec
-    Sec->>Sec: Basic Security Checks
-    Sec->>Sec: SAST (Bandit, Semgrep)
-    Sec->>Sec: Dependency Scanning
-    Sec->>Sec: Container Scanning (Trivy)
-    Sec-->>CI: ✓ Security OK
-    deactivate Sec
+    CI->>Build: Build Docker
+    Build-->>CI: ✓ Complete
 
-    CI->>Build: Call build.yml (no push)
-    activate Build
-    Build->>Build: Build Docker Images
-    Build->>Build: Test Container
-    Build->>Build: Generate SBOM
-    Build->>Build: Build Documentation
-    Build-->>CI: ✓ Build Complete
-    deactivate Build
+    CI-->>PR: ✓ All checks pass
+    Dev->>PR: Review & Merge
+    PR-->>Dev: ✓ Merged
+```
 
-    CI->>Int: Call test.yml (integration)
-    activate Int
-    Int->>Int: Run Integration Tests
-    Int-->>CI: ✓ Integration OK
-    deactivate Int
+## Workflow Flow Diagram - Main Branch Release
 
-    CI-->>PR: ✓ All Checks Pass
-    deactivate CI
+```mermaid
+sequenceDiagram
+    participant Main as Main Branch
+    participant CI as CI/CD Pipeline
+    participant Build as Build
+    participant Deploy as Deploy
+    participant Auto as Auto-Version
+    participant Pub as Publish
+    participant PyPI as PyPI
 
-    Dev->>PR: Review and Merge
-    PR->>Main: Merge to main
-    deactivate PR
+    Main->>CI: Trigger on push
 
-    %% Main Branch Flow
-    Note over Main,Pages: Main Branch Push Workflow
-    activate Main
-    Main->>CI: Trigger CI/CD Pipeline
-    activate CI
+    CI->>Build: Full build & push
+    Build-->>CI: ✓ Complete
 
-    CI->>Test: Call test.yml
-    activate Test
-    Test->>Test: Run All Tests
-    Test-->>CI: ✓ Tests Complete
-    deactivate Test
+    CI->>Deploy: Generate reports
+    Deploy-->>CI: ✓ Deployed
 
-    CI->>Sec: Call security.yml (basic)
-    activate Sec
-    Sec->>Sec: Run Basic Security
-    Sec-->>CI: ✓ Security OK
-    deactivate Sec
+    CI->>Auto: Trigger version bump
+    Auto->>Main: Create version PR
+    Auto->>Main: Create git tag
+    Auto-->>Pub: Trigger release
 
-    CI->>Build: Call build.yml (push images)
-    activate Build
-    Build->>Build: Build & Push Docker Images
-    Build->>Build: Generate SBOM
-    Build->>Build: Build Documentation
-    Build-->>CI: ✓ Build Complete
-    deactivate Build
-
-    CI->>Int: Call test.yml (integration)
-    activate Int
-    Int->>Int: Run Integration Tests
-    Int-->>CI: ✓ Integration OK
-    deactivate Int
-
-    CI->>Perf: Call performance.yml
-    activate Perf
-    Perf->>Perf: Benchmark Tests
-    Perf->>Perf: Load Testing
-    Perf-->>CI: ✓ Performance OK
-    deactivate Perf
-
-    CI->>Deploy: Call deploy.yml
-    activate Deploy
-    Deploy->>Deploy: Generate Reports
-    Deploy->>Pages: Deploy to GitHub Pages
-    activate Pages
-    Pages-->>Deploy: ✓ Deployed
-    deactivate Pages
-    Deploy-->>CI: ✓ Deploy Complete
-    deactivate Deploy
-
-    CI->>Auto: Trigger auto-version-release.yml
-    deactivate CI
-
-    %% Auto Version & Release Flow
-    Note over Auto,Pub: Auto Version & Release Workflow
-    activate Auto
-    Auto->>Auto: Get Latest Merged PR Info
-    Auto->>Auto: Determine Version Bump Type
-    Note right of Auto: Analyze PR Title:<br/>feat: → minor<br/>fix: → patch<br/>BREAKING CHANGE: → major
-
-    Auto->>Auto: Calculate New Version
-    Auto->>Auto: Update pyproject.toml
-    Auto->>Auto: Update __init__.py
-    Auto->>Main: Create Version Bump PR
-    Auto->>Main: Auto-merge PR
-    Auto->>Main: Create Git Tag (v*.*.*)
-    Note right of Auto: Tag triggers<br/>publish-release.yml
-
-    Auto->>Pub: Trigger publish-release.yml
-    deactivate Auto
-    deactivate Main
-
-    %% Publish Release Flow
-    Note over Pub,GH: Publish Release Workflow
-    activate Pub
-    Pub->>Pub: Build Python Package
-    Note right of Pub: Build wheel & sdist
-
-    Pub->>PyPI: Publish to PyPI
-    activate PyPI
-    PyPI-->>Pub: ✓ Package Published
-    deactivate PyPI
-
-    Pub->>GH: Create GitHub Release
-    activate GH
-    Note right of GH: Attach artifacts<br/>Generate release notes
-    GH-->>Pub: ✓ Release Created
-    deactivate GH
-
-    Pub-->>Dev: ✓ Release v*.*.* Complete
-    deactivate Pub
+    Pub->>PyPI: Publish package
+    PyPI-->>Pub: ✓ Published
+    Pub-->>Dev: ✓ Release complete
 ```
 
 ## Modular Workflow Architecture
@@ -242,7 +138,7 @@ graph TB
 7. **Trigger Auto-Version** - Triggers `auto-version-release.yml` (main branch only)
 
 **Benefits:**
-- Simplified main workflow (120 lines vs 662 lines previously)
+- Modular architecture with ~120 lines orchestrator workflow
 - Clear separation of concerns
 - Easy to maintain and extend
 - Consistent execution across all environments
