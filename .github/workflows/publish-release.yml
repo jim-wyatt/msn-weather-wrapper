@@ -156,7 +156,12 @@ jobs:
           *Release automatically created from tag v${VERSION}*
           EOF
 
-          echo "release_notes=$(cat /tmp/release_notes.txt)" >> $GITHUB_OUTPUT
+          # Use heredoc for multiline output
+          {
+            echo 'release_notes<<EOF'
+            cat /tmp/release_notes.txt
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
