@@ -1081,12 +1081,7 @@
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
+          <li class="md-nav__item">
   <a href="#test-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1095,14 +1090,13 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Test Breakdown">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
-  <a href="#unit-tests-35-tests" class="md-nav__link">
+  <a href="#backend-tests-65-tests" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Unit Tests (35 tests)
+        Backend Tests (65 tests)
       
     </span>
   </a>
@@ -2045,8 +2039,6 @@
       
         
       
-        
-      
     
     
     
@@ -2183,42 +2175,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../AUTOMATIC_VERSIONING/" class="md-nav__link">
+      <a href="../AUTOMATED_VERSIONING/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Automatic Versioning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../VERSIONING_QUICKSTART/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Quick Start
+    Automated Versioning
   
 
     
@@ -2520,12 +2484,7 @@
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
+          <li class="md-nav__item">
   <a href="#test-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2534,14 +2493,13 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Test Breakdown">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
-  <a href="#unit-tests-35-tests" class="md-nav__link">
+  <a href="#backend-tests-65-tests" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Unit Tests (35 tests)
+        Backend Tests (65 tests)
       
     </span>
   </a>
@@ -3244,17 +3202,17 @@
 <tbody>
 <tr>
 <td><strong>Backend Tests</strong></td>
-<td>109</td>
+<td>65</td>
 <td>✅ Passing</td>
 </tr>
 <tr>
 <td><strong>Frontend E2E Tests</strong></td>
-<td>33</td>
+<td>40</td>
 <td>✅ Passing (containerized)</td>
 </tr>
 <tr>
 <td><strong>Total Tests</strong></td>
-<td>142</td>
+<td>105</td>
 <td>✅ All passing</td>
 </tr>
 <tr>
@@ -3266,17 +3224,17 @@
 </table>
 <h3 id="backend-coverage-breakdown">Backend Coverage Breakdown<a class="headerlink" href="#backend-coverage-breakdown" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>Unit Tests</strong>: 35 (client, models, API)</li>
-<li><strong>Security Tests</strong>: 43 (input validation, attack prevention, HTTP errors)</li>
-<li><strong>Cache Tests</strong>: 12 (TTL, concurrency, edge cases)</li>
-<li><strong>Integration Tests</strong>: 17 (live API testing)</li>
-<li><strong>Coverage</strong>: 92% overall (90% API, 96% client, 100% models)</li>
+<li><strong>Client Tests</strong>: 28 (weather data, parsing, conversions, geolocation)</li>
+<li><strong>API Tests</strong>: 33 (endpoints, validation, caching, health checks, coordinates, recent searches)</li>
+<li><strong>Models</strong>: 4 (Pydantic validation)</li>
+<li><strong>Coverage</strong>: 92% overall</li>
 </ul>
 <h3 id="frontend-test-coverage">Frontend Test Coverage<a class="headerlink" href="#frontend-test-coverage" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>Accessibility Tests</strong>: 13 (WCAG 2.1 Level AA)</li>
-<li><strong>Visual Regression Tests</strong>: 15 (7 viewports, 10+ states)</li>
-<li><strong>Functional E2E Tests</strong>: 5 (weather search, autocomplete)</li>
+<li><strong>End-to-End Tests</strong>: 40 total (Playwright)</li>
+<li><strong>Accessibility Tests</strong>: WCAG 2.1 Level AA compliance</li>
+<li><strong>Visual Regression Tests</strong>: Multiple viewports and states</li>
+<li><strong>Functional Tests</strong>: Weather search, autocomplete, geolocation</li>
 <li><strong>Tool</strong>: Playwright with @axe-core/playwright</li>
 </ul>
 <h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
@@ -3320,9 +3278,9 @@
 </span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">PLAYWRIGHT_BASE_URL</span><span class="o">=</span>http://frontend-srv:5173<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">  </span>msn-weather-playwright:latest<span class="w"> </span>npx<span class="w"> </span>playwright<span class="w"> </span><span class="nb">test</span>
 </span></code></pre></div>
-<h2 id="test-breakdown">Test Breakdown<a class="headerlink" href="#test-breakdown" title="Permanent link">&para;</a></h2>
-<h3 id="unit-tests-35-tests">Unit Tests (35 tests)<a class="headerlink" href="#unit-tests-35-tests" title="Permanent link">&para;</a></h3>
-<h4 id="client-tests-21-tests">Client Tests (21 tests)<a class="headerlink" href="#client-tests-21-tests" title="Permanent link">&para;</a></h4>
+<h3 id="test-breakdown">Test Breakdown<a class="headerlink" href="#test-breakdown" title="Permanent link">&para;</a></h3>
+<h3 id="backend-tests-65-tests">Backend Tests (65 tests)<a class="headerlink" href="#backend-tests-65-tests" title="Permanent link">&para;</a></h3>
+<h4 id="client-tests-28-tests">Client Tests (28 tests)<a class="headerlink" href="#client-tests-28-tests" title="Permanent link">&para;</a></h4>
 <ul>
 <li>Weather data fetching</li>
 <li>Error handling</li>
@@ -3338,9 +3296,9 @@
 <li>Required fields</li>
 <li>Optional fields</li>
 </ul>
-<h4 id="api-tests-10-tests">API Tests (10 tests)<a class="headerlink" href="#api-tests-10-tests" title="Permanent link">&para;</a></h4>
+<h4 id="api-tests-33-tests">API Tests (33 tests)<a class="headerlink" href="#api-tests-33-tests" title="Permanent link">&para;</a></h4>
 <ul>
-<li>Health check endpoint (<code>/api/v1/health</code>)</li>
+<li>Health check endpoints (<code>/api/v1/health</code>, <code>/api/v1/health/live</code>, <code>/api/v1/health/ready</code>)</li>
 <li>GET request handling</li>
 <li>POST request handling</li>
 <li>Error responses</li>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for src/msn_weather_wrapper/client.py: 93%</title>
+    <title>Coverage for src/msn_weather_wrapper/client.py: 96%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
     <link rel="stylesheet" href="style_cb_8432e98f.css" type="text/css">
     <script src="coverage_html_cb_bcae5fc4.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>src&#8201;/&#8201;msn_weather_wrapper&#8201;/&#8201;client.py</b>:
-            <span class="pc_cov">93%</span>
+            <span class="pc_cov">96%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">136 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">126<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">10<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">131<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">5<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_ff544bdced220c3e_models_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.12.0">coverage.py v7.12.0</a>,
-            created at 2025-12-04 20:10 +0000
+            created at 2025-12-04 20:56 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -180,23 +180,23 @@
     <p class="run run2"><span class="n"><a id="t98" href="#t98">98</a></span><span class="t">                    <span class="fst">f"</span><span class="fst">Could not determine location for coordinates </span><span class="op">{</span><span class="nam">latitude</span><span class="op">}</span><span class="fst">, </span><span class="op">{</span><span class="nam">longitude</span><span class="op">}</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t99" href="#t99">99</a></span><span class="t">                <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t100" href="#t100">100</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t101" href="#t101">101</a></span><span class="t">            <span class="nam">address</span> <span class="op">=</span> <span class="nam">location_data</span><span class="op">.</span><span class="nam">raw</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"address"</span><span class="op">,</span> <span class="op">{</span><span class="op">}</span><span class="op">)</span>  <span class="com"># type: ignore[union-attr]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t102" href="#t102">102</a></span><span class="t">            <span class="nam">city</span> <span class="op">=</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t103" href="#t103">103</a></span><span class="t">                <span class="nam">address</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"city"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t104" href="#t104">104</a></span><span class="t">                <span class="key">or</span> <span class="nam">address</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"town"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t105" href="#t105">105</a></span><span class="t">                <span class="key">or</span> <span class="nam">address</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"village"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t106" href="#t106">106</a></span><span class="t">                <span class="key">or</span> <span class="nam">address</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"county"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t107" href="#t107">107</a></span><span class="t">                <span class="key">or</span> <span class="str">"Unknown"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t108" href="#t108">108</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t109" href="#t109">109</a></span><span class="t">            <span class="nam">country</span> <span class="op">=</span> <span class="nam">address</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"country"</span><span class="op">,</span> <span class="str">"Unknown"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t101" href="#t101">101</a></span><span class="t">            <span class="nam">address</span> <span class="op">=</span> <span class="nam">location_data</span><span class="op">.</span><span class="nam">raw</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"address"</span><span class="op">,</span> <span class="op">{</span><span class="op">}</span><span class="op">)</span>  <span class="com"># type: ignore[union-attr]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t102" href="#t102">102</a></span><span class="t">            <span class="nam">city</span> <span class="op">=</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t103" href="#t103">103</a></span><span class="t">                <span class="nam">address</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"city"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t104" href="#t104">104</a></span><span class="t">                <span class="key">or</span> <span class="nam">address</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"town"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t105" href="#t105">105</a></span><span class="t">                <span class="key">or</span> <span class="nam">address</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"village"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t106" href="#t106">106</a></span><span class="t">                <span class="key">or</span> <span class="nam">address</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"county"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t107" href="#t107">107</a></span><span class="t">                <span class="key">or</span> <span class="str">"Unknown"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t108" href="#t108">108</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t109" href="#t109">109</a></span><span class="t">            <span class="nam">country</span> <span class="op">=</span> <span class="nam">address</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"country"</span><span class="op">,</span> <span class="str">"Unknown"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t110" href="#t110">110</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t111" href="#t111">111</a></span><span class="t">            <span class="nam">location</span> <span class="op">=</span> <span class="nam">Location</span><span class="op">(</span><span class="nam">city</span><span class="op">=</span><span class="nam">city</span><span class="op">,</span> <span class="nam">country</span><span class="op">=</span><span class="nam">country</span><span class="op">,</span> <span class="nam">latitude</span><span class="op">=</span><span class="nam">latitude</span><span class="op">,</span> <span class="nam">longitude</span><span class="op">=</span><span class="nam">longitude</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t111" href="#t111">111</a></span><span class="t">            <span class="nam">location</span> <span class="op">=</span> <span class="nam">Location</span><span class="op">(</span><span class="nam">city</span><span class="op">=</span><span class="nam">city</span><span class="op">,</span> <span class="nam">country</span><span class="op">=</span><span class="nam">country</span><span class="op">,</span> <span class="nam">latitude</span><span class="op">=</span><span class="nam">latitude</span><span class="op">,</span> <span class="nam">longitude</span><span class="op">=</span><span class="nam">longitude</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t112" href="#t112">112</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t113" href="#t113">113</a></span><span class="t">        <span class="key">except</span> <span class="nam">Exception</span> <span class="key">as</span> <span class="nam">e</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t114" href="#t114">114</a></span><span class="t">            <span class="key">raise</span> <span class="nam">ValueError</span><span class="op">(</span><span class="fst">f"</span><span class="fst">Failed to reverse geocode coordinates: </span><span class="op">{</span><span class="nam">str</span><span class="op">(</span><span class="nam">e</span><span class="op">)</span><span class="op">}</span><span class="fst">"</span><span class="op">)</span> <span class="key">from</span> <span class="nam">e</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t115" href="#t115">115</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t116" href="#t116">116</a></span><span class="t">        <span class="com"># Now get weather for this location</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t117" href="#t117">117</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">get_weather</span><span class="op">(</span><span class="nam">location</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t117" href="#t117">117</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">get_weather</span><span class="op">(</span><span class="nam">location</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t118" href="#t118">118</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t119" href="#t119">119</a></span><span class="t">    <span class="key">def</span> <span class="nam">_extract_weather_from_json</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">html</span><span class="op">:</span> <span class="nam">str</span><span class="op">)</span> <span class="op">-></span> <span class="nam">dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">float</span> <span class="op">|</span> <span class="nam">int</span> <span class="op">|</span> <span class="nam">str</span><span class="op">]</span> <span class="op">|</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t120" href="#t120">120</a></span><span class="t">        <span class="str">"""Extract weather data from embedded JSON in the HTML.</span>&nbsp;</span><span class="r"></span></p>
@@ -399,7 +399,7 @@
             <a class="nav" href="z_ff544bdced220c3e_models_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.12.0">coverage.py v7.12.0</a>,
-            created at 2025-12-04 20:10 +0000
+            created at 2025-12-04 20:56 +0000
         </p>
     </div>
 </footer>
