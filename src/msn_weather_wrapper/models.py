@@ -8,8 +8,8 @@ class Location(BaseModel):
 
     city: str = Field(description="City name")
     country: str = Field(description="Country name")
-    latitude: float | None = Field(None, description="Latitude coordinate")
-    longitude: float | None = Field(None, description="Longitude coordinate")
+    latitude: float | None = Field(default=None, description="Latitude coordinate")
+    longitude: float | None = Field(default=None, description="Longitude coordinate")
 
 
 class WeatherData(BaseModel):

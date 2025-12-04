@@ -12,7 +12,7 @@ from typing import Any
 import structlog
 from dotenv import load_dotenv
 from flasgger import Swagger
-from flask import Flask, jsonify, request, session
+from flask import Flask, Response, jsonify, request, session
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -203,14 +203,12 @@ def get_client() -> WeatherClient:
     """Get or create a weather client instance."""
     if not hasattr(app, "weather_client"):
         timeout = int(os.getenv("REQUEST_TIMEOUT", "15"))
-        app.weather_client = WeatherClient(timeout=timeout)
-    return app.weather_client
+        app.weather_client = WeatherClient(timeout=timeout)  # type: ignore[attr-defined]
+    return app.weather_client  # type: ignore[attr-defined, return-value]
 
 
 @lru_cache(maxsize=CACHE_SIZE)
-def get_cached_weather(
-    city: str, country: str, minute_bucket: int
-) -> tuple[dict[str, str | float | int], int]:
+def get_cached_weather(city: str, country: str, minute_bucket: int) -> tuple[dict[str, Any], int]:
     """Get weather with 5-minute caching.
 
     Args:
@@ -222,7 +220,7 @@ def get_cached_weather(
         Tuple of (weather_dict, status_code)
     """
     try:
-        location = Location(city=city, country=country)
+        location = Location(city=city, country=country, latitude=None, longitude=None)
         client = get_client()
         weather = client.get_weather(location)
 
@@ -298,7 +296,7 @@ def add_request_id_header(response):  # type: ignore[no-untyped-def]
 
 @app.route("/api/health", methods=["GET"])
 @app.route("/api/v1/health", methods=["GET"])
-def health_check() -> tuple[dict[str, str], int]:
+def health_check() -> Response:
     """Health check endpoint (basic).
     ---
     tags:
@@ -325,7 +323,7 @@ def health_check() -> tuple[dict[str, str], int]:
 
 
 @app.route("/api/v1/health/live", methods=["GET"])
-def liveness_check() -> tuple[dict[str, str], int]:
+def liveness_probe() -> Response:
     """Liveness probe endpoint.
     ---
     tags:
@@ -346,7 +344,7 @@ def liveness_check() -> tuple[dict[str, str], int]:
 
 
 @app.route("/api/v1/health/ready", methods=["GET"])
-def readiness_check() -> tuple[dict[str, str | bool], int]:
+def readiness_probe() -> Response:
     """Readiness probe endpoint.
     ---
     tags:
@@ -541,7 +539,8 @@ def get_weather() -> tuple[dict[str, str | float | int | dict[str, str]], int]:
             country=country,
             cached=True,
         )
-        # Store in recent searches
+        # Store in recent searches (city and country are validated non-None above)
+        assert city is not None and country is not None
         _add_to_recent_searches(city, country)
     else:
         logger.error(
@@ -682,6 +681,7 @@ def get_weather_post() -> tuple[dict[str, str | float | int | dict[str, str]], i
             cached=True,
         )
         # Store in recent searches
+        assert city is not None and country is not None  # validated above
         _add_to_recent_searches(city, country)
     else:
         logger.error(
@@ -842,7 +842,7 @@ def get_weather_by_coordinates() -> tuple[dict[str, Any], int]:
 
 
 @app.route("/api/v1/recent-searches", methods=["GET"])
-def get_recent_searches() -> tuple[dict[str, list[dict[str, str]]], int]:
+def get_recent_searches() -> Response:
     """Get recent weather searches for the current session.
     ---
     tags:
@@ -878,7 +878,7 @@ def get_recent_searches() -> tuple[dict[str, list[dict[str, str]]], int]:
 
 
 @app.route("/api/v1/recent-searches", methods=["DELETE"])
-def clear_recent_searches() -> tuple[dict[str, str], int]:
+def clear_recent_searches() -> Response:
     """Clear recent weather searches for the current session.
     ---
     tags:
@@ -905,10 +905,10 @@ def clear_recent_searches() -> tuple[dict[str, str], int]:
 
 
 @app.teardown_appcontext
-def cleanup(error: Exception | None = None) -> None:
+def cleanup(error: BaseException | None = None) -> None:
     """Clean up resources on app shutdown."""
     if hasattr(app, "weather_client"):
-        app.weather_client.close()
+        app.weather_client.close()  # type: ignore[attr-defined]
 
 
 if __name__ == "__main__":
