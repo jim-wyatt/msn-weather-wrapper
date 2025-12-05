@@ -4,7 +4,6 @@ These tests measure the performance of core operations to track
 performance regressions over time.
 """
 
-import sys
 
 import pytest
 
@@ -12,11 +11,10 @@ from msn_weather_wrapper import Location, WeatherClient
 from msn_weather_wrapper.models import WeatherData
 
 # Skip all tests in this file if pytest-benchmark is not available
-if "pytest_benchmark" not in sys.modules:
-    try:
-        __import__("pytest_benchmark")
-    except ImportError:
-        pytestmark = pytest.mark.skip(reason="pytest-benchmark not installed")
+try:
+    import pytest_benchmark  # noqa: F401
+except ImportError:
+    pytestmark = pytest.mark.skip(reason="pytest-benchmark not installed")
 
 
 @pytest.mark.benchmark(group="client")
