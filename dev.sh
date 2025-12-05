@@ -640,7 +640,41 @@ monitor_workflows() {
         fi
     }
 
-    # Function to draw the monitor display (fits 80x24)
+    # Function to get job status from latest CI/CD Pipeline run
+    get_job_status() {
+        local job_name="$1"
+        local workflows_json="$2"
+        local cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/msn-weather-wrapper"
+
+        # Get the latest CI/CD Pipeline run ID
+        local run_id=$(echo "$workflows_json" | jq -r '.workflow_runs[] | select(.name == "CI/CD Pipeline") | .id' 2>/dev/null | head -1)
+
+        if [ -z "$run_id" ] || [ "$run_id" = "null" ]; then
+            echo "unknown"
+            return
+        fi
+
+        # Ensure cache directory exists
+        mkdir -p "$cache_dir"
+
+        # Cache job status for 60 seconds
+        local cache_file="${cache_dir}/jobs_${run_id}.json"
+        if [ ! -f "$cache_file" ] || [ $(( $(date +%s) - $(stat -c %Y "$cache_file" 2>/dev/null || echo 0) )) -gt 60 ]; then
+            curl -s -H "Accept: application/vnd.github+json" \
+                "${GITHUB_API_BASE}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/actions/runs/${run_id}/jobs" \
+                > "$cache_file" 2>/dev/null || echo '{"jobs":[]}' > "$cache_file"
+        fi
+
+        # Extract job conclusion
+        local status=$(jq -r --arg name "$job_name" \
+            '.jobs[] | select(.name == $name) | .conclusion' "$cache_file" 2>/dev/null | head -1)
+
+        if [ -z "$status" ] || [ "$status" = "null" ]; then
+            echo "unknown"
+        else
+            echo "$status"
+        fi
+    }    # Function to draw the monitor display (fits 80x24)
     draw_monitor() {
         clear
         local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
@@ -689,15 +723,15 @@ monitor_workflows() {
         printf "\n"
 
         local ci_status=$(get_workflow_status "CI/CD Pipeline" "$workflows_json")
-        local sec_wf_status=$(get_workflow_status "Security" "$workflows_json")
-        local version_status=$(get_workflow_status "Auto Version and Release" "$workflows_json")
-        local perf_status=$(get_workflow_status "Performance Testing" "$workflows_json")
+        local sec_wf_status=$(get_job_status "Run Security Scans / Basic Security Checks" "$workflows_json")
+        local version_status=$(get_job_status "Trigger Auto-Version-Release" "$workflows_json")
+        local perf_status=$(get_job_status "Performance Tests" "$workflows_json")
         printf " ${YELLOW}CI/CD${NC}  "
         format_rag "$(get_rag_status "$ci_status")"; printf " CI "
         case "$ci_status" in success) printf "${GREEN}ok${NC}";; failure) printf "${RED}fail${NC}";; cancelled) printf "${BLUE}can${NC}";; *) printf "${BLUE}n/a${NC}";; esac
-        printf " | Sec "; format_rag "$(get_rag_status "$sec_wf_status")"; case "$sec_wf_status" in success) printf "${GREEN}ok${NC}";; failure) printf "${RED}fail${NC}";; cancelled) printf "${BLUE}can${NC}";; *) printf "${BLUE}n/a${NC}";; esac
-        printf " | AutoVer "; format_rag "$(get_rag_status "$version_status")"; case "$version_status" in success) printf "${GREEN}ok${NC}";; failure) printf "${RED}fail${NC}";; cancelled) printf "${BLUE}can${NC}";; *) printf "${BLUE}n/a${NC}";; esac
-        printf " | Perf "; format_rag "$(get_rag_status "$perf_status")"; case "$perf_status" in success) printf "${GREEN}ok${NC}";; failure) printf "${RED}fail${NC}";; cancelled) printf "${BLUE}can${NC}";; *) printf "${BLUE}n/a${NC}";; esac
+        printf " | Sec "; format_rag "$(get_rag_status "$sec_wf_status")"; case "$sec_wf_status" in success) printf "${GREEN}ok${NC}";; failure) printf "${RED}fail${NC}";; cancelled) printf "${BLUE}can${NC}";; skipped) printf "${BLUE}skip${NC}";; *) printf "${BLUE}n/a${NC}";; esac
+        printf " | AutoVer "; format_rag "$(get_rag_status "$version_status")"; case "$version_status" in success) printf "${GREEN}ok${NC}";; failure) printf "${RED}fail${NC}";; cancelled) printf "${BLUE}can${NC}";; skipped) printf "${BLUE}skip${NC}";; *) printf "${BLUE}n/a${NC}";; esac
+        printf " | Perf "; format_rag "$(get_rag_status "$perf_status")"; case "$perf_status" in success) printf "${GREEN}ok${NC}";; failure) printf "${RED}fail${NC}";; cancelled) printf "${BLUE}can${NC}";; skipped) printf "${BLUE}skip${NC}";; *) printf "${BLUE}n/a${NC}";; esac
         printf "\n"
 
         printf "${BLUE}%s${NC}\n" "$(printf '=%.0s' {1..80})"
