@@ -691,33 +691,33 @@ monitor_workflows() {
         local pyenv_status=$(get_local_status python_env)
         local git_status=$(get_local_status git)
         printf " ${YELLOW}Local${NC}  "
-        format_rag "$(get_rag_status "$cont_status")"; printf " Ctnr "
-        case "$cont_status" in healthy) printf "${GREEN}ok${NC}";; partial) printf "${YELLOW}part${NC}";; unhealthy) printf "${YELLOW}unhl${NC}";; stopped) printf "${BLUE}stop${NC}";; disabled) printf "${BLUE}na${NC}";; *) printf "${BLUE}na${NC}";; esac
-        printf " | PyEnv "
-        case "$pyenv_status" in active) printf "${GREEN}act${NC}";; inactive) printf "${YELLOW}exists${NC}";; none) printf "${BLUE}none${NC}";; esac
-        printf " | Git "
-        case "${git_status%%|*}" in clean) printf "${GREEN}clean${NC}";; dirty) IFS='+' read -r s u t <<< "${git_status##*|}"; printf "${YELLOW}%s/%s/%s${NC}" "$s" "$u" "$t";; esac
-        printf " | PC "; if [ -f ".pre-commit-config.yaml" ]; then if [ -f ".git/hooks/pre-commit" ]; then printf "${GREEN}on${NC}"; else printf "${YELLOW}cfg${NC}"; fi; else printf "${BLUE}na${NC}"; fi
+        printf "Ctnr "; format_rag "$(get_rag_status "$cont_status")"
+        case "$cont_status" in healthy) printf " ${GREEN}ok${NC}";; partial) printf " ${YELLOW}part${NC}";; unhealthy) printf " ${YELLOW}unhl${NC}";; stopped) printf " ${BLUE}stop${NC}";; disabled) printf " ${BLUE}na${NC}";; *) printf " ${BLUE}na${NC}";; esac
+        printf " | PyEnv "; format_rag "$(get_rag_status "$pyenv_status")"
+        case "$pyenv_status" in active) printf " ${GREEN}act${NC}";; inactive) printf " ${YELLOW}exists${NC}";; none) printf " ${BLUE}none${NC}";; esac
+        printf " | Git "; format_rag "$(get_rag_status "${git_status%%|*}")"
+        case "${git_status%%|*}" in clean) printf " ${GREEN}clean${NC}";; dirty) IFS='+' read -r s u t <<< "${git_status##*|}"; printf " ${YELLOW}%s/%s/%s${NC}" "$s" "$u" "$t";; esac
+        printf " | PC "; if [ -f ".pre-commit-config.yaml" ]; then if [ -f ".git/hooks/pre-commit" ]; then format_rag "GREEN|✅"; printf " ${GREEN}on${NC}"; else format_rag "YELLOW|⚠️"; printf " ${YELLOW}cfg${NC}"; fi; else format_rag "GREY|○"; printf " ${BLUE}na${NC}"; fi
         printf "\n"
 
         local test_status=$(get_local_status tests)
         local cov_status=$(get_local_status coverage)
         printf " ${YELLOW}Quality${NC} "
-        format_rag "$(get_rag_status "$test_status")"; printf " Test "
-        case "$test_status" in pass) printf "${GREEN}pass${NC}";; fail) printf "${RED}fail${NC}";; *) printf "${BLUE}none${NC}";; esac
+        printf "Test "; format_rag "$(get_rag_status "$test_status")"
+        case "$test_status" in pass) printf " ${GREEN}pass${NC}";; fail) printf " ${RED}fail${NC}";; *) printf " ${BLUE}none${NC}";; esac
         printf " | Cov "
-        if [ "$cov_status" != "none" ] && [ "$cov_status" != "unknown" ]; then format_rag "$(get_rag_status "" "$cov_status")"; printf " %s%%" "$cov_status"; else printf "${BLUE}○${NC} --"; fi
-        printf " | mypy "; if command -v mypy &> /dev/null && [ -f "pyproject.toml" ]; then printf "${GREEN}yes${NC}"; else printf "${BLUE}no${NC}"; fi
-        printf " | ruff "; if command -v ruff &> /dev/null || (command -v pip &> /dev/null && pip list 2>/dev/null | grep -q "ruff"); then printf "${GREEN}yes${NC}"; else printf "${BLUE}no${NC}"; fi
+        if [ "$cov_status" != "none" ] && [ "$cov_status" != "unknown" ]; then format_rag "$(get_rag_status "" "$cov_status")"; printf " %s%%" "$cov_status"; else format_rag "GREY|○"; printf " --"; fi
+        printf " | mypy "; if command -v mypy &> /dev/null && [ -f "pyproject.toml" ]; then format_rag "GREEN|✅"; printf " ${GREEN}yes${NC}"; else format_rag "GREY|○"; printf " ${BLUE}no${NC}"; fi
+        printf " | ruff "; if command -v ruff &> /dev/null || (command -v pip &> /dev/null && pip list 2>/dev/null | grep -q "ruff"); then format_rag "GREEN|✅"; printf " ${GREEN}yes${NC}"; else format_rag "GREY|○"; printf " ${BLUE}no${NC}"; fi
         printf "\n"
 
         local sec_status=$(get_local_status security)
         local dep_status=$(get_local_status dependencies)
         printf " ${YELLOW}Security${NC} "
-        format_rag "$(get_rag_status "${sec_status%%|*}")"; printf " SAST "
-        case "${sec_status%%|*}" in pass) printf "${GREEN}ok${NC}";; fail) printf "${RED}${sec_status##*|}${NC}";; *) printf "${BLUE}none${NC}";; esac
-        printf " | "; format_rag "$(get_rag_status "${dep_status%%|*}")"; printf " Deps "
-        case "${dep_status%%|*}" in pass) printf "${GREEN}clean${NC}";; warn) printf "${YELLOW}${dep_status##*|}${NC}";; unchecked) printf "${BLUE}n/a${NC}";; none) printf "${BLUE}n/a${NC}";; *) printf "${BLUE}n/a${NC}";; esac
+        printf "SAST "; format_rag "$(get_rag_status "${sec_status%%|*}")"
+        case "${sec_status%%|*}" in pass) printf " ${GREEN}ok${NC}";; fail) printf " ${RED}${sec_status##*|}${NC}";; *) printf " ${BLUE}none${NC}";; esac
+        printf " | Deps "; format_rag "$(get_rag_status "${dep_status%%|*}")"
+        case "${dep_status%%|*}" in pass) printf " ${GREEN}clean${NC}";; warn) printf " ${YELLOW}${dep_status##*|}${NC}";; unchecked) printf " ${BLUE}n/a${NC}";; none) printf " ${BLUE}n/a${NC}";; *) printf " ${BLUE}n/a${NC}";; esac
         printf " | Lic "; if [ -f "artifacts/security-reports/licenses.json" ]; then local pkgs=$(jq 'length' artifacts/security-reports/licenses.json 2>/dev/null); format_rag "GREEN|✅"; printf " %s" "$pkgs"; else format_rag "GREY|○"; printf " --"; fi
         printf " | SBOM "; local sbom_count=$(find sbom_output -name "*.json" 2>/dev/null | wc -l || echo "0"); if [ "$sbom_count" -gt 0 ]; then format_rag "GREEN|✅"; printf " %s" "$sbom_count"; else format_rag "GREY|○"; printf " --"; fi
         printf "\n"
@@ -727,11 +727,11 @@ monitor_workflows() {
         local version_status=$(get_job_status "Trigger Auto-Version-Release" "$workflows_json")
         local perf_status=$(get_job_status "Performance Tests" "$workflows_json")
         printf " ${YELLOW}CI/CD${NC}  "
-        format_rag "$(get_rag_status "$ci_status")"; printf " CI "
-        case "$ci_status" in success) printf "${GREEN}ok${NC}";; failure) printf "${RED}fail${NC}";; cancelled) printf "${BLUE}can${NC}";; *) printf "${BLUE}n/a${NC}";; esac
-        printf " | Sec "; format_rag "$(get_rag_status "$sec_wf_status")"; case "$sec_wf_status" in success) printf "${GREEN}ok${NC}";; failure) printf "${RED}fail${NC}";; cancelled) printf "${BLUE}can${NC}";; skipped) printf "${BLUE}skip${NC}";; *) printf "${BLUE}n/a${NC}";; esac
-        printf " | AutoVer "; format_rag "$(get_rag_status "$version_status")"; case "$version_status" in success) printf "${GREEN}ok${NC}";; failure) printf "${RED}fail${NC}";; cancelled) printf "${BLUE}can${NC}";; skipped) printf "${BLUE}skip${NC}";; *) printf "${BLUE}n/a${NC}";; esac
-        printf " | Perf "; format_rag "$(get_rag_status "$perf_status")"; case "$perf_status" in success) printf "${GREEN}ok${NC}";; failure) printf "${RED}fail${NC}";; cancelled) printf "${BLUE}can${NC}";; skipped) printf "${BLUE}skip${NC}";; *) printf "${BLUE}n/a${NC}";; esac
+        printf "CI "; format_rag "$(get_rag_status "$ci_status")"
+        case "$ci_status" in success) printf " ${GREEN}ok${NC}";; failure) printf " ${RED}fail${NC}";; cancelled) printf " ${BLUE}can${NC}";; *) printf " ${BLUE}n/a${NC}";; esac
+        printf " | Sec "; format_rag "$(get_rag_status "$sec_wf_status")"; case "$sec_wf_status" in success) printf " ${GREEN}ok${NC}";; failure) printf " ${RED}fail${NC}";; cancelled) printf " ${BLUE}can${NC}";; skipped) printf " ${BLUE}skip${NC}";; *) printf " ${BLUE}n/a${NC}";; esac
+        printf " | AutoVer "; format_rag "$(get_rag_status "$version_status")"; case "$version_status" in success) printf " ${GREEN}ok${NC}";; failure) printf " ${RED}fail${NC}";; cancelled) printf " ${BLUE}can${NC}";; skipped) printf " ${BLUE}skip${NC}";; *) printf " ${BLUE}n/a${NC}";; esac
+        printf " | Perf "; format_rag "$(get_rag_status "$perf_status")"; case "$perf_status" in success) printf " ${GREEN}ok${NC}";; failure) printf " ${RED}fail${NC}";; cancelled) printf " ${BLUE}can${NC}";; skipped) printf " ${BLUE}skip${NC}";; *) printf " ${BLUE}n/a${NC}";; esac
         printf "\n"
 
         printf "${BLUE}%s${NC}\n" "$(printf '=%.0s' {1..80})"
