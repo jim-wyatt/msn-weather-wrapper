@@ -453,22 +453,78 @@ monitor_workflows() {
         exit 1
     fi
 
-    # Function to colorize status
+    # Add CYAN color for running status
+    local CYAN='\033[0;36m'
+
+    # Function to get workflow status with emoji
+    get_workflow_status() {
+        local workflow="$1"
+        local result=$(gh run list --workflow="$workflow" --limit 1 --json status,conclusion,updatedAt 2>/dev/null | \
+            jq -r 'if length > 0 then .[0] | "\(.status)|\(.conclusion // "")|\(.updatedAt // "")" else "none||" end' 2>/dev/null || echo "error||")
+        echo "$result"
+    }
+
+    # Function to format status with emoji
+    format_status_emoji() {
+        local status="$1"
+        local conclusion="$2"
+        case "$status" in
+            completed)
+                case "$conclusion" in
+                    success) printf "✅" ;;
+                    failure) printf "❌" ;;
+                    cancelled|skipped) printf "⊘ " ;;
+                    *) printf "📋" ;;
+                esac
+                ;;
+            in_progress|queued|waiting|pending|requested)
+                printf "⏳"
+                ;;
+            none|error|"")
+                printf "📋"
+                ;;
+            *)
+                printf "📋"
+                ;;
+        esac
+    }
+
+    # Function to colorize status text
     colorize_status() {
         case "$1" in
-            PASS) printf "%b" "${GREEN}PASS${NC}" ;;
-            FAIL) printf "%b" "${RED}FAIL${NC}" ;;
-            RUN*)  printf "%b" "${CYAN}RUN ${NC}" ;;
-            CANC) printf "%b" "${YELLOW}CANC${NC}" ;;
-            Clean) printf "%b" "${GREEN}Clean${NC}" ;;
-            Running) printf "%b" "${GREEN}Running${NC}" ;;
-            Healthy) printf "%b" "${GREEN}Healthy${NC}" ;;
-            Stopped) printf "%b" "${RED}Stopped${NC}" ;;
-            Down) printf "%b" "${RED}Down${NC}" ;;
-            Unhealthy) printf "%b" "${YELLOW}Unhealthy${NC}" ;;
-            N/A) printf "%b" "${NC}N/A${NC}" ;;
+            success|PASS|Clean|Running|Healthy) printf "%b" "${GREEN}$1${NC}" ;;
+            failure|FAIL|Stopped|Down) printf "%b" "${RED}$1${NC}" ;;
+            in_progress|queued|RUN*) printf "%b" "${CYAN}$1${NC}" ;;
+            cancelled|skipped|CANC|Unhealthy) printf "%b" "${YELLOW}$1${NC}" ;;
+            warning) printf "%b" "${YELLOW}$1${NC}" ;;
+            N/A|none|"") printf "%b" "${NC}N/A${NC}" ;;
             *) printf "%b" "${1}" ;;
         esac
+    }
+
+    # Function to calculate duration from updatedAt
+    get_duration() {
+        local updated_at="$1"
+        if [ -z "$updated_at" ] || [ "$updated_at" = "null" ]; then
+            echo "N/A"
+            return
+        fi
+        local now=$(date +%s)
+        local updated=$(date -d "$updated_at" +%s 2>/dev/null || echo "0")
+        if [ "$updated" = "0" ]; then
+            echo "N/A"
+            return
+        fi
+        local diff=$((now - updated))
+        if [ $diff -lt 60 ]; then
+            echo "${diff}s ago"
+        elif [ $diff -lt 3600 ]; then
+            echo "$((diff / 60))m ago"
+        elif [ $diff -lt 86400 ]; then
+            echo "$((diff / 3600))h ago"
+        else
+            echo "$((diff / 86400))d ago"
+        fi
     }
 
     # Function to draw the monitor display
@@ -477,50 +533,101 @@ monitor_workflows() {
         local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
 
         printf "%b\n" "${BLUE}================================================================================${NC}"
-        printf "%b\n" "${YELLOW} MSN Weather DevOps Monitor${NC}                            Updated: ${BLUE}$timestamp${NC}"
+        printf "%b\n" "${YELLOW}🖥️  MSN Weather DevOps Monitor${NC}                         Updated: ${BLUE}$timestamp${NC}"
         printf "%b\n" "${BLUE}================================================================================${NC}"
         echo ""
 
-        # GitHub Workflows Status
-        printf "%b\n" "${YELLOW}--- WORKFLOWS ---${NC}"
-        local ci_st=$(gh run list --workflow=ci.yml --limit 1 --json status,conclusion 2>/dev/null | \
-            jq -r 'if length > 0 then .[0] | if .status == "completed" then if .conclusion == "success" then "PASS" elif .conclusion == "failure" then "FAIL" else "CANC" end else "RUN " end else "N/A " end' 2>/dev/null || echo "N/A")
-        local test_st=$(gh run list --workflow=test.yml --limit 1 --json status,conclusion 2>/dev/null | \
-            jq -r 'if length > 0 then .[0] | if .status == "completed" then if .conclusion == "success" then "PASS" else "FAIL" end else "RUN " end else "N/A " end' 2>/dev/null || echo "N/A")
-        local sec_st=$(gh run list --workflow=security.yml --limit 1 --json status,conclusion 2>/dev/null | \
-            jq -r 'if length > 0 then .[0] | if .status == "completed" then if .conclusion == "success" then "PASS" else "FAIL" end else "RUN " end else "N/A " end' 2>/dev/null || echo "N/A")
-        local build_st=$(gh run list --workflow=build.yml --limit 1 --json status,conclusion 2>/dev/null | \
-            jq -r 'if length > 0 then .[0] | if .status == "completed" then if .conclusion == "success" then "PASS" else "FAIL" end else "RUN " end else "N/A " end' 2>/dev/null || echo "N/A")
+        # Fetch all workflow statuses
+        local ci_data=$(get_workflow_status "ci.yml")
+        local test_data=$(get_workflow_status "test.yml")
+        local sec_data=$(get_workflow_status "security.yml")
+        local build_data=$(get_workflow_status "build.yml")
+        local deploy_data=$(get_workflow_status "deploy.yml")
+        local perf_data=$(get_workflow_status "performance.yml")
+        local publish_data=$(get_workflow_status "publish-release.yml")
+        local autoversion_data=$(get_workflow_status "auto-version-release.yml")
+        local deps_data=$(get_workflow_status "dependencies.yml")
 
-        printf "  CI/CD: %b   | Tests: %b   | Security: %b   | Build: %b\n" "$(colorize_status "$ci_st")" "$(colorize_status "$test_st")" "$(colorize_status "$sec_st")" "$(colorize_status "$build_st")"
+        # Parse workflow data
+        local ci_status=$(echo "$ci_data" | cut -d'|' -f1)
+        local ci_conclusion=$(echo "$ci_data" | cut -d'|' -f2)
+
+        local test_status=$(echo "$test_data" | cut -d'|' -f1)
+        local test_conclusion=$(echo "$test_data" | cut -d'|' -f2)
+
+        local sec_status=$(echo "$sec_data" | cut -d'|' -f1)
+        local sec_conclusion=$(echo "$sec_data" | cut -d'|' -f2)
+
+        local build_status=$(echo "$build_data" | cut -d'|' -f1)
+        local build_conclusion=$(echo "$build_data" | cut -d'|' -f2)
+
+        local deploy_status=$(echo "$deploy_data" | cut -d'|' -f1)
+        local deploy_conclusion=$(echo "$deploy_data" | cut -d'|' -f2)
+        local deploy_updated=$(echo "$deploy_data" | cut -d'|' -f3)
+
+        local perf_status=$(echo "$perf_data" | cut -d'|' -f1)
+        local perf_conclusion=$(echo "$perf_data" | cut -d'|' -f2)
+
+        local publish_status=$(echo "$publish_data" | cut -d'|' -f1)
+        local publish_conclusion=$(echo "$publish_data" | cut -d'|' -f2)
+
+        local autoversion_status=$(echo "$autoversion_data" | cut -d'|' -f1)
+        local autoversion_conclusion=$(echo "$autoversion_data" | cut -d'|' -f2)
+
+        local deps_status=$(echo "$deps_data" | cut -d'|' -f1)
+        local deps_conclusion=$(echo "$deps_data" | cut -d'|' -f2)
+
+        # 🔄 CI/CD & Testing Section
+        printf "%b\n" "${YELLOW}🔄 CI/CD & TESTING${NC}"
+        printf "  %s CI/CD Pipeline    %s Tests            %s Performance\n" \
+            "$(format_status_emoji "$ci_status" "$ci_conclusion")" \
+            "$(format_status_emoji "$test_status" "$test_conclusion")" \
+            "$(format_status_emoji "$perf_status" "$perf_conclusion")"
         echo ""
 
-        # Recent Pipeline Activity
-        printf "%b\n" "${YELLOW}--- RECENT ACTIVITY (Last 5 Runs) ---${NC}"
+        # 🔒 Security & Build Section
+        printf "%b\n" "${YELLOW}🔒 SECURITY & BUILD${NC}"
+        printf "  %s Security Scans   %s Build Artifacts\n" \
+            "$(format_status_emoji "$sec_status" "$sec_conclusion")" \
+            "$(format_status_emoji "$build_status" "$build_conclusion")"
+        echo ""
+
+        # 🚀 Deployment Section
+        printf "%b\n" "${YELLOW}🚀 DEPLOYMENT${NC}"
+        printf "  %s Deploy Docs      %s Publish Release\n" \
+            "$(format_status_emoji "$deploy_status" "$deploy_conclusion")" \
+            "$(format_status_emoji "$publish_status" "$publish_conclusion")"
+        echo ""
+
+        # 🔧 Maintenance Section
+        printf "%b\n" "${YELLOW}🔧 MAINTENANCE${NC}"
+        printf "  %s Auto-Version     %s Dependencies\n" \
+            "$(format_status_emoji "$autoversion_status" "$autoversion_conclusion")" \
+            "$(format_status_emoji "$deps_status" "$deps_conclusion")"
+        echo ""
+
+        # 📊 Recent Pipeline Activity
+        printf "%b\n" "${YELLOW}📊 RECENT ACTIVITY (Last 5 Runs)${NC}"
         local activity=$(gh run list --workflow=ci.yml --limit 5 --json createdAt,status,conclusion,displayTitle 2>/dev/null | \
-            jq -r '.[] | (.createdAt | split("T")[1] | .[0:5]) + " " + (if .status == "completed" then if .conclusion == "success" then "PASS" elif .conclusion == "failure" then "FAIL" else "CANC" end else "RUN " end) + " " + (.displayTitle | .[0:56])' 2>/dev/null)
+            jq -r '.[] | (.createdAt | split("T")[1] | .[0:5]) + "|" + .status + "|" + (.conclusion // "") + "|" + (.displayTitle | .[0:50])' 2>/dev/null)
 
         if [ -n "$activity" ]; then
             while IFS= read -r line; do
-                local time=$(echo "$line" | cut -d' ' -f1)
-                local status=$(echo "$line" | cut -d' ' -f2)
-                local title=$(echo "$line" | cut -d' ' -f3-)
+                local time=$(echo "$line" | cut -d'|' -f1)
+                local status=$(echo "$line" | cut -d'|' -f2)
+                local conclusion=$(echo "$line" | cut -d'|' -f3)
+                local title=$(echo "$line" | cut -d'|' -f4-)
+                local emoji=$(format_status_emoji "$status" "$conclusion")
 
-                case "$status" in
-                    PASS) printf "  %s %b %s\n" "$time" "${GREEN}[PASS]${NC}" "$title" ;;
-                    FAIL) printf "  %s %b %s\n" "$time" "${RED}[FAIL]${NC}" "$title" ;;
-                    CANC) printf "  %s %b %s\n" "$time" "${YELLOW}[CANC]${NC}" "$title" ;;
-                    RUN*) printf "  %s %b %s\n" "$time" "${CYAN}[RUN ]${NC}" "$title" ;;
-                    *) printf "  %s\n" "$line" ;;
-                esac
+                printf "  %s %s %s\n" "$time" "$emoji" "$title"
             done <<< "$activity"
         else
-            printf "%b\n" "  ${YELLOW}No workflow data available${NC}"
+            printf "  📋 No workflow data available\n"
         fi
         echo ""
 
-        # Local Build Status
-        printf "%b\n" "${YELLOW}--- LOCAL BUILD ---${NC}"
+        # 📈 Local Build Status
+        printf "%b\n" "${YELLOW}📈 LOCAL BUILD${NC}"
         local cov="N/A"
         local cov_color="${NC}"
         if [ -f "htmlcov/index.html" ]; then
@@ -555,19 +662,22 @@ monitor_workflows() {
         printf "  Coverage: %b%-8s%b | Tests: %b%-25s%b\n" "$cov_color" "$cov" "${NC}" "$test_color" "$tests" "${NC}"
         echo ""
 
-        # Security Status
-        printf "%b\n" "${YELLOW}--- SECURITY ---${NC}"
+        # 🛡️ Security Status
+        printf "%b\n" "${YELLOW}🛡️ SECURITY${NC}"
         local sec_dir="artifacts/security-reports"
         local bandit="N/A"
         local bandit_color="${NC}"
+        local bandit_emoji="📋"
         if [ -f "$sec_dir/bandit-report.json" ]; then
             local issues=$(jq '[.results[] | select(.issue_severity == "HIGH" or .issue_severity == "CRITICAL")] | length' "$sec_dir/bandit-report.json" 2>/dev/null || echo "0")
             if [ "${issues:-0}" -eq 0 ] 2>/dev/null; then
                 bandit="Clean"
                 bandit_color="${GREEN}"
+                bandit_emoji="✅"
             else
                 bandit="${issues} issues"
                 bandit_color="${RED}"
+                bandit_emoji="⚠️"
             fi
         fi
 
@@ -577,59 +687,88 @@ monitor_workflows() {
             [ -n "$pkgs" ] && lics="${pkgs} packages"
         fi
 
-        printf "  Bandit: %b%-12s%b | Licenses: %-25s\n" "$bandit_color" "$bandit" "${NC}" "$lics"
+        printf "  %s Bandit: %b%-12s%b | Licenses: %-20s\n" "$bandit_emoji" "$bandit_color" "$bandit" "${NC}" "$lics"
         echo ""
 
-        # Container Status
-        printf "%b\n" "${YELLOW}--- CONTAINERS ---${NC}"
+        # 🐳 Container Status
+        printf "%b\n" "${YELLOW}🐳 CONTAINERS${NC}"
         local api_status="Stopped"
         local api_health="N/A"
+        local api_emoji="⊘ "
+        local health_emoji="📋"
         if command -v podman &> /dev/null; then
             local api_up=$(podman ps --filter "name=msn-weather-api-dev" --format "{{.Status}}" 2>/dev/null)
             if [ -n "$api_up" ]; then
                 api_status="Running"
+                api_emoji="✅"
                 if curl -s -f http://localhost:5000/api/v1/health > /dev/null 2>&1; then
                     api_health="Healthy"
+                    health_emoji="✅"
                 else
                     api_health="Unhealthy"
+                    health_emoji="⚠️"
                 fi
             else
                 api_health="Down"
+                health_emoji="❌"
             fi
         else
             api_status="Podman N/A"
         fi
 
         local fe_status="Stopped"
+        local fe_emoji="⊘ "
         if command -v podman &> /dev/null; then
             local fe_up=$(podman ps --filter "name=msn-weather-frontend-dev" --format "{{.Status}}" 2>/dev/null)
-            [ -n "$fe_up" ] && fe_status="Running"
+            if [ -n "$fe_up" ]; then
+                fe_status="Running"
+                fe_emoji="✅"
+            fi
         fi
 
-        printf "  API: %b   Health: %b   | Frontend: %b\n" "$(colorize_status "$api_status")" "$(colorize_status "$api_health")" "$(colorize_status "$fe_status")"
+        printf "  %s API: %b%-10s%b %s Health: %b%-10s%b | %s Frontend: %b%s%b\n" \
+            "$api_emoji" "$([ "$api_status" = "Running" ] && echo "${GREEN}" || echo "${RED}")" "$api_status" "${NC}" \
+            "$health_emoji" "$([ "$api_health" = "Healthy" ] && echo "${GREEN}" || echo "${YELLOW}")" "$api_health" "${NC}" \
+            "$fe_emoji" "$([ "$fe_status" = "Running" ] && echo "${GREEN}" || echo "${RED}")" "$fe_status" "${NC}"
         echo ""
 
-        # Repository Info
-        printf "%b\n" "${YELLOW}--- REPOSITORY ---${NC}"
+        # 📁 Repository Info with Git Status
+        printf "%b\n" "${YELLOW}📁 REPOSITORY${NC}"
         local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "N/A")
         local commits=$(git rev-list --count HEAD 2>/dev/null || echo "0")
-        local modified=$(git status --porcelain 2>/dev/null | wc -l || echo "0")
-        local mod_color="${GREEN}"
-        [ "$modified" -gt 0 ] && mod_color="${YELLOW}"
-        printf "  Branch: %b%-15s%b | Commits: %-8s | Modified: %b%s files%b\n" "${CYAN}" "$branch" "${NC}" "$commits" "$mod_color" "$modified" "${NC}"
+
+        # Get detailed git status
+        local staged=$(git diff --cached --numstat 2>/dev/null | wc -l || echo "0")
+        local unstaged=$(git diff --numstat 2>/dev/null | wc -l || echo "0")
+        local untracked=$(git ls-files --others --exclude-standard 2>/dev/null | wc -l || echo "0")
+        local total_modified=$((staged + unstaged + untracked))
+
+        local mod_emoji="✅"
+        if [ "$total_modified" -gt 0 ]; then
+            mod_emoji="⚠️"
+        fi
+
+        printf "  Branch: %b%-15s%b | Commits: %-6s\n" "${CYAN}" "$branch" "${NC}" "$commits"
+        printf "  %s Changes: %b%s staged%b | %b%s unstaged%b | %b%s untracked%b\n" \
+            "$mod_emoji" \
+            "$([ "$staged" -gt 0 ] && echo "${GREEN}" || echo "${NC}")" "$staged" "${NC}" \
+            "$([ "$unstaged" -gt 0 ] && echo "${YELLOW}" || echo "${NC}")" "$unstaged" "${NC}" \
+            "$([ "$untracked" -gt 0 ] && echo "${YELLOW}" || echo "${NC}")" "$untracked" "${NC}"
         echo ""
 
-        # Deployment Info
-        printf "%b\n" "${YELLOW}--- DEPLOYMENT ---${NC}"
-        local last_deploy=$(gh run list --workflow=deploy.yml --limit 1 --json createdAt 2>/dev/null | \
-            jq -r 'if length > 0 then .[0].createdAt | split("T")[0] + " " + (split("T")[1] | split(".")[0] | .[0:5]) else "N/A" end' 2>/dev/null || echo "N/A")
-        local deploy_st=$(gh run list --workflow=deploy.yml --limit 1 --json conclusion 2>/dev/null | \
-            jq -r 'if length > 0 then .[0].conclusion // "N/A" else "N/A" end' 2>/dev/null || echo "N/A")
-        printf "  Last Deploy: %-18s | Status: %b\n" "$last_deploy" "$(colorize_status "$deploy_st")"
+        # 🌐 Deployment Info
+        printf "%b\n" "${YELLOW}🌐 LAST DEPLOYMENT${NC}"
+        local last_deploy=$(gh run list --workflow=deploy.yml --limit 1 --json createdAt,updatedAt 2>/dev/null | \
+            jq -r 'if length > 0 then .[0].createdAt | split("T")[0] + " " + (split("T")[1] | .[0:5]) else "N/A" end' 2>/dev/null || echo "N/A")
+        local deploy_emoji=$(format_status_emoji "$deploy_status" "$deploy_conclusion")
+        local deploy_duration=$(get_duration "$deploy_updated")
+
+        printf "  %s Deploy: %-18s | Duration: %-10s\n" "$deploy_emoji" "$last_deploy" "$deploy_duration"
 
         echo ""
         printf "%b\n" "${BLUE}================================================================================${NC}"
-        printf "%b\n" " ${BLUE}Security Tools:${NC} Bandit | Semgrep | Safety | pip-audit | Trivy | Grype"
+        printf "%b\n" " 🔐 ${BLUE}Security Tools:${NC} Bandit | Semgrep | Safety | pip-audit | Trivy | Grype"
+        printf "%b\n" " ✅ Success  ❌ Failure  ⏳ Running  ⊘ Cancelled  ⚠️ Warning  📋 N/A"
         printf "%b\n" " ${GREEN}Press Ctrl+C to exit${NC}                             Refreshes every ${YELLOW}60 seconds${NC}"
         printf "%b\n" "${BLUE}================================================================================${NC}"
     }
