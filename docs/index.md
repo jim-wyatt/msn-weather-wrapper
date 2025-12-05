@@ -29,8 +29,10 @@ Modern Python wrapper for MSN Weather with Flask API, React frontend, and produc
 - **[Security](SECURITY.md)** - Security features, testing, and best practices
 
 ### 🚀 Deployment & Operations
+
 - **[Container Setup](CONTAINER_DEV_SETUP.md)** - Production deployment
 - **[SBOM Generation](SYFT_GUIDE.md)** - Software bill of materials
+- **[PyPI Setup](PYPI_SETUP.md)** - Automated PyPI publishing
 
 ### 📊 Project Information
 - **[Changelog](CHANGELOG.md)** - Version history and updates
@@ -51,12 +53,14 @@ Modern Python wrapper for MSN Weather with Flask API, React frontend, and produc
 | [TESTING.md](TESTING.md) | Test suite documentation | Developers |
 
 ### Specialized Guides
+
 | Document | Purpose | Audience |
 |----------|---------|----------|
 | [CONTAINER_DEV_SETUP.md](CONTAINER_DEV_SETUP.md) | Containerized development | Developers |
 | [MONITOR_DASHBOARD.md](MONITOR_DASHBOARD.md) | DevSecOps monitor & RAG thresholds | DevSecOps/Developers |
 | [SYFT_GUIDE.md](SYFT_GUIDE.md) | SBOM generation | DevOps/Security |
 | [VERSIONING.md](VERSIONING.md) | Release process | Maintainers |
+| [PYPI_SETUP.md](PYPI_SETUP.md) | PyPI publishing configuration | Maintainers |
 
 ### Reports & Logs
 | Document | Purpose | Audience |
