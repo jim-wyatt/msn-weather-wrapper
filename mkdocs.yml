@@ -91,12 +91,10 @@ nav:
   - Development:
       - Development Guide: DEVELOPMENT.md
       - Container Setup: CONTAINER_DEV_SETUP.md
-      - DevSecOps Monitor:
-        - Dashboard Overview: MONITOR_DASHBOARD.md
-        - Quick Reference: MONITOR_QUICKREF.md
-        - Enhancement Summary: MONITOR_ENHANCEMENT.md
+      - DevSecOps Monitor: MONITOR_DASHBOARD.md
 
-  - Deployment:
+  - Deployment & Operations:
+      - PyPI Setup: PYPI_SETUP.md
       - SBOM Generation: SYFT_GUIDE.md
 
   - About:
