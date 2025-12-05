@@ -15,6 +15,7 @@
 #   shell-api - Open shell in API container
 #   shell-frontend - Open shell in frontend container
 #   rebuild   - Rebuild all containers from scratch
+#   monitor   - Monitor GitHub workflows (CI/CD status)
 
 set -e
 
@@ -444,6 +445,210 @@ rebuild_all() {
     log_success "Rebuild complete!"
 }
 
+monitor_workflows() {
+    # Add CYAN color for running status
+    local CYAN='\033[0;36m'
+
+    # Function to format status with emoji
+    format_status_emoji() {
+        local status="$1"
+        case "$status" in
+            pass|success|clean|healthy|running) printf "✅" ;;
+            fail|failure|error|stopped|down|unhealthy) printf "❌" ;;
+            skip|skipped|cancelled) printf "⊘" ;;
+            *) printf "📋" ;;
+        esac
+    }
+
+    # Function to get local build status
+    get_local_status() {
+        local item="$1"
+        case "$item" in
+            coverage)
+                if [ -f "htmlcov/index.html" ]; then
+                    local pct=$(grep -oP 'pc_cov">\K[0-9]+(?=%)' htmlcov/index.html 2>/dev/null | head -1)
+                    if [ -n "$pct" ] && [ "$pct" -ge 70 ]; then
+                        echo "pass"
+                    elif [ -n "$pct" ] && [ "$pct" -ge 50 ]; then
+                        echo "warn"
+                    elif [ -n "$pct" ]; then
+                        echo "fail"
+                    else
+                        echo "unknown"
+                    fi
+                else
+                    echo "unknown"
+                fi
+                ;;
+            tests)
+                if [ -f "junit.xml" ]; then
+                    local fail=$(grep -oP 'failures="\K[0-9]+' junit.xml 2>/dev/null | head -1)
+                    if [ "${fail:-0}" -eq 0 ] 2>/dev/null; then
+                        echo "pass"
+                    else
+                        echo "fail"
+                    fi
+                else
+                    echo "unknown"
+                fi
+                ;;
+            security)
+                if [ -f "artifacts/security-reports/bandit-report.json" ]; then
+                    local issues=$(jq '[.results[] | select(.issue_severity == "HIGH" or .issue_severity == "CRITICAL")] | length' "artifacts/security-reports/bandit-report.json" 2>/dev/null || echo "0")
+                    if [ "${issues:-0}" -eq 0 ] 2>/dev/null; then
+                        echo "pass"
+                    else
+                        echo "fail"
+                    fi
+                else
+                    echo "unknown"
+                fi
+                ;;
+            *)
+                echo "unknown"
+                ;;
+        esac
+    }
+
+    # Function to draw the monitor display
+    draw_monitor() {
+        clear
+        local timestamp=$(date '+%H:%M:%S')
+
+        printf "%b\n" "${BLUE}─────────────────────────────────────────────────────────────────────────────${NC}"
+        printf "%b\n" "${YELLOW}DevSecOps Status${NC}  ${BLUE}[${timestamp}]${NC}"
+        printf "%b\n" "${BLUE}─────────────────────────────────────────────────────────────────────────────${NC}"
+        echo ""
+
+        # Get local test statuses
+        local cov_status=$(get_local_status coverage)
+        local test_status=$(get_local_status tests)
+        local sec_status=$(get_local_status security)
+
+        # Build & Testing summary
+        printf "%b Build & Test:  " "${YELLOW}━━"
+        printf "%s Coverage  " "$(format_status_emoji "$cov_status")"
+        printf "%s Tests  " "$(format_status_emoji "$test_status")"
+        printf "%s Security\n" "$(format_status_emoji "$sec_status")"
+        echo ""
+
+        # Coverage details
+        printf "%b Coverage:  " "${YELLOW}━━"
+        if [ -f "htmlcov/index.html" ]; then
+            local cov=$(grep -oP 'pc_cov">\K[0-9]+(?=%)' htmlcov/index.html 2>/dev/null | head -1)
+            if [ -n "$cov" ]; then
+                if [ "$cov" -ge 80 ]; then
+                    printf "%b%d%%%b (Excellent)\n" "${GREEN}" "$cov" "${NC}"
+                elif [ "$cov" -ge 70 ]; then
+                    printf "%b%d%%%b (Good)\n" "${GREEN}" "$cov" "${NC}"
+                elif [ "$cov" -ge 50 ]; then
+                    printf "%b%d%%%b (Fair)\n" "${YELLOW}" "$cov" "${NC}"
+                else
+                    printf "%b%d%%%b (Low)\n" "${RED}" "$cov" "${NC}"
+                fi
+            else
+                printf "No data\n"
+            fi
+        else
+            printf "No report\n"
+        fi
+
+        # Tests details
+        printf "%b Tests:  " "${YELLOW}━━"
+        if [ -f "junit.xml" ]; then
+            local tot=$(grep -oP 'tests="\K[0-9]+' junit.xml 2>/dev/null | head -1)
+            local fail=$(grep -oP 'failures="\K[0-9]+' junit.xml 2>/dev/null | head -1)
+            if [ -n "$tot" ]; then
+                if [ "${fail:-0}" -eq 0 ]; then
+                    printf "%b✅ %d passed%b\n" "${GREEN}" "$tot" "${NC}"
+                else
+                    printf "%b❌ %d/%d failed%b\n" "${RED}" "${fail:-0}" "$tot" "${NC}"
+                fi
+            else
+                printf "No report\n"
+            fi
+        else
+            printf "No report\n"
+        fi
+        echo ""
+
+        # Security scan
+        printf "%b Security:  " "${YELLOW}━━"
+        local sec_dir="artifacts/security-reports"
+        if [ -f "$sec_dir/bandit-report.json" ]; then
+            local issues=$(jq '[.results[] | select(.issue_severity == "HIGH" or .issue_severity == "CRITICAL")] | length' "$sec_dir/bandit-report.json" 2>/dev/null || echo "0")
+            if [ "${issues:-0}" -eq 0 ] 2>/dev/null; then
+                printf "%b✅ Bandit Clean%b  " "${GREEN}" "${NC}"
+            else
+                printf "%b⚠️ Bandit: ${issues} critical%b  " "${RED}" "${NC}"
+            fi
+        fi
+
+        if [ -f "$sec_dir/licenses.json" ]; then
+            local pkgs=$(jq 'length' "$sec_dir/licenses.json" 2>/dev/null)
+            [ -n "$pkgs" ] && printf "%d dependencies" "$pkgs" || printf "Dependencies: Unknown"
+        fi
+        printf "\n"
+        echo ""
+
+        # Container status
+        printf "%b Containers:  " "${YELLOW}━━"
+        if command -v podman &> /dev/null; then
+            local api_up=$(podman ps --filter "name=msn-weather-api-dev" --format "{{.Status}}" 2>/dev/null)
+            if [ -n "$api_up" ]; then
+                if curl -s -f http://localhost:5000/api/v1/health > /dev/null 2>&1; then
+                    printf "%b✅ API Healthy%b  " "${GREEN}" "${NC}"
+                else
+                    printf "%b⚠️ API Unhealthy%b  " "${YELLOW}" "${NC}"
+                fi
+            else
+                printf "%b❌ API Down%b  " "${RED}" "${NC}"
+            fi
+
+            local fe_up=$(podman ps --filter "name=msn-weather-frontend-dev" --format "{{.Status}}" 2>/dev/null)
+            if [ -n "$fe_up" ]; then
+                printf "%b✅ Frontend%b\n" "${GREEN}" "${NC}"
+            else
+                printf "%b❌ Frontend%b\n" "${RED}" "${NC}"
+            fi
+        else
+            printf "Podman not available\n"
+        fi
+        echo ""
+
+        # Git status
+        printf "%b Repository:  " "${YELLOW}━━"
+        local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
+        printf "Branch: %b%s%b" "${CYAN}" "$branch" "${NC}"
+
+        local staged=$(git diff --cached --numstat 2>/dev/null | wc -l || echo "0")
+        local unstaged=$(git diff --numstat 2>/dev/null | wc -l || echo "0")
+        local untracked=$(git ls-files --others --exclude-standard 2>/dev/null | wc -l || echo "0")
+
+        if [ "$staged" -gt 0 ] || [ "$unstaged" -gt 0 ] || [ "$untracked" -gt 0 ]; then
+            printf "  |  %b⚠️ Changes: %d+%d+%d%b\n" "${YELLOW}" "$staged" "$unstaged" "$untracked" "${NC}"
+        else
+            printf "  |  %b✅ Clean%b\n" "${GREEN}" "${NC}"
+        fi
+        echo ""
+
+        printf "%b─────────────────────────────────────────────────────────────────────────────${NC}\n" "${BLUE}"
+        printf " ${GREEN}Press Ctrl+C to exit${NC}  •  Local data • Updates every 60s\n"
+        printf "%b─────────────────────────────────────────────────────────────────────────────${NC}\n" "${BLUE}"
+    }
+
+    log_info "Starting DevOps monitor (Ctrl+C to exit)..."
+    sleep 1
+
+    # Trap Ctrl+C to clean up
+    trap 'clear; echo -e "${GREEN}Monitor stopped${NC}"; exit 0' INT TERM
+
+    while true; do
+        draw_monitor
+        sleep 60
+    done
+}
+
 create_dev_compose() {
     cat > "$COMPOSE_FILE" << 'EOF'
 version: '3.8'
@@ -531,12 +736,14 @@ Commands:
   shell-api         Open shell in API container
   shell-frontend    Open shell in frontend container
   rebuild           Rebuild all containers from scratch
+  monitor           Real-time monitoring dashboard for workflows, tests, and security
   help              Show this help message
 
 Examples:
   ./dev.sh setup              # First-time setup
   ./dev.sh start              # Start development
   ./dev.sh status             # Check container status
+  ./dev.sh monitor            # Launch real-time monitoring dashboard
   ./dev.sh logs               # Watch logs
   ./dev.sh test               # Run tests once
   ./dev.sh test --watch       # Run tests in watch mode
@@ -586,6 +793,9 @@ case "${1:-help}" in
         ;;
     rebuild)
         rebuild_all
+        ;;
+    monitor)
+        monitor_workflows
         ;;
     help|--help|-h)
         show_usage
