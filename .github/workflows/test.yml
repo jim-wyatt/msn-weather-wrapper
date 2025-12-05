@@ -54,13 +54,13 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Run Ruff format check
-        run: ruff format --check .
+        run: ruff format --check . --output-format=github
 
       - name: Run Ruff linting
-        run: ruff check .
+        run: ruff check . --output-format=github
 
       - name: Run mypy type checking
-        run: mypy src/msn_weather_wrapper --strict
+        run: mypy src/msn_weather_wrapper --strict --no-incremental
 
   unit-tests:
     needs: [smoke-tests]
@@ -79,10 +79,10 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Run unit tests
-        run: pytest tests/test_client.py tests/test_models.py tests/test_api.py -v --tb=short --junitxml=junit-${{ matrix.python-version }}.xml
+        run: pytest tests/test_client.py tests/test_models.py tests/test_api.py -v --tb=short -n auto --junitxml=junit-${{ matrix.python-version }}.xml
 
       - name: Run security tests
-        run: pytest tests/test_security.py -v --tb=short --junitxml=junit-security-${{ matrix.python-version }}.xml
+        run: pytest tests/test_security.py -v --tb=short -n auto --junitxml=junit-security-${{ matrix.python-version }}.xml
 
       - name: Upload test results
         uses: actions/upload-artifact@v5
@@ -107,7 +107,8 @@ jobs:
       - name: Run tests with coverage
         run: |
           pytest tests/test_client.py tests/test_models.py tests/test_api.py tests/test_security.py \
-            --cov=src/msn_weather_wrapper --cov-report=xml --cov-report=html --cov-report=term --cov-report=json
+            --cov=src/msn_weather_wrapper --cov-report=xml --cov-report=html --cov-report=term --cov-report=json \
+            -n auto
 
       - name: Generate coverage badge
         run: |
