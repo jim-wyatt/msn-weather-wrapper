@@ -3,7 +3,7 @@
 > A modern, production-ready Python wrapper for MSN Weather with Flask REST API and React frontend.
 
 [![CI/CD Pipeline](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/ci.yml/badge.svg)](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/ci.yml)
-[![Security Scan](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/security-scan.yml/badge.svg)](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/security-scan.yml)
+[![Security Scan](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/security.yml/badge.svg)](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/security.yml)
 [![PyPI version](https://img.shields.io/pypi/v/msn-weather-wrapper.svg)](https://pypi.org/project/msn-weather-wrapper/)
 [![Python](https://img.shields.io/pypi/pyversions/msn-weather-wrapper.svg)](https://pypi.org/project/msn-weather-wrapper/)
 [![License](https://img.shields.io/github/license/jim-wyatt/msn-weather-wrapper.svg)](LICENSE)
