@@ -652,10 +652,14 @@ monitor_workflows() {
 
         # Header
         echo ""
-        printf "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
-        printf "  ${YELLOW}⚡ DevSecOps Dashboard${NC}  ${BLUE}•${NC}  ${CYAN}${GITHUB_OWNER}/${GITHUB_REPO}${NC}  ${BLUE}•${NC}  ${MAGENTA}${branch}${NC} @ ${commit}\n"
-        printf "  ${BLUE}${timestamp}${NC}  ${BLUE}•${NC}  Auto-refresh: 60s  ${BLUE}•${NC}  Press ${GREEN}Ctrl+C${NC} to exit\n"
-        printf "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
+        printf "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
+        printf "  ${YELLOW}⚡ DevSecOps Dashboard${NC}  ${BLUE}•${NC}  "
+        printf "${CYAN}${GITHUB_OWNER}/${GITHUB_REPO}${NC}  ${BLUE}•${NC}  "
+        printf "${MAGENTA}${branch}${NC} @ ${commit}\n"
+        printf "  ${BLUE}${timestamp}${NC}  ${BLUE}•${NC}  "
+        printf "Auto-refresh: 60s  ${BLUE}•${NC}  "
+        printf "Press ${GREEN}Ctrl+C${NC} to exit\n"
+        printf "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
         echo ""
 
         # LOCAL ENVIRONMENT
@@ -670,7 +674,7 @@ monitor_workflows() {
         case "$cont_status" in
             healthy) printf "${GREEN}Both services running & healthy${NC}" ;;
             partial) printf "${YELLOW}Partial (1 service down)${NC}" ;;
-            unhealthy) printf "${YELLOW}Running but API unhealthy${NC}" ;;
+            unhealthy) printf "${YELLOW}Running but unhealthy${NC}" ;;
             stopped) printf "${BLUE}Services stopped${NC}" ;;
             disabled) printf "${BLUE}Podman not available${NC}" ;;
         esac
@@ -709,7 +713,8 @@ monitor_workflows() {
             if [ -d ".git/hooks" ] && [ -f ".git/hooks/pre-commit" ]; then
                 printf "  ${GREEN}✅${NC} Pre-commit: ${GREEN}Installed & active${NC}\n"
             else
-                printf "  ${YELLOW}⚠️${NC} Pre-commit: ${YELLOW}Config exists but not installed${NC}\n"
+                printf "  ${YELLOW}⚠️${NC} Pre-commit: "
+                printf "${YELLOW}Config exists but not installed${NC}\n"
             fi
         else
             printf "  ${BLUE}○${NC} Pre-commit: ${BLUE}Not configured${NC}\n"
@@ -734,8 +739,10 @@ monitor_workflows() {
             fi
         elif [ "$test_status" = "fail" ]; then
             if [ -f "junit.xml" ]; then
-                local tot=$(grep -oP 'tests="\K[0-9]+' junit.xml 2>/dev/null | head -1)
-                local fail=$(grep -oP 'failures="\K[0-9]+' junit.xml 2>/dev/null | head -1)
+                local tot=$(grep -oP 'tests="\K[0-9]+' junit.xml \
+                    2>/dev/null | head -1)
+                local fail=$(grep -oP 'failures="\K[0-9]+' junit.xml \
+                    2>/dev/null | head -1)
                 printf "${RED}%d/%d tests failed${NC}" "${fail:-0}" "${tot:-0}"
             else
                 printf "${RED}Tests failed${NC}"
@@ -771,7 +778,9 @@ monitor_workflows() {
             printf "  ${BLUE}○${NC} Type Check: ${BLUE}mypy not installed${NC}\n"
         fi
 
-        if command -v ruff &> /dev/null || (command -v pip &> /dev/null && pip list 2>/dev/null | grep -q "ruff"); then
+        if command -v ruff &> /dev/null || \
+           (command -v pip &> /dev/null && \
+            pip list 2>/dev/null | grep -q "ruff"); then
             printf "  ${GREEN}✅${NC} Linter: ${GREEN}ruff available${NC}\n"
         else
             printf "  ${BLUE}○${NC} Linter: ${BLUE}ruff not installed${NC}\n"
@@ -808,7 +817,7 @@ monitor_workflows() {
             warn)
                 local vuln_count="${dep_status##*|}"
                 printf "${YELLOW}%s vulnerable packages${NC}" "$vuln_count" ;;
-            unchecked) printf "${BLUE}Not scanned (install pip-audit)${NC}" ;;
+            unchecked) printf "${BLUE}Not scanned (pip-audit needed)${NC}" ;;
             none) printf "${BLUE}Unavailable${NC}" ;;
         esac
         echo ""
@@ -816,7 +825,8 @@ monitor_workflows() {
         # License Compliance
         printf "  "
         if [ -f "artifacts/security-reports/licenses.json" ]; then
-            local pkgs=$(jq 'length' "artifacts/security-reports/licenses.json" 2>/dev/null)
+            local pkgs=$(jq 'length' \
+                "artifacts/security-reports/licenses.json" 2>/dev/null)
             format_rag "GREEN|✅"
             printf " Licenses: ${GREEN}%s dependencies tracked${NC}\n" "$pkgs"
         else
@@ -825,7 +835,8 @@ monitor_workflows() {
         fi
 
         # SBOM Generation
-        local sbom_count=$(find sbom_output -name "*.json" 2>/dev/null | wc -l || echo "0")
+        local sbom_count=$(find sbom_output -name "*.json" 2>/dev/null | \
+            wc -l || echo "0")
         printf "  "
         if [ "$sbom_count" -gt 0 ]; then
             format_rag "GREEN|✅"
@@ -837,7 +848,7 @@ monitor_workflows() {
 
         echo ""
 
-        printf "${YELLOW}🚀 GitHub CI/CD Workflows${NC} ${BLUE}(Latest Runs)${NC}\n"
+        printf "${YELLOW}🚀 GitHub CI/CD${NC} ${BLUE}(Latest Runs)${NC}\n"
 
         # CI/CD Pipeline
         local ci_status=$(get_workflow_status "CI/CD Pipeline" "$workflows_json")
@@ -868,7 +879,8 @@ monitor_workflows() {
         echo ""
 
         # Auto Version and Release
-        local version_status=$(get_workflow_status "Auto Version and Release" "$workflows_json")
+        local version_status=$(get_workflow_status \
+            "Auto Version and Release" "$workflows_json")
         local version_rag=$(get_rag_status "$version_status")
         printf "  "
         format_rag "$version_rag"
@@ -882,7 +894,8 @@ monitor_workflows() {
         echo ""
 
         # Performance Tests
-        local perf_status=$(get_workflow_status "Performance Testing" "$workflows_json")
+        local perf_status=$(get_workflow_status \
+            "Performance Testing" "$workflows_json")
         local perf_rag=$(get_rag_status "$perf_status")
         printf "  "
         format_rag "$perf_rag"
@@ -896,7 +909,7 @@ monitor_workflows() {
         echo ""
 
         echo ""
-        printf "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
+        printf "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
     }
 
     log_info "Starting DevOps monitor (Ctrl+C to exit)..."
