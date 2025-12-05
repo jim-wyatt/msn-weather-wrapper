@@ -480,4 +480,4 @@ Potential improvements for future versions:
 - [Testing Documentation](TESTING.md) - Test suite and coverage
 - [Security Documentation](SECURITY.md) - Security features and scanning
 - [Container Development Setup](CONTAINER_DEV_SETUP.md) - Podman/Docker deployment
-- [CI/CD Workflows](../README.md) - GitHub Actions automation
+- [CI/CD Workflows](WORKFLOW_DIAGRAM.md) - GitHub Actions automation

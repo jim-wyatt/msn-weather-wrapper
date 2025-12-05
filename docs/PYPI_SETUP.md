@@ -262,6 +262,6 @@ gh run list --workflow publish-release.yml
 
 ## Related Documentation
 
-- [CI/CD Workflows](.github/workflows/WORKFLOWS.md) - Complete workflow documentation
+- [CI/CD Workflows](WORKFLOW_DIAGRAM.md) - Complete workflow documentation
 - [Versioning Guide](VERSIONING.md) - Version management process
 - [Development Guide](DEVELOPMENT.md) - Local development setup
