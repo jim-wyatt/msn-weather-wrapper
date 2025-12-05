@@ -132,73 +132,37 @@ jobs:
 
           echo "✏️  Updated version files to $NEW_VERSION"
 
-      - name: Create version bump PR
+      - name: Commit and push version bump directly to main
         if: steps.check.outputs.skip == 'false'
-        uses: peter-evans/create-pull-request@v6
-        id: create_pr
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: bump version to ${{ steps.version.outputs.new }}"
-          branch: auto-version/${{ steps.version.outputs.new }}
-          delete-branch: true
-          title: "chore: bump version to ${{ steps.version.outputs.new }}"
-          body: |
-            ## 🤖 Automated Version Bump
-
-            **Version**: ${{ steps.version.outputs.current }} → **${{ steps.version.outputs.new }}**
-            **Bump Type**: ${{ steps.bump_type.outputs.bump_type }}
-            **Triggered by**: CI/CD Pipeline (PR #${{ github.event.inputs.pr_number }} - ${{ github.event.inputs.pr_title }})
-
-            ### Changes
-            - Updated `pyproject.toml` version
-            - Updated `src/msn_weather_wrapper/__init__.py` version
-
-            ### What happens after merge?
-            1. ✅ Version files updated in main
-            2. 🏷️ Git tag `v${{ steps.version.outputs.new }}` will be created
-            3. 🚀 CI/CD pipeline will:
-               - Build Python package
-               - Publish to PyPI
-               - Build container images
-               - Create GitHub Release
-
-            ---
-            *Auto-generated from PR #${{ github.event.inputs.pr_number }}*
-          labels: |
-            automated
-            version-bump
-
-      - name: Auto-merge version bump PR
-        if: steps.check.outputs.skip == 'false' && steps.create_pr.outputs.pull-request-number
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          PR_NUMBER="${{ steps.create_pr.outputs.pull-request-number }}"
-
-          # Wait a moment for PR to be fully created
-          sleep 5
-
-          # Enable auto-merge
-          gh pr merge $PR_NUMBER --auto --squash --delete-branch
-
-          echo "🔄 Enabled auto-merge for PR #$PR_NUMBER"
-          echo "Note: If branch protection requires reviews, the PR will merge after approval"
-
-      - name: Create release tag
-        if: steps.check.outputs.skip == 'false' && steps.create_pr.outputs.pull-request-number
         run: |
           NEW_VERSION="${{ steps.version.outputs.new }}"
 
-          # Wait for PR to be merged
-          echo "⏳ Waiting for version bump PR to be merged..."
-          sleep 10
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Check if PR was merged
-          PR_STATE=$(gh pr view ${{ steps.create_pr.outputs.pull-request-number }} --json state --jq .state)
-          if [ "$PR_STATE" != "MERGED" ]; then
-            echo "⏸️  PR not yet merged - tag will be created manually or in next workflow"
-            exit 0
-          fi
+          # Commit changes
+          git add pyproject.toml src/msn_weather_wrapper/__init__.py
+          git commit -m "chore: bump version to $NEW_VERSION" \
+                     -m "Auto-generated version bump" \
+                     -m "Version: ${{ steps.version.outputs.current }} → $NEW_VERSION" \
+                     -m "Bump Type: ${{ steps.bump_type.outputs.bump_type }}" \
+                     -m "Triggered by: PR #${{ github.event.inputs.pr_number }} - ${{ github.event.inputs.pr_title }}"
+
+          # Push to main
+          git push origin main
+
+          echo "✅ Pushed version bump to main"
+          echo "📦 Version: ${{ steps.version.outputs.current }} → $NEW_VERSION"
+
+      - name: Create release tag
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          NEW_VERSION="${{ steps.version.outputs.new }}"
+
+          # Wait for push to complete
+          echo "⏳ Waiting for version bump commit to be processed..."
+          sleep 5
 
           # Fetch latest main
           git fetch origin main
@@ -224,7 +188,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Trigger publish-release workflow
-        if: steps.check.outputs.skip == 'false' && steps.create_pr.outputs.pull-request-number
+        if: steps.check.outputs.skip == 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -251,23 +215,19 @@ jobs:
           **Current version**: ${{ steps.version.outputs.current }}
           **Would-be version**: ${{ steps.version.outputs.new }}
           EOF
-          elif [ -n "${{ steps.create_pr.outputs.pull-request-number }}" ]; then
+          else
             cat >> $GITHUB_STEP_SUMMARY << 'EOF'
-          # 🎉 Version Bump Initiated!
+          # 🎉 Version Bump Complete!
 
           ## Version Change
           - **Previous**: v${{ steps.version.outputs.current }}
           - **New**: v${{ steps.version.outputs.new }}
           - **Bump Type**: ${{ steps.bump_type.outputs.bump_type }}
 
-          ## Version Bump PR
-          - **PR Number**: #${{ steps.create_pr.outputs.pull-request-number }}
-          - **Status**: Auto-merge enabled (will merge when checks pass)
-
-          ## Next Steps
-          1. ✅ Version bump PR will auto-merge
-          2. 🏷️ Tag v${{ steps.version.outputs.new }} will be created
-          3. 🚀 CI/CD pipeline will publish release
+          ## Actions Taken
+          1. ✅ Version files updated in main
+          2. 🏷️ Tag v${{ steps.version.outputs.new }} created
+          3. 🚀 Publish workflow triggered
 
           ## Bump Type Rules
           - **Major (X.0.0)**: breaking changes, labels: `major`, `breaking`
