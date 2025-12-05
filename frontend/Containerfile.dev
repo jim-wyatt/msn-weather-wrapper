@@ -1,5 +1,5 @@
 # Development Containerfile for Frontend
-FROM node:20-slim-trixie
+FROM node:20-slim-bookworm
 
 WORKDIR /app
 
