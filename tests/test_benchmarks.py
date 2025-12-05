@@ -4,7 +4,6 @@ These tests measure the performance of core operations to track
 performance regressions over time.
 """
 
-
 import pytest
 
 from msn_weather_wrapper import Location, WeatherClient
