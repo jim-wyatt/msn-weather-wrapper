@@ -126,10 +126,11 @@ jobs:
 
       - name: Generate Grype SBOM scan
         run: |
-          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
-          syft msn-weather-app:security-scan -o spdx-json > security-reports/container-sbom.json
-          grype sbom:security-reports/container-sbom.json --fail-on critical -o json > security-reports/grype-results.json || true
+          mkdir -p /tmp/sbom-tools
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /tmp/sbom-tools
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /tmp/sbom-tools
+          /tmp/sbom-tools/syft msn-weather-app:security-scan -o spdx-json > security-reports/container-sbom.json
+          /tmp/sbom-tools/grype sbom:security-reports/container-sbom.json --fail-on critical -o json > security-reports/grype-results.json || true
 
       - name: Upload container security reports
         uses: actions/upload-artifact@v5
