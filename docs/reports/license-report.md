@@ -6,8 +6,8 @@ Generated: December 2, 2025
 
 This report lists all dependencies used in MSN Weather Wrapper v1.0.0 and their licenses. All dependencies have been verified to be compatible with the MIT License.
 
-**Total Dependencies:** 155  
-**License Compatibility:** ✅ All MIT-compatible  
+**Total Dependencies:** 155
+**License Compatibility:** ✅ All MIT-compatible
 **Known Vulnerabilities:** 0 (verified with pip-audit, safety, and bandit)
 
 ## Primary License Types

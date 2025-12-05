@@ -10,12 +10,6 @@ import pytest
 from msn_weather_wrapper import Location, WeatherClient
 from msn_weather_wrapper.models import WeatherData
 
-# Skip all tests in this file if pytest-benchmark is not available
-try:
-    import pytest_benchmark  # noqa: F401
-except ImportError:
-    pytestmark = pytest.mark.skip(reason="pytest-benchmark not installed")
-
 
 @pytest.mark.benchmark(group="client")
 def test_client_initialization_benchmark(benchmark):

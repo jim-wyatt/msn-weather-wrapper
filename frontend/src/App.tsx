@@ -52,17 +52,17 @@ function App() {
 
         if (!response.ok) {
           const errorData = await response.json();
-          
+
           // Don't retry on client errors (4xx)
           if (response.status >= 400 && response.status < 500) {
             throw new Error(errorData.message || 'Failed to fetch weather');
           }
-          
+
           // Retry on server errors (5xx) or network issues
           if (attempt === retries) {
             throw new Error(errorData.message || 'Failed to fetch weather after multiple attempts');
           }
-          
+
           // Wait before retrying (exponential backoff)
           await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
           continue;
@@ -100,7 +100,7 @@ function App() {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
-        
+
         try {
           const response = await fetch(
             `/api/v1/weather/coordinates?lat=${latitude}&lon=${longitude}`,
@@ -179,8 +179,8 @@ function App() {
 
         <div className="search-section" role="search" aria-label="Weather search">
           <CityAutocomplete onCitySelect={fetchWeatherWithRetry} />
-          <button 
-            className="location-button" 
+          <button
+            className="location-button"
             onClick={fetchWeatherByLocation}
             disabled={loadingLocation}
             aria-label="Get weather for my current location"
@@ -195,16 +195,16 @@ function App() {
           <section className="recent-searches" aria-label="Recent weather searches">
             <div className="recent-searches-header">
               <h3 id="recent-searches-heading">Recent Searches</h3>
-              <button 
-                className="clear-button" 
+              <button
+                className="clear-button"
                 onClick={clearRecentSearches}
                 aria-label="Clear all recent searches"
               >
                 Clear
               </button>
             </div>
-            <div 
-              className="recent-searches-list" 
+            <div
+              className="recent-searches-list"
               role="list"
               aria-labelledby="recent-searches-heading"
             >
@@ -241,9 +241,9 @@ function App() {
         )}
 
         {weather && !loading && (
-          <article 
-            className="weather-card" 
-            role="region" 
+          <article
+            className="weather-card"
+            role="region"
             aria-label={`Weather information for ${weather.location.city}, ${weather.location.country}`}
           >
             <div className="weather-header">
@@ -261,8 +261,8 @@ function App() {
                 <span aria-label={`Temperature: ${Math.round(convertTemp(weather.temperature, unit))} degrees ${unit === 'C' ? 'Celsius' : 'Fahrenheit'}`}>
                   {Math.round(convertTemp(weather.temperature, unit))}°{unit}
                 </span>
-                <button 
-                  className="unit-toggle" 
+                <button
+                  className="unit-toggle"
                   onClick={toggleUnit}
                   aria-label={`Switch temperature unit to ${unit === 'C' ? 'Fahrenheit' : 'Celsius'}`}
                 >

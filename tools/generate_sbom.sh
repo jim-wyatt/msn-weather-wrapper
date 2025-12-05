@@ -23,10 +23,10 @@ check_syft() {
     if ! command -v syft &> /dev/null; then
         echo -e "${RED}✗ Syft is not installed${NC}"
         echo -e "${YELLOW}Installing Syft...${NC}\n"
-        
+
         # Install syft
         curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-        
+
         if [ $? -eq 0 ]; then
             echo -e "${GREEN}✓ Syft installed successfully${NC}\n"
         else
@@ -50,10 +50,10 @@ setup_output_dir() {
 # Function to check if containers exist
 check_containers() {
     echo -e "${BLUE}[1/7] Checking for containers...${NC}"
-    
+
     API_EXISTS=$(podman images -q localhost/msn-weather-wrapper_api:latest 2>/dev/null)
     FRONTEND_EXISTS=$(podman images -q localhost/msn-weather-wrapper_frontend:latest 2>/dev/null)
-    
+
     if [ -z "$API_EXISTS" ] || [ -z "$FRONTEND_EXISTS" ]; then
         echo -e "${YELLOW}⚠ Containers not found. Building...${NC}"
         podman-compose build
@@ -66,15 +66,15 @@ check_containers() {
 # Function to generate SBOM for API container
 generate_api_sbom() {
     echo -e "${BLUE}[2/7] Generating SBOM for API container...${NC}"
-    
+
     # SPDX JSON format
     syft localhost/msn-weather-wrapper_api:latest -o spdx-json > "$SBOM_DIR/api_sbom_spdx_${TIMESTAMP}.json"
     echo -e "${GREEN}✓ Generated: api_sbom_spdx_${TIMESTAMP}.json${NC}"
-    
+
     # CycloneDX JSON format
     syft localhost/msn-weather-wrapper_api:latest -o cyclonedx-json > "$SBOM_DIR/api_sbom_cyclonedx_${TIMESTAMP}.json"
     echo -e "${GREEN}✓ Generated: api_sbom_cyclonedx_${TIMESTAMP}.json${NC}"
-    
+
     # Human-readable table format
     syft localhost/msn-weather-wrapper_api:latest -o table > "$SBOM_DIR/api_sbom_table_${TIMESTAMP}.txt"
     echo -e "${GREEN}✓ Generated: api_sbom_table_${TIMESTAMP}.txt${NC}"
@@ -84,15 +84,15 @@ generate_api_sbom() {
 # Function to generate SBOM for Frontend container
 generate_frontend_sbom() {
     echo -e "${BLUE}[3/7] Generating SBOM for Frontend container...${NC}"
-    
+
     # SPDX JSON format
     syft localhost/msn-weather-wrapper_frontend:latest -o spdx-json > "$SBOM_DIR/frontend_sbom_spdx_${TIMESTAMP}.json"
     echo -e "${GREEN}✓ Generated: frontend_sbom_spdx_${TIMESTAMP}.json${NC}"
-    
+
     # CycloneDX JSON format
     syft localhost/msn-weather-wrapper_frontend:latest -o cyclonedx-json > "$SBOM_DIR/frontend_sbom_cyclonedx_${TIMESTAMP}.json"
     echo -e "${GREEN}✓ Generated: frontend_sbom_cyclonedx_${TIMESTAMP}.json${NC}"
-    
+
     # Human-readable table format
     syft localhost/msn-weather-wrapper_frontend:latest -o table > "$SBOM_DIR/frontend_sbom_table_${TIMESTAMP}.txt"
     echo -e "${GREEN}✓ Generated: frontend_sbom_table_${TIMESTAMP}.txt${NC}"
@@ -102,14 +102,14 @@ generate_frontend_sbom() {
 # Function to generate SBOM for source directory
 generate_source_sbom() {
     echo -e "${BLUE}[4/7] Generating SBOM for source code...${NC}"
-    
+
     # Scan the entire project directory
     syft dir:. -o spdx-json > "$SBOM_DIR/source_sbom_spdx_${TIMESTAMP}.json"
     echo -e "${GREEN}✓ Generated: source_sbom_spdx_${TIMESTAMP}.json${NC}"
-    
+
     syft dir:. -o cyclonedx-json > "$SBOM_DIR/source_sbom_cyclonedx_${TIMESTAMP}.json"
     echo -e "${GREEN}✓ Generated: source_sbom_cyclonedx_${TIMESTAMP}.json${NC}"
-    
+
     syft dir:. -o table > "$SBOM_DIR/source_sbom_table_${TIMESTAMP}.txt"
     echo -e "${GREEN}✓ Generated: source_sbom_table_${TIMESTAMP}.txt${NC}"
     echo ""
@@ -118,7 +118,7 @@ generate_source_sbom() {
 # Function to generate Python package SBOM
 generate_python_sbom() {
     echo -e "${BLUE}[5/7] Generating SBOM for Python packages...${NC}"
-    
+
     # Create virtual environment if it doesn't exist
     if [ ! -d ".venv" ]; then
         echo -e "${YELLOW}Creating virtual environment...${NC}"
@@ -128,14 +128,14 @@ generate_python_sbom() {
     else
         source .venv/bin/activate
     fi
-    
+
     # Generate SBOM from installed packages
     syft dir:.venv -o spdx-json > "$SBOM_DIR/python_packages_sbom_spdx_${TIMESTAMP}.json"
     echo -e "${GREEN}✓ Generated: python_packages_sbom_spdx_${TIMESTAMP}.json${NC}"
-    
+
     syft dir:.venv -o table > "$SBOM_DIR/python_packages_sbom_table_${TIMESTAMP}.txt"
     echo -e "${GREEN}✓ Generated: python_packages_sbom_table_${TIMESTAMP}.txt${NC}"
-    
+
     deactivate
     echo ""
 }
@@ -143,12 +143,12 @@ generate_python_sbom() {
 # Function to generate summary report
 generate_summary() {
     echo -e "${BLUE}[6/7] Generating summary report...${NC}"
-    
+
     cat > "$SBOM_DIR/SBOM_SUMMARY_${TIMESTAMP}.md" << EOF
 # SBOM Generation Summary
 
-**Project:** MSN Weather Wrapper  
-**Generated:** $(date)  
+**Project:** MSN Weather Wrapper
+**Generated:** $(date)
 **Syft Version:** $(syft version | head -1)
 
 ## Generated Files
@@ -220,7 +220,7 @@ jq '.packages[] | select(.name=="flask")' $SBOM_DIR/api_sbom_spdx_${TIMESTAMP}.j
 - [SPDX Specification](https://spdx.dev/)
 - [CycloneDX Standard](https://cyclonedx.org/)
 EOF
-    
+
     echo -e "${GREEN}✓ Generated: SBOM_SUMMARY_${TIMESTAMP}.md${NC}"
     echo ""
 }
@@ -228,16 +228,16 @@ EOF
 # Function to display results
 display_results() {
     echo -e "${BLUE}[7/7] SBOM Generation Complete!${NC}\n"
-    
+
     echo -e "${GREEN}═══════════════════════════════════════${NC}"
     echo -e "${GREEN}           Generated Files             ${NC}"
     echo -e "${GREEN}═══════════════════════════════════════${NC}"
     ls -lh "$SBOM_DIR"/*${TIMESTAMP}* | awk '{print $9, "(" $5 ")"}'
     echo ""
-    
+
     echo -e "${BLUE}Summary report: $SBOM_DIR/SBOM_SUMMARY_${TIMESTAMP}.md${NC}"
     echo ""
-    
+
     echo -e "${YELLOW}Quick View Commands:${NC}"
     echo -e "  cat $SBOM_DIR/api_sbom_table_${TIMESTAMP}.txt"
     echo -e "  cat $SBOM_DIR/frontend_sbom_table_${TIMESTAMP}.txt"
@@ -256,7 +256,7 @@ main() {
     generate_python_sbom
     generate_summary
     display_results
-    
+
     echo -e "${GREEN}✓ All SBOMs generated successfully!${NC}"
 }
 
