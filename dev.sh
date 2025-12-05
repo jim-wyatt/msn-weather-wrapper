@@ -693,7 +693,7 @@ monitor_workflows() {
         printf " ${YELLOW}Local${NC}  "
         printf "Ctnr "; format_rag "$(get_rag_status "$cont_status")"
         case "$cont_status" in healthy) printf " ${GREEN}ok${NC}";; partial) printf " ${YELLOW}part${NC}";; unhealthy) printf " ${YELLOW}unhl${NC}";; stopped) printf " ${BLUE}stop${NC}";; disabled) printf " ${BLUE}na${NC}";; *) printf " ${BLUE}na${NC}";; esac
-        printf " | PyEnv "; format_rag "$(get_rag_status "$pyenv_status")"
+        printf " | PyEnv "; case "$pyenv_status" in active) format_rag "GREEN|✅";; inactive) format_rag "YELLOW|⚠️";; *) format_rag "GREY|○";; esac
         case "$pyenv_status" in active) printf " ${GREEN}act${NC}";; inactive) printf " ${YELLOW}exists${NC}";; none) printf " ${BLUE}none${NC}";; esac
         printf " | Git "; format_rag "$(get_rag_status "${git_status%%|*}")"
         case "${git_status%%|*}" in clean) printf " ${GREEN}clean${NC}";; dirty) IFS='+' read -r s u t <<< "${git_status##*|}"; printf " ${YELLOW}%s/%s/%s${NC}" "$s" "$u" "$t";; esac
