@@ -644,22 +644,24 @@ monitor_workflows() {
     draw_monitor() {
         clear
         local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-        local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
-        local commit=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+        local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || \
+            echo "unknown")
+        local commit=$(git rev-parse --short HEAD 2>/dev/null || \
+            echo "unknown")
 
         # Fetch GitHub workflow data
         local workflows_json=$(get_github_workflows)
 
         # Header
         echo ""
-        printf "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
+        printf "${BLUE}%s${NC}\n" "$(printf '=%.0s' {1..75})"
         printf "  ${YELLOW}⚡ DevSecOps Dashboard${NC}  ${BLUE}•${NC}  "
         printf "${CYAN}${GITHUB_OWNER}/${GITHUB_REPO}${NC}  ${BLUE}•${NC}  "
         printf "${MAGENTA}${branch}${NC} @ ${commit}\n"
         printf "  ${BLUE}${timestamp}${NC}  ${BLUE}•${NC}  "
         printf "Auto-refresh: 60s  ${BLUE}•${NC}  "
         printf "Press ${GREEN}Ctrl+C${NC} to exit\n"
-        printf "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
+        printf "${BLUE}%s${NC}\n" "$(printf '=%.0s' {1..75})"
         echo ""
 
         # LOCAL ENVIRONMENT
@@ -704,14 +706,16 @@ monitor_workflows() {
             dirty)
                 local changes="${git_status##*|}"
                 IFS='+' read -r staged unstaged untracked <<< "$changes"
-                printf "${YELLOW}${staged} staged, ${unstaged} unstaged, ${untracked} untracked${NC}" ;;
+                printf "${YELLOW}${staged} staged, ${unstaged} unstaged, "
+                printf "${untracked} untracked${NC}" ;;
         esac
         echo ""
 
         # Pre-commit hooks
         if [ -f ".pre-commit-config.yaml" ]; then
             if [ -d ".git/hooks" ] && [ -f ".git/hooks/pre-commit" ]; then
-                printf "  ${GREEN}✅${NC} Pre-commit: ${GREEN}Installed & active${NC}\n"
+                printf "  ${GREEN}✅${NC} Pre-commit: "
+                printf "${GREEN}Installed & active${NC}\n"
             else
                 printf "  ${YELLOW}⚠️${NC} Pre-commit: "
                 printf "${YELLOW}Config exists but not installed${NC}\n"
@@ -732,7 +736,8 @@ monitor_workflows() {
         printf " Tests: "
         if [ "$test_status" = "pass" ]; then
             if [ -f "junit.xml" ]; then
-                local tot=$(grep -oP 'tests="\K[0-9]+' junit.xml 2>/dev/null | head -1)
+                local tot=$(grep -oP 'tests="\K[0-9]+' junit.xml \
+                    2>/dev/null | head -1)
                 printf "${GREEN}%d tests passed${NC}" "${tot:-0}"
             else
                 printf "${GREEN}All tests passed${NC}"
@@ -775,7 +780,8 @@ monitor_workflows() {
         if command -v mypy &> /dev/null && [ -f "pyproject.toml" ]; then
             printf "  ${GREEN}✅${NC} Type Check: ${GREEN}mypy available${NC}\n"
         else
-            printf "  ${BLUE}○${NC} Type Check: ${BLUE}mypy not installed${NC}\n"
+            printf "  ${BLUE}○${NC} Type Check: "
+            printf "${BLUE}mypy not installed${NC}\n"
         fi
 
         if command -v ruff &> /dev/null || \
@@ -851,7 +857,8 @@ monitor_workflows() {
         printf "${YELLOW}🚀 GitHub CI/CD${NC} ${BLUE}(Latest Runs)${NC}\n"
 
         # CI/CD Pipeline
-        local ci_status=$(get_workflow_status "CI/CD Pipeline" "$workflows_json")
+        local ci_status=$(get_workflow_status "CI/CD Pipeline" \
+            "$workflows_json")
         local ci_rag=$(get_rag_status "$ci_status")
         printf "  "
         format_rag "$ci_rag"
@@ -909,7 +916,7 @@ monitor_workflows() {
         echo ""
 
         echo ""
-        printf "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
+        printf "${BLUE}%s${NC}\n" "$(printf '=%.0s' {1..75})"
     }
 
     log_info "Starting DevOps monitor (Ctrl+C to exit)..."
