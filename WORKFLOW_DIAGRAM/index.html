@@ -1751,6 +1751,8 @@
       
         
       
+        
+      
     
     
     
@@ -1847,6 +1849,158 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DevSecOps Monitor
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DevSecOps Monitor
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MONITOR_DASHBOARD/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dashboard Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MONITOR_QUICKREF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MONITOR_ENHANCEMENT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enhancement Summary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -2403,7 +2557,8 @@
 <li><strong>publish-release.yml</strong> - Standalone release publishing</li>
 </ul>
 <h2 id="workflow-flow-diagram-pull-request">Workflow Flow Diagram - Pull Request<a class="headerlink" href="#workflow-flow-diagram-pull-request" title="Permanent link">&para;</a></h2>
-<pre class="mermaid"><code>sequenceDiagram
+<pre class="mermaid"><code>%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E3F2FD', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#1E88E5', 'lineColor': '#1E88E5', 'secondaryColor': '#BBDEFB', 'tertiaryColor': '#90CAF9', 'edgeLabelBackground': '#E3F2FD'}}}%%
+sequenceDiagram
     actor Dev as Developer
     participant PR as Pull Request
     participant CI as CI/CD Pipeline
@@ -2427,7 +2582,8 @@
     Dev-&gt;&gt;PR: Review &amp; Merge
     PR--&gt;&gt;Dev: ✓ Merged</code></pre>
 <h2 id="workflow-flow-diagram-main-branch-release">Workflow Flow Diagram - Main Branch Release<a class="headerlink" href="#workflow-flow-diagram-main-branch-release" title="Permanent link">&para;</a></h2>
-<pre class="mermaid"><code>sequenceDiagram
+<pre class="mermaid"><code>%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E3F2FD', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#1E88E5', 'lineColor': '#1E88E5', 'secondaryColor': '#BBDEFB', 'tertiaryColor': '#90CAF9', 'edgeLabelBackground': '#E3F2FD'}}}%%
+sequenceDiagram
     participant Main as Main Branch
     participant CI as CI/CD Pipeline
     participant Build as Build
@@ -2453,7 +2609,8 @@
     PyPI--&gt;&gt;Pub: ✓ Published
     Pub--&gt;&gt;Dev: ✓ Release complete</code></pre>
 <h2 id="modular-workflow-architecture">Modular Workflow Architecture<a class="headerlink" href="#modular-workflow-architecture" title="Permanent link">&para;</a></h2>
-<pre class="mermaid"><code>graph TB
+<pre class="mermaid"><code>%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E3F2FD', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#1E88E5', 'lineColor': '#1E88E5', 'secondaryColor': '#BBDEFB', 'tertiaryColor': '#90CAF9', 'edgeLabelBackground': '#E3F2FD'}}}%%
+graph TB
     subgraph "Main CI/CD Pipeline (ci.yml)"
         CI[CI/CD Orchestrator]
     end
@@ -2481,15 +2638,16 @@
     AUTO --&gt;|triggers| PUB
     DEP --&gt;|creates PR| CI
 
-    style CI fill:#4CAF50,color:#fff
-    style TEST fill:#2196F3,color:#fff
-    style SEC fill:#FF9800,color:#fff
-    style BUILD fill:#9C27B0,color:#fff
-    style DEPLOY fill:#00BCD4,color:#fff
-    style PERF fill:#795548,color:#fff
-    style DEP fill:#607D8B,color:#fff
-    style AUTO fill:#E91E63,color:#fff
-    style PUB fill:#F44336,color:#fff</code></pre>
+    %% Muted palette to match site blues with softer contrast
+    style CI fill:#1E88E5,stroke:#0D47A1,stroke-width:1.5px,color:#fff
+    style TEST fill:#64B5F6,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style SEC fill:#26A69A,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style BUILD fill:#BA68C8,stroke:#6A1B9A,stroke-width:1.5px,color:#0F172A
+    style DEPLOY fill:#4DD0E1,stroke:#00838F,stroke-width:1.5px,color:#0F172A
+    style PERF fill:#B0BEC5,stroke:#546E7A,stroke-width:1.5px,color:#0F172A
+    style DEP fill:#CFD8DC,stroke:#90A4AE,stroke-width:1.5px,color:#0F172A
+    style AUTO fill:#FBC02D,stroke:#F57F17,stroke-width:1.5px,color:#0F172A
+    style PUB fill:#EF6C00,stroke:#E65100,stroke-width:1.5px,color:#fff</code></pre>
 <h2 id="workflow-descriptions">Workflow Descriptions<a class="headerlink" href="#workflow-descriptions" title="Permanent link">&para;</a></h2>
 <h3 id="main-cicd-pipeline-ciyml">Main CI/CD Pipeline (<code>ci.yml</code>)<a class="headerlink" href="#main-cicd-pipeline-ciyml" title="Permanent link">&para;</a></h3>
 <p><strong>Purpose:</strong> Orchestrator workflow that manages the entire CI/CD process by calling reusable workflows.</p>
@@ -2551,7 +2709,8 @@
 </ul>
 <p><strong>Called by:</strong> <code>ci.yml</code> (full scan on main/tags, basic on PR)</p>
 <h4 id="security-tools-architecture">Security Tools Architecture<a class="headerlink" href="#security-tools-architecture" title="Permanent link">&para;</a></h4>
-<pre class="mermaid"><code>graph LR
+<pre class="mermaid"><code>%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E3F2FD', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#1E88E5', 'lineColor': '#1E88E5', 'secondaryColor': '#BBDEFB', 'tertiaryColor': '#90CAF9', 'edgeLabelBackground': '#E3F2FD'}}}%%
+graph LR
     SEC["security.yml&lt;br/&gt;Orchestrator"]
 
     subgraph "Always On (All Branches)"
@@ -2576,13 +2735,14 @@
     DEP --&gt;|Reports| REPORTS
     CONT --&gt;|Reports| REPORTS
 
-    style SEC fill:#FF9800,color:#fff
-    style BASIC fill:#4CAF50,color:#fff
-    style SAST fill:#F44336,color:#fff
-    style DEP fill:#E91E63,color:#fff
-    style CONT fill:#2196F3,color:#fff
-    style GHSEC fill:#00BCD4,color:#fff
-    style REPORTS fill:#9C27B0,color:#fff</code></pre>
+    %% Muted palette consistent with site blues
+    style SEC fill:#26A69A,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style BASIC fill:#64B5F6,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style SAST fill:#90CAF9,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style DEP fill:#BA68C8,stroke:#6A1B9A,stroke-width:1.5px,color:#0F172A
+    style CONT fill:#4DD0E1,stroke:#00838F,stroke-width:1.5px,color:#0F172A
+    style GHSEC fill:#CFD8DC,stroke:#90A4AE,stroke-width:1.5px,color:#0F172A
+    style REPORTS fill:#BBDEFB,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A</code></pre>
 <h3 id="reusable-workflow-build-buildyml">Reusable Workflow: Build (<code>build.yml</code>)<a class="headerlink" href="#reusable-workflow-build-buildyml" title="Permanent link">&para;</a></h3>
 <p><strong>Purpose:</strong> Builds Docker images, generates SBOM, and builds documentation.</p>
 <p><strong>Inputs:</strong>

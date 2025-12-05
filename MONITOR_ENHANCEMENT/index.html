@@ -12,13 +12,13 @@
         <meta name="author" content="Jim Wyatt">
       
       
-        <link rel="canonical" href="https://jim-wyatt.github.io/msn-weather-wrapper/SECURITY/">
+        <link rel="canonical" href="https://jim-wyatt.github.io/msn-weather-wrapper/MONITOR_ENHANCEMENT/">
       
       
-        <link rel="prev" href="../SWAGGER/">
+        <link rel="prev" href="../MONITOR_QUICKREF/">
       
       
-        <link rel="next" href="../TESTING/">
+        <link rel="next" href="../SYFT_GUIDE/">
       
       
         
@@ -29,7 +29,7 @@
     
     
       
-        <title>Security Overview - MSN Weather Wrapper</title>
+        <title>Enhancement Summary - MSN Weather Wrapper</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#security" class="md-skip">
+        <a href="#devsecops-monitor-enhancement-summary" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Security Overview
+              Enhancement Summary
             
           </span>
         </div>
@@ -304,13 +304,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../SECURITY/" class="md-tabs__link">
           
   
   
@@ -394,10 +392,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../DEVELOPMENT/" class="md-tabs__link">
           
   
@@ -816,10 +816,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -829,22 +827,19 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
             
   
   
@@ -862,7 +857,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -877,37 +872,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Security Overview
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../SECURITY/" class="md-nav__link">
         
   
   
@@ -923,359 +891,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#reporting-security-issues" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reporting Security Issues
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#security-features" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Security Features
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Security Features">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#input-validation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Input Validation
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#security-defense-layers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Security Defense Layers
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#attack-prevention" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Attack Prevention
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#rate-limiting" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Rate Limiting
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#security-testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Security Testing
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Security Testing">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#automated-security-scanning" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Automated Security Scanning
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#test-coverage" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Test Coverage
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#test-methodology" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Test Methodology
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-security-tests" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example Security Tests
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#security-best-practices" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Security Best Practices
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Security Best Practices">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#for-developers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        For Developers
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#for-deployment" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        For Deployment
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#for-users" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        For Users
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#vulnerability-reporting" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Vulnerability Reporting
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#security-audit-history" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Security Audit History
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Security Audit History">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#december-2025" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        December 2025
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#security-tools-integration" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Security Tools Integration
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Security Tools Integration">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#static-analysis" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Static Analysis
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dynamic-testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Dynamic Testing
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sbom-generation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SBOM Generation
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#compliance" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Compliance
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Compliance">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#standards" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Standards
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#certifications" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Certifications
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#security-checklist" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Security Checklist
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#references" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        References
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1788,8 +1403,10 @@
       
   
   
+    
   
   
+  
     
     
       
@@ -1803,19 +1420,22 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
             
   
   
@@ -1833,7 +1453,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1904,8 +1524,10 @@
                 
   
   
+    
   
   
+  
     
     
       
@@ -1920,18 +1542,21 @@
     
       
       
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_3" >
         
           
-          <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="0">
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="">
             
   
   
@@ -1949,7 +1574,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_8_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2020,10 +1645,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../MONITOR_ENHANCEMENT/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enhancement Summary
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2039,6 +1691,331 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#changes-made" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes Made
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Changes Made">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-enhanced-monitor-function-monitor_workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Enhanced Monitor Function (monitor_workflows())
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-updated-script-header" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Updated Script Header
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-enhanced-help-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Enhanced Help Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-new-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. New Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-updated-mkdocs-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Updated MkDocs Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#technical-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Technical Details
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Technical Details">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#files-modified" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Files Modified
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#files-created" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Files Created
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#benefits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Benefits
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Benefits">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#for-developers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For Developers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-devsecops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For DevSecOps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-teams" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For Teams
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pre-push-check-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-Push Check Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#continuous-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Continuous Development
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance Considerations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Performance Considerations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api-rate-limiting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Rate Limiting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Local Performance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#future-enhancements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Future Enhancements
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2268,10 +2245,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#reporting-security-issues" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Reporting Security Issues
+        Overview
       
     </span>
   </a>
@@ -2279,22 +2256,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#security-features" class="md-nav__link">
+  <a href="#changes-made" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Security Features
+        Changes Made
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Security Features">
+    <nav class="md-nav" aria-label="Changes Made">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#input-validation" class="md-nav__link">
+  <a href="#1-enhanced-monitor-function-monitor_workflows" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Input Validation
+        1. Enhanced Monitor Function (monitor_workflows())
       
     </span>
   </a>
@@ -2302,10 +2279,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#security-defense-layers" class="md-nav__link">
+  <a href="#2-updated-script-header" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Security Defense Layers
+        2. Updated Script Header
       
     </span>
   </a>
@@ -2313,10 +2290,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#attack-prevention" class="md-nav__link">
+  <a href="#3-enhanced-help-documentation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Attack Prevention
+        3. Enhanced Help Documentation
       
     </span>
   </a>
@@ -2324,10 +2301,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#rate-limiting" class="md-nav__link">
+  <a href="#4-new-documentation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Rate Limiting
+        4. New Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-updated-mkdocs-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Updated MkDocs Configuration
       
     </span>
   </a>
@@ -2340,22 +2328,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#security-testing" class="md-nav__link">
+  <a href="#technical-details" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Security Testing
+        Technical Details
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Security Testing">
+    <nav class="md-nav" aria-label="Technical Details">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#automated-security-scanning" class="md-nav__link">
+  <a href="#dependencies" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Automated Security Scanning
+        Dependencies
       
     </span>
   </a>
@@ -2363,10 +2351,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#test-coverage" class="md-nav__link">
+  <a href="#files-modified" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Test Coverage
+        Files Modified
       
     </span>
   </a>
@@ -2374,21 +2362,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#test-methodology" class="md-nav__link">
+  <a href="#files-created" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Test Methodology
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-security-tests" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example Security Tests
+        Files Created
       
     </span>
   </a>
@@ -2401,15 +2378,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#security-best-practices" class="md-nav__link">
+  <a href="#benefits" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Security Best Practices
+        Benefits
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Security Best Practices">
+    <nav class="md-nav" aria-label="Benefits">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2424,10 +2401,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#for-deployment" class="md-nav__link">
+  <a href="#for-devsecops" class="md-nav__link">
     <span class="md-ellipsis">
       
-        For Deployment
+        For DevSecOps
       
     </span>
   </a>
@@ -2435,10 +2412,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#for-users" class="md-nav__link">
+  <a href="#for-teams" class="md-nav__link">
     <span class="md-ellipsis">
       
-        For Users
+        For Teams
       
     </span>
   </a>
@@ -2451,33 +2428,44 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#vulnerability-reporting" class="md-nav__link">
+  <a href="#usage-examples" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Vulnerability Reporting
+        Usage Examples
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#security-audit-history" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Security Audit History
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Security Audit History">
+    <nav class="md-nav" aria-label="Usage Examples">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#december-2025" class="md-nav__link">
+  <a href="#basic-monitoring" class="md-nav__link">
     <span class="md-ellipsis">
       
-        December 2025
+        Basic Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pre-push-check-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-Push Check Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#continuous-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Continuous Development
       
     </span>
   </a>
@@ -2490,22 +2478,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#security-tools-integration" class="md-nav__link">
+  <a href="#performance-considerations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Security Tools Integration
+        Performance Considerations
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Security Tools Integration">
+    <nav class="md-nav" aria-label="Performance Considerations">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#static-analysis" class="md-nav__link">
+  <a href="#api-rate-limiting" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Static Analysis
+        API Rate Limiting
       
     </span>
   </a>
@@ -2513,21 +2501,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dynamic-testing" class="md-nav__link">
+  <a href="#local-performance" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dynamic Testing
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sbom-generation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SBOM Generation
+        Local Performance
       
     </span>
   </a>
@@ -2540,49 +2517,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#compliance" class="md-nav__link">
+  <a href="#future-enhancements" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Compliance
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Compliance">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#standards" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Standards
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#certifications" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Certifications
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#security-checklist" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Security Checklist
+        Future Enhancements
       
     </span>
   </a>
@@ -2590,10 +2528,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#references" class="md-nav__link">
+  <a href="#testing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        References
+        Testing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
       
     </span>
   </a>
@@ -2617,7 +2566,7 @@
 
 
   
-    <a href="https://github.com/jim-wyatt/msn-weather-wrapper/edit/main/docs/SECURITY.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/jim-wyatt/msn-weather-wrapper/edit/main/docs/MONITOR_ENHANCEMENT.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z"/></svg>
     </a>
@@ -2626,304 +2575,294 @@
     
       
     
-    <a href="https://github.com/jim-wyatt/msn-weather-wrapper/raw/main/docs/SECURITY.md" title="View source of this page" class="md-content__button md-icon">
+    <a href="https://github.com/jim-wyatt/msn-weather-wrapper/raw/main/docs/MONITOR_ENHANCEMENT.md" title="View source of this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"/></svg>
     </a>
   
 
 
-<h1 id="security">Security<a class="headerlink" href="#security" title="Permanent link">&para;</a></h1>
-<p>MSN Weather Wrapper implements comprehensive security measures to protect against common web vulnerabilities and attacks.</p>
-<h2 id="reporting-security-issues">Reporting Security Issues<a class="headerlink" href="#reporting-security-issues" title="Permanent link">&para;</a></h2>
-<p>If you discover a security vulnerability, please report it privately to:
-- <strong>Email</strong>: the.jim.wyatt@outlook.com
-- <strong>Subject</strong>: [SECURITY] MSN Weather Wrapper - Brief Description</p>
-<p>Please do not open public issues for security vulnerabilities.</p>
-<h2 id="security-features">Security Features<a class="headerlink" href="#security-features" title="Permanent link">&para;</a></h2>
-<h3 id="input-validation">Input Validation<a class="headerlink" href="#input-validation" title="Permanent link">&para;</a></h3>
+<h1 id="devsecops-monitor-enhancement-summary">DevSecOps Monitor Enhancement Summary<a class="headerlink" href="#devsecops-monitor-enhancement-summary" title="Permanent link">&para;</a></h1>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>Enhanced the <code>./dev.sh monitor</code> command to provide a comprehensive DevSecOps dashboard with Red-Amber-Green (RAG) status indicators for both local development environment monitoring and GitHub CI/CD workflow status.</p>
+<h2 id="changes-made">Changes Made<a class="headerlink" href="#changes-made" title="Permanent link">&para;</a></h2>
+<h3 id="1-enhanced-monitor-function-monitor_workflows">1. Enhanced Monitor Function (<code>monitor_workflows()</code>)<a class="headerlink" href="#1-enhanced-monitor-function-monitor_workflows" title="Permanent link">&para;</a></h3>
+<h4 id="new-rag-status-system">New RAG Status System<a class="headerlink" href="#new-rag-status-system" title="Permanent link">&para;</a></h4>
 <ul>
-<li><strong>Character Filtering</strong>: Blocks dangerous characters (<code>;</code>, <code>&lt;&gt;</code>, <code>`</code>, <code>$</code>, <code>|</code>, <code>&amp;</code>, <code>/\</code>)</li>
-<li><strong>Length Limits</strong>: 100 character maximum for city and country names</li>
-<li><strong>Type Checking</strong>: Enforces string types, rejects integers/booleans/arrays</li>
-<li><strong>Whitespace Handling</strong>: Trims and rejects empty/whitespace-only inputs</li>
+<li>Implemented <code>get_rag_status()</code> function with percentage and status-based thresholds</li>
+<li>Implemented <code>format_rag()</code> function for color-coded visual indicators</li>
+<li>RAG levels:</li>
+<li><strong>GREEN (✅)</strong>: Healthy/Passing (80%+ coverage, 0 issues, all passing)</li>
+<li><strong>AMBER (⚠️)</strong>: Warning (60-79% coverage, minor issues, partial services)</li>
+<li><strong>RED (❌)</strong>: Critical (&lt; 60% coverage, failures, critical vulnerabilities)</li>
+<li><strong>GREY (○)</strong>: Unknown/Not Available/Disabled</li>
 </ul>
-<h3 id="security-defense-layers">Security Defense Layers<a class="headerlink" href="#security-defense-layers" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E3F2FD', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#1E88E5', 'lineColor': '#1E88E5', 'secondaryColor': '#BBDEFB', 'tertiaryColor': '#90CAF9', 'edgeLabelBackground': '#E3F2FD'}}}%%
-graph TD
-    subgraph Layer1["🔍 Layer 1: Input Reception"]
-        L1["Input Received&lt;br/&gt;(user parameter)"]
-    end
-
-    subgraph Layer2["✂️ Layer 2: Data Cleaning"]
-        L2["Trim Whitespace&lt;br/&gt;Normalize input"]
-    end
-
-    subgraph Layer3["📏 Layer 3: Validation"]
-        L3["Empty Check&lt;br/&gt;Length Limit ≤ 100 chars&lt;br/&gt;Type Validation (string only)"]
-    end
-
-    subgraph Layer4["🔒 Layer 4: Sanitization"]
-        L4["Block Dangerous Chars&lt;br/&gt;Remove: ; &amp;lt;&amp;gt; ` $ | &amp;amp; /"]
-    end
-
-    subgraph Layer5["🛡️ Layer 5: Attack Prevention"]
-        L5["SQL Injection&lt;br/&gt;XSS Prevention&lt;br/&gt;Path Traversal&lt;br/&gt;Command Injection&lt;br/&gt;Null Byte Blocking"]
-    end
-
-    subgraph Layer6["⛔ Layer 6: Rate Limiting"]
-        L6["30 req/min per IP&lt;br/&gt;200 req/hour global&lt;br/&gt;DoS/DDoS Protection"]
-    end
-
-    subgraph Layer7["✅ Layer 7: Safe Execution"]
-        L7["Process Request&lt;br/&gt;Return Response"]
-    end
-
-    L1 --&gt; L2 --&gt; L3 --&gt; L4 --&gt; L5 --&gt; L6 --&gt; L7
-
-    %% Muted blues and ambers for web-friendly contrast
-    style L1 fill:#E3F2FD,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
-    style L2 fill:#D7E3FC,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
-    style L3 fill:#C5CAE9,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
-    style L4 fill:#BBDEFB,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
-    style L5 fill:#90CAF9,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
-    style L6 fill:#FFE082,stroke:#FBC02D,stroke-width:1.5px,color:#0F172A
-    style L7 fill:#1E88E5,stroke:#0D47A1,stroke-width:1.5px,color:#fff</code></pre>
-<h3 id="attack-prevention">Attack Prevention<a class="headerlink" href="#attack-prevention" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Attack Type</th>
-<th>Protection</th>
-<th>Status</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>SQL Injection</td>
-<td>Blocks SQL keywords and syntax</td>
-<td>✅ Blocked</td>
-</tr>
-<tr>
-<td>XSS (Cross-Site Scripting)</td>
-<td>Blocks HTML/JavaScript tags</td>
-<td>✅ Blocked</td>
-</tr>
-<tr>
-<td>Path Traversal</td>
-<td>Blocks directory traversal patterns</td>
-<td>✅ Blocked</td>
-</tr>
-<tr>
-<td>Command Injection</td>
-<td>Blocks shell command syntax</td>
-<td>✅ Blocked</td>
-</tr>
-<tr>
-<td>Null Byte Injection</td>
-<td>Blocks null characters</td>
-<td>✅ Blocked</td>
-</tr>
-<tr>
-<td>Buffer Overflow</td>
-<td>Enforces input length limits</td>
-<td>✅ Blocked</td>
-</tr>
-<tr>
-<td>Type Confusion</td>
-<td>Validates data types</td>
-<td>✅ Blocked</td>
-</tr>
-</tbody>
-</table>
-<h3 id="rate-limiting">Rate Limiting<a class="headerlink" href="#rate-limiting" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Weather Endpoints</strong>: 30 requests per minute per IP</li>
-<li><strong>Global Limit</strong>: 200 requests per hour total</li>
-<li><strong>Protection</strong>: DoS and DDoS mitigation</li>
-</ul>
-<h2 id="security-testing">Security Testing<a class="headerlink" href="#security-testing" title="Permanent link">&para;</a></h2>
-<h3 id="automated-security-scanning">Automated Security Scanning<a class="headerlink" href="#automated-security-scanning" title="Permanent link">&para;</a></h3>
-<p>The project uses a <strong>comprehensive security scanning workflow</strong> integrated into CI/CD:</p>
-<p><strong>SAST (Static Application Security Testing):</strong>
-- <strong>Bandit</strong>: Detects hardcoded passwords, insecure patterns, common security issues
-- <strong>Semgrep</strong>: Advanced pattern-based SAST with community security rules (main branch only)</p>
-<p><strong>Dependency Vulnerability Scanning:</strong>
-- <strong>Safety</strong>: Checks PyPI known vulnerabilities database (main branch only)
-- <strong>pip-audit</strong>: OSV database vulnerability checking (main branch only)
-- <strong>Dependency Tree</strong>: Complete dependency mapping for audit trails</p>
-<p><strong>Container Security:</strong>
-- <strong>Trivy</strong>: Multi-layer container image vulnerability scanning with SARIF upload to GitHub Security (main branch only)
-- <strong>Grype</strong>: SBOM-based vulnerability detection and analysis (main branch only)</p>
-<p><strong>License Compliance:</strong>
-- <strong>pip-licenses</strong>: Dependency license checking on all branches
-- <strong>Automated GPL/AGPL detection</strong> for compliance violations</p>
-<p><strong>Execution Strategy:</strong>
-- <strong>Pull Requests</strong>: Basic security checks (Bandit + licenses) - fast feedback
-- <strong>Main Branch &amp; Tags</strong>: Full comprehensive scanning (all 6 tools) - complete validation
-- <strong>Manual Trigger</strong>: On-demand full scans via workflow dispatch</p>
-<p><strong>Artifact Management:</strong>
-- 7-day retention for PR artifacts
-- 30-day retention for main branch artifacts
-- All reports uploaded to GitHub Security tab
-- Automated markdown reports generated for documentation site</p>
-<p><strong>CI/CD Integration:</strong>
-- Critical security checks run on every PR (fast)
-- Full comprehensive scans on main branch and tags (thorough)
-- Results uploaded to GitHub Security tab with SARIF format
-- Automated reports generated in docs/reports/security-report.md</p>
-<h3 id="test-coverage">Test Coverage<a class="headerlink" href="#test-coverage" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>25 Security Tests</strong>: All passing ✅</li>
-<li><strong>Fuzzing Coverage</strong>: 23+ attack vectors tested</li>
-<li><strong>90% Code Coverage</strong>: Including security validation paths</li>
-<li><strong>Integration Tests</strong>: Security validation on live API</li>
-<li><strong>6 Security Tools</strong>: Coverage across SAST, dependencies, and containers</li>
-</ul>
-<h3 id="test-methodology">Test Methodology<a class="headerlink" href="#test-methodology" title="Permanent link">&para;</a></h3>
+<h4 id="enhanced-local-status-monitoring">Enhanced Local Status Monitoring<a class="headerlink" href="#enhanced-local-status-monitoring" title="Permanent link">&para;</a></h4>
+<p>Expanded <code>get_local_status()</code> function to monitor:</p>
 <ol>
-<li><strong>Unit Tests</strong>: Validate input sanitization logic</li>
-<li><strong>Integration Tests</strong>: Test security on live API endpoints</li>
-<li><strong>Fuzzing</strong>: Test with malicious payloads</li>
-<li><strong>Rate Limit Tests</strong>: Verify DoS protection</li>
+<li><strong>Containers</strong> - Service health and availability</li>
+<li>API container (with health endpoint check)</li>
+<li>Frontend container</li>
+<li>
+<p>Podman availability</p>
+</li>
+<li>
+<p><strong>Python Environment</strong> - Virtual environment status</p>
+</li>
+<li>Directory existence (<code>venv/</code>)</li>
+<li>
+<p>Activation state</p>
+</li>
+<li>
+<p><strong>Git Working Directory</strong> - Repository cleanliness</p>
+</li>
+<li>Staged changes</li>
+<li>Unstaged modifications</li>
+<li>
+<p>Untracked files</p>
+</li>
+<li>
+<p><strong>Tests</strong> - Test execution results</p>
+</li>
+<li>Pass/fail status from <code>junit.xml</code></li>
+<li>
+<p>Test counts</p>
+</li>
+<li>
+<p><strong>Coverage</strong> - Code coverage percentage</p>
+</li>
+<li>Parsed from <code>htmlcov/index.html</code></li>
+<li>
+<p>Percentage-based RAG thresholds (80%, 60%)</p>
+</li>
+<li>
+<p><strong>Security</strong> - SAST scan results</p>
+</li>
+<li>Critical/high severity issues from Bandit</li>
+<li>
+<p>Located in <code>artifacts/security-reports/bandit-report.json</code></p>
+</li>
+<li>
+<p><strong>Dependencies</strong> - Vulnerability scanning</p>
+</li>
+<li>pip-audit results</li>
+<li>Vulnerable package counts</li>
 </ol>
-<h3 id="example-security-tests">Example Security Tests<a class="headerlink" href="#example-security-tests" title="Permanent link">&para;</a></h3>
-<p><strong>SQL Injection Attempts:</strong>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Test 1: Classic SQL injection</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>curl<span class="w"> </span><span class="s2">&quot;http://localhost:5000/api/weather?city=&#39;; DROP TABLE users--&amp;country=USA&quot;</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Response: {&quot;error&quot;: &quot;Invalid request&quot;, &quot;message&quot;: &quot;city contains invalid characters&quot;}</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># Test 2: UNION-based injection</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>curl<span class="w"> </span><span class="s2">&quot;http://localhost:5000/api/weather?city=1&#39; UNION SELECT * FROM users--&amp;country=USA&quot;</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># Response: {&quot;error&quot;: &quot;Invalid request&quot;, &quot;message&quot;: &quot;city contains invalid characters&quot;}</span>
+<h4 id="github-workflow-integration">GitHub Workflow Integration<a class="headerlink" href="#github-workflow-integration" title="Permanent link">&para;</a></h4>
+<p>Added public GitHub API integration:</p>
+<ul>
+<li><strong><code>get_github_workflows()</code></strong> - Fetches latest workflow runs</li>
+<li>Endpoint: <code>https://api.github.com/repos/jim-wyatt/msn-weather-wrapper/actions/runs</code></li>
+<li>Caching: 30-second file-based cache at <code>/tmp/gh_workflows_*.json</code></li>
+<li>No authentication required (public API)</li>
+<li>
+<p>Rate limit: 60 requests/hour</p>
+</li>
+<li>
+<p><strong><code>get_workflow_status()</code></strong> - Extracts status for specific workflows</p>
+</li>
+<li>Matches by workflow name</li>
+<li>
+<p>Returns conclusion (success/failure/cancelled/unknown)</p>
+</li>
+<li>
+<p><strong>Monitored Workflows</strong>:</p>
+</li>
+<li>CI Pipeline</li>
+<li>Security Scans</li>
+<li>Build &amp; Push</li>
+<li>Deploy to Production</li>
+</ul>
+<h4 id="improved-dashboard-layout">Improved Dashboard Layout<a class="headerlink" href="#improved-dashboard-layout" title="Permanent link">&para;</a></h4>
+<p>Complete redesign of <code>draw_monitor()</code>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>╔═══════════════════════════════════════════════════════════════════════════╗
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>║ DevSecOps Dashboard                                                       ║
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>║ jim-wyatt/msn-weather-wrapper @ branch                                    ║
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>║ 2025-12-04 HH:MM:SS                                                       ║
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>╚═══════════════════════════════════════════════════════════════════════════╝
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>┌─ Local Development Environment ────────────────────────────────────────────┐
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│ Container Services:      ✅  Both services healthy                          │
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>│ Python Virtual Env:      ✅  Active (venv/)                                 │
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>│ Git Working Directory:   ✅  No uncommitted changes                         │
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>└─────────────────────────────────────────────────────────────────────────────┘
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>┌─ Code Quality &amp; Testing ────────────────────────────────────────────────────┐
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>│ Test Execution:          ✅  168 tests passed                               │
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>│ Code Coverage:           ✅  97% (Excellent)                                │
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>└─────────────────────────────────────────────────────────────────────────────┘
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>┌─ Security &amp; Compliance ─────────────────────────────────────────────────────┐
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>│ SAST Security Scan:      ✅  No critical vulnerabilities                    │
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>│ Dependency Scan:         ✅  No known vulnerabilities                       │
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>│ License Compliance:      ✅  142 dependencies tracked                       │
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>└─────────────────────────────────────────────────────────────────────────────┘
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>┌─ GitHub CI/CD Workflows (Latest Runs) ──────────────────────────────────────┐
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>│ CI Pipeline:             ✅  Passed                                         │
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>│ Security Scans:          ✅  Passed                                         │
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>│ Build &amp; Push:            ✅  Passed                                         │
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>│ Deploy to Production:    ✅  Passed                                         │
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>└─────────────────────────────────────────────────────────────────────────────┘
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a> ● Press Ctrl+C to exit  •  Updates every 60s  •  GitHub API via public endpoint
+</span></code></pre></div>
+<h3 id="2-updated-script-header">2. Updated Script Header<a class="headerlink" href="#2-updated-script-header" title="Permanent link">&para;</a></h3>
+<p>Changed line 17 from:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">#   monitor   - Monitor GitHub workflows (CI/CD status)</span>
 </span></code></pre></div></p>
-<p><strong>XSS Attempts:</strong>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Test 1: Script tag injection</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>curl<span class="w"> </span><span class="s2">&quot;http://localhost:5000/api/weather?city=&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;&amp;country=USA&quot;</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># Response: {&quot;error&quot;: &quot;Invalid request&quot;, &quot;message&quot;: &quot;city contains invalid characters&quot;}</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># Test 2: JavaScript protocol</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>curl<span class="w"> </span><span class="s2">&quot;http://localhost:5000/api/weather?city=javascript:alert(1)&amp;country=USA&quot;</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># Response: {&quot;error&quot;: &quot;Invalid request&quot;, &quot;message&quot;: &quot;city contains invalid characters&quot;}</span>
+<p>To:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">#   monitor   - DevSecOps dashboard with RAG status (Local env + GitHub workflows)</span>
 </span></code></pre></div></p>
-<p><strong>Path Traversal Attempts:</strong>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Test 1: Directory traversal</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>curl<span class="w"> </span><span class="s2">&quot;http://localhost:5000/api/weather?city=../../../etc/passwd&amp;country=USA&quot;</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># Response: {&quot;error&quot;: &quot;Invalid request&quot;, &quot;message&quot;: &quot;city contains invalid characters&quot;}</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># Test 2: Encoded traversal</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>curl<span class="w"> </span><span class="s2">&quot;http://localhost:5000/api/weather?city=..%2F..%2Fetc%2Fpasswd&amp;country=USA&quot;</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Response: {&quot;error&quot;: &quot;Invalid request&quot;, &quot;message&quot;: &quot;city contains invalid characters&quot;}</span>
-</span></code></pre></div></p>
-<p><strong>Command Injection Attempts:</strong>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Test 1: Shell command</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>curl<span class="w"> </span><span class="s2">&quot;http://localhost:5000/api/weather?city=Seattle; cat /etc/passwd&amp;country=USA&quot;</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Response: {&quot;error&quot;: &quot;Invalid request&quot;, &quot;message&quot;: &quot;city contains invalid characters&quot;}</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># Test 2: Pipe command</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>curl<span class="w"> </span><span class="s2">&quot;http://localhost:5000/api/weather?city=Seattle | whoami&amp;country=USA&quot;</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># Response: {&quot;error&quot;: &quot;Invalid request&quot;, &quot;message&quot;: &quot;city contains invalid characters&quot;}</span>
-</span></code></pre></div></p>
-<h2 id="security-best-practices">Security Best Practices<a class="headerlink" href="#security-best-practices" title="Permanent link">&para;</a></h2>
+<h3 id="3-enhanced-help-documentation">3. Enhanced Help Documentation<a class="headerlink" href="#3-enhanced-help-documentation" title="Permanent link">&para;</a></h3>
+<p>Updated <code>show_usage()</code> function:</p>
+<ul>
+<li>Expanded monitor command description with details about RAG indicators</li>
+<li>Added monitoring categories (Local, GitHub)</li>
+<li>Added update frequency (60 seconds)</li>
+<li>Added new "Monitor Dashboard Features" section explaining RAG levels</li>
+</ul>
+<h3 id="4-new-documentation">4. New Documentation<a class="headerlink" href="#4-new-documentation" title="Permanent link">&para;</a></h3>
+<p>Created comprehensive documentation: <code>docs/MONITOR_DASHBOARD.md</code></p>
+<p>Sections include:
+- Overview of RAG status system
+- Detailed explanation of all monitored items
+- Thresholds for each status level
+- Usage instructions
+- GitHub API details
+- Prerequisites and dependencies
+- Example output
+- Troubleshooting guide
+- Integration with CI/CD
+- Future enhancement ideas</p>
+<h3 id="5-updated-mkdocs-configuration">5. Updated MkDocs Configuration<a class="headerlink" href="#5-updated-mkdocs-configuration" title="Permanent link">&para;</a></h3>
+<p>Modified <code>mkdocs.yml</code>:
+- Added new navigation entry under "Development" section
+- New entry: <code>- DevSecOps Monitor: MONITOR_DASHBOARD.md</code></p>
+<h2 id="technical-details">Technical Details<a class="headerlink" href="#technical-details" title="Permanent link">&para;</a></h2>
+<h3 id="dependencies">Dependencies<a class="headerlink" href="#dependencies" title="Permanent link">&para;</a></h3>
+<p><strong>Required:</strong>
+- <code>bash</code> - Shell execution
+- <code>curl</code> - HTTP requests for GitHub API
+- <code>jq</code> - JSON parsing
+- <code>git</code> - Repository status</p>
+<p><strong>Optional (for full functionality):</strong>
+- <code>podman</code> - Container status monitoring
+- <code>pip-audit</code> - Dependency vulnerability scanning</p>
+<h3 id="files-modified">Files Modified<a class="headerlink" href="#files-modified" title="Permanent link">&para;</a></h3>
+<ol>
+<li><code>dev.sh</code> - Main script file</li>
+<li>Lines ~420-875: Complete rewrite of monitor_workflows() function</li>
+<li>Line 17: Updated comment</li>
+<li>
+<p>Lines 953-995: Updated show_usage() function</p>
+</li>
+<li>
+<p><code>mkdocs.yml</code> - Documentation navigation</p>
+</li>
+<li>Lines ~92-95: Added DevSecOps Monitor entry</li>
+</ol>
+<h3 id="files-created">Files Created<a class="headerlink" href="#files-created" title="Permanent link">&para;</a></h3>
+<ol>
+<li><code>docs/MONITOR_DASHBOARD.md</code> - Comprehensive monitoring documentation (392 lines)</li>
+</ol>
+<h2 id="benefits">Benefits<a class="headerlink" href="#benefits" title="Permanent link">&para;</a></h2>
 <h3 id="for-developers">For Developers<a class="headerlink" href="#for-developers" title="Permanent link">&para;</a></h3>
 <ol>
-<li><strong>Never disable input validation</strong> - All user inputs must pass through sanitization</li>
-<li><strong>Use parameterized queries</strong> - Although we don't use SQL directly, maintain safe practices</li>
-<li><strong>Keep dependencies updated</strong> - Regularly update all dependencies</li>
-<li><strong>Run security tests</strong> - Execute <code>pytest tests/test_security.py</code> before each release</li>
-<li><strong>Review security scans</strong> - Run Bandit and Safety tools regularly</li>
+<li><strong>At-a-glance Status</strong> - Instantly see health of local environment</li>
+<li><strong>Proactive Issue Detection</strong> - Catch problems before pushing to GitHub</li>
+<li><strong>Workflow Visibility</strong> - Monitor CI/CD without leaving terminal</li>
+<li><strong>No Authentication Required</strong> - Uses public GitHub API</li>
+<li><strong>Continuous Monitoring</strong> - Auto-refresh every 60 seconds</li>
 </ol>
-<h3 id="for-deployment">For Deployment<a class="headerlink" href="#for-deployment" title="Permanent link">&para;</a></h3>
+<h3 id="for-devsecops">For DevSecOps<a class="headerlink" href="#for-devsecops" title="Permanent link">&para;</a></h3>
 <ol>
-<li><strong>Use HTTPS</strong> - Always deploy with TLS/SSL in production</li>
-<li><strong>Set secure headers</strong> - Configure CSP, X-Frame-Options, etc.</li>
-<li><strong>Configure rate limiting</strong> - Adjust limits based on expected traffic</li>
-<li><strong>Monitor logs</strong> - Watch for suspicious patterns</li>
-<li><strong>Keep secrets safe</strong> - Use environment variables for sensitive data</li>
+<li><strong>Security Integration</strong> - SAST and dependency vulnerability tracking</li>
+<li><strong>Compliance Visibility</strong> - License tracking at a glance</li>
+<li><strong>Quality Gates</strong> - Coverage and test metrics with clear thresholds</li>
+<li><strong>Pipeline Health</strong> - Real-time CI/CD workflow status</li>
+<li><strong>RAG Reporting</strong> - Industry-standard status indicators</li>
 </ol>
-<h3 id="for-users">For Users<a class="headerlink" href="#for-users" title="Permanent link">&para;</a></h3>
+<h3 id="for-teams">For Teams<a class="headerlink" href="#for-teams" title="Permanent link">&para;</a></h3>
 <ol>
-<li><strong>Use official sources</strong> - Only download from official repositories</li>
-<li><strong>Verify checksums</strong> - Check SBOM and package integrity</li>
-<li><strong>Report vulnerabilities</strong> - Use responsible disclosure</li>
-<li><strong>Keep updated</strong> - Use latest stable versions</li>
+<li><strong>Standardized Monitoring</strong> - Consistent status indicators across team</li>
+<li><strong>Self-Service Troubleshooting</strong> - Clear status helps identify issues</li>
+<li><strong>Reduced Context Switching</strong> - Everything in one dashboard</li>
+<li><strong>Public API</strong> - No credentials needed, works for all contributors</li>
 </ol>
-<h2 id="vulnerability-reporting">Vulnerability Reporting<a class="headerlink" href="#vulnerability-reporting" title="Permanent link">&para;</a></h2>
-<p>If you discover a security vulnerability:</p>
-<ol>
-<li><strong>Do NOT</strong> open a public issue</li>
-<li>Email security concerns to: [your-security-email]</li>
-<li>Include:</li>
-<li>Description of the vulnerability</li>
-<li>Steps to reproduce</li>
-<li>Potential impact</li>
-<li>Suggested fix (if any)</li>
-<li>Allow 90 days for responsible disclosure</li>
-</ol>
-<h2 id="security-audit-history">Security Audit History<a class="headerlink" href="#security-audit-history" title="Permanent link">&para;</a></h2>
-<h3 id="december-2025">December 2025<a class="headerlink" href="#december-2025" title="Permanent link">&para;</a></h3>
-<ul>
-<li>✅ Comprehensive security test suite added (25 tests)</li>
-<li>✅ Input validation hardened</li>
-<li>✅ Rate limiting implemented</li>
-<li>✅ Security documentation completed</li>
-<li>✅ All security tests passing</li>
-<li>✅ 90% code coverage achieved</li>
-</ul>
-<h2 id="security-tools-integration">Security Tools Integration<a class="headerlink" href="#security-tools-integration" title="Permanent link">&para;</a></h2>
-<h3 id="static-analysis">Static Analysis<a class="headerlink" href="#static-analysis" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Run Bandit security scanner</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>bandit<span class="w"> </span>-r<span class="w"> </span>src/
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Run Safety dependency checker</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>safety<span class="w"> </span>check
+<h2 id="usage-examples">Usage Examples<a class="headerlink" href="#usage-examples" title="Permanent link">&para;</a></h2>
+<h3 id="basic-monitoring">Basic Monitoring<a class="headerlink" href="#basic-monitoring" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>./dev.sh<span class="w"> </span>monitor
 </span></code></pre></div>
-<h3 id="dynamic-testing">Dynamic Testing<a class="headerlink" href="#dynamic-testing" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Run security test suite</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>pytest<span class="w"> </span>tests/test_security.py<span class="w"> </span>-v
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Run all tests including security</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>pytest<span class="w"> </span>--cov<span class="o">=</span>src<span class="w"> </span>--cov-report<span class="o">=</span>html
+<h3 id="pre-push-check-workflow">Pre-Push Check Workflow<a class="headerlink" href="#pre-push-check-workflow" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 1. Generate local reports</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>./dev.sh<span class="w"> </span><span class="nb">test</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>./dev.sh<span class="w"> </span>docs
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># 2. Launch monitor</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>./dev.sh<span class="w"> </span>monitor
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># 3. Verify all GREEN indicators before pushing</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># 4. Push to GitHub</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>git<span class="w"> </span>push
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="c1"># 5. Monitor continues to show GitHub workflow status</span>
 </span></code></pre></div>
-<h3 id="sbom-generation">SBOM Generation<a class="headerlink" href="#sbom-generation" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Generate Software Bill of Materials</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>./tools/generate_sbom.sh
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># View SBOM summary</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>cat<span class="w"> </span>sbom_output/SBOM_SUMMARY_*.md
+<h3 id="continuous-development">Continuous Development<a class="headerlink" href="#continuous-development" title="Permanent link">&para;</a></h3>
+<p>Leave the monitor running in a dedicated terminal window during development for continuous visibility into:
+- Container health
+- Test results after each run
+- Security scan results
+- GitHub workflow status after push</p>
+<h2 id="performance-considerations">Performance Considerations<a class="headerlink" href="#performance-considerations" title="Permanent link">&para;</a></h2>
+<h3 id="api-rate-limiting">API Rate Limiting<a class="headerlink" href="#api-rate-limiting" title="Permanent link">&para;</a></h3>
+<ul>
+<li>GitHub public API: 60 requests/hour</li>
+<li>Caching: 30-second cache reduces API calls to ~2 per minute</li>
+<li>With caching: Can run continuously for many hours without hitting limit</li>
+</ul>
+<h3 id="local-performance">Local Performance<a class="headerlink" href="#local-performance" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Minimal CPU usage (mostly sleep)</li>
+<li>Quick status checks (&lt; 1 second per refresh)</li>
+<li>File-based caching for GitHub data</li>
+</ul>
+<h2 id="future-enhancements">Future Enhancements<a class="headerlink" href="#future-enhancements" title="Permanent link">&para;</a></h2>
+<p>Documented in <code>MONITOR_DASHBOARD.md</code>, potential improvements include:</p>
+<ul>
+<li>Docker support (in addition to Podman)</li>
+<li>Configurable refresh intervals</li>
+<li>Historical trend visualization</li>
+<li>Alert notifications for status changes</li>
+<li>GitHub Actions running status (not just completed)</li>
+<li>GitHub authentication support for higher rate limits</li>
+<li>Export status to JSON/HTML report</li>
+<li>Custom threshold configuration</li>
+<li>Integration with other CI/CD platforms</li>
+</ul>
+<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Syntax validation</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>bash<span class="w"> </span>-n<span class="w"> </span>dev.sh
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># ✅ Syntax check passed</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># GitHub API connectivity</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://api.github.com/repos/jim-wyatt/msn-weather-wrapper/actions/runs?per_page=1&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.workflow_runs[0].name&#39;</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># ✅ Returns workflow name</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="c1"># Monitor execution (5-second test)</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>timeout<span class="w"> </span><span class="m">5</span><span class="w"> </span>./dev.sh<span class="w"> </span>monitor
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="c1"># ✅ Dashboard displays correctly</span>
 </span></code></pre></div>
-<h2 id="compliance">Compliance<a class="headerlink" href="#compliance" title="Permanent link">&para;</a></h2>
-<h3 id="standards">Standards<a class="headerlink" href="#standards" title="Permanent link">&para;</a></h3>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>The enhanced <code>./dev.sh monitor</code> command now provides comprehensive DevSecOps visibility with:</p>
 <ul>
-<li>✅ OWASP Top 10 protections</li>
-<li>✅ CWE Common Weakness Enumeration coverage</li>
-<li>✅ NIST security guidelines</li>
+<li><strong>13 monitored items</strong> across 4 categories</li>
+<li><strong>RAG status indicators</strong> for at-a-glance health assessment</li>
+<li><strong>GitHub CI/CD integration</strong> via public API</li>
+<li><strong>Auto-refresh</strong> every 60 seconds</li>
+<li><strong>Comprehensive documentation</strong> for users and maintainers</li>
 </ul>
-<h3 id="certifications">Certifications<a class="headerlink" href="#certifications" title="Permanent link">&para;</a></h3>
-<ul>
-<li>MIT Licensed open source</li>
-<li>No known CVEs</li>
-<li>Regular security updates</li>
-</ul>
-<h2 id="security-checklist">Security Checklist<a class="headerlink" href="#security-checklist" title="Permanent link">&para;</a></h2>
-<p>Before each release:
-- [ ] All security tests passing
-- [ ] No new security warnings from Bandit
-- [ ] All dependencies checked with Safety
-- [ ] SBOM generated and verified
-- [ ] Security documentation updated
-- [ ] Rate limits configured appropriately
-- [ ] Input validation reviewed
-- [ ] No hardcoded secrets or credentials</p>
-<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="https://owasp.org/www-project-top-ten/">OWASP Top 10</a></li>
-<li><a href="https://cwe.mitre.org/top25/">CWE Top 25</a></li>
-<li><a href="https://flask.palletsprojects.com/en/latest/security/">Flask Security</a></li>
-<li><a href="https://docs.pydantic.dev/">Pydantic Validation</a></li>
-</ul>
-<hr />
-<p>Last updated: December 2, 2025</p>
+<p>This enhancement transforms a simple workflow monitor into a complete DevSecOps dashboard suitable for continuous development monitoring and pre-deployment verification.</p>
 
 
 
@@ -3011,7 +2950,7 @@ graph TD
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../SWAGGER/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Interactive Swagger UI">
+          <a href="../MONITOR_QUICKREF/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Quick Reference">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -3021,20 +2960,20 @@ graph TD
                 Previous
               </span>
               <div class="md-ellipsis">
-                Interactive Swagger UI
+                Quick Reference
               </div>
             </div>
           </a>
         
         
           
-          <a href="../TESTING/" class="md-footer__link md-footer__link--next" aria-label="Next: Testing Guide">
+          <a href="../SYFT_GUIDE/" class="md-footer__link md-footer__link--next" aria-label="Next: SBOM Generation">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Testing Guide
+                SBOM Generation
               </div>
             </div>
             <div class="md-footer__button md-icon">
