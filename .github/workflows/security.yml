@@ -61,11 +61,11 @@ jobs:
 
       - name: Upload security reports as artifact
         uses: actions/upload-artifact@v5
-        if: always()
+        if: ${{ github.event_name != 'pull_request' && always() }}
         with:
           name: security-reports
           path: security-reports/
-          retention-days: 7
+          retention-days: 3
 
       - name: Security scan summary
         if: always()

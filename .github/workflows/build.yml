@@ -93,13 +93,13 @@ jobs:
           docker stop test-app
 
       - name: Save Docker image as artifact
-        if: ${{ !inputs.push-image }}
+        if: ${{ !inputs.push-image && github.event_name != 'pull_request' }}
         run: |
           docker save msn-weather-app:test -o /tmp/docker-image.tar
           gzip /tmp/docker-image.tar
 
       - name: Upload Docker image artifact
-        if: ${{ !inputs.push-image }}
+        if: ${{ !inputs.push-image && github.event_name != 'pull_request' }}
         uses: actions/upload-artifact@v5
         with:
           name: docker-image
@@ -128,11 +128,12 @@ jobs:
           syft dir:. -o cyclonedx-json > sbom_output/source_cyclonedx.json
 
       - name: Upload SBOM artifacts
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v5
         with:
           name: sbom-reports
           path: sbom_output/
-          retention-days: 30
+          retention-days: 7
 
   docs:
     name: Build Documentation
@@ -153,8 +154,9 @@ jobs:
         run: mkdocs build --strict
 
       - name: Upload documentation
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v5
         with:
           name: documentation
           path: site/
-          retention-days: 30
+          retention-days: 7
