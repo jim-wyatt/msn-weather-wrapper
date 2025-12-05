@@ -91,6 +91,7 @@ nav:
   - Development:
       - Development Guide: DEVELOPMENT.md
       - Container Setup: CONTAINER_DEV_SETUP.md
+      - DevSecOps Monitor: MONITOR_DASHBOARD.md
 
   - Deployment:
       - SBOM Generation: SYFT_GUIDE.md

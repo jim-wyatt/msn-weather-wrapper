@@ -24,7 +24,7 @@ permissions:
 jobs:
   docker-build:
     name: Build Docker Images
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     permissions:
       contents: read
       packages: write
@@ -108,7 +108,7 @@ jobs:
 
   sbom:
     name: Generate SBOM
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -136,7 +136,7 @@ jobs:
 
   docs:
     name: Build Documentation
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v6

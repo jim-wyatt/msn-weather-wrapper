@@ -25,7 +25,7 @@ env:
 jobs:
   smoke-tests:
     name: Smoke Tests
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -44,7 +44,7 @@ jobs:
   code-quality:
     needs: [smoke-tests]
     name: Code Quality
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -65,7 +65,7 @@ jobs:
   unit-tests:
     needs: [smoke-tests]
     name: Unit Tests (Python ${{ matrix.python-version }})
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
       matrix:
@@ -95,7 +95,7 @@ jobs:
   coverage:
     needs: [smoke-tests]
     name: Test Coverage
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -142,7 +142,7 @@ jobs:
   integration-tests:
     if: inputs.run-integration
     name: Integration Tests
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v6

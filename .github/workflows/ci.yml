@@ -76,7 +76,7 @@ jobs:
   # Deploy Phase: Generate reports and deploy documentation (main branch only)
   deploy:
     name: Deploy Documentation
-    needs: [integration-tests]
+    needs: [integration-tests, performance]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     uses: ./.github/workflows/deploy.yml
     with:
@@ -86,7 +86,7 @@ jobs:
   # Trigger Auto-Version-Release: After successful CI on main branch
   trigger-auto-version:
     name: Trigger Auto-Version-Release
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')
     needs: [test, security, build, integration-tests, deploy]
     steps:
