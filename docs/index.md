@@ -73,7 +73,7 @@ Modern Python wrapper for MSN Weather with Flask API, React frontend, and produc
 | 📖 **Swagger UI** | Interactive API documentation | [Interactive Docs](API.md#interactive-api-documentation) |
 | ⚛️ **React Frontend** | React 19 + TypeScript 5.7 | [Frontend](API.md) |
 | 🐳 **Containerized** | Podman deployment | [Container Dev](CONTAINER_DEV_SETUP.md) |
-| ✅ **Tested** | 169 tests (128 backend, 41 frontend), 97% coverage | [Testing](TESTING.md) |
+| ✅ **Tested** | 168 tests (128 backend, 40 frontend), 97% coverage | [Testing](TESTING.md) |
 | 🔒 **Secure** | Enhanced security scanning | [Security](SECURITY.md) |
 | 📋 **SBOM** | Supply chain security | [SBOM Guide](SYFT_GUIDE.md) |
 
@@ -83,7 +83,7 @@ Modern Python wrapper for MSN Weather with Flask API, React frontend, and produc
 
 - **Backend**: Python 3.10+, Flask 3.1+, Flasgger (Swagger/OpenAPI), Pydantic 2.12+, Gunicorn 23.0+
 - **Frontend**: React 19.2, Vite 7.2, TypeScript 5.7+
-- **Testing**: pytest 8.0+, Playwright, 169 tests
+- **Testing**: pytest 8.0+, Playwright, 168 tests
 - **Quality**: ruff 0.14+, mypy 1.19+, pre-commit hooks
 - **Deployment**: Podman/Docker, Nginx, multi-stage builds
 
