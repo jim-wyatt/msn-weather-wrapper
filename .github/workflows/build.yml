@@ -104,7 +104,7 @@ jobs:
         with:
           name: docker-image
           path: /tmp/docker-image.tar.gz
-          retention-days: 1
+          retention-days: 5
 
   sbom:
     name: Generate SBOM

@@ -161,33 +161,55 @@ jobs:
       - name: Load Docker image from artifact
         run: |
           if [ -f /tmp/docker-image.tar.gz ]; then
-            gunzip /tmp/docker-image.tar.gz
-            docker load -i /tmp/docker-image.tar
+            echo "Docker image artifact found, attempting to load..."
+            gunzip -q /tmp/docker-image.tar.gz
+            if docker load -i /tmp/docker-image.tar; then
+              echo "✓ Docker image loaded successfully"
+            else
+              echo "✗ Failed to load Docker image"
+              exit 1
+            fi
           else
-            echo "No Docker image artifact found, skipping integration tests"
+            echo "⊘ No Docker image artifact found, skipping integration tests"
             exit 0
           fi
 
       - name: Start container
         run: |
+          echo "Starting container..."
+          set -e
           docker run -d --name msn-weather-app -p 8080:80 \
             -e FLASK_DEBUG=false \
             -e CORS_ORIGINS="*" \
             -e RATE_LIMIT_ENABLED=true \
             -e CACHE_ENABLED=true \
-            msn-weather-app:test
+            msn-weather-app:test || {
+            echo "✗ Failed to start container"
+            docker ps -a
+            exit 1
+          }
+          echo "✓ Container started successfully"
           sleep 15
 
       - name: Wait for API
         run: |
+          echo "Waiting for API to become ready..."
+          API_READY=false
           for i in {1..30}; do
-            if curl -f http://localhost:8080/api/v1/health; then
-              echo "API is ready!"
+            if curl -f -s http://localhost:8080/api/v1/health > /dev/null 2>&1; then
+              echo "✓ API is ready! (attempt $i)"
+              API_READY=true
               break
             fi
-            echo "Waiting for API... ($i/30)"
+            echo "⏳ Waiting for API... ($i/30)"
             sleep 2
           done
+
+          if [ "$API_READY" = false ]; then
+            echo "✗ API failed to become ready after 60 seconds"
+            docker logs msn-weather-app || true
+            exit 1
+          fi
 
       - name: Run integration tests
         run: pytest tests/test_integration.py -v --tb=short
