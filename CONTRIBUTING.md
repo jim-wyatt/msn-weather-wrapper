@@ -209,10 +209,10 @@ def test_temperature_conversion():
     # Arrange
     fahrenheit = 68.0
     expected_celsius = 20.0
-    
+
     # Act
     result = convert_fahrenheit_to_celsius(fahrenheit)
-    
+
     # Assert
     assert result == expected_celsius
 ```

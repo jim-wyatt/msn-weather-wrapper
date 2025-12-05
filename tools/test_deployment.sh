@@ -18,19 +18,19 @@ cleanup() {
     EXIT_CODE=$?
     echo ""
     echo -e "${BLUE}Cleaning up...${NC}"
-    
+
     # Stop and remove containers
     podman-compose down 2>/dev/null || true
-    
+
     # Remove generated test artifacts
     rm -rf htmlcov/ .coverage .pytest_cache/__pycache__ 2>/dev/null || true
-    
+
     if [ $EXIT_CODE -ne 0 ]; then
         echo -e "${RED}✗ Deployment test failed (exit code: $EXIT_CODE)${NC}"
     else
         echo -e "${GREEN}✓ Cleanup completed${NC}"
     fi
-    
+
     exit $EXIT_CODE
 }
 

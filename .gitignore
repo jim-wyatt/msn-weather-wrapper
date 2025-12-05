@@ -38,12 +38,7 @@ htmlcov/
 .coverage
 .coverage.*
 .cache
-nosetests.xml
-coverage.xml
-*.cover
-*.log
-.hypothesis/
-.pytest_cache/
+junit.xml
 junit-*.xml
 coverage.json
 

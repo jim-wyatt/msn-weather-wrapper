@@ -230,23 +230,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install Syft
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-      
+
       - name: Build containers
         run: podman-compose build
-      
+
       - name: Generate SBOMs
         run: ./generate_sbom_ci.sh
-      
+
       - name: Upload SBOMs
         uses: actions/upload-artifact@v4
         with:
           name: sboms
           path: sbom_output/
-      
+
       - name: Scan for vulnerabilities
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin

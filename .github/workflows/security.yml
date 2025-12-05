@@ -142,22 +142,3 @@ jobs:
         run: |
           echo "✓ Trivy container scan completed"
           echo "✓ Grype SBOM scan completed"
-          format: 'json'
-          output: 'trivy-results.json'
-
-      - name: Generate Grype SBOM scan
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
-          syft msn-weather-app:security-scan -o spdx-json > container-sbom.json
-          grype sbom:container-sbom.json --fail-on critical -o json > grype-results.json || true
-
-      - name: Upload container security reports
-        uses: actions/upload-artifact@v5
-        with:
-          name: container-security-reports
-          path: |
-            trivy-results.json
-            grype-results.json
-            container-sbom.json
-          retention-days: 30

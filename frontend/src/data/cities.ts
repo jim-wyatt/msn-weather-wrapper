@@ -5,48 +5,48 @@ import type { City } from '../types';
 export const cities: City[] = [
   // Afghanistan
   { name: "Kabul", country: "Afghanistan" },
-  
+
   // Algeria
   { name: "Algiers", country: "Algeria" },
   { name: "Oran", country: "Algeria" },
-  
+
   // Angola
   { name: "Luanda", country: "Angola" },
-  
+
   // Argentina
   { name: "Buenos Aires", country: "Argentina" },
   { name: "Córdoba", country: "Argentina" },
   { name: "Rosario", country: "Argentina" },
-  
+
   // Australia
   { name: "Adelaide", country: "Australia" },
   { name: "Brisbane", country: "Australia" },
   { name: "Melbourne", country: "Australia" },
   { name: "Perth", country: "Australia" },
   { name: "Sydney", country: "Australia" },
-  
+
   // Austria
   { name: "Vienna", country: "Austria" },
-  
+
   // Azerbaijan
   { name: "Baku", country: "Azerbaijan" },
-  
+
   // Bangladesh
   { name: "Chittagong", country: "Bangladesh" },
   { name: "Dhaka", country: "Bangladesh" },
   { name: "Khulna", country: "Bangladesh" },
   { name: "Rajshahi", country: "Bangladesh" },
-  
+
   // Belarus
   { name: "Minsk", country: "Belarus" },
-  
+
   // Belgium
   { name: "Brussels", country: "Belgium" },
-  
+
   // Bolivia
   { name: "La Paz", country: "Bolivia" },
   { name: "Santa Cruz", country: "Bolivia" },
-  
+
   // Brazil
   { name: "Belém", country: "Brazil" },
   { name: "Belo Horizonte", country: "Brazil" },
@@ -63,14 +63,14 @@ export const cities: City[] = [
   { name: "Salvador", country: "Brazil" },
   { name: "São Luís", country: "Brazil" },
   { name: "São Paulo", country: "Brazil" },
-  
+
   // Burkina Faso
   { name: "Ouagadougou", country: "Burkina Faso" },
-  
+
   // Cameroon
   { name: "Douala", country: "Cameroon" },
   { name: "Yaoundé", country: "Cameroon" },
-  
+
   // Canada
   { name: "Calgary", country: "Canada" },
   { name: "Edmonton", country: "Canada" },
@@ -79,13 +79,13 @@ export const cities: City[] = [
   { name: "Toronto", country: "Canada" },
   { name: "Vancouver", country: "Canada" },
   { name: "Winnipeg", country: "Canada" },
-  
+
   // Chad
   { name: "N'Djamena", country: "Chad" },
-  
+
   // Chile
   { name: "Santiago", country: "Chile" },
-  
+
   // China
   { name: "Anshan", country: "China" },
   { name: "Baoding", country: "China" },
@@ -135,74 +135,74 @@ export const cities: City[] = [
   { name: "Yantai", country: "China" },
   { name: "Zhengzhou", country: "China" },
   { name: "Zibo", country: "China" },
-  
+
   // Colombia
   { name: "Barranquilla", country: "Colombia" },
   { name: "Bogotá", country: "Colombia" },
   { name: "Cali", country: "Colombia" },
   { name: "Cartagena", country: "Colombia" },
   { name: "Medellín", country: "Colombia" },
-  
+
   // Congo (DRC)
   { name: "Kinshasa", country: "Congo (DRC)" },
   { name: "Lubumbashi", country: "Congo (DRC)" },
   { name: "Mbuji-Mayi", country: "Congo (DRC)" },
-  
+
   // Cuba
   { name: "Havana", country: "Cuba" },
-  
+
   // Czech Republic
   { name: "Prague", country: "Czech Republic" },
-  
+
   // Dominican Republic
   { name: "Santo Domingo", country: "Dominican Republic" },
-  
+
   // Ecuador
   { name: "Guayaquil", country: "Ecuador" },
   { name: "Quito", country: "Ecuador" },
-  
+
   // Egypt
   { name: "Alexandria", country: "Egypt" },
   { name: "Cairo", country: "Egypt" },
   { name: "Giza", country: "Egypt" },
-  
+
   // Ethiopia
   { name: "Addis Ababa", country: "Ethiopia" },
-  
+
   // France
   { name: "Lyon", country: "France" },
   { name: "Marseille", country: "France" },
   { name: "Paris", country: "France" },
-  
+
   // Germany
   { name: "Berlin", country: "Germany" },
   { name: "Cologne", country: "Germany" },
   { name: "Frankfurt", country: "Germany" },
   { name: "Hamburg", country: "Germany" },
   { name: "Munich", country: "Germany" },
-  
+
   // Ghana
   { name: "Accra", country: "Ghana" },
   { name: "Kumasi", country: "Ghana" },
-  
+
   // Greece
   { name: "Athens", country: "Greece" },
-  
+
   // Guatemala
   { name: "Guatemala City", country: "Guatemala" },
-  
+
   // Guinea
   { name: "Conakry", country: "Guinea" },
-  
+
   // Haiti
   { name: "Port-au-Prince", country: "Haiti" },
-  
+
   // Honduras
   { name: "Tegucigalpa", country: "Honduras" },
-  
+
   // Hungary
   { name: "Budapest", country: "Hungary" },
-  
+
   // India
   { name: "Agra", country: "India" },
   { name: "Ahmedabad", country: "India" },
@@ -234,7 +234,7 @@ export const cities: City[] = [
   { name: "Vadodara", country: "India" },
   { name: "Varanasi", country: "India" },
   { name: "Visakhapatnam", country: "India" },
-  
+
   // Indonesia
   { name: "Bandung", country: "Indonesia" },
   { name: "Bekasi", country: "Indonesia" },
@@ -247,7 +247,7 @@ export const cities: City[] = [
   { name: "South Tangerang", country: "Indonesia" },
   { name: "Surabaya", country: "Indonesia" },
   { name: "Tangerang", country: "Indonesia" },
-  
+
   // Iran
   { name: "Ahvaz", country: "Iran" },
   { name: "Karaj", country: "Iran" },
@@ -256,25 +256,25 @@ export const cities: City[] = [
   { name: "Shiraz", country: "Iran" },
   { name: "Tabriz", country: "Iran" },
   { name: "Tehran", country: "Iran" },
-  
+
   // Iraq
   { name: "Baghdad", country: "Iraq" },
   { name: "Basra", country: "Iraq" },
   { name: "Mosul", country: "Iraq" },
-  
+
   // Israel
   { name: "Jerusalem", country: "Israel" },
   { name: "Tel Aviv", country: "Israel" },
-  
+
   // Italy
   { name: "Milan", country: "Italy" },
   { name: "Naples", country: "Italy" },
   { name: "Rome", country: "Italy" },
   { name: "Turin", country: "Italy" },
-  
+
   // Ivory Coast
   { name: "Abidjan", country: "Ivory Coast" },
-  
+
   // Japan
   { name: "Fukuoka", country: "Japan" },
   { name: "Hiroshima", country: "Japan" },
@@ -288,19 +288,19 @@ export const cities: City[] = [
   { name: "Sendai", country: "Japan" },
   { name: "Tokyo", country: "Japan" },
   { name: "Yokohama", country: "Japan" },
-  
+
   // Jordan
   { name: "Amman", country: "Jordan" },
-  
+
   // Kazakhstan
   { name: "Almaty", country: "Kazakhstan" },
-  
+
   // Kenya
   { name: "Nairobi", country: "Kenya" },
-  
+
   // North Korea
   { name: "Pyongyang", country: "North Korea" },
-  
+
   // South Korea
   { name: "Busan", country: "South Korea" },
   { name: "Daegu", country: "South Korea" },
@@ -309,26 +309,26 @@ export const cities: City[] = [
   { name: "Incheon", country: "South Korea" },
   { name: "Seoul", country: "South Korea" },
   { name: "Ulsan", country: "South Korea" },
-  
+
   // Kuwait
   { name: "Kuwait City", country: "Kuwait" },
-  
+
   // Lebanon
   { name: "Beirut", country: "Lebanon" },
-  
+
   // Libya
   { name: "Benghazi", country: "Libya" },
   { name: "Tripoli", country: "Libya" },
-  
+
   // Madagascar
   { name: "Antananarivo", country: "Madagascar" },
-  
+
   // Malaysia
   { name: "Kuala Lumpur", country: "Malaysia" },
-  
+
   // Mali
   { name: "Bamako", country: "Mali" },
-  
+
   // Mexico
   { name: "Acapulco", country: "Mexico" },
   { name: "Aguascalientes", country: "Mexico" },
@@ -351,37 +351,37 @@ export const cities: City[] = [
   { name: "Toluca", country: "Mexico" },
   { name: "Torreón", country: "Mexico" },
   { name: "Zapopan", country: "Mexico" },
-  
+
   // Mongolia
   { name: "Ulaanbaatar", country: "Mongolia" },
-  
+
   // Morocco
   { name: "Casablanca", country: "Morocco" },
   { name: "Fez", country: "Morocco" },
   { name: "Marrakech", country: "Morocco" },
   { name: "Rabat", country: "Morocco" },
   { name: "Tangier", country: "Morocco" },
-  
+
   // Mozambique
   { name: "Maputo", country: "Mozambique" },
-  
+
   // Myanmar
   { name: "Mandalay", country: "Myanmar" },
   { name: "Yangon", country: "Myanmar" },
-  
+
   // Nepal
   { name: "Kathmandu", country: "Nepal" },
-  
+
   // Netherlands
   { name: "Amsterdam", country: "Netherlands" },
   { name: "Rotterdam", country: "Netherlands" },
-  
+
   // Nicaragua
   { name: "Managua", country: "Nicaragua" },
-  
+
   // Niger
   { name: "Niamey", country: "Niger" },
-  
+
   // Nigeria
   { name: "Abuja", country: "Nigeria" },
   { name: "Benin City", country: "Nigeria" },
@@ -390,10 +390,10 @@ export const cities: City[] = [
   { name: "Kano", country: "Nigeria" },
   { name: "Lagos", country: "Nigeria" },
   { name: "Port Harcourt", country: "Nigeria" },
-  
+
   // Oman
   { name: "Muscat", country: "Oman" },
-  
+
   // Pakistan
   { name: "Faisalabad", country: "Pakistan" },
   { name: "Gujranwala", country: "Pakistan" },
@@ -404,41 +404,41 @@ export const cities: City[] = [
   { name: "Multan", country: "Pakistan" },
   { name: "Peshawar", country: "Pakistan" },
   { name: "Rawalpindi", country: "Pakistan" },
-  
+
   // Panama
   { name: "Panama City", country: "Panama" },
-  
+
   // Paraguay
   { name: "Asunción", country: "Paraguay" },
-  
+
   // Peru
   { name: "Arequipa", country: "Peru" },
   { name: "Lima", country: "Peru" },
-  
+
   // Philippines
   { name: "Caloocan", country: "Philippines" },
   { name: "Davao City", country: "Philippines" },
   { name: "Manila", country: "Philippines" },
   { name: "Quezon City", country: "Philippines" },
-  
+
   // Poland
   { name: "Kraków", country: "Poland" },
   { name: "Łódź", country: "Poland" },
   { name: "Warsaw", country: "Poland" },
   { name: "Wrocław", country: "Poland" },
-  
+
   // Portugal
   { name: "Lisbon", country: "Portugal" },
-  
+
   // Puerto Rico
   { name: "San Juan", country: "Puerto Rico" },
-  
+
   // Qatar
   { name: "Doha", country: "Qatar" },
-  
+
   // Romania
   { name: "Bucharest", country: "Romania" },
-  
+
   // Russia
   { name: "Chelyabinsk", country: "Russia" },
   { name: "Kazan", country: "Russia" },
@@ -455,73 +455,73 @@ export const cities: City[] = [
   { name: "Volgograd", country: "Russia" },
   { name: "Voronezh", country: "Russia" },
   { name: "Yekaterinburg", country: "Russia" },
-  
+
   // Saudi Arabia
   { name: "Dammam", country: "Saudi Arabia" },
   { name: "Jeddah", country: "Saudi Arabia" },
   { name: "Mecca", country: "Saudi Arabia" },
   { name: "Medina", country: "Saudi Arabia" },
   { name: "Riyadh", country: "Saudi Arabia" },
-  
+
   // Senegal
   { name: "Dakar", country: "Senegal" },
-  
+
   // Serbia
   { name: "Belgrade", country: "Serbia" },
-  
+
   // Singapore
   { name: "Singapore", country: "Singapore" },
-  
+
   // Somalia
   { name: "Mogadishu", country: "Somalia" },
-  
+
   // South Africa
   { name: "Cape Town", country: "South Africa" },
   { name: "Durban", country: "South Africa" },
   { name: "Johannesburg", country: "South Africa" },
   { name: "Pretoria", country: "South Africa" },
-  
+
   // South Sudan
   { name: "Juba", country: "South Sudan" },
-  
+
   // Spain
   { name: "Barcelona", country: "Spain" },
   { name: "Madrid", country: "Spain" },
   { name: "Seville", country: "Spain" },
   { name: "Valencia", country: "Spain" },
-  
+
   // Sri Lanka
   { name: "Colombo", country: "Sri Lanka" },
-  
+
   // Sudan
   { name: "Khartoum", country: "Sudan" },
   { name: "Omdurman", country: "Sudan" },
-  
+
   // Sweden
   { name: "Stockholm", country: "Sweden" },
-  
+
   // Syria
   { name: "Aleppo", country: "Syria" },
   { name: "Damascus", country: "Syria" },
   { name: "Homs", country: "Syria" },
-  
+
   // Taiwan
   { name: "Kaohsiung", country: "Taiwan" },
   { name: "Taichung", country: "Taiwan" },
   { name: "Taipei", country: "Taiwan" },
-  
+
   // Tanzania
   { name: "Dar es Salaam", country: "Tanzania" },
-  
+
   // Thailand
   { name: "Bangkok", country: "Thailand" },
-  
+
   // Togo
   { name: "Lomé", country: "Togo" },
-  
+
   // Tunisia
   { name: "Tunis", country: "Tunisia" },
-  
+
   // Turkey
   { name: "Adana", country: "Turkey" },
   { name: "Ankara", country: "Turkey" },
@@ -531,29 +531,29 @@ export const cities: City[] = [
   { name: "Istanbul", country: "Turkey" },
   { name: "Izmir", country: "Turkey" },
   { name: "Konya", country: "Turkey" },
-  
+
   // Uganda
   { name: "Kampala", country: "Uganda" },
-  
+
   // Ukraine
   { name: "Dnipro", country: "Ukraine" },
   { name: "Donetsk", country: "Ukraine" },
   { name: "Kharkiv", country: "Ukraine" },
   { name: "Kyiv", country: "Ukraine" },
   { name: "Odesa", country: "Ukraine" },
-  
+
   // United Arab Emirates
   { name: "Abu Dhabi", country: "UAE" },
   { name: "Dubai", country: "UAE" },
   { name: "Sharjah", country: "UAE" },
-  
+
   // United Kingdom
   { name: "Birmingham", country: "UK" },
   { name: "Glasgow", country: "UK" },
   { name: "Leeds", country: "UK" },
   { name: "London", country: "UK" },
   { name: "Manchester", country: "UK" },
-  
+
   // United States
   { name: "Albuquerque", country: "USA" },
   { name: "Atlanta", country: "USA" },
@@ -591,33 +591,33 @@ export const cities: City[] = [
   { name: "Seattle", country: "USA" },
   { name: "Tucson", country: "USA" },
   { name: "Washington", country: "USA" },
-  
+
   // Uruguay
   { name: "Montevideo", country: "Uruguay" },
-  
+
   // Uzbekistan
   { name: "Tashkent", country: "Uzbekistan" },
-  
+
   // Venezuela
   { name: "Barquisimeto", country: "Venezuela" },
   { name: "Caracas", country: "Venezuela" },
   { name: "Maracaibo", country: "Venezuela" },
   { name: "Valencia", country: "Venezuela" },
-  
+
   // Vietnam
   { name: "Da Nang", country: "Vietnam" },
   { name: "Haiphong", country: "Vietnam" },
   { name: "Hanoi", country: "Vietnam" },
   { name: "Ho Chi Minh City", country: "Vietnam" },
-  
+
   // Yemen
   { name: "Aden", country: "Yemen" },
   { name: "Sanaa", country: "Yemen" },
   { name: "Taiz", country: "Yemen" },
-  
+
   // Zambia
   { name: "Lusaka", country: "Zambia" },
-  
+
   // Zimbabwe
   { name: "Harare", country: "Zimbabwe" },
 ];

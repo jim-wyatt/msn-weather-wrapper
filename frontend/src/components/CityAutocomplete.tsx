@@ -98,7 +98,7 @@ export default function CityAutocomplete({ onCitySelect }: CityAutocompleteProps
       />
 
       {showSuggestions && filteredCities.length > 0 && (
-        <ul 
+        <ul
           id="city-suggestions"
           className="suggestions-list"
           role="listbox"
