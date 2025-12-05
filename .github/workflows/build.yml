@@ -70,18 +70,12 @@ jobs:
           provenance: true
           sbom: true
 
-      - name: Build container image (load for testing)
+      - name: Build all container images
         if: ${{ !inputs.push-image }}
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./Containerfile
-          push: false
-          tags: msn-weather-app:test
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          load: true
+        run: |
+          docker buildx build -t msn-weather-app:test -f ./Containerfile --load .
+          docker buildx build -t msn-weather-frontend:test -f ./frontend/Containerfile --load ./frontend
+          docker buildx build -t msn-weather-playwright:test -f ./Containerfile.playwright --load .
 
       - name: Test unified container
         if: ${{ !inputs.push-image }}
@@ -93,18 +87,23 @@ jobs:
           curl -f http://localhost:8080/ || exit 1
           docker stop test-app || true
 
-      - name: Save Docker image as artifact
+      - name: Save Docker images as artifacts
         if: ${{ !inputs.push-image && github.event_name != 'pull_request' }}
         run: |
-          docker save msn-weather-app:test -o /tmp/docker-image.tar
-          gzip /tmp/docker-image.tar
+          mkdir -p /tmp/docker-images
+          docker save msn-weather-app:test -o /tmp/docker-images/api.tar
+          docker save msn-weather-frontend:test -o /tmp/docker-images/frontend.tar
+          docker save msn-weather-playwright:test -o /tmp/docker-images/playwright.tar
+          cd /tmp/docker-images
+          tar -czf docker-images.tar.gz *.tar
+          rm -f *.tar
 
-      - name: Upload Docker image artifact
+      - name: Upload Docker images artifact
         if: ${{ !inputs.push-image && github.event_name != 'pull_request' }}
         uses: actions/upload-artifact@v5
         with:
-          name: docker-image
-          path: /tmp/docker-image.tar.gz
+          name: docker-images
+          path: /tmp/docker-images/docker-images.tar.gz
           retention-days: 5
 
   sbom:

@@ -87,6 +87,7 @@ nav:
       - Security Report: reports/security-report.md
       - Performance Report: reports/performance-report.md
       - License Report: reports/license-report.md
+      - Level of Effort: LEVEL_OF_EFFORT.md
 
   - Development:
       - Development Guide: DEVELOPMENT.md
