@@ -1,6 +1,6 @@
 # Multi-stage Dockerfile - Unified Flask API + React Frontend
 # Stage 1: Build React frontend
-FROM node:20-alpine AS frontend-builder
+FROM node:20-slim-bookworm AS frontend-builder
 
 WORKDIR /frontend
 
@@ -17,7 +17,7 @@ COPY frontend/ .
 RUN npm run build
 
 # Stage 2: Python + Nginx unified container
-FROM python:3.12-slim
+FROM python:3.12-slim-bookworm
 
 WORKDIR /app
 
