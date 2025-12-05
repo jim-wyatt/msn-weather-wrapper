@@ -21,7 +21,7 @@ jobs:
   # Job 1: Build Python Package
   build-package:
     name: Build Python Package
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -74,7 +74,7 @@ jobs:
   # Job 2: Publish to PyPI
   publish-pypi:
     name: Publish to PyPI
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: [build-package]
     environment:
       name: pypi
@@ -96,7 +96,7 @@ jobs:
   # Job 3: Create GitHub Release
   release:
     name: Create GitHub Release
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: [build-package, publish-pypi]
     permissions:
       contents: write

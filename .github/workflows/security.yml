@@ -20,7 +20,7 @@ env:
 jobs:
   basic-security:
     name: Basic Security Checks
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -61,11 +61,11 @@ jobs:
 
       - name: Upload security reports as artifact
         uses: actions/upload-artifact@v5
-        if: always()
+        if: ${{ github.event_name != 'pull_request' && always() }}
         with:
           name: security-reports
           path: security-reports/
-          retention-days: 7
+          retention-days: 3
 
       - name: Security scan summary
         if: always()
@@ -79,7 +79,7 @@ jobs:
   container-scan:
     name: Container Security Scan
     if: ${{ inputs.full-scan }}
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     permissions:
       contents: read
       security-events: write

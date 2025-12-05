@@ -21,6 +21,7 @@ Modern Python wrapper for MSN Weather with Flask API, React frontend, and produc
 - **[Container Development](CONTAINER_DEV_SETUP.md)** - Podman-based dev environment
 - **[Testing Guide](TESTING.md)** - Test suite, coverage, and best practices
 - **[Versioning Guide](VERSIONING.md)** - Semantic versioning and release process
+- **[DevSecOps Monitor](MONITOR_DASHBOARD.md)** - Local + CI/CD RAG dashboard
 
 ### 📚 API & Features
 - **[API Reference](API.md)** - Complete REST API documentation
@@ -53,6 +54,7 @@ Modern Python wrapper for MSN Weather with Flask API, React frontend, and produc
 | Document | Purpose | Audience |
 |----------|---------|----------|
 | [CONTAINER_DEV_SETUP.md](CONTAINER_DEV_SETUP.md) | Containerized development | Developers |
+| [MONITOR_DASHBOARD.md](MONITOR_DASHBOARD.md) | DevSecOps monitor & RAG thresholds | DevSecOps/Developers |
 | [SYFT_GUIDE.md](SYFT_GUIDE.md) | SBOM generation | DevOps/Security |
 | [VERSIONING.md](VERSIONING.md) | Release process | Maintainers |
 

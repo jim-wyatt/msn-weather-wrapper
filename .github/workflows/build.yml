@@ -24,7 +24,7 @@ permissions:
 jobs:
   docker-build:
     name: Build Docker Images
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     permissions:
       contents: read
       packages: write
@@ -86,20 +86,21 @@ jobs:
       - name: Test unified container
         if: ${{ !inputs.push-image }}
         run: |
-          docker run -d --name test-app -p 8080:80 msn-weather-app:test
+          docker rm -f test-app || true
+          docker run --rm -d --name test-app -p 8080:80 msn-weather-app:test
           sleep 15
           curl -f http://localhost:8080/api/health || exit 1
           curl -f http://localhost:8080/ || exit 1
-          docker stop test-app
+          docker stop test-app || true
 
       - name: Save Docker image as artifact
-        if: ${{ !inputs.push-image }}
+        if: ${{ !inputs.push-image && github.event_name != 'pull_request' }}
         run: |
           docker save msn-weather-app:test -o /tmp/docker-image.tar
           gzip /tmp/docker-image.tar
 
       - name: Upload Docker image artifact
-        if: ${{ !inputs.push-image }}
+        if: ${{ !inputs.push-image && github.event_name != 'pull_request' }}
         uses: actions/upload-artifact@v5
         with:
           name: docker-image
@@ -108,7 +109,9 @@ jobs:
 
   sbom:
     name: Generate SBOM
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    env:
+      LOCAL_BIN: /tmp/syft-bin
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -119,7 +122,9 @@ jobs:
 
       - name: Install Syft
         run: |
-          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+          mkdir -p "$LOCAL_BIN"
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b "$LOCAL_BIN"
+          echo "$LOCAL_BIN" >> "$GITHUB_PATH"
 
       - name: Generate Source SBOM
         run: |
@@ -128,15 +133,16 @@ jobs:
           syft dir:. -o cyclonedx-json > sbom_output/source_cyclonedx.json
 
       - name: Upload SBOM artifacts
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v5
         with:
           name: sbom-reports
           path: sbom_output/
-          retention-days: 30
+          retention-days: 7
 
   docs:
     name: Build Documentation
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -153,8 +159,9 @@ jobs:
         run: mkdocs build --strict
 
       - name: Upload documentation
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v5
         with:
           name: documentation
           path: site/
-          retention-days: 30
+          retention-days: 7
