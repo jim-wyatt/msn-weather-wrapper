@@ -86,11 +86,12 @@ jobs:
       - name: Test unified container
         if: ${{ !inputs.push-image }}
         run: |
-          docker run -d --name test-app -p 8080:80 msn-weather-app:test
+          docker rm -f test-app || true
+          docker run --rm -d --name test-app -p 8080:80 msn-weather-app:test
           sleep 15
           curl -f http://localhost:8080/api/health || exit 1
           curl -f http://localhost:8080/ || exit 1
-          docker stop test-app
+          docker stop test-app || true
 
       - name: Save Docker image as artifact
         if: ${{ !inputs.push-image && github.event_name != 'pull_request' }}
