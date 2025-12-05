@@ -660,9 +660,9 @@ monitor_workflows() {
         printf "  ${BLUE}${timestamp}${NC}  ${BLUE}•${NC}  "
         printf "Auto-refresh: 60s  ${BLUE}•${NC}  "
         printf "Press ${GREEN}Ctrl+C${NC} to exit\n"
-            printf "  ${MAGENTA}${branch}${NC} @ ${commit}\n"
-            echo ""
         printf "${BLUE}%s${NC}\n" "$(printf '=%.0s' {1..75})"
+        echo ""
+        printf "  ${MAGENTA}${branch}${NC} @ ${commit}\n"
         echo ""
 
         # LOCAL ENVIRONMENT
