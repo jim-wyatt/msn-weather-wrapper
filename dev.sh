@@ -446,9 +446,6 @@ rebuild_all() {
 }
 
 monitor_workflows() {
-    log_info "Monitoring GitHub workflows..."
-    echo ""
-
     # Check if gh CLI is available
     if ! command -v gh &> /dev/null; then
         log_error "GitHub CLI (gh) is not installed"
@@ -456,41 +453,198 @@ monitor_workflows() {
         exit 1
     fi
 
-    # Display workflow status
-    echo "╔════════════════════════════════════════════════════════════╗"
-    echo "║     WORKFLOW MONITORING - msn-weather-wrapper              ║"
-    echo "╚════════════════════════════════════════════════════════════╝"
-    echo ""
+    # Function to colorize status
+    colorize_status() {
+        case "$1" in
+            PASS) printf "%b" "${GREEN}PASS${NC}" ;;
+            FAIL) printf "%b" "${RED}FAIL${NC}" ;;
+            RUN*)  printf "%b" "${CYAN}RUN ${NC}" ;;
+            CANC) printf "%b" "${YELLOW}CANC${NC}" ;;
+            Clean) printf "%b" "${GREEN}Clean${NC}" ;;
+            Running) printf "%b" "${GREEN}Running${NC}" ;;
+            Healthy) printf "%b" "${GREEN}Healthy${NC}" ;;
+            Stopped) printf "%b" "${RED}Stopped${NC}" ;;
+            Down) printf "%b" "${RED}Down${NC}" ;;
+            Unhealthy) printf "%b" "${YELLOW}Unhealthy${NC}" ;;
+            N/A) printf "%b" "${NC}N/A${NC}" ;;
+            *) printf "%b" "${1}" ;;
+        esac
+    }
 
-    echo "📋 CI/CD PIPELINE STATUS (Latest 5 Runs)"
-    echo "────────────────────────────────────────"
-    echo ""
+    # Function to draw the monitor display
+    draw_monitor() {
+        clear
+        local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
 
-    gh run list --workflow=ci.yml --limit 5 --json createdAt,status,conclusion -q '.[] | .createdAt as $t | ($t | split("T")[1] | split("Z")[0]) as $time | .status as $s | .conclusion as $c | if $s == "completed" then if $c == "success" then "✅ \($time) SUCCESS" elif $c == "failure" then "❌ \($time) FAILURE" else "⊘  \($time) CANCELLED" end else "🔄 \($time) IN_PROGRESS" end'
-
-    echo ""
-    echo "🔐 SECURITY TOOLS"
-    echo "─────────────────"
-    echo "  ✅ Bandit       (Python SAST)"
-    echo "  ✅ Semgrep      (Pattern Analysis)"
-    echo "  ✅ Safety       (Dependency Vulns)"
-    echo "  ✅ pip-audit    (CVE Database)"
-    echo "  ✅ Trivy        (Container Images)"
-    echo "  ✅ Grype        (SBOM Analysis)"
-    echo ""
-    echo "  → All reports consolidated to: security-reports artifact"
-    echo "  → Report generator processes all 6 tools"
-    echo ""
-
-    # Check if any runs are in progress
-    IN_PROGRESS=$(gh run list --workflow=ci.yml --status in_progress --limit 1 -q 'length')
-    if [ "$IN_PROGRESS" -gt 0 ]; then
-        echo "🔄 Active Run in Progress"
-        gh run list --workflow=ci.yml --status in_progress --limit 1 --json createdAt,databaseId -q '.[] | "   Started: \(.createdAt)"'
+        printf "%b\n" "${BLUE}================================================================================${NC}"
+        printf "%b\n" "${YELLOW} MSN Weather DevOps Monitor${NC}                            Updated: ${BLUE}$timestamp${NC}"
+        printf "%b\n" "${BLUE}================================================================================${NC}"
         echo ""
-    fi
 
-    log_success "Workflow monitoring complete"
+        # GitHub Workflows Status
+        printf "%b\n" "${YELLOW}--- WORKFLOWS ---${NC}"
+        local ci_st=$(gh run list --workflow=ci.yml --limit 1 --json status,conclusion 2>/dev/null | \
+            jq -r 'if length > 0 then .[0] | if .status == "completed" then if .conclusion == "success" then "PASS" elif .conclusion == "failure" then "FAIL" else "CANC" end else "RUN " end else "N/A " end' 2>/dev/null || echo "N/A")
+        local test_st=$(gh run list --workflow=test.yml --limit 1 --json status,conclusion 2>/dev/null | \
+            jq -r 'if length > 0 then .[0] | if .status == "completed" then if .conclusion == "success" then "PASS" else "FAIL" end else "RUN " end else "N/A " end' 2>/dev/null || echo "N/A")
+        local sec_st=$(gh run list --workflow=security.yml --limit 1 --json status,conclusion 2>/dev/null | \
+            jq -r 'if length > 0 then .[0] | if .status == "completed" then if .conclusion == "success" then "PASS" else "FAIL" end else "RUN " end else "N/A " end' 2>/dev/null || echo "N/A")
+        local build_st=$(gh run list --workflow=build.yml --limit 1 --json status,conclusion 2>/dev/null | \
+            jq -r 'if length > 0 then .[0] | if .status == "completed" then if .conclusion == "success" then "PASS" else "FAIL" end else "RUN " end else "N/A " end' 2>/dev/null || echo "N/A")
+
+        printf "  CI/CD: %b   | Tests: %b   | Security: %b   | Build: %b\n" "$(colorize_status "$ci_st")" "$(colorize_status "$test_st")" "$(colorize_status "$sec_st")" "$(colorize_status "$build_st")"
+        echo ""
+
+        # Recent Pipeline Activity
+        printf "%b\n" "${YELLOW}--- RECENT ACTIVITY (Last 5 Runs) ---${NC}"
+        local activity=$(gh run list --workflow=ci.yml --limit 5 --json createdAt,status,conclusion,displayTitle 2>/dev/null | \
+            jq -r '.[] | (.createdAt | split("T")[1] | .[0:5]) + " " + (if .status == "completed" then if .conclusion == "success" then "PASS" elif .conclusion == "failure" then "FAIL" else "CANC" end else "RUN " end) + " " + (.displayTitle | .[0:56])' 2>/dev/null)
+
+        if [ -n "$activity" ]; then
+            while IFS= read -r line; do
+                local time=$(echo "$line" | cut -d' ' -f1)
+                local status=$(echo "$line" | cut -d' ' -f2)
+                local title=$(echo "$line" | cut -d' ' -f3-)
+
+                case "$status" in
+                    PASS) printf "  %s %b %s\n" "$time" "${GREEN}[PASS]${NC}" "$title" ;;
+                    FAIL) printf "  %s %b %s\n" "$time" "${RED}[FAIL]${NC}" "$title" ;;
+                    CANC) printf "  %s %b %s\n" "$time" "${YELLOW}[CANC]${NC}" "$title" ;;
+                    RUN*) printf "  %s %b %s\n" "$time" "${CYAN}[RUN ]${NC}" "$title" ;;
+                    *) printf "  %s\n" "$line" ;;
+                esac
+            done <<< "$activity"
+        else
+            printf "%b\n" "  ${YELLOW}No workflow data available${NC}"
+        fi
+        echo ""
+
+        # Local Build Status
+        printf "%b\n" "${YELLOW}--- LOCAL BUILD ---${NC}"
+        local cov="N/A"
+        local cov_color="${NC}"
+        if [ -f "htmlcov/index.html" ]; then
+            cov=$(grep -oP 'pc_cov">\K[0-9]+(?=%)' htmlcov/index.html 2>/dev/null | head -1)
+            if [ -n "$cov" ]; then
+                if [ "$cov" -ge 80 ]; then
+                    cov_color="${GREEN}"
+                elif [ "$cov" -ge 60 ]; then
+                    cov_color="${YELLOW}"
+                else
+                    cov_color="${RED}"
+                fi
+                cov="${cov}%"
+            else
+                cov="N/A"
+            fi
+        fi
+
+        local tests="N/A"
+        local test_color="${NC}"
+        if [ -f "junit.xml" ]; then
+            local tot=$(grep -oP 'tests="\K[0-9]+' junit.xml 2>/dev/null | head -1)
+            local fail=$(grep -oP 'failures="\K[0-9]+' junit.xml 2>/dev/null | head -1)
+            if [ -n "$tot" ]; then
+                tests="${tot} tests, ${fail:-0} failed"
+                [ "${fail:-0}" -eq 0 ] && test_color="${GREEN}" || test_color="${RED}"
+            else
+                tests="No report"
+            fi
+        fi
+
+        printf "  Coverage: %b%-8s%b | Tests: %b%-25s%b\n" "$cov_color" "$cov" "${NC}" "$test_color" "$tests" "${NC}"
+        echo ""
+
+        # Security Status
+        printf "%b\n" "${YELLOW}--- SECURITY ---${NC}"
+        local sec_dir="artifacts/security-reports"
+        local bandit="N/A"
+        local bandit_color="${NC}"
+        if [ -f "$sec_dir/bandit-report.json" ]; then
+            local issues=$(jq '[.results[] | select(.issue_severity == "HIGH" or .issue_severity == "CRITICAL")] | length' "$sec_dir/bandit-report.json" 2>/dev/null || echo "0")
+            if [ "${issues:-0}" -eq 0 ] 2>/dev/null; then
+                bandit="Clean"
+                bandit_color="${GREEN}"
+            else
+                bandit="${issues} issues"
+                bandit_color="${RED}"
+            fi
+        fi
+
+        local lics="N/A"
+        if [ -f "$sec_dir/licenses.json" ]; then
+            local pkgs=$(jq 'length' "$sec_dir/licenses.json" 2>/dev/null)
+            [ -n "$pkgs" ] && lics="${pkgs} packages"
+        fi
+
+        printf "  Bandit: %b%-12s%b | Licenses: %-25s\n" "$bandit_color" "$bandit" "${NC}" "$lics"
+        echo ""
+
+        # Container Status
+        printf "%b\n" "${YELLOW}--- CONTAINERS ---${NC}"
+        local api_status="Stopped"
+        local api_health="N/A"
+        if command -v podman &> /dev/null; then
+            local api_up=$(podman ps --filter "name=msn-weather-api-dev" --format "{{.Status}}" 2>/dev/null)
+            if [ -n "$api_up" ]; then
+                api_status="Running"
+                if curl -s -f http://localhost:5000/api/v1/health > /dev/null 2>&1; then
+                    api_health="Healthy"
+                else
+                    api_health="Unhealthy"
+                fi
+            else
+                api_health="Down"
+            fi
+        else
+            api_status="Podman N/A"
+        fi
+
+        local fe_status="Stopped"
+        if command -v podman &> /dev/null; then
+            local fe_up=$(podman ps --filter "name=msn-weather-frontend-dev" --format "{{.Status}}" 2>/dev/null)
+            [ -n "$fe_up" ] && fe_status="Running"
+        fi
+
+        printf "  API: %b   Health: %b   | Frontend: %b\n" "$(colorize_status "$api_status")" "$(colorize_status "$api_health")" "$(colorize_status "$fe_status")"
+        echo ""
+
+        # Repository Info
+        printf "%b\n" "${YELLOW}--- REPOSITORY ---${NC}"
+        local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "N/A")
+        local commits=$(git rev-list --count HEAD 2>/dev/null || echo "0")
+        local modified=$(git status --porcelain 2>/dev/null | wc -l || echo "0")
+        local mod_color="${GREEN}"
+        [ "$modified" -gt 0 ] && mod_color="${YELLOW}"
+        printf "  Branch: %b%-15s%b | Commits: %-8s | Modified: %b%s files%b\n" "${CYAN}" "$branch" "${NC}" "$commits" "$mod_color" "$modified" "${NC}"
+        echo ""
+
+        # Deployment Info
+        printf "%b\n" "${YELLOW}--- DEPLOYMENT ---${NC}"
+        local last_deploy=$(gh run list --workflow=deploy.yml --limit 1 --json createdAt 2>/dev/null | \
+            jq -r 'if length > 0 then .[0].createdAt | split("T")[0] + " " + (split("T")[1] | split(".")[0] | .[0:5]) else "N/A" end' 2>/dev/null || echo "N/A")
+        local deploy_st=$(gh run list --workflow=deploy.yml --limit 1 --json conclusion 2>/dev/null | \
+            jq -r 'if length > 0 then .[0].conclusion // "N/A" else "N/A" end' 2>/dev/null || echo "N/A")
+        printf "  Last Deploy: %-18s | Status: %b\n" "$last_deploy" "$(colorize_status "$deploy_st")"
+
+        echo ""
+        printf "%b\n" "${BLUE}================================================================================${NC}"
+        printf "%b\n" " ${BLUE}Security Tools:${NC} Bandit | Semgrep | Safety | pip-audit | Trivy | Grype"
+        printf "%b\n" " ${GREEN}Press Ctrl+C to exit${NC}                             Refreshes every ${YELLOW}60 seconds${NC}"
+        printf "%b\n" "${BLUE}================================================================================${NC}"
+    }
+
+    # Main monitoring loop
+    log_info "Starting DevOps monitor (Ctrl+C to exit)..."
+    sleep 1
+
+    # Trap Ctrl+C to clean up
+    trap 'clear; echo -e "${GREEN}Monitor stopped${NC}"; exit 0' INT TERM
+
+    while true; do
+        draw_monitor
+        sleep 60
+    done
 }
 
 create_dev_compose() {
@@ -580,12 +734,14 @@ Commands:
   shell-api         Open shell in API container
   shell-frontend    Open shell in frontend container
   rebuild           Rebuild all containers from scratch
+  monitor           Real-time monitoring dashboard for workflows, tests, and security
   help              Show this help message
 
 Examples:
   ./dev.sh setup              # First-time setup
   ./dev.sh start              # Start development
   ./dev.sh status             # Check container status
+  ./dev.sh monitor            # Launch real-time monitoring dashboard
   ./dev.sh logs               # Watch logs
   ./dev.sh test               # Run tests once
   ./dev.sh test --watch       # Run tests in watch mode
