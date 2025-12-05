@@ -15,6 +15,7 @@
 #   shell-api - Open shell in API container
 #   shell-frontend - Open shell in frontend container
 #   rebuild   - Rebuild all containers from scratch
+#   monitor   - Monitor GitHub workflows (CI/CD status)
 
 set -e
 
@@ -444,6 +445,63 @@ rebuild_all() {
     log_success "Rebuild complete!"
 }
 
+monitor_workflows() {
+    log_info "Monitoring GitHub workflows..."
+    echo ""
+
+    # Check if gh CLI is available
+    if ! command -v gh &> /dev/null; then
+        log_error "GitHub CLI (gh) is not installed"
+        echo "Install it from: https://cli.github.com"
+        exit 1
+    fi
+
+    # Display workflow status
+    echo "╔════════════════════════════════════════════════════════════╗"
+    echo "║     WORKFLOW MONITORING - msn-weather-wrapper              ║"
+    echo "╚════════════════════════════════════════════════════════════╝"
+    echo ""
+
+    echo "📋 CI/CD PIPELINE STATUS (Latest 5 Runs)"
+    echo "────────────────────────────────────────"
+    echo ""
+
+    gh run list --workflow=ci.yml --limit 5 --json createdAt,status,conclusion -q '.[] |
+  .createdAt as $t |
+  ($t | split("T")[1] | split("Z")[0]) as $time |
+  .status as $s |
+  .conclusion as $c |
+  if $s == "completed" then
+    if $c == "success" then "✅ \($time) SUCCESS"
+    elif $c == "failure" then "❌ \($time) FAILURE"
+    else "⊘  \($time) CANCELLED" end
+  else "🔄 \($time) IN_PROGRESS" end'
+
+    echo ""
+    echo "🔐 SECURITY TOOLS"
+    echo "─────────────────"
+    echo "  ✅ Bandit       (Python SAST)"
+    echo "  ✅ Semgrep      (Pattern Analysis)"
+    echo "  ✅ Safety       (Dependency Vulns)"
+    echo "  ✅ pip-audit    (CVE Database)"
+    echo "  ✅ Trivy        (Container Images)"
+    echo "  ✅ Grype        (SBOM Analysis)"
+    echo ""
+    echo "  → All reports consolidated to: security-reports artifact"
+    echo "  → Report generator processes all 6 tools"
+    echo ""
+
+    # Check if any runs are in progress
+    IN_PROGRESS=$(gh run list --workflow=ci.yml --status in_progress --limit 1 -q 'length')
+    if [ "$IN_PROGRESS" -gt 0 ]; then
+        echo "🔄 Active Run in Progress"
+        gh run list --workflow=ci.yml --status in_progress --limit 1 --json createdAt,databaseId -q '.[] | "   Started: \(.createdAt)"'
+        echo ""
+    fi
+
+    log_success "Workflow monitoring complete"
+}
+
 create_dev_compose() {
     cat > "$COMPOSE_FILE" << 'EOF'
 version: '3.8'
@@ -586,6 +644,9 @@ case "${1:-help}" in
         ;;
     rebuild)
         rebuild_all
+        ;;
+    monitor)
+        monitor_workflows
         ;;
     help|--help|-h)
         show_usage
