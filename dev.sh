@@ -686,17 +686,10 @@ monitor_workflows() {
         # Python Virtual Environment
         local pyenv_status=$(get_local_status python_env)
         printf "  "
-        printf " Python Env: "
         case "$pyenv_status" in
-            active)
-                printf "${GREEN}✅${NC}"
-                printf " Python Env: ${GREEN}venv/ active${NC}" ;;
-            inactive)
-                printf "${YELLOW}⚠️${NC}"
-                printf " Python Env: ${YELLOW}venv/ exists but not activated${NC}" ;;
-            none)
-                printf "${BLUE}○${NC}"
-                printf " Python Env: ${BLUE}Not configured${NC}" ;;
+            active) printf "${GREEN}✅${NC} Python Env: ${GREEN}venv/ active${NC}" ;;
+            inactive) printf "${YELLOW}⚠️${NC} Python Env: ${YELLOW}venv/ exists but not activated${NC}" ;;
+            none) printf "${BLUE}○${NC} Python Env: ${BLUE}Not configured${NC}" ;;
         esac
         echo ""
 
