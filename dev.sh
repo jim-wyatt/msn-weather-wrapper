@@ -466,16 +466,7 @@ monitor_workflows() {
     echo "────────────────────────────────────────"
     echo ""
 
-    gh run list --workflow=ci.yml --limit 5 --json createdAt,status,conclusion -q '.[] |
-  .createdAt as $t |
-  ($t | split("T")[1] | split("Z")[0]) as $time |
-  .status as $s |
-  .conclusion as $c |
-  if $s == "completed" then
-    if $c == "success" then "✅ \($time) SUCCESS"
-    elif $c == "failure" then "❌ \($time) FAILURE"
-    else "⊘  \($time) CANCELLED" end
-  else "🔄 \($time) IN_PROGRESS" end'
+    gh run list --workflow=ci.yml --limit 5 --json createdAt,status,conclusion -q '.[] | .createdAt as $t | ($t | split("T")[1] | split("Z")[0]) as $time | .status as $s | .conclusion as $c | if $s == "completed" then if $c == "success" then "✅ \($time) SUCCESS" elif $c == "failure" then "❌ \($time) FAILURE" else "⊘  \($time) CANCELLED" end else "🔄 \($time) IN_PROGRESS" end'
 
     echo ""
     echo "🔐 SECURITY TOOLS"
