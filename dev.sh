@@ -657,10 +657,11 @@ monitor_workflows() {
         printf "${BLUE}%s${NC}\n" "$(printf '=%.0s' {1..75})"
         printf "  ${YELLOW}⚡ DevSecOps Dashboard${NC}  ${BLUE}•${NC}  "
         printf "${CYAN}${GITHUB_OWNER}/${GITHUB_REPO}${NC}\n"
-        printf "  ${MAGENTA}${branch}${NC} @ ${commit}\n"
         printf "  ${BLUE}${timestamp}${NC}  ${BLUE}•${NC}  "
         printf "Auto-refresh: 60s  ${BLUE}•${NC}  "
         printf "Press ${GREEN}Ctrl+C${NC} to exit\n"
+            printf "  ${MAGENTA}${branch}${NC} @ ${commit}\n"
+            echo ""
         printf "${BLUE}%s${NC}\n" "$(printf '=%.0s' {1..75})"
         echo ""
 
@@ -684,14 +685,18 @@ monitor_workflows() {
 
         # Python Virtual Environment
         local pyenv_status=$(get_local_status python_env)
-        local pyenv_rag=$(get_rag_status "$pyenv_status")
         printf "  "
-        format_rag "$pyenv_rag"
         printf " Python Env: "
         case "$pyenv_status" in
-            active) printf "${GREEN}venv/ active${NC}" ;;
-            inactive) printf "${YELLOW}venv/ exists but not activated${NC}" ;;
-            none) printf "${BLUE}Not configured${NC}" ;;
+            active)
+                printf "${GREEN}✅${NC}"
+                printf " Python Env: ${GREEN}venv/ active${NC}" ;;
+            inactive)
+                printf "${YELLOW}⚠️${NC}"
+                printf " Python Env: ${YELLOW}venv/ exists but not activated${NC}" ;;
+            none)
+                printf "${BLUE}○${NC}"
+                printf " Python Env: ${BLUE}Not configured${NC}" ;;
         esac
         echo ""
 
