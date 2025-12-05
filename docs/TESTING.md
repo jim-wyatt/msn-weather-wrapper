@@ -5,6 +5,7 @@ Complete testing documentation for MSN Weather Wrapper, including test coverage,
 ## Test Pyramid
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E3F2FD', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#1E88E5', 'lineColor': '#1E88E5', 'secondaryColor': '#BBDEFB', 'tertiaryColor': '#90CAF9', 'edgeLabelBackground': '#E3F2FD'}}}%%
 graph TB
     subgraph Pyramid[" "]
         direction TB
@@ -18,9 +19,10 @@ graph TB
         U --> I --> E
     end
 
-    style U fill:#4CAF50,color:#fff,stroke:#2E7D32,stroke-width:3px,padding:20px
-    style I fill:#2196F3,color:#fff,stroke:#1565C0,stroke-width:3px,padding:20px
-    style E fill:#FF9800,color:#fff,stroke:#E65100,stroke-width:3px,padding:20px
+    %% Muted blues to align with site palette
+    style U fill:#1E88E5,color:#fff,stroke:#0D47A1,stroke-width:2px,padding:20px
+    style I fill:#64B5F6,color:#0F172A,stroke:#1E88E5,stroke-width:2px,padding:20px
+    style E fill:#90CAF9,color:#0F172A,stroke:#1E88E5,stroke-width:2px,padding:20px
     style Pyramid fill:none,stroke:none
 ```
 

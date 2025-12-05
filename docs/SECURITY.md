@@ -21,6 +21,7 @@ Please do not open public issues for security vulnerabilities.
 ### Security Defense Layers
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E3F2FD', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#1E88E5', 'lineColor': '#1E88E5', 'secondaryColor': '#BBDEFB', 'tertiaryColor': '#90CAF9', 'edgeLabelBackground': '#E3F2FD'}}}%%
 graph TD
     subgraph Layer1["🔍 Layer 1: Input Reception"]
         L1["Input Received<br/>(user parameter)"]
@@ -52,13 +53,14 @@ graph TD
 
     L1 --> L2 --> L3 --> L4 --> L5 --> L6 --> L7
 
-    style L1 fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#000
-    style L2 fill:#C8E6C9,stroke:#2E7D32,stroke-width:2px,color:#000
-    style L3 fill:#A5D6A7,stroke:#2E7D32,stroke-width:2px,color:#000
-    style L4 fill:#81C784,stroke:#2E7D32,stroke-width:2px,color:#fff
-    style L5 fill:#4CAF50,stroke:#2E7D32,stroke-width:2px,color:#fff
-    style L6 fill:#F57C00,stroke:#E65100,stroke-width:2px,color:#fff
-    style L7 fill:#2E7D32,stroke:#1B5E20,stroke-width:2px,color:#fff
+    %% Muted blues and ambers for web-friendly contrast
+    style L1 fill:#E3F2FD,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style L2 fill:#D7E3FC,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style L3 fill:#C5CAE9,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style L4 fill:#BBDEFB,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style L5 fill:#90CAF9,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style L6 fill:#FFE082,stroke:#FBC02D,stroke-width:1.5px,color:#0F172A
+    style L7 fill:#1E88E5,stroke:#0D47A1,stroke-width:1.5px,color:#fff
 ```
 
 ### Attack Prevention

@@ -109,6 +109,8 @@ jobs:
   sbom:
     name: Generate SBOM
     runs-on: self-hosted
+    env:
+      LOCAL_BIN: ${{ runner.temp }}/bin
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -119,7 +121,9 @@ jobs:
 
       - name: Install Syft
         run: |
-          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+          mkdir -p "$LOCAL_BIN"
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b "$LOCAL_BIN"
+          echo "$LOCAL_BIN" >> "$GITHUB_PATH"
 
       - name: Generate Source SBOM
         run: |

@@ -19,6 +19,7 @@ The CI/CD system has been refactored to use a **modular architecture** where the
 ## Workflow Flow Diagram - Pull Request
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E3F2FD', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#1E88E5', 'lineColor': '#1E88E5', 'secondaryColor': '#BBDEFB', 'tertiaryColor': '#90CAF9', 'edgeLabelBackground': '#E3F2FD'}}}%%
 sequenceDiagram
     actor Dev as Developer
     participant PR as Pull Request
@@ -47,6 +48,7 @@ sequenceDiagram
 ## Workflow Flow Diagram - Main Branch Release
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E3F2FD', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#1E88E5', 'lineColor': '#1E88E5', 'secondaryColor': '#BBDEFB', 'tertiaryColor': '#90CAF9', 'edgeLabelBackground': '#E3F2FD'}}}%%
 sequenceDiagram
     participant Main as Main Branch
     participant CI as CI/CD Pipeline
@@ -77,6 +79,7 @@ sequenceDiagram
 ## Modular Workflow Architecture
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E3F2FD', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#1E88E5', 'lineColor': '#1E88E5', 'secondaryColor': '#BBDEFB', 'tertiaryColor': '#90CAF9', 'edgeLabelBackground': '#E3F2FD'}}}%%
 graph TB
     subgraph "Main CI/CD Pipeline (ci.yml)"
         CI[CI/CD Orchestrator]
@@ -105,15 +108,16 @@ graph TB
     AUTO -->|triggers| PUB
     DEP -->|creates PR| CI
 
-    style CI fill:#4CAF50,color:#fff
-    style TEST fill:#2196F3,color:#fff
-    style SEC fill:#FF9800,color:#fff
-    style BUILD fill:#9C27B0,color:#fff
-    style DEPLOY fill:#00BCD4,color:#fff
-    style PERF fill:#795548,color:#fff
-    style DEP fill:#607D8B,color:#fff
-    style AUTO fill:#E91E63,color:#fff
-    style PUB fill:#F44336,color:#fff
+    %% Muted palette to match site blues with softer contrast
+    style CI fill:#1E88E5,stroke:#0D47A1,stroke-width:1.5px,color:#fff
+    style TEST fill:#64B5F6,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style SEC fill:#26A69A,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style BUILD fill:#BA68C8,stroke:#6A1B9A,stroke-width:1.5px,color:#0F172A
+    style DEPLOY fill:#4DD0E1,stroke:#00838F,stroke-width:1.5px,color:#0F172A
+    style PERF fill:#B0BEC5,stroke:#546E7A,stroke-width:1.5px,color:#0F172A
+    style DEP fill:#CFD8DC,stroke:#90A4AE,stroke-width:1.5px,color:#0F172A
+    style AUTO fill:#FBC02D,stroke:#F57F17,stroke-width:1.5px,color:#0F172A
+    style PUB fill:#EF6C00,stroke:#E65100,stroke-width:1.5px,color:#fff
 ```
 
 ## Workflow Descriptions
@@ -193,6 +197,7 @@ graph TB
 #### Security Tools Architecture
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E3F2FD', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#1E88E5', 'lineColor': '#1E88E5', 'secondaryColor': '#BBDEFB', 'tertiaryColor': '#90CAF9', 'edgeLabelBackground': '#E3F2FD'}}}%%
 graph LR
     SEC["security.yml<br/>Orchestrator"]
 
@@ -218,13 +223,14 @@ graph LR
     DEP -->|Reports| REPORTS
     CONT -->|Reports| REPORTS
 
-    style SEC fill:#FF9800,color:#fff
-    style BASIC fill:#4CAF50,color:#fff
-    style SAST fill:#F44336,color:#fff
-    style DEP fill:#E91E63,color:#fff
-    style CONT fill:#2196F3,color:#fff
-    style GHSEC fill:#00BCD4,color:#fff
-    style REPORTS fill:#9C27B0,color:#fff
+    %% Muted palette consistent with site blues
+    style SEC fill:#26A69A,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style BASIC fill:#64B5F6,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style SAST fill:#90CAF9,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style DEP fill:#BA68C8,stroke:#6A1B9A,stroke-width:1.5px,color:#0F172A
+    style CONT fill:#4DD0E1,stroke:#00838F,stroke-width:1.5px,color:#0F172A
+    style GHSEC fill:#CFD8DC,stroke:#90A4AE,stroke-width:1.5px,color:#0F172A
+    style REPORTS fill:#BBDEFB,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
 ```
 
 ### Reusable Workflow: Build (`build.yml`)
