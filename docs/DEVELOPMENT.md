@@ -269,8 +269,8 @@ cd frontend && npm update
 
 ### Architecture
 
-- **API Container**: Python 3.12 slim, port 5000, Flask with hot reload
-- **Frontend Container**: Node 20 Alpine, port 5173, Vite with HMR
+- **API Container**: Python 3.12 slim (Trixie), port 5000, Flask with hot reload
+- **Frontend Container**: Node 22 Trixie slim, port 5173, Vite with HMR
 - **Volumes**: Source code mounted for hot reload
 
 ### Environment Variables

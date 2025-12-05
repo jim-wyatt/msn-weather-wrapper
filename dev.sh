@@ -268,102 +268,278 @@ run_tests() {
         log_info "Running tests in watch mode (Ctrl+C to stop)..."
         echo ""
         podman exec -it msn-weather-api-dev pytest -v --looponfail
-        clear
-        local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-        local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
-        local commit=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
-        local workflows_json=$(get_github_workflows)
+    else
+        log_info "Running backend tests..."
+        podman exec msn-weather-api-dev pytest -v
 
-        # Compact header (fits 80x24)
-        printf "${BLUE}%s${NC}\n" "$(printf '=%.0s' {1..70})"
-        printf " ${YELLOW}⚡ DevSecOps${NC} • ${CYAN}${GITHUB_OWNER}/${GITHUB_REPO}${NC} • ${BLUE}${timestamp}${NC}\n"
-        printf " ${BLUE}Branch${NC} ${MAGENTA}${branch}${NC} @ ${commit}  •  Auto-refresh:60s  •  Ctrl+C to exit\n"
-        printf "${BLUE}%s${NC}\n" "$(printf '-%.0s' {1..70})"
+        log_warning "Skipping frontend E2E tests in containerized dev environment"
+        log_info "Frontend E2E tests require significant system resources and may fail in containers"
+        log_info "To run E2E tests: cd frontend && npm run test:e2e (on host machine)"
 
-        # Local
-        local cont_status=$(get_local_status containers)
-        local cont_rag=$(get_rag_status "$cont_status")
-        local pyenv_status=$(get_local_status python_env)
-        local git_status=$(get_local_status git)
-        printf " ${YELLOW}Local${NC}  "
-        format_rag "$cont_rag"; printf " Cntnr "
-        case "$cont_status" in
-            healthy) printf "${GREEN}OK${NC}" ;;
-            partial) printf "${YELLOW}Partial${NC}" ;;
-            unhealthy) printf "${YELLOW}Unhealthy${NC}" ;;
-            stopped) printf "${BLUE}Stopped${NC}" ;;
-            *) printf "${BLUE}NA${NC}" ;;
-        esac
-        printf "  PyEnv "
-        case "$pyenv_status" in
-            active) printf "${GREEN}active${NC}" ;;
-            inactive) printf "${YELLOW}exists${NC}" ;;
-            none) printf "${BLUE}none${NC}" ;;
-        esac
-        printf "  Git "
-        case "${git_status%%|*}" in
-            clean) printf "${GREEN}clean${NC}\n" ;;
-            dirty)
-                IFS='+' read -r staged unstaged untracked <<< "${git_status##*|}"
-                printf "${YELLOW}%s/%s/%s${NC}\n" "$staged" "$unstaged" "$untracked" ;;
-        esac
+        log_success "Backend tests completed!"
+    fi
+}
 
-        # Quality
-        local test_status=$(get_local_status tests)
-        local test_rag=$(get_rag_status "$test_status")
-        local cov_status=$(get_local_status coverage)
-        printf " ${YELLOW}Quality${NC} "
-        format_rag "$test_rag"; printf " Tests "
-        case "$test_status" in
-            pass) printf "${GREEN}pass${NC}" ;;
-            fail) printf "${RED}fail${NC}" ;;
-            *) printf "${BLUE}none${NC}" ;;
-        esac
-        printf "  Cov "
-        if [ "$cov_status" != "none" ] && [ "$cov_status" != "unknown" ]; then
-            local cov_rag=$(get_rag_status "" "$cov_status")
-            format_rag "$cov_rag"; printf " %s%%" "$cov_status"
-        else
-            printf "${BLUE}○${NC} --"
+generate_and_serve_docs() {
+    log_info "Generating comprehensive documentation with reports..."
+
+    # Check if containers are running
+    if ! podman ps | grep -q "msn-weather-api-dev"; then
+        log_warning "API container not running. Starting containers..."
+        start_dev
+        sleep 5  # Wait for containers to be ready
+    fi
+
+    # Check if mkdocs is installed
+    if ! command -v mkdocs &> /dev/null; then
+        log_warning "mkdocs not found. Installing..."
+        pip3 install --user mkdocs mkdocs-material pymdown-extensions
+    fi
+
+    # Create reports directory
+    mkdir -p docs/reports
+
+    # Run backend tests with coverage and generate reports
+    log_info "Running backend tests with coverage..."
+    podman-compose -f "$COMPOSE_FILE" exec -T api pytest \
+        --cov=msn_weather_wrapper \
+        --cov-report=html:htmlcov \
+        --cov-report=json:coverage.json \
+        --cov-report=term \
+        --junitxml=junit.xml \
+        -v || true
+
+    # Copy coverage reports from container
+    log_info "Extracting coverage data..."
+    API_CONTAINER=$(podman ps --filter "name=msn-weather-api-dev" --format "{{.Names}}" | head -1)
+    if [ -n "$API_CONTAINER" ]; then
+        podman cp "$API_CONTAINER:/app/coverage.json" ./coverage.json 2>/dev/null || true
+        podman cp "$API_CONTAINER:/app/htmlcov" ./htmlcov 2>/dev/null || true
+        podman cp "$API_CONTAINER:/app/junit.xml" ./junit.xml 2>/dev/null || true
+    fi
+
+    # Generate coverage report
+    if [ -f coverage.json ]; then
+        log_info "Generating coverage report..."
+        python3 tools/generate_reports.py --type coverage --input . --output docs/reports/coverage-report.md
+    fi
+
+    # Generate test report
+    if [ -f junit.xml ]; then
+        log_info "Generating test report..."
+        mkdir -p test-results
+        mv junit.xml test-results/
+        python3 tools/generate_reports.py --type test --input test-results --output docs/reports/test-report.md
+    fi
+
+    # Run security scan
+    log_info "Running security scan..."
+    podman-compose -f "$COMPOSE_FILE" exec -T api bash -c \
+        "pip install bandit safety && bandit -r src/ -f json -o bandit-report.json || true" || true
+
+    # Copy security report from container
+    if [ -n "$API_CONTAINER" ]; then
+        podman cp "$API_CONTAINER:/app/bandit-report.json" ./bandit-report.json 2>/dev/null || true
+    fi
+
+    if [ -f bandit-report.json ]; then
+        log_info "Generating security report..."
+        mkdir -p security-results
+        mv bandit-report.json security-results/
+        python3 tools/generate_reports.py --type security --input security-results --output docs/reports/security-report.md
+    fi
+
+    # Generate license report
+    log_info "Generating license report..."
+    podman-compose -f "$COMPOSE_FILE" exec -T api bash -c \
+        "pip install pip-licenses && pip-licenses --format=json --output-file=licenses.json" || true
+
+    # Copy license report from container
+    if [ -n "$API_CONTAINER" ]; then
+        podman cp "$API_CONTAINER:/app/licenses.json" ./licenses.json 2>/dev/null || true
+    fi
+
+    if [ -f licenses.json ]; then
+        mkdir -p license-results
+        mv licenses.json license-results/
+        python3 tools/generate_reports.py --type license --input license-results --output docs/reports/license-report.md
+    fi
+
+    # Generate CI/CD report
+    log_info "Generating CI/CD pipeline report..."
+    python3 tools/generate_reports.py --type cicd --output docs/reports/ci-cd.md
+
+    # Create reports index if it doesn't exist
+    if [ ! -f docs/reports/index.md ]; then
+        cat > docs/reports/index.md << 'INDEXEOF'
+# Reports Overview
+
+Automated reports generated from test execution, code coverage, security scans, and license compliance checks.
+
+## 📊 Available Reports
+
+- **[Test Report](test-report.md)** - Test execution results and statistics
+- **[Coverage Report](coverage-report.md)** - Code coverage analysis
+- **[Security Report](security-report.md)** - Security vulnerability scan results
+- **[License Report](license-report.md)** - Dependency license compliance
+- **[CI/CD Pipeline](ci-cd.md)** - Pipeline execution status
+
+## 🔄 Report Generation
+
+Reports are automatically generated during CI/CD pipeline execution and can be regenerated locally using:
+
+```bash
+./dev.sh docs
+```
+
+All reports are timestamped and reflect the current state of the codebase.
+INDEXEOF
+        log_success "Created reports index"
+    fi
+
+    # Update README in reports
+    if [ ! -f docs/reports/README.md ]; then
+        ln -sf index.md docs/reports/README.md
+    fi
+
+    log_success "All reports generated!"
+
+    # Cleanup temporary files
+    log_info "Cleaning up temporary files..."
+    rm -f coverage.json junit.xml bandit-report.json licenses.json 2>/dev/null
+    rm -rf test-results security-results license-results 2>/dev/null
+    log_success "Temporary files cleaned up"
+
+    # Start MkDocs server
+    log_info "Starting documentation server..."
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "📚 Documentation site will be available at:"
+    echo "   http://localhost:8000"
+    echo ""
+    echo "Press Ctrl+C to stop the server"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+
+    mkdocs serve
+}
+
+show_logs() {
+    podman-compose -f "$COMPOSE_FILE" logs -f
+}
+
+shell_api() {
+    log_info "Opening shell in API container..."
+    podman exec -it msn-weather-api-dev /bin/bash
+}
+
+shell_frontend() {
+    log_info "Opening shell in frontend container..."
+    podman exec -it msn-weather-frontend-dev /bin/bash
+}
+
+rebuild_all() {
+    log_info "Rebuilding all containers..."
+    podman-compose -f "$COMPOSE_FILE" down
+    podman-compose -f "$COMPOSE_FILE" build --no-cache
+    log_success "Rebuild complete!"
+}
+
+monitor_workflows() {
+    # Add CYAN color for running status
+    local CYAN='\033[0;36m'
+    local MAGENTA='\033[0;35m'
+
+    # GitHub API configuration
+    local GITHUB_OWNER="jim-wyatt"
+    local GITHUB_REPO="msn-weather-wrapper"
+    local GITHUB_API_BASE="https://api.github.com"
+
+    # Function to get RAG status color and symbol
+    get_rag_status() {
+        local status="$1"
+        local percentage="$2"
+
+        # If percentage provided, use thresholds
+        if [ -n "$percentage" ]; then
+            if [ "$percentage" -ge 80 ]; then
+                echo "GREEN|✅"
+            elif [ "$percentage" -ge 60 ]; then
+                echo "AMBER|⚠️"
+            else
+                echo "RED|❌"
+            fi
+            return
         fi
-        printf "  mypy "
-        if command -v mypy &> /dev/null && [ -f "pyproject.toml" ]; then printf "${GREEN}yes${NC}"; else printf "${BLUE}no${NC}"; fi
-        printf "  ruff "
-        if command -v ruff &> "/dev/null" || (command -v pip &> /dev/null && pip list 2>/dev/null | grep -q "ruff"); then printf "${GREEN}yes${NC}\n"; else printf "${BLUE}no${NC}\n"; fi
 
-        # Security
-        local sec_status=$(get_local_status security)
-        local sec_rag=$(get_rag_status "${sec_status%%|*}")
-        local dep_status=$(get_local_status dependencies)
-        local dep_rag=$(get_rag_status "${dep_status%%|*}")
-        printf " ${YELLOW}Security${NC} "
-        format_rag "$sec_rag"; printf " SAST "
-        case "${sec_status%%|*}" in pass) printf "${GREEN}ok${NC}";; fail) printf "${RED}${sec_status##*|} issues${NC}";; *) printf "${BLUE}none${NC}";; esac
-        printf "  "
-        format_rag "$dep_rag"; printf " Deps "
-        case "${dep_status%%|*}" in pass) printf "${GREEN}clean${NC}";; warn) printf "${YELLOW}${dep_status##*|} vulns${NC}";; unchecked) printf "${BLUE}n/a${NC}";; *) printf "${BLUE}n/a${NC}";; esac
-        printf "  Lic "
-        if [ -f "artifacts/security-reports/licenses.json" ]; then local pkgs=$(jq 'length' artifacts/security-reports/licenses.json 2>/dev/null); format_rag "GREEN|✅"; printf " %s" "$pkgs"; else format_rag "GREY|○"; printf " --"; fi
-        printf "  SBOM "
-        local sbom_count=$(find sbom_output -name "*.json" 2>/dev/null | wc -l || echo "0")
-        if [ "$sbom_count" -gt 0 ]; then format_rag "GREEN|✅"; printf " %s\n" "$sbom_count"; else format_rag "GREY|○"; printf " --\n"; fi
+        # Otherwise use status string
+        case "$status" in
+            pass|success|clean|healthy|completed) echo "GREEN|✅" ;;
+            warn|warning|amber|in_progress|queued) echo "AMBER|⚠️" ;;
+            fail|failure|error|stopped|down|unhealthy) echo "RED|❌" ;;
+            skip|skipped|cancelled|disabled|unknown) echo "GREY|⊘" ;;
+            *) echo "GREY|○" ;;
+        esac
+    }
 
-        # GitHub
-        printf " ${YELLOW}CI/CD${NC}  "
-        local ci_status=$(get_workflow_status "CI/CD Pipeline" "$workflows_json")
-        format_rag "$(get_rag_status "$ci_status")"; printf " CI "
-        case "$ci_status" in success) printf "${GREEN}ok${NC}";; failure) printf "${RED}fail${NC}";; cancelled) printf "${BLUE}cancel${NC}";; *) printf "${BLUE}n/a${NC}";; esac
-        printf "  Sec "
-        local sec_wf_status=$(get_workflow_status "Security" "$workflows_json")
-        format_rag "$(get_rag_status "$sec_wf_status")"; case "$sec_wf_status" in success) printf "${GREEN}ok${NC}";; failure) printf "${RED}fail${NC}";; cancelled) printf "${BLUE}cancel${NC}";; *) printf "${BLUE}n/a${NC}";; esac
-        printf "  AutoVer "
-        local version_status=$(get_workflow_status "Auto Version and Release" "$workflows_json")
-        format_rag "$(get_rag_status "$version_status")"; case "$version_status" in success) printf "${GREEN}ok${NC}";; failure) printf "${RED}fail${NC}";; cancelled) printf "${BLUE}cancel${NC}";; *) printf "${BLUE}n/a${NC}";; esac
-        printf "  Perf "
-        local perf_status=$(get_workflow_status "Performance Testing" "$workflows_json")
-        format_rag "$(get_rag_status "$perf_status")"; case "$perf_status" in success) printf "${GREEN}ok${NC}\n";; failure) printf "${RED}fail${NC}\n";; cancelled) printf "${BLUE}cancel${NC}\n";; *) printf "${BLUE}n/a${NC}\n";; esac
+    # Function to format RAG output
+    format_rag() {
+        local rag_output="$1"
+        local color="${rag_output%%|*}"
+        local symbol="${rag_output##*|}"
 
-        printf "${BLUE}%s${NC}\n" "$(printf '=%.0s' {1..70})"
+        case "$color" in
+            GREEN) printf "%b%s%b" "${GREEN}" "$symbol" "${NC}" ;;
+            AMBER) printf "%b%s%b" "${YELLOW}" "$symbol" "${NC}" ;;
+            RED) printf "%b%s%b" "${RED}" "$symbol" "${NC}" ;;
+            GREY) printf "%b%s%b" "${BLUE}" "$symbol" "${NC}" ;;
+            *) printf "%s" "$symbol" ;;
+        esac
+    }
+
+    # Function to get local build status
+    get_local_status() {
+        local item="$1"
+        case "$item" in
+            coverage)
+                if [ -f "htmlcov/index.html" ]; then
+                    local pct=$(grep -oP 'pc_cov">\K[0-9]+(?=%)' htmlcov/index.html 2>/dev/null | head -1)
+                    if [ -n "$pct" ]; then
+                        echo "$pct"
+                    else
+                        echo "unknown"
+                    fi
+                else
+                    echo "none"
+                fi
+                ;;
+            tests)
+                if [ -f "junit.xml" ]; then
+                    local fail=$(grep -oP 'failures="\K[0-9]+' junit.xml 2>/dev/null | head -1)
+                    if [ "${fail:-0}" -eq 0 ] 2>/dev/null; then
+                        echo "pass"
+                    else
+                        echo "fail"
+                    fi
+                else
+                    echo "none"
+                fi
+                ;;
+            security)
+                if [ -f "artifacts/security-reports/bandit-report.json" ]; then
+                    local issues=$(jq '[.results[] | select(.issue_severity == "HIGH" or .issue_severity == "CRITICAL")] | length' "artifacts/security-reports/bandit-report.json" 2>/dev/null || echo "0")
+                    if [ "${issues:-0}" -eq 0 ] 2>/dev/null; then
+                        echo "pass"
+                    else
+                        echo "fail|$issues"
+                    fi
+                else
+                    echo "none"
+                fi
+                ;;
+            containers)
+                if ! command -v podman &> /dev/null; then
+                    echo "disabled"
                     return
                 fi
 
@@ -464,281 +640,67 @@ run_tests() {
         fi
     }
 
-    # Function to draw the monitor display
+    # Function to draw the monitor display (fits 80x24)
     draw_monitor() {
         clear
         local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-        local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || \
-            echo "unknown")
-        local commit=$(git rev-parse --short HEAD 2>/dev/null || \
-            echo "unknown")
-
-        # Fetch GitHub workflow data
+        local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
+        local commit=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
         local workflows_json=$(get_github_workflows)
 
-        # Header
-        echo ""
-        printf "${BLUE}%s${NC}\n" "$(printf '=%.0s' {1..75})"
-        printf "  ${YELLOW}⚡ DevSecOps Dashboard${NC}  ${BLUE}•${NC}  "
-        printf "${CYAN}${GITHUB_OWNER}/${GITHUB_REPO}${NC}\n"
-        printf "  ${BLUE}${timestamp}${NC}  ${BLUE}•${NC}  "
-        printf "Auto-refresh: 60s  ${BLUE}•${NC}  "
-        printf "Press ${GREEN}Ctrl+C${NC} to exit\n"
-        printf "${BLUE}%s${NC}\n" "$(printf '=%.0s' {1..75})"
-        echo ""
-        printf "  ${MAGENTA}${branch}${NC} @ ${commit}\n"
-        echo ""
+        printf "${BLUE}%s${NC}\n" "$(printf '=%.0s' {1..80})"
+        printf " ${YELLOW}⚡ DevSecOps${NC} • ${CYAN}${GITHUB_OWNER}/${GITHUB_REPO}${NC} • ${BLUE}%s${NC}\n" "$timestamp"
+        printf " ${BLUE}Branch${NC} ${MAGENTA}%s${NC} @ %s • Refresh 60s • Ctrl+C to exit\n" "$branch" "$commit"
+        printf "${BLUE}%s${NC}\n" "$(printf -- '-%.0s' {1..80})"
 
-        # LOCAL ENVIRONMENT
-        printf "${YELLOW}🔧 Local Environment${NC}\n"
-
-        # Container Services
         local cont_status=$(get_local_status containers)
-        local cont_rag=$(get_rag_status "$cont_status")
-        printf "  "
-        format_rag "$cont_rag"
-        printf " Containers: "
-        case "$cont_status" in
-            healthy) printf "${GREEN}Both services running & healthy${NC}" ;;
-            partial) printf "${YELLOW}Partial (1 service down)${NC}" ;;
-            unhealthy) printf "${YELLOW}Running but unhealthy${NC}" ;;
-            stopped) printf "${BLUE}Services stopped${NC}" ;;
-            disabled) printf "${BLUE}Podman not available${NC}" ;;
-        esac
-        echo ""
-
-        # Python Virtual Environment
         local pyenv_status=$(get_local_status python_env)
-        printf "  "
-        case "$pyenv_status" in
-            active) printf "${GREEN}✅${NC} Python Env: ${GREEN}venv/ active${NC}" ;;
-            inactive) printf "${YELLOW}⚠️${NC} Python Env: ${YELLOW}venv/ exists but not activated${NC}" ;;
-            none) printf "${BLUE}○${NC} Python Env: ${BLUE}Not configured${NC}" ;;
-        esac
-        echo ""
-
-        # Git Working Directory
         local git_status=$(get_local_status git)
-        local git_rag=$(get_rag_status "${git_status%%|*}")
-        printf "  "
-        format_rag "$git_rag"
-        printf " Git Status: "
-        case "${git_status%%|*}" in
-            clean) printf "${GREEN}Clean (no uncommitted changes)${NC}" ;;
-            dirty)
-                local changes="${git_status##*|}"
-                IFS='+' read -r staged unstaged untracked <<< "$changes"
-                printf "${YELLOW}${staged} staged, ${unstaged} unstaged, "
-                printf "${untracked} untracked${NC}" ;;
-        esac
-        echo ""
+        printf " ${YELLOW}Local${NC}  "
+        format_rag "$(get_rag_status "$cont_status")"; printf " Ctnr "
+        case "$cont_status" in healthy) printf "${GREEN}ok${NC}";; partial) printf "${YELLOW}part${NC}";; unhealthy) printf "${YELLOW}unhl${NC}";; stopped) printf "${BLUE}stop${NC}";; disabled) printf "${BLUE}na${NC}";; *) printf "${BLUE}na${NC}";; esac
+        printf " | PyEnv "
+        case "$pyenv_status" in active) printf "${GREEN}act${NC}";; inactive) printf "${YELLOW}exists${NC}";; none) printf "${BLUE}none${NC}";; esac
+        printf " | Git "
+        case "${git_status%%|*}" in clean) printf "${GREEN}clean${NC}";; dirty) IFS='+' read -r s u t <<< "${git_status##*|}"; printf "${YELLOW}%s/%s/%s${NC}" "$s" "$u" "$t";; esac
+        printf " | PC "; if [ -f ".pre-commit-config.yaml" ]; then if [ -f ".git/hooks/pre-commit" ]; then printf "${GREEN}on${NC}"; else printf "${YELLOW}cfg${NC}"; fi; else printf "${BLUE}na${NC}"; fi
+        printf "\n"
 
-        # Pre-commit hooks
-        if [ -f ".pre-commit-config.yaml" ]; then
-            if [ -d ".git/hooks" ] && [ -f ".git/hooks/pre-commit" ]; then
-                printf "  ${GREEN}✅${NC} Pre-commit: "
-                printf "${GREEN}Installed & active${NC}\n"
-            else
-                printf "  ${YELLOW}⚠️${NC} Pre-commit: "
-                printf "${YELLOW}Config exists but not installed${NC}\n"
-            fi
-        else
-            printf "  ${BLUE}○${NC} Pre-commit: ${BLUE}Not configured${NC}\n"
-        fi
-
-        echo ""
-
-        printf "${YELLOW}🧪 Code Quality & Testing${NC}\n"
-
-        # Test Results
         local test_status=$(get_local_status tests)
-        local test_rag=$(get_rag_status "$test_status")
-        printf "  "
-        format_rag "$test_rag"
-        printf " Tests: "
-        if [ "$test_status" = "pass" ]; then
-            if [ -f "junit.xml" ]; then
-                local tot=$(grep -oP 'tests="\K[0-9]+' junit.xml \
-                    2>/dev/null | head -1)
-                printf "${GREEN}%d tests passed${NC}" "${tot:-0}"
-            else
-                printf "${GREEN}All tests passed${NC}"
-            fi
-        elif [ "$test_status" = "fail" ]; then
-            if [ -f "junit.xml" ]; then
-                local tot=$(grep -oP 'tests="\K[0-9]+' junit.xml \
-                    2>/dev/null | head -1)
-                local fail=$(grep -oP 'failures="\K[0-9]+' junit.xml \
-                    2>/dev/null | head -1)
-                printf "${RED}%d/%d tests failed${NC}" "${fail:-0}" "${tot:-0}"
-            else
-                printf "${RED}Tests failed${NC}"
-            fi
-        else
-            printf "${BLUE}No test report available${NC}"
-        fi
-        echo ""
-
-        # Code Coverage
         local cov_status=$(get_local_status coverage)
-        printf "  "
-        if [ "$cov_status" != "none" ] && [ "$cov_status" != "unknown" ]; then
-            local cov_rag=$(get_rag_status "" "$cov_status")
-            format_rag "$cov_rag"
-            printf " Coverage: "
-            if [ "$cov_status" -ge 80 ]; then
-                printf "${GREEN}%d%% (Excellent)${NC}" "$cov_status"
-            elif [ "$cov_status" -ge 60 ]; then
-                printf "${YELLOW}%d%% (Good)${NC}" "$cov_status"
-            else
-                printf "${RED}%d%% (Needs improvement)${NC}" "$cov_status"
-            fi
-        else
-            printf "${BLUE}○${NC} Coverage: ${BLUE}No coverage report${NC}"
-        fi
-        echo ""
+        printf " ${YELLOW}Quality${NC} "
+        format_rag "$(get_rag_status "$test_status")"; printf " Test "
+        case "$test_status" in pass) printf "${GREEN}pass${NC}";; fail) printf "${RED}fail${NC}";; *) printf "${BLUE}none${NC}";; esac
+        printf " | Cov "
+        if [ "$cov_status" != "none" ] && [ "$cov_status" != "unknown" ]; then format_rag "$(get_rag_status "" "$cov_status")"; printf " %s%%" "$cov_status"; else printf "${BLUE}○${NC} --"; fi
+        printf " | mypy "; if command -v mypy &> /dev/null && [ -f "pyproject.toml" ]; then printf "${GREEN}yes${NC}"; else printf "${BLUE}no${NC}"; fi
+        printf " | ruff "; if command -v ruff &> /dev/null || (command -v pip &> /dev/null && pip list 2>/dev/null | grep -q "ruff"); then printf "${GREEN}yes${NC}"; else printf "${BLUE}no${NC}"; fi
+        printf "\n"
 
-        # Type Checking & Linting
-        if command -v mypy &> /dev/null && [ -f "pyproject.toml" ]; then
-            printf "  ${GREEN}✅${NC} Type Check: ${GREEN}mypy available${NC}\n"
-        else
-            printf "  ${BLUE}○${NC} Type Check: "
-            printf "${BLUE}mypy not installed${NC}\n"
-        fi
-
-        if command -v ruff &> /dev/null || \
-           (command -v pip &> /dev/null && \
-            pip list 2>/dev/null | grep -q "ruff"); then
-            printf "  ${GREEN}✅${NC} Linter: ${GREEN}ruff available${NC}\n"
-        else
-            printf "  ${BLUE}○${NC} Linter: ${BLUE}ruff not installed${NC}\n"
-        fi
-
-        echo ""
-
-        printf "${YELLOW}🔒 Security & Compliance${NC}\n"
-
-        # SAST Security Scan
         local sec_status=$(get_local_status security)
-        local sec_rag=$(get_rag_status "${sec_status%%|*}")
-        printf "  "
-        format_rag "$sec_rag"
-        printf " SAST Scan: "
-        if [ "${sec_status%%|*}" = "pass" ]; then
-            printf "${GREEN}No critical vulnerabilities${NC}"
-        elif [ "${sec_status%%|*}" = "fail" ]; then
-            local issues="${sec_status##*|}"
-            printf "${RED}%s critical issues found${NC}" "$issues"
-        else
-            printf "${BLUE}No security report${NC}"
-        fi
-        echo ""
-
-        # Dependency Vulnerabilities
         local dep_status=$(get_local_status dependencies)
-        local dep_rag=$(get_rag_status "${dep_status%%|*}")
-        printf "  "
-        format_rag "$dep_rag"
-        printf " Dependencies: "
-        case "${dep_status%%|*}" in
-            pass) printf "${GREEN}No known vulnerabilities${NC}" ;;
-            warn)
-                local vuln_count="${dep_status##*|}"
-                printf "${YELLOW}%s vulnerable packages${NC}" "$vuln_count" ;;
-            unchecked) printf "${BLUE}Not scanned (pip-audit needed)${NC}" ;;
-            none) printf "${BLUE}Unavailable${NC}" ;;
-        esac
-        echo ""
+        printf " ${YELLOW}Security${NC} "
+        format_rag "$(get_rag_status "${sec_status%%|*}")"; printf " SAST "
+        case "${sec_status%%|*}" in pass) printf "${GREEN}ok${NC}";; fail) printf "${RED}${sec_status##*|}${NC}";; *) printf "${BLUE}none${NC}";; esac
+        printf " | "; format_rag "$(get_rag_status "${dep_status%%|*}")"; printf " Deps "
+        case "${dep_status%%|*}" in pass) printf "${GREEN}clean${NC}";; warn) printf "${YELLOW}${dep_status##*|}${NC}";; unchecked) printf "${BLUE}n/a${NC}";; none) printf "${BLUE}n/a${NC}";; *) printf "${BLUE}n/a${NC}";; esac
+        printf " | Lic "; if [ -f "artifacts/security-reports/licenses.json" ]; then local pkgs=$(jq 'length' artifacts/security-reports/licenses.json 2>/dev/null); format_rag "GREEN|✅"; printf " %s" "$pkgs"; else format_rag "GREY|○"; printf " --"; fi
+        printf " | SBOM "; local sbom_count=$(find sbom_output -name "*.json" 2>/dev/null | wc -l || echo "0"); if [ "$sbom_count" -gt 0 ]; then format_rag "GREEN|✅"; printf " %s" "$sbom_count"; else format_rag "GREY|○"; printf " --"; fi
+        printf "\n"
 
-        # License Compliance
-        printf "  "
-        if [ -f "artifacts/security-reports/licenses.json" ]; then
-            local pkgs=$(jq 'length' \
-                "artifacts/security-reports/licenses.json" 2>/dev/null)
-            format_rag "GREEN|✅"
-            printf " Licenses: ${GREEN}%s dependencies tracked${NC}\n" "$pkgs"
-        else
-            format_rag "GREY|○"
-            printf " Licenses: ${BLUE}No license report${NC}\n"
-        fi
-
-        # SBOM Generation
-        local sbom_count=$(find sbom_output -name "*.json" 2>/dev/null | \
-            wc -l || echo "0")
-        printf "  "
-        if [ "$sbom_count" -gt 0 ]; then
-            format_rag "GREEN|✅"
-            printf " SBOM: ${GREEN}%d SBOMs generated${NC}\n" "$sbom_count"
-        else
-            format_rag "GREY|○"
-            printf " SBOM: ${BLUE}No SBOMs generated${NC}\n"
-        fi
-
-        echo ""
-
-        printf "${YELLOW}🚀 GitHub CI/CD${NC} ${BLUE}(Latest Runs)${NC}\n"
-
-        # CI/CD Pipeline
-        local ci_status=$(get_workflow_status "CI/CD Pipeline" \
-            "$workflows_json")
-        local ci_rag=$(get_rag_status "$ci_status")
-        printf "  "
-        format_rag "$ci_rag"
-        printf " CI/CD Pipeline: "
-        case "$ci_status" in
-            success) printf "${GREEN}Passed${NC}" ;;
-            failure) printf "${RED}Failed${NC}" ;;
-            cancelled) printf "${BLUE}Cancelled${NC}" ;;
-            *) printf "${BLUE}No recent runs${NC}" ;;
-        esac
-        echo ""
-
-        # Security Scans
+        local ci_status=$(get_workflow_status "CI/CD Pipeline" "$workflows_json")
         local sec_wf_status=$(get_workflow_status "Security" "$workflows_json")
-        local sec_wf_rag=$(get_rag_status "$sec_wf_status")
-        printf "  "
-        format_rag "$sec_wf_rag"
-        printf " Security Scans: "
-        case "$sec_wf_status" in
-            success) printf "${GREEN}Passed${NC}" ;;
-            failure) printf "${RED}Failed${NC}" ;;
-            cancelled) printf "${BLUE}Cancelled${NC}" ;;
-            *) printf "${BLUE}No recent runs${NC}" ;;
-        esac
-        echo ""
+        local version_status=$(get_workflow_status "Auto Version and Release" "$workflows_json")
+        local perf_status=$(get_workflow_status "Performance Testing" "$workflows_json")
+        printf " ${YELLOW}CI/CD${NC}  "
+        format_rag "$(get_rag_status "$ci_status")"; printf " CI "
+        case "$ci_status" in success) printf "${GREEN}ok${NC}";; failure) printf "${RED}fail${NC}";; cancelled) printf "${BLUE}can${NC}";; *) printf "${BLUE}n/a${NC}";; esac
+        printf " | Sec "; format_rag "$(get_rag_status "$sec_wf_status")"; case "$sec_wf_status" in success) printf "${GREEN}ok${NC}";; failure) printf "${RED}fail${NC}";; cancelled) printf "${BLUE}can${NC}";; *) printf "${BLUE}n/a${NC}";; esac
+        printf " | AutoVer "; format_rag "$(get_rag_status "$version_status")"; case "$version_status" in success) printf "${GREEN}ok${NC}";; failure) printf "${RED}fail${NC}";; cancelled) printf "${BLUE}can${NC}";; *) printf "${BLUE}n/a${NC}";; esac
+        printf " | Perf "; format_rag "$(get_rag_status "$perf_status")"; case "$perf_status" in success) printf "${GREEN}ok${NC}";; failure) printf "${RED}fail${NC}";; cancelled) printf "${BLUE}can${NC}";; *) printf "${BLUE}n/a${NC}";; esac
+        printf "\n"
 
-        # Auto Version and Release
-        local version_status=$(get_workflow_status \
-            "Auto Version and Release" "$workflows_json")
-        local version_rag=$(get_rag_status "$version_status")
-        printf "  "
-        format_rag "$version_rag"
-        printf " Auto Version: "
-        case "$version_status" in
-            success) printf "${GREEN}Passed${NC}" ;;
-            failure) printf "${RED}Failed${NC}" ;;
-            cancelled) printf "${BLUE}Cancelled${NC}" ;;
-            *) printf "${BLUE}No recent runs${NC}" ;;
-        esac
-        echo ""
-
-        # Performance Tests
-        local perf_status=$(get_workflow_status \
-            "Performance Testing" "$workflows_json")
-        local perf_rag=$(get_rag_status "$perf_status")
-        printf "  "
-        format_rag "$perf_rag"
-        printf " Performance: "
-        case "$perf_status" in
-            success) printf "${GREEN}Passed${NC}" ;;
-            failure) printf "${RED}Failed${NC}" ;;
-            cancelled) printf "${BLUE}Cancelled${NC}" ;;
-            *) printf "${BLUE}No recent runs${NC}" ;;
-        esac
-        echo ""
-
-        echo ""
-        printf "${BLUE}%s${NC}\n" "$(printf '=%.0s' {1..75})"
+        printf "${BLUE}%s${NC}\n" "$(printf '=%.0s' {1..80})"
     }
 
     log_info "Starting DevOps monitor (Ctrl+C to exit)..."

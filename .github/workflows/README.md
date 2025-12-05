@@ -215,7 +215,7 @@ gh action-update --dry-run
 
 **Podman container build failures:**
 - Check Containerfile syntax
-- Verify base image availability (python:3.12-slim, node:20-alpine)
+- Verify base image availability (python:3.12-slim-trixie, node:22-trixie-slim)
 - Review multi-stage build logs in Actions
 - Ensure frontend build completes successfully
 

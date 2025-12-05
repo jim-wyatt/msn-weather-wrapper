@@ -105,8 +105,8 @@ npm install package-name
 ## Architecture
 
 ### Containers
-- **API**: Python 3.12 slim + Flask + dev tools (port 5000)
-- **Frontend**: Node 20 Alpine + Vite + Playwright (port 5173)
+- **API**: Python 3.12 slim (Trixie) + Flask + dev tools (port 5000)
+- **Frontend**: Node 22 Trixie slim + Vite + Playwright (port 5173)
 - **Test Runner**: On-demand test execution
 
 ### Volume Mounts

@@ -86,7 +86,7 @@ xdg-open htmlcov/index.html  # Linux
 
 ### Frontend Tests
 
-Frontend E2E tests require Node.js 20+ and run in a containerized environment.
+Frontend E2E tests require Node.js 22+ (project standard) and run in a containerized environment.
 
 #### Containerized Testing
 ```bash
@@ -95,7 +95,7 @@ podman build -f Containerfile.playwright -t msn-weather-playwright:latest .
 
 # Start frontend server
 podman run -d --name frontend-srv --network test-net -p 5173:5173 \
-  -v ./frontend:/app:Z node:20 sh -c "cd /app && npm install && npm run dev -- --host 0.0.0.0"
+  -v ./frontend:/app:Z node:22-trixie-slim sh -c "cd /app && npm install && npm run dev -- --host 0.0.0.0"
 
 # Run tests
 podman run --rm --network test-net \
@@ -347,7 +347,7 @@ def test_feature_name():
 **Frontend**:
 - `playwright` - E2E testing framework (1.57.0+)
 - `@axe-core/playwright` - Accessibility testing (added Phase 3)
-- `vite` - Dev server and build tool (6.x, requires Node 20+)
+- `vite` - Dev server and build tool (6.x, project standard Node 22+)
 - `typescript` - Type safety
 
 ### Pre-commit Hooks
@@ -429,7 +429,7 @@ Tests run on:
 
 #### Running E2E Tests
 
-**Local Development** (requires Node 20+):
+**Local Development** (requires Node 22+):
 ```bash
 cd frontend
 
@@ -697,7 +697,7 @@ When tests fail:
 ## Known Limitations
 
 ### Frontend Testing
-- **Node.js Version**: Vite 6.x requires Node 20+, while host system has 18.19.1
+- **Node.js Version**: Vite 6.x uses Node 22+ as the project standard (host system has 18.19.1)
   - **Solution**: Use containerized testing with `Containerfile.playwright`
 - **Visual Baselines**: Not yet established (requires manual review and approval)
   - **Impact**: Visual regression tests will fail until baselines are updated

@@ -187,11 +187,11 @@ podman exec frontend-dev npx playwright test
 ## Troubleshooting
 
 ### Issue: `crypto.hash is not a function`
-**Cause**: Node.js < 20.19.0 doesn't have crypto.hash API required by Vite 6.x
+**Cause**: Node.js < 22 (project standard) may not expose the crypto.hash API used by Vite 6.x
 
 **Solution**:
-- Upgrade Node.js: `nvm install 20` or use official installer
-- Or use Docker/Podman container with Node 20 (see above)
+- Upgrade Node.js: `nvm install 22` or use official installer
+- Or use Docker/Podman container with Node 22 (see above)
 
 ### Issue: Playwright browsers not installed
 **Solution**:
