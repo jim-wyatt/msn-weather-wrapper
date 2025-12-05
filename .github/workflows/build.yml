@@ -110,7 +110,7 @@ jobs:
     name: Generate SBOM
     runs-on: self-hosted
     env:
-      LOCAL_BIN: ${{ runner.temp }}/bin
+      LOCAL_BIN: /tmp/syft-bin
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
