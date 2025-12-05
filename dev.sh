@@ -473,7 +473,7 @@ monitor_workflows() {
                 case "$conclusion" in
                     success) printf "✅" ;;
                     failure) printf "❌" ;;
-                    cancelled|skipped) printf "⊘ " ;;
+                    cancelled|skipped) printf "⊘" ;;
                     *) printf "📋" ;;
                 esac
                 ;;
@@ -694,7 +694,7 @@ monitor_workflows() {
         printf "%b\n" "${YELLOW}🐳 CONTAINERS${NC}"
         local api_status="Stopped"
         local api_health="N/A"
-        local api_emoji="⊘ "
+        local api_emoji="⊘"
         local health_emoji="📋"
         if command -v podman &> /dev/null; then
             local api_up=$(podman ps --filter "name=msn-weather-api-dev" --format "{{.Status}}" 2>/dev/null)
@@ -717,7 +717,7 @@ monitor_workflows() {
         fi
 
         local fe_status="Stopped"
-        local fe_emoji="⊘ "
+        local fe_emoji="⊘"
         if command -v podman &> /dev/null; then
             local fe_up=$(podman ps --filter "name=msn-weather-frontend-dev" --format "{{.Status}}" 2>/dev/null)
             if [ -n "$fe_up" ]; then
