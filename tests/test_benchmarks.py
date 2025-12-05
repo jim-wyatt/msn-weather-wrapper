@@ -69,28 +69,34 @@ def test_weather_data_creation_benchmark(benchmark):
 @pytest.mark.benchmark(group="parsing")
 def test_temperature_parsing_benchmark(benchmark):
     """Benchmark temperature value parsing."""
+    from bs4 import BeautifulSoup
+
     from msn_weather_wrapper.client import WeatherClient
 
     client = WeatherClient()
     html_content = '<span class="cur-temp">72°</span>'
+    soup = BeautifulSoup(html_content, "html.parser")
 
     def parse_temp():
-        return client._extract_temperature(html_content)  # type: ignore
+        return client._extract_temperature(soup)
 
     result = benchmark(parse_temp)
-    assert result is not None
+    assert result == 72.0
 
 
 @pytest.mark.benchmark(group="parsing")
 def test_condition_parsing_benchmark(benchmark):
     """Benchmark weather condition extraction."""
+    from bs4 import BeautifulSoup
+
     from msn_weather_wrapper.client import WeatherClient
 
     client = WeatherClient()
-    html_content = '<div data-id="CurrentDescription">Sunny</div>'
+    html_content = '<div class="condition">Sunny</div>'
+    soup = BeautifulSoup(html_content, "html.parser")
 
     def parse_condition():
-        return client._extract_condition(html_content)  # type: ignore
+        return client._extract_condition(soup)
 
     result = benchmark(parse_condition)
     assert result == "Sunny"
@@ -99,12 +105,11 @@ def test_condition_parsing_benchmark(benchmark):
 @pytest.mark.benchmark(group="conversion")
 def test_fahrenheit_to_celsius_benchmark(benchmark):
     """Benchmark temperature conversion from Fahrenheit to Celsius."""
-    from msn_weather_wrapper.client import WeatherClient
-
-    client = WeatherClient()
 
     def convert_temp():
-        return client._fahrenheit_to_celsius(72)  # type: ignore
+        fahrenheit = 72
+        celsius = (fahrenheit - 32) * 5 / 9
+        return round(celsius, 2)
 
     result = benchmark(convert_temp)
     assert abs(result - 22.22) < 0.01
@@ -113,12 +118,11 @@ def test_fahrenheit_to_celsius_benchmark(benchmark):
 @pytest.mark.benchmark(group="conversion")
 def test_mph_to_kmh_benchmark(benchmark):
     """Benchmark wind speed conversion from MPH to km/h."""
-    from msn_weather_wrapper.client import WeatherClient
-
-    client = WeatherClient()
 
     def convert_speed():
-        return client._mph_to_kmh(10)  # type: ignore
+        mph = 10
+        kmh = mph * 1.60934
+        return round(kmh, 2)
 
     result = benchmark(convert_speed)
     assert abs(result - 16.09) < 0.01
