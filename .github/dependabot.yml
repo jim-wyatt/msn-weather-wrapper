@@ -120,22 +120,6 @@ updates:
           - "minor"
           - "patch"
 
-  # Docker base images (if using specific tags in Containerfile)
-  - package-ecosystem: "docker"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "08:00"
-      timezone: "UTC"
-    open-pull-requests-limit: 3
-    labels:
-      - "dependencies"
-      - "docker"
-    assignees:
-      - "jim-wyatt"
-    reviewers:
-      - "jim-wyatt"
-    commit-message:
-      prefix: "chore"
-      include: "scope"
+  # Note: Docker updater is disabled because this project uses Containerfiles (Podman)
+  # instead of Dockerfiles. Dependabot's docker package-ecosystem only supports Dockerfile
+  # naming convention. Container image updates can be managed manually when needed.
