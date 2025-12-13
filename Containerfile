@@ -1,6 +1,6 @@
 # Multi-stage Dockerfile - Unified Flask API + React Frontend
 # Stage 1: Build React frontend
-FROM node:22-trixie-slim AS frontend-builder
+FROM node:lts-trixie-slim@sha256:9ad7e7db423b2ca7ddcc01568da872701ef6171505bd823978736247885c7eb4 AS frontend-builder
 
 WORKDIR /frontend
 
