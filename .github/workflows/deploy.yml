@@ -25,42 +25,42 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Download coverage reports
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: coverage-reports
           path: artifacts/coverage/
         continue-on-error: true
 
       - name: Download security reports
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: security-reports
           path: artifacts/security/
         continue-on-error: true
 
       - name: Download SAST reports
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: sast-reports
           path: artifacts/security/
         continue-on-error: true
 
       - name: Download dependency reports
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: dependency-reports
           path: artifacts/security/
         continue-on-error: true
 
       - name: Download container security reports
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: container-security-reports
           path: artifacts/security/
         continue-on-error: true
 
       - name: Download test results
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           pattern: test-results-*
           path: artifacts/tests/
@@ -117,14 +117,14 @@ jobs:
         run: mkdir -p artifacts/performance
 
       - name: Download load test results
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: load-test-results
           path: artifacts/performance/
         continue-on-error: true
 
       - name: Download benchmark results
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: benchmark-results
           path: artifacts/performance/
@@ -157,14 +157,14 @@ jobs:
           fetch-depth: 0
 
       - name: Download report documentation
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: report-documentation
           path: ci-reports/
         continue-on-error: true
 
       - name: Download coverage reports (for badges)
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: coverage-reports
           path: docs/assets/
