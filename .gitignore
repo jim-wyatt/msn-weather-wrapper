@@ -41,6 +41,9 @@ htmlcov/
 junit.xml
 junit-*.xml
 coverage.json
+coverage.xml
+coverage.svg
+coverage-report.md
 
 # Mutation testing
 mutants/
