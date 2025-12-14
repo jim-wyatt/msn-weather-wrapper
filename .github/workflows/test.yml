@@ -85,7 +85,7 @@ jobs:
         run: pytest tests/test_security.py -v --tb=short -n auto -m "not integration" --junitxml=junit-security-${{ matrix.python-version }}.xml
 
       - name: Upload test results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: ${{ github.event_name != 'pull_request' || failure() }}
         with:
           name: test-results-${{ matrix.python-version }}${{ inputs.artifact-suffix }}
@@ -129,7 +129,7 @@ jobs:
           fail_ci_if_error: false
 
       - name: Upload coverage reports
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: ${{ github.event_name != 'pull_request' }}
         with:
           name: coverage-reports${{ inputs.artifact-suffix }}

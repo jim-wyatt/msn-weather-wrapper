@@ -145,7 +145,7 @@ jobs:
 
       - name: Upload load test results
         if: github.event_name == 'push' && github.ref == 'refs/heads/main' && always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: load-test-results
           path: |
@@ -201,7 +201,7 @@ jobs:
 
       - name: Upload benchmark results
         if: github.event_name == 'push' && github.ref == 'refs/heads/main' && always() && steps.run_benchmarks.outputs.has_benchmarks == 'true'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: benchmark-results
           path: benchmark.json

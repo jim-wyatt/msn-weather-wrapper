@@ -60,7 +60,7 @@ jobs:
           pip-licenses --format=json --output-file=security-reports/licenses.json
 
       - name: Upload security reports as artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: ${{ github.event_name != 'pull_request' && always() }}
         with:
           name: security-reports
@@ -133,7 +133,7 @@ jobs:
           /tmp/sbom-tools/grype sbom:security-reports/container-sbom.json --fail-on critical -o json > security-reports/grype-results.json || true
 
       - name: Upload container security reports
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: container-security-reports
           path: security-reports/
