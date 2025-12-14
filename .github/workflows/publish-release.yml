@@ -83,7 +83,7 @@ jobs:
       id-token: write
     steps:
       - name: Download package
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: python-package
           path: dist/
@@ -127,7 +127,7 @@ jobs:
           fi
 
       - name: Download Python package
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: python-package
           path: release-artifacts/python-package/
