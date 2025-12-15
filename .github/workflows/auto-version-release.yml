@@ -204,6 +204,22 @@ jobs:
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
           echo "✅ Merged version bump PR #$PR_NUMBER"
 
+      - name: Clean up release branch
+        if: steps.check.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          NEW_VERSION="${{ steps.version.outputs.new }}"
+          BRANCH_NAME="chore/version-bump-$NEW_VERSION"
+
+          # Delete the remote branch
+          gh api repos/{owner}/{repo}/git/refs/heads/"$BRANCH_NAME" -X DELETE || {
+            echo "⚠️  Could not delete branch via API, attempting via git..."
+            git push origin --delete "$BRANCH_NAME" || echo "⚠️  Branch deletion failed, but release process continues"
+          }
+
+          echo "🗑️  Deleted release branch: $BRANCH_NAME"
+
       - name: Create release tag
         if: steps.check.outputs.skip == 'false'
         id: tag
