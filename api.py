@@ -18,6 +18,12 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 from msn_weather_wrapper import Location, WeatherClient
+from msn_weather_wrapper.exceptions import (
+    LocationNotFoundError,
+    ParsingError,
+    UpstreamError,
+    WeatherError,
+)
 
 # Load environment variables from .env file
 # Try production env file first, then local .env
@@ -239,9 +245,29 @@ def get_cached_weather(city: str, country: str, minute_bucket: int) -> tuple[dic
             },
             200,
         )
+    except LocationNotFoundError as e:
+        return (
+            {"error": "Location not found", "message": str(e)},
+            404,
+        )
+    except UpstreamError as e:
+        return (
+            {"error": "Upstream service error", "message": str(e)},
+            502,
+        )
+    except ParsingError as e:
+        return (
+            {"error": "Data parsing error", "message": str(e)},
+            500,
+        )
+    except WeatherError as e:
+        return (
+            {"error": "Weather service error", "message": str(e)},
+            500,
+        )
     except Exception as e:
         return (
-            {"error": "Failed to fetch weather data", "message": str(e)},
+            {"error": "Internal server error", "message": str(e)},
             500,
         )
 
@@ -827,18 +853,42 @@ def get_weather_by_coordinates() -> tuple[dict[str, Any], int]:
 
         return jsonify(weather_data), 200
 
-    except Exception as e:
-        logger.error(
-            "weather_fetch_by_coordinates_failed",
+    except LocationNotFoundError as e:
+        logger.warning(
+            "location_not_found",
             request_id=getattr(request, "id", None),
             lat=lat,
             lon=lon,
             error=str(e),
         )
-        return (
-            jsonify({"error": "Failed to fetch weather data", "message": str(e)}),
-            500,
+        return jsonify({"error": "Location not found", "message": str(e)}), 404
+    except UpstreamError as e:
+        logger.error(
+            "upstream_error",
+            request_id=getattr(request, "id", None),
+            lat=lat,
+            lon=lon,
+            error=str(e),
         )
+        return jsonify({"error": "Upstream service error", "message": str(e)}), 502
+    except WeatherError as e:
+        logger.error(
+            "weather_error",
+            request_id=getattr(request, "id", None),
+            lat=lat,
+            lon=lon,
+            error=str(e),
+        )
+        return jsonify({"error": "Weather service error", "message": str(e)}), 500
+    except Exception as e:
+        logger.error(
+            "unexpected_error",
+            request_id=getattr(request, "id", None),
+            lat=lat,
+            lon=lon,
+            error=str(e),
+        )
+        return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
 
 @app.route("/api/v1/recent-searches", methods=["GET"])

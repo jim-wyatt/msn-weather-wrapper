@@ -7,6 +7,11 @@ import requests
 from bs4 import BeautifulSoup
 
 from msn_weather_wrapper.client import WeatherClient
+from msn_weather_wrapper.exceptions import (
+    LocationNotFoundError,
+    UpstreamError,
+    WeatherError,
+)
 from msn_weather_wrapper.models import Location
 
 
@@ -278,7 +283,7 @@ def test_get_weather_request_exception(mock_get) -> None:
     location = Location(city="TestCity", country="TestCountry")
     client = WeatherClient()
 
-    with pytest.raises(requests.RequestException):
+    with pytest.raises(UpstreamError):
         client.get_weather(location)
 
     client.close()
@@ -469,7 +474,7 @@ def test_get_weather_by_coordinates_geocode_failure(mock_nominatim: Mock) -> Non
     mock_nominatim.return_value = mock_geocoder
 
     client = WeatherClient()
-    with pytest.raises(ValueError, match="Could not determine location for coordinates"):
+    with pytest.raises(LocationNotFoundError, match="Could not determine location for coordinates"):
         client.get_weather_by_coordinates(51.5074, -0.1278)
     client.close()
 
@@ -482,6 +487,6 @@ def test_get_weather_by_coordinates_geocode_exception(mock_nominatim: Mock) -> N
     mock_nominatim.return_value = mock_geocoder
 
     client = WeatherClient()
-    with pytest.raises(ValueError, match="Failed to reverse geocode coordinates"):
+    with pytest.raises(WeatherError, match="Failed to reverse geocode coordinates"):
         client.get_weather_by_coordinates(51.5074, -0.1278)
     client.close()

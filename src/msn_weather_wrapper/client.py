@@ -2,56 +2,49 @@
 
 import json
 import re
+from typing import TypeVar
 from urllib.parse import quote
 
+import httpx  # type: ignore[import-not-found]
 import requests
 from bs4 import BeautifulSoup
 from geopy.geocoders import Nominatim  # type: ignore[import-not-found, import-untyped]
+from tenacity import retry, stop_after_attempt, wait_exponential  # type: ignore[import-not-found]
 
+from msn_weather_wrapper.exceptions import (
+    LocationNotFoundError,
+    ParsingError,
+    UpstreamError,
+    WeatherError,
+)
 from msn_weather_wrapper.models import Location, WeatherData
 
+T = TypeVar("T", bound="BaseWeatherClient")
 
-class WeatherClient:
-    """Client for fetching weather data from MSN Weather."""
+
+class BaseWeatherClient:
+    """Base class for weather clients with shared extraction logic."""
 
     def __init__(self, timeout: int = 10) -> None:
-        """Initialize the weather client.
+        """Initialize the base weather client.
 
         Args:
             timeout: Request timeout in seconds
         """
         self.timeout = timeout
         self.base_url = "https://www.msn.com/en-us/weather/forecast/in-"
-        self.session = requests.Session()
-        self.session.headers.update(
-            {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
-        )
         self.geocoder = Nominatim(user_agent="msn-weather-wrapper")
 
-    def get_weather(self, location: Location) -> WeatherData:
-        """Get current weather data for a location.
-
-        Args:
-            location: Location to get weather for
-
-        Returns:
-            Weather data for the specified location
-
-        Raises:
-            requests.RequestException: If the request fails
-            ValueError: If weather data cannot be parsed from the page
-        """
-        # Construct the URL for the location
+    def _get_location_url(self, location: Location) -> str:
+        """Construct the URL for the location."""
         location_str = f"{location.city},{location.country}"
         encoded_location = quote(location_str)
-        url = f"{self.base_url}{encoded_location}"
+        return f"{self.base_url}{encoded_location}"
 
-        # Fetch the page
-        response = self.session.get(url, timeout=self.timeout)
-        response.raise_for_status()
-
+    def _parse_weather_response(self, html: str, location: Location) -> WeatherData:
+        """Parse weather data from HTML response."""
         # Try to extract weather data from embedded JSON
-        weather_data = self._extract_weather_from_json(response.text)
+        weather_data = self._extract_weather_from_json(html)
         if weather_data:
             return WeatherData(
                 location=location,
@@ -62,59 +55,22 @@ class WeatherClient:
             )
 
         # Fallback to HTML parsing if JSON extraction fails
-        soup = BeautifulSoup(response.text, "lxml")
-        temperature = self._extract_temperature(soup)
-        condition = self._extract_condition(soup)
-        humidity = self._extract_humidity(soup)
-        wind_speed = self._extract_wind_speed(soup)
-
-        return WeatherData(
-            location=location,
-            temperature=temperature,
-            condition=condition,
-            humidity=humidity,
-            wind_speed=wind_speed,
-        )
-
-    def get_weather_by_coordinates(self, latitude: float, longitude: float) -> WeatherData:
-        """Get current weather data for a location by coordinates.
-
-        Args:
-            latitude: Latitude coordinate
-            longitude: Longitude coordinate
-
-        Returns:
-            Weather data for the specified coordinates
-
-        Raises:
-            requests.RequestException: If the request fails
-            ValueError: If weather data cannot be parsed or location cannot be determined
-        """
-        # Use reverse geocoding to get city and country
+        soup = BeautifulSoup(html, "lxml")
         try:
-            location_data = self.geocoder.reverse(f"{latitude}, {longitude}", language="en")  # type: ignore[call-arg, misc]
-            if not location_data:
-                raise ValueError(
-                    f"Could not determine location for coordinates {latitude}, {longitude}"
-                )
+            temperature = self._extract_temperature(soup)
+            condition = self._extract_condition(soup)
+            humidity = self._extract_humidity(soup)
+            wind_speed = self._extract_wind_speed(soup)
 
-            address = location_data.raw.get("address", {})  # type: ignore[union-attr]
-            city = (
-                address.get("city")
-                or address.get("town")
-                or address.get("village")
-                or address.get("county")
-                or "Unknown"
+            return WeatherData(
+                location=location,
+                temperature=temperature,
+                condition=condition,
+                humidity=humidity,
+                wind_speed=wind_speed,
             )
-            country = address.get("country", "Unknown")
-
-            location = Location(city=city, country=country, latitude=latitude, longitude=longitude)
-
-        except Exception as e:
-            raise ValueError(f"Failed to reverse geocode coordinates: {str(e)}") from e
-
-        # Now get weather for this location
-        return self.get_weather(location)
+        except ValueError as e:
+            raise ParsingError(f"Failed to parse weather data: {str(e)}") from e
 
     def _extract_weather_from_json(self, html: str) -> dict[str, float | int | str] | None:
         """Extract weather data from embedded JSON in the HTML.
@@ -297,6 +253,93 @@ class WeatherClient:
         # Default value if not found
         return 0.0
 
+
+class WeatherClient(BaseWeatherClient):
+    """Synchronous client for fetching weather data from MSN Weather."""
+
+    def __init__(self, timeout: int = 10) -> None:
+        """Initialize the weather client.
+
+        Args:
+            timeout: Request timeout in seconds
+        """
+        super().__init__(timeout)
+        self.session = requests.Session()
+        self.session.headers.update(
+            {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+        )
+
+    @retry(  # type: ignore[misc]
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+        retry=lambda e: isinstance(e, requests.RequestException),
+    )
+    def get_weather(self, location: Location) -> WeatherData:
+        """Get current weather data for a location.
+
+        Args:
+            location: Location to get weather for
+
+        Returns:
+            Weather data for the specified location
+
+        Raises:
+            UpstreamError: If the request fails
+            ParsingError: If weather data cannot be parsed from the page
+        """
+        url = self._get_location_url(location)
+
+        try:
+            response = self.session.get(url, timeout=self.timeout)
+            response.raise_for_status()
+        except requests.RequestException as e:
+            raise UpstreamError(f"Failed to fetch weather data from MSN: {str(e)}") from e
+
+        return self._parse_weather_response(response.text, location)
+
+    def get_weather_by_coordinates(self, latitude: float, longitude: float) -> WeatherData:
+        """Get current weather data for a location by coordinates.
+
+        Args:
+            latitude: Latitude coordinate
+            longitude: Longitude coordinate
+
+        Returns:
+            Weather data for the specified coordinates
+
+        Raises:
+            LocationNotFoundError: If location cannot be determined
+            WeatherError: If weather data cannot be fetched or parsed
+        """
+        # Use reverse geocoding to get city and country
+        try:
+            location_data = self.geocoder.reverse(f"{latitude}, {longitude}", language="en")  # type: ignore[call-arg, misc]
+            if not location_data:
+                raise LocationNotFoundError(
+                    f"Could not determine location for coordinates {latitude}, {longitude}"
+                )
+
+            address = location_data.raw.get("address", {})  # type: ignore[union-attr]
+            city = (
+                address.get("city")
+                or address.get("town")
+                or address.get("village")
+                or address.get("county")
+                or "Unknown"
+            )
+            country = address.get("country", "Unknown")
+
+            location = Location(city=city, country=country, latitude=latitude, longitude=longitude)
+
+        except LocationNotFoundError:
+            raise
+        except Exception as e:
+            raise WeatherError(f"Failed to reverse geocode coordinates: {str(e)}") from e
+
+        # Now get weather for this location
+        result = self.get_weather(location)
+        return result  # type: ignore[no-any-return]
+
     def close(self) -> None:
         """Close the HTTP session."""
         self.session.close()
@@ -308,3 +351,104 @@ class WeatherClient:
     def __exit__(self, *args: object) -> None:
         """Context manager exit."""
         self.close()
+
+
+class AsyncWeatherClient(BaseWeatherClient):
+    """Asynchronous client for fetching weather data from MSN Weather."""
+
+    def __init__(self, timeout: int = 10) -> None:
+        """Initialize the async weather client.
+
+        Args:
+            timeout: Request timeout in seconds
+        """
+        super().__init__(timeout)
+        self.client = httpx.AsyncClient(
+            timeout=timeout,
+            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"},
+        )
+
+    @retry(  # type: ignore[misc]
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+        retry=lambda e: isinstance(e, httpx.HTTPError),
+    )
+    async def get_weather(self, location: Location) -> WeatherData:
+        """Get current weather data for a location asynchronously.
+
+        Args:
+            location: Location to get weather for
+
+        Returns:
+            Weather data for the specified location
+
+        Raises:
+            UpstreamError: If the request fails
+            ParsingError: If weather data cannot be parsed from the page
+        """
+        url = self._get_location_url(location)
+
+        try:
+            response = await self.client.get(url)
+            response.raise_for_status()
+        except httpx.HTTPError as e:
+            raise UpstreamError(f"Failed to fetch weather data from MSN: {str(e)}") from e
+
+        return self._parse_weather_response(response.text, location)
+
+    async def get_weather_by_coordinates(self, latitude: float, longitude: float) -> WeatherData:
+        """Get current weather data for a location by coordinates asynchronously.
+
+        Args:
+            latitude: Latitude coordinate
+            longitude: Longitude coordinate
+
+        Returns:
+            Weather data for the specified coordinates
+
+        Raises:
+            LocationNotFoundError: If location cannot be determined
+            WeatherError: If weather data cannot be fetched or parsed
+        """
+        # Use reverse geocoding to get city and country
+        # Note: geopy is synchronous, so we run it in a thread if needed,
+        # but for simplicity we'll just call it here.
+        try:
+            location_data = self.geocoder.reverse(f"{latitude}, {longitude}", language="en")  # type: ignore[call-arg, misc]
+            if not location_data:
+                raise LocationNotFoundError(
+                    f"Could not determine location for coordinates {latitude}, {longitude}"
+                )
+
+            address = location_data.raw.get("address", {})  # type: ignore[union-attr]
+            city = (
+                address.get("city")
+                or address.get("town")
+                or address.get("village")
+                or address.get("county")
+                or "Unknown"
+            )
+            country = address.get("country", "Unknown")
+
+            location = Location(city=city, country=country, latitude=latitude, longitude=longitude)
+
+        except LocationNotFoundError:
+            raise
+        except Exception as e:
+            raise WeatherError(f"Failed to reverse geocode coordinates: {str(e)}") from e
+
+        # Now get weather for this location
+        result = await self.get_weather(location)
+        return result  # type: ignore[no-any-return]
+
+    async def close(self) -> None:
+        """Close the HTTP client."""
+        await self.client.aclose()
+
+    async def __aenter__(self) -> "AsyncWeatherClient":
+        """Async context manager entry."""
+        return self
+
+    async def __aexit__(self, *args: object) -> None:
+        """Async context manager exit."""
+        await self.close()
