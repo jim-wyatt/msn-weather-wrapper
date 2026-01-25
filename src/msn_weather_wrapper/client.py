@@ -436,7 +436,7 @@ class AsyncWeatherClient(BaseWeatherClient):
             LocationNotFoundError: If location cannot be determined
             WeatherError: If weather data cannot be fetched or parsed
         """
-        # Note: geopy is synchronous, but the shared helper handles this
+        # Reverse geocode using shared helper (note: geopy remains synchronous)
         location = self._reverse_geocode_to_location(latitude, longitude)
         return await self.get_weather(location)
 
