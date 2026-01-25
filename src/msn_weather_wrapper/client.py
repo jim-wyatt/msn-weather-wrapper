@@ -438,9 +438,7 @@ class AsyncWeatherClient(BaseWeatherClient):
             raise WeatherError(f"Failed to reverse geocode coordinates: {str(e)}") from e
 
         # Now get weather for this location
-        result = await self.get_weather(location)
-        return result  # type: ignore[no-any-return]
-
+        return await self.get_weather(location)
     async def close(self) -> None:
         """Close the HTTP client."""
         await self.client.aclose()
