@@ -439,6 +439,7 @@ class AsyncWeatherClient(BaseWeatherClient):
         # Note: geopy is synchronous, but the shared helper handles this
         location = self._reverse_geocode_to_location(latitude, longitude)
         return await self.get_weather(location)
+
     async def close(self) -> None:
         """Close the HTTP client."""
         await self.client.aclose()
