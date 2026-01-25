@@ -351,8 +351,7 @@ class WeatherClient(BaseWeatherClient):
             raise WeatherError(f"Failed to reverse geocode coordinates: {str(e)}") from e
 
         # Now get weather for this location
-        result = self.get_weather(location)
-        return result  # type: ignore[no-any-return]
+        return self.get_weather(location)
 
     def close(self) -> None:
         """Close the HTTP session."""
