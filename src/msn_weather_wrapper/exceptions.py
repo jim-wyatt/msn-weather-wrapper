@@ -15,4 +15,4 @@ class ParsingError(WeatherError):
 
 
 class LocationNotFoundError(WeatherError):
-"""Raised when a location cannot be found or geocoded."""
+    """Raised when a location cannot be found or geocoded."""
