@@ -42,7 +42,21 @@ class BaseWeatherClient:
         return f"{self.base_url}{encoded_location}"
 
     def _parse_weather_response(self, html: str, location: Location) -> WeatherData:
-        """Parse weather data from HTML response."""
+        """Parse weather data from an HTML response.
+
+        Args:
+            html: The raw HTML content returned by the MSN Weather service.
+            location: The location associated with the weather data being parsed.
+
+        Returns:
+            A :class:`WeatherData` instance containing the parsed temperature,
+            condition, humidity, and wind speed for the given location.
+
+        Raises:
+            ParsingError: If the weather data cannot be parsed from the HTML
+                content, for example when required values are missing or have
+                an unexpected format.
+        """
         # Try to extract weather data from embedded JSON
         weather_data = self._extract_weather_from_json(html)
         if weather_data:
