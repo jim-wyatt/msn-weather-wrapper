@@ -9,7 +9,12 @@ import httpx  # type: ignore[import-not-found]
 import requests
 from bs4 import BeautifulSoup
 from geopy.geocoders import Nominatim  # type: ignore[import-not-found, import-untyped]
-from tenacity import retry, stop_after_attempt, wait_exponential  # type: ignore[import-not-found]
+from tenacity import (  # type: ignore[import-not-found]
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_exponential,
+)
 
 from msn_weather_wrapper.exceptions import (
     LocationNotFoundError,
@@ -324,7 +329,7 @@ class WeatherClient(BaseWeatherClient):
     @retry(  # type: ignore[misc]
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=2, max=10),
-        retry=lambda e: isinstance(e, requests.RequestException),
+        retry=retry_if_exception_type(requests.RequestException),
     )
     def get_weather(self, location: Location) -> WeatherData:
         """Get current weather data for a location.
@@ -397,7 +402,7 @@ class AsyncWeatherClient(BaseWeatherClient):
     @retry(  # type: ignore[misc]
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=2, max=10),
-        retry=lambda e: isinstance(e, httpx.HTTPError),
+        retry=retry_if_exception_type(httpx.HTTPError),
     )
     async def get_weather(self, location: Location) -> WeatherData:
         """Get current weather data for a location asynchronously.
