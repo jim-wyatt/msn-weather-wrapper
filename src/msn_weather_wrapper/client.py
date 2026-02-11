@@ -1,5 +1,6 @@
 """Weather client for interacting with MSN Weather services."""
 
+import asyncio
 import json
 import re
 from typing import TypeVar
@@ -441,8 +442,8 @@ class AsyncWeatherClient(BaseWeatherClient):
             LocationNotFoundError: If location cannot be determined
             WeatherError: If weather data cannot be fetched or parsed
         """
-        # Reverse geocode using shared helper (note: geopy remains synchronous)
-        location = self._reverse_geocode_to_location(latitude, longitude)
+        # Run synchronous geocoding in a thread pool to avoid blocking the event loop
+        location = await asyncio.to_thread(self._reverse_geocode_to_location, latitude, longitude)
         return await self.get_weather(location)
 
     async def close(self) -> None:
