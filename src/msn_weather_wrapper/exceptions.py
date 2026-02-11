@@ -5,7 +5,6 @@ class WeatherError(Exception):
     """Base exception for all weather-related errors."""
 
 
-
 class UpstreamError(WeatherError):
     """Raised when the upstream MSN Weather service returns an error."""
 
