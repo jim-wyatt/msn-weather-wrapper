@@ -41,7 +41,14 @@ class BaseWeatherClient:
         self.geocoder = Nominatim(user_agent="msn-weather-wrapper")
 
     def _get_location_url(self, location: Location) -> str:
-        """Construct the URL for the location."""
+        """Construct the MSN Weather URL for the given location.
+
+        Args:
+            location: Location object containing the city and country used to build the URL.
+
+        Returns:
+            str: The MSN Weather forecast URL for the specified location.
+        """
         location_str = f"{location.city},{location.country}"
         encoded_location = quote(location_str)
         return f"{self.base_url}{encoded_location}"
