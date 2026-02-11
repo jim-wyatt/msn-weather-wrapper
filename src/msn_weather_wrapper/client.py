@@ -3,7 +3,6 @@
 import asyncio
 import json
 import re
-from typing import TypeVar
 from urllib.parse import quote
 
 import httpx  # type: ignore[import-not-found]
@@ -24,8 +23,6 @@ from msn_weather_wrapper.exceptions import (
     WeatherError,
 )
 from msn_weather_wrapper.models import Location, WeatherData
-
-T = TypeVar("T", bound="BaseWeatherClient")
 
 
 class BaseWeatherClient:
