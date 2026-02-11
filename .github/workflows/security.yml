@@ -52,8 +52,8 @@ jobs:
 
       - name: Run Safety check
         run: |
-          safety check --json --output security-reports/safety-report.json || true
-          safety check --output security-reports/safety-report.txt || true
+          safety check --save-json security-reports/safety-report.json || true
+          safety check --output text > security-reports/safety-report.txt || true
 
       - name: Generate pip-licenses report
         run: |

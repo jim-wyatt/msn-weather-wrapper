@@ -148,7 +148,7 @@ jobs:
           pip install safety pip-audit
 
       - name: Run Safety check
-        run: safety check --json --output safety-report.json
+        run: safety check --save-json safety-report.json
         continue-on-error: true
 
       - name: Run pip-audit
