@@ -272,6 +272,44 @@ class BaseWeatherClient:
         # Default value if not found
         return 0.0
 
+    def _reverse_geocode_to_location(self, latitude: float, longitude: float) -> Location:
+        """Reverse geocode coordinates to a Location object.
+
+        Args:
+            latitude: Latitude coordinate
+            longitude: Longitude coordinate
+
+        Returns:
+            Location object with city, country, and coordinates
+
+        Raises:
+            LocationNotFoundError: If location cannot be determined
+            WeatherError: If reverse geocoding fails
+        """
+        try:
+            location_data = self.geocoder.reverse(f"{latitude}, {longitude}", language="en")  # type: ignore[call-arg, misc]
+            if not location_data:
+                raise LocationNotFoundError(
+                    f"Could not determine location for coordinates {latitude}, {longitude}"
+                )
+
+            address = location_data.raw.get("address", {})  # type: ignore[union-attr]
+            city = (
+                address.get("city")
+                or address.get("town")
+                or address.get("village")
+                or address.get("county")
+                or "Unknown"
+            )
+            country = address.get("country", "Unknown")
+
+            return Location(city=city, country=country, latitude=latitude, longitude=longitude)
+
+        except LocationNotFoundError:
+            raise
+        except Exception as e:
+            raise WeatherError(f"Failed to reverse geocode coordinates: {str(e)}") from e
+
 
 class WeatherClient(BaseWeatherClient):
     """Synchronous client for fetching weather data from MSN Weather."""
@@ -330,32 +368,7 @@ class WeatherClient(BaseWeatherClient):
             LocationNotFoundError: If location cannot be determined
             WeatherError: If weather data cannot be fetched or parsed
         """
-        # Use reverse geocoding to get city and country
-        try:
-            location_data = self.geocoder.reverse(f"{latitude}, {longitude}", language="en")  # type: ignore[call-arg, misc]
-            if not location_data:
-                raise LocationNotFoundError(
-                    f"Could not determine location for coordinates {latitude}, {longitude}"
-                )
-
-            address = location_data.raw.get("address", {})  # type: ignore[union-attr]
-            city = (
-                address.get("city")
-                or address.get("town")
-                or address.get("village")
-                or address.get("county")
-                or "Unknown"
-            )
-            country = address.get("country", "Unknown")
-
-            location = Location(city=city, country=country, latitude=latitude, longitude=longitude)
-
-        except LocationNotFoundError:
-            raise
-        except Exception as e:
-            raise WeatherError(f"Failed to reverse geocode coordinates: {str(e)}") from e
-
-        # Now get weather for this location
+        location = self._reverse_geocode_to_location(latitude, longitude)
         return self.get_weather(location)
 
     def close(self) -> None:
@@ -428,35 +441,10 @@ class AsyncWeatherClient(BaseWeatherClient):
             LocationNotFoundError: If location cannot be determined
             WeatherError: If weather data cannot be fetched or parsed
         """
-        # Use reverse geocoding to get city and country
-        # Note: geopy is synchronous, so we run it in a thread if needed,
-        # but for simplicity we'll just call it here.
-        try:
-            location_data = self.geocoder.reverse(f"{latitude}, {longitude}", language="en")  # type: ignore[call-arg, misc]
-            if not location_data:
-                raise LocationNotFoundError(
-                    f"Could not determine location for coordinates {latitude}, {longitude}"
-                )
-
-            address = location_data.raw.get("address", {})  # type: ignore[union-attr]
-            city = (
-                address.get("city")
-                or address.get("town")
-                or address.get("village")
-                or address.get("county")
-                or "Unknown"
-            )
-            country = address.get("country", "Unknown")
-
-            location = Location(city=city, country=country, latitude=latitude, longitude=longitude)
-
-        except LocationNotFoundError:
-            raise
-        except Exception as e:
-            raise WeatherError(f"Failed to reverse geocode coordinates: {str(e)}") from e
-
-        # Now get weather for this location
+        # Reverse geocode using shared helper (note: geopy remains synchronous)
+        location = self._reverse_geocode_to_location(latitude, longitude)
         return await self.get_weather(location)
+
     async def close(self) -> None:
         """Close the HTTP client."""
         await self.client.aclose()
