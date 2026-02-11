@@ -147,8 +147,8 @@ jobs:
           pip install -e ".[dev]"
           pip install safety pip-audit
 
-      - name: Run Safety check
-        run: safety check --json --output safety-report.json
+      - name: Run Safety scan
+        run: safety scan --save-as json safety-report.json
         continue-on-error: true
 
       - name: Run pip-audit
