@@ -25,7 +25,6 @@ Comprehensive security vulnerability scanning results from CI/CD pipeline.
 | Tool | Purpose | Status | Last Run |
 |------|---------|--------|----------|
 | **Bandit** | Python static analysis | ✅ Clean | December 2, 2025 20:10:00 UTC |
-| **Safety** | Dependency vulnerability check | ✅ No issues | December 2, 2025 20:10:00 UTC |
 | **pip-audit** | PyPI CVE scanning | ✅ No issues | December 2, 2025 20:10:00 UTC |
 | **Grype** | SBOM vulnerability scanning | ✅ No issues | December 2, 2025 20:10:00 UTC |
 | **Trivy** | Container image scanning | ✅ No issues | December 2, 2025 20:10:00 UTC |
@@ -75,24 +74,6 @@ All code follows security best practices:
 - ✅ Input validation on all endpoints
 
 ## 🔍 Dependency Vulnerability Scanning
-
-### Safety Check Results
-
-**Dependencies Scanned**: 22 packages
-**Vulnerabilities Found**: 0
-**Last Database Update**: December 2, 2025 20:10:00 UTC
-
-```
-All dependencies are secure:
-  ✅ requests==2.32.0 - No known vulnerabilities
-  ✅ pydantic==2.12.0 - No known vulnerabilities
-  ✅ beautifulsoup4==4.14.0 - No known vulnerabilities
-  ✅ lxml==6.0.0 - No known vulnerabilities
-  ✅ flask==3.1.0 - No known vulnerabilities
-  ✅ flask-cors==6.0.0 - No known vulnerabilities
-  ✅ gunicorn==23.0.0 - No known vulnerabilities
-  ... (all dependencies clean)
-```
 
 ### pip-audit CVE Scanning
 
@@ -279,7 +260,6 @@ Strict-Transport-Security: max-age=31536000
 
 **Monitoring Tools**:
 - GitHub Dependabot
-- Safety CLI
 - pip-audit
 - Container scanning (Grype + Trivy)
 

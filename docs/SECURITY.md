@@ -91,7 +91,6 @@ The project uses a **comprehensive security scanning workflow** integrated into 
 - **Semgrep**: Advanced pattern-based SAST with community security rules (main branch only)
 
 **Dependency Vulnerability Scanning:**
-- **Safety**: Checks PyPI known vulnerabilities database (main branch only)
 - **pip-audit**: OSV database vulnerability checking (main branch only)
 - **Dependency Tree**: Complete dependency mapping for audit trails
 
@@ -186,7 +185,7 @@ curl "http://localhost:5000/api/weather?city=Seattle | whoami&country=USA"
 2. **Use parameterized queries** - Although we don't use SQL directly, maintain safe practices
 3. **Keep dependencies updated** - Regularly update all dependencies
 4. **Run security tests** - Execute `pytest tests/test_security.py` before each release
-5. **Review security scans** - Run Bandit and Safety tools regularly
+5. **Review security scans** - Run Bandit and pip-audit tools regularly
 
 ### For Deployment
 1. **Use HTTPS** - Always deploy with TLS/SSL in production
@@ -231,8 +230,8 @@ If you discover a security vulnerability:
 # Run Bandit security scanner
 bandit -r src/
 
-# Run Safety dependency checker
-safety check
+# Run pip-audit dependency checker
+pip-audit
 ```
 
 ### Dynamic Testing
@@ -270,7 +269,7 @@ cat sbom_output/SBOM_SUMMARY_*.md
 Before each release:
 - [ ] All security tests passing
 - [ ] No new security warnings from Bandit
-- [ ] All dependencies checked with Safety
+- [ ] All dependencies checked with pip-audit
 - [ ] SBOM generated and verified
 - [ ] Security documentation updated
 - [ ] Rate limits configured appropriately

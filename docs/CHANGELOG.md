@@ -40,7 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Automated Security Scanning**
   - Weekly security scans (Mondays 2 AM UTC) + on main branch pushes
   - SAST tools: Bandit (Python security), Semgrep (pattern detection)
-  - Dependency scanning: Safety, pip-audit
+  - Dependency scanning: pip-audit
   - Container security: Trivy, Grype (image vulnerabilities)
   - License compliance: pip-licenses check
   - Results uploaded to GitHub Security tab
@@ -127,7 +127,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Rate limiting (30 req/min per IP, 200/hr global)
   - CORS configuration
   - Comprehensive security test suite (25 tests)
-  - **Zero vulnerabilities** (verified with pip-audit, safety, bandit, Grype)
+  - **Zero vulnerabilities** (verified with pip-audit, bandit, Grype)
 
 - **Production Deployment**
   - Gunicorn WSGI server (4 workers, 120s timeout)
@@ -179,7 +179,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Frontend**: React 19.2, Vite 7.2, TypeScript 5.7+, CSS3
 - **Testing**: pytest 9.0+, Playwright 1.49+, 86 tests with 89% coverage
 - **Quality**: ruff 0.14+, mypy 1.19+, pre-commit 4.5+, bandit 1.9+
-- **Security**: pip-audit 2.10+, safety 3.7+, Grype 0.104+, Trivy
+- **Security**: pip-audit 2.10+, Grype 0.104+, Trivy
 - **Deployment**: Podman/Docker, multi-stage containers, Nginx, Supervisor
 - **Documentation**: MkDocs 1.6+ with Material theme 9.7+
 - **CI/CD**: GitHub Actions, Syft SBOM generation, semantic versioning

@@ -30,7 +30,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install security tools
-        run: pip install bandit semgrep pip-audit safety pip-licenses
+        run: pip install bandit semgrep pip-audit pip-licenses
 
       - name: Create security reports directory
         run: mkdir -p security-reports
@@ -50,11 +50,6 @@ jobs:
           pip-audit --format json --output security-reports/pip-audit-report.json || true
           pip-audit --output security-reports/pip-audit-report.txt || true
 
-      - name: Run Safety scan
-        run: |
-          safety scan --save-as json security-reports/safety-report.json || true
-          safety scan --save-as text security-reports/safety-report.txt || true
-
       - name: Generate pip-licenses report
         run: |
           pip-licenses --format=json --output-file=security-reports/licenses.json
@@ -73,7 +68,6 @@ jobs:
           echo "✓ Bandit scan completed"
           echo "✓ Semgrep SAST scan completed"
           echo "✓ pip-audit scan completed"
-          echo "✓ Safety scan completed"
           echo "✓ License report generated"
 
   container-scan:

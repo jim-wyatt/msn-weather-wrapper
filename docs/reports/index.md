@@ -40,7 +40,7 @@ Reports are automatically generated during every CI/CD pipeline run:
 - **Coverage**: 92% overall
 - **Linting**: Ruff (PEP 8 compliant)
 - **Type Checking**: mypy strict mode
-- **Security Scans**: Bandit, Safety, pip-audit
+- **Security Scans**: Bandit, pip-audit
 
 ### Security Posture
 - **Vulnerabilities Fixed**: 23 critical/high issues resolved
@@ -88,7 +88,6 @@ pytest --cov=src/msn_weather_wrapper --cov-report=html
 
 # Run security scans
 bandit -r src/ -f txt
-safety check
 pip-audit
 
 # Generate license report
@@ -114,7 +113,6 @@ Comprehensive code coverage analysis:
 ### Security Report
 Security scanning results:
 - Bandit static analysis
-- Safety dependency vulnerability check
 - pip-audit CVE scanning
 - Container vulnerability scanning
 - Remediation recommendations

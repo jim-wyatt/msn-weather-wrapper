@@ -87,7 +87,7 @@ graph TB
 
     subgraph "Reusable Workflows"
         TEST[test.yml<br/>Smoke, Unit, Coverage,<br/>Integration Tests]
-        SEC[security.yml<br/>6 Security Tools<br/>Bandit, Semgrep, Safety,<br/>pip-audit, Trivy, Grype]
+        SEC[security.yml<br/>5 Security Tools<br/>Bandit, Semgrep,<br/>pip-audit, Trivy, Grype]
         BUILD[build.yml<br/>Docker, SBOM, Docs]
         DEPLOY[deploy.yml<br/>Reports & GitHub Pages]
         PERF[performance.yml<br/>Benchmarks & Load Tests]
@@ -180,7 +180,6 @@ graph TB
    - Bandit (code analysis & hardcoded secrets)
    - Semgrep (pattern-based security analysis)
 3. **Dependency Vulnerabilities** - Full dependency scanning (full scan only)
-   - Safety (known vulnerabilities database)
    - pip-audit (package auditing)
    - Dependency tree generation
 4. **Container Security Scan** - Image & SBOM analysis (full scan only)
@@ -207,7 +206,7 @@ graph LR
 
     subgraph "Full Scan (Main/Tags Only)"
         SAST["SAST Scanning<br/>✓ Bandit<br/>✓ Semgrep"]
-        DEP["Dependency Scanning<br/>✓ Safety<br/>✓ pip-audit<br/>✓ Dep Tree"]
+        DEP["Dependency Scanning<br/>✓ pip-audit<br/>✓ Dep Tree"]
         CONT["Container Scanning<br/>✓ Trivy<br/>✓ Grype"]
     end
 
