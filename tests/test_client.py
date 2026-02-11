@@ -7,6 +7,11 @@ import requests
 from bs4 import BeautifulSoup
 
 from msn_weather_wrapper.client import WeatherClient
+from msn_weather_wrapper.exceptions import (
+    LocationNotFoundError,
+    UpstreamError,
+    WeatherError,
+)
 from msn_weather_wrapper.models import Location
 
 
@@ -278,7 +283,7 @@ def test_get_weather_request_exception(mock_get) -> None:
     location = Location(city="TestCity", country="TestCountry")
     client = WeatherClient()
 
-    with pytest.raises(requests.RequestException):
+    with pytest.raises(UpstreamError):
         client.get_weather(location)
 
     client.close()
@@ -469,7 +474,7 @@ def test_get_weather_by_coordinates_geocode_failure(mock_nominatim: Mock) -> Non
     mock_nominatim.return_value = mock_geocoder
 
     client = WeatherClient()
-    with pytest.raises(ValueError, match="Could not determine location for coordinates"):
+    with pytest.raises(LocationNotFoundError, match="Could not determine location for coordinates"):
         client.get_weather_by_coordinates(51.5074, -0.1278)
     client.close()
 
@@ -482,6 +487,91 @@ def test_get_weather_by_coordinates_geocode_exception(mock_nominatim: Mock) -> N
     mock_nominatim.return_value = mock_geocoder
 
     client = WeatherClient()
-    with pytest.raises(ValueError, match="Failed to reverse geocode coordinates"):
+    with pytest.raises(WeatherError, match="Failed to reverse geocode coordinates"):
         client.get_weather_by_coordinates(51.5074, -0.1278)
     client.close()
+
+
+@pytest.mark.asyncio
+@patch("msn_weather_wrapper.client.Nominatim")
+@patch("msn_weather_wrapper.client.httpx.AsyncClient.get")
+async def test_async_get_weather_by_coordinates_success(
+    mock_get: Mock, mock_nominatim: Mock
+) -> None:
+    """Test AsyncWeatherClient.get_weather_by_coordinates with successful geocoding."""
+    from msn_weather_wrapper.client import AsyncWeatherClient
+
+    # Mock geocoder
+    mock_location = Mock()
+    mock_location.raw = {"address": {"city": "London", "country": "United Kingdom"}}
+    mock_geocoder = Mock()
+    mock_geocoder.reverse.return_value = mock_location
+    mock_nominatim.return_value = mock_geocoder
+
+    # Mock HTTP response
+    html = """
+    <html>
+        <body>
+            <script type="application/json">
+            {
+                "WeatherData": {
+                    "_@STATE@_": {
+                        "forecast": [{
+                            "hourly": [{
+                                "cap": "Sunny",
+                                "temperature": "75",
+                                "humidity": "60",
+                                "windSpeed": "5"
+                            }]
+                        }]
+                    }
+                }
+            }
+            </script>
+        </body>
+    </html>
+    """
+    mock_response = Mock()
+    mock_response.text = html
+    mock_response.status_code = 200
+    mock_get.return_value = mock_response
+
+    async with AsyncWeatherClient() as client:
+        weather = await client.get_weather_by_coordinates(51.5074, -0.1278)
+        assert weather.location.city == "London"
+        assert weather.location.country == "United Kingdom"
+        assert weather.location.latitude == 51.5074
+        assert weather.location.longitude == -0.1278
+        assert weather.condition == "Sunny"
+
+
+@pytest.mark.asyncio
+@patch("msn_weather_wrapper.client.Nominatim")
+async def test_async_get_weather_by_coordinates_geocode_failure(mock_nominatim: Mock) -> None:
+    """Test AsyncWeatherClient.get_weather_by_coordinates when geocoding fails."""
+    from msn_weather_wrapper.client import AsyncWeatherClient
+
+    mock_geocoder = Mock()
+    mock_geocoder.reverse.return_value = None
+    mock_nominatim.return_value = mock_geocoder
+
+    async with AsyncWeatherClient() as client:
+        with pytest.raises(
+            LocationNotFoundError, match="Could not determine location for coordinates"
+        ):
+            await client.get_weather_by_coordinates(51.5074, -0.1278)
+
+
+@pytest.mark.asyncio
+@patch("msn_weather_wrapper.client.Nominatim")
+async def test_async_get_weather_by_coordinates_geocode_exception(mock_nominatim: Mock) -> None:
+    """Test AsyncWeatherClient.get_weather_by_coordinates when geocoding raises exception."""
+    from msn_weather_wrapper.client import AsyncWeatherClient
+
+    mock_geocoder = Mock()
+    mock_geocoder.reverse.side_effect = Exception("Geocoding API error")
+    mock_nominatim.return_value = mock_geocoder
+
+    async with AsyncWeatherClient() as client:
+        with pytest.raises(WeatherError, match="Failed to reverse geocode coordinates"):
+            await client.get_weather_by_coordinates(51.5074, -0.1278)
