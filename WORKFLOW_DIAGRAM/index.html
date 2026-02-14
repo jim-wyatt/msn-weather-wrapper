@@ -2553,7 +2553,7 @@ graph TB
 
     subgraph "Reusable Workflows"
         TEST[test.yml&lt;br/&gt;Smoke, Unit, Coverage,&lt;br/&gt;Integration Tests]
-        SEC[security.yml&lt;br/&gt;6 Security Tools&lt;br/&gt;Bandit, Semgrep, Safety,&lt;br/&gt;pip-audit, Trivy, Grype]
+        SEC[security.yml&lt;br/&gt;5 Security Tools&lt;br/&gt;Bandit, Semgrep,&lt;br/&gt;pip-audit, Trivy, Grype]
         BUILD[build.yml&lt;br/&gt;Docker, SBOM, Docs]
         DEPLOY[deploy.yml&lt;br/&gt;Reports &amp; GitHub Pages]
         PERF[performance.yml&lt;br/&gt;Benchmarks &amp; Load Tests]
@@ -2631,7 +2631,6 @@ graph TB
 <li>Bandit (code analysis &amp; hardcoded secrets)</li>
 <li>Semgrep (pattern-based security analysis)</li>
 <li><strong>Dependency Vulnerabilities</strong> - Full dependency scanning (full scan only)</li>
-<li>Safety (known vulnerabilities database)</li>
 <li>pip-audit (package auditing)</li>
 <li>Dependency tree generation</li>
 <li><strong>Container Security Scan</strong> - Image &amp; SBOM analysis (full scan only)</li>
@@ -2655,7 +2654,7 @@ graph LR
 
     subgraph "Full Scan (Main/Tags Only)"
         SAST["SAST Scanning&lt;br/&gt;✓ Bandit&lt;br/&gt;✓ Semgrep"]
-        DEP["Dependency Scanning&lt;br/&gt;✓ Safety&lt;br/&gt;✓ pip-audit&lt;br/&gt;✓ Dep Tree"]
+        DEP["Dependency Scanning&lt;br/&gt;✓ pip-audit&lt;br/&gt;✓ Dep Tree"]
         CONT["Container Scanning&lt;br/&gt;✓ Trivy&lt;br/&gt;✓ Grype"]
     end
 

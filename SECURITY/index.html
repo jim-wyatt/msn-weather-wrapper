@@ -2685,7 +2685,6 @@ graph TD
 - <strong>Bandit</strong>: Detects hardcoded passwords, insecure patterns, common security issues
 - <strong>Semgrep</strong>: Advanced pattern-based SAST with community security rules (main branch only)</p>
 <p><strong>Dependency Vulnerability Scanning:</strong>
-- <strong>Safety</strong>: Checks PyPI known vulnerabilities database (main branch only)
 - <strong>pip-audit</strong>: OSV database vulnerability checking (main branch only)
 - <strong>Dependency Tree</strong>: Complete dependency mapping for audit trails</p>
 <p><strong>Container Security:</strong>
@@ -2767,7 +2766,7 @@ graph TD
 <li><strong>Use parameterized queries</strong> - Although we don't use SQL directly, maintain safe practices</li>
 <li><strong>Keep dependencies updated</strong> - Regularly update all dependencies</li>
 <li><strong>Run security tests</strong> - Execute <code>pytest tests/test_security.py</code> before each release</li>
-<li><strong>Review security scans</strong> - Run Bandit and Safety tools regularly</li>
+<li><strong>Review security scans</strong> - Run Bandit and pip-audit tools regularly</li>
 </ol>
 <h3 id="for-deployment">For Deployment<a class="headerlink" href="#for-deployment" title="Permanent link">&para;</a></h3>
 <ol>
@@ -2811,8 +2810,8 @@ graph TD
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Run Bandit security scanner</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>bandit<span class="w"> </span>-r<span class="w"> </span>src/
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Run Safety dependency checker</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>safety<span class="w"> </span>check
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Run pip-audit dependency checker</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>pip-audit
 </span></code></pre></div>
 <h3 id="dynamic-testing">Dynamic Testing<a class="headerlink" href="#dynamic-testing" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Run security test suite</span>
@@ -2845,7 +2844,7 @@ graph TD
 <p>Before each release:
 - [ ] All security tests passing
 - [ ] No new security warnings from Bandit
-- [ ] All dependencies checked with Safety
+- [ ] All dependencies checked with pip-audit
 - [ ] SBOM generated and verified
 - [ ] Security documentation updated
 - [ ] Rate limits configured appropriately
