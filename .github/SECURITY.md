@@ -73,7 +73,7 @@ This project implements several security measures:
 ### Automated Security Scanning
 
 - **SAST**: Bandit (Python security linting), Semgrep (pattern detection)
-- **Dependency Scanning**: Safety, pip-audit for known vulnerabilities
+- **Dependency Scanning**: pip-audit for known vulnerabilities
 - **Container Scanning**: Trivy, Grype for image vulnerabilities
 - **License Compliance**: Automated checking of dependency licenses
 - **Schedule**: Weekly scans every Monday at 2 AM UTC + on all pushes to main

@@ -340,24 +340,6 @@ def parse_semgrep_json(json_path: Path) -> dict[str, Any]:
         return {}
 
 
-def parse_safety_json(json_path: Path) -> dict[str, Any]:
-    """Parse Safety dependency check JSON."""
-    try:
-        with open(json_path) as f:
-            data = json.load(f)
-
-        # Safety returns a list of vulnerability objects
-        vulnerabilities = data if isinstance(data, list) else data.get("vulnerabilities", [])
-
-        return {
-            "total_issues": len(vulnerabilities),
-            "vulnerabilities": vulnerabilities,
-        }
-    except Exception as e:
-        print(f"Error parsing Safety JSON {json_path}: {e}", file=sys.stderr)
-        return {}
-
-
 def parse_pip_audit_json(json_path: Path) -> dict[str, Any]:
     """Parse pip-audit JSON output."""
     try:
@@ -411,20 +393,18 @@ def generate_security_report(input_dir: Path, output_path: Path) -> None:
     # Parse all available security scan results
     bandit_path = input_dir / "bandit-report.json"
     semgrep_path = input_dir / "semgrep-report.json"
-    safety_path = input_dir / "safety-report.json"
     pip_audit_path = input_dir / "pip-audit-report.json"
     trivy_path = input_dir / "trivy-results.json"
     grype_path = input_dir / "grype-results.json"
 
     bandit_data = parse_bandit_json(bandit_path) if bandit_path.exists() else {}
     semgrep_data = parse_semgrep_json(semgrep_path) if semgrep_path.exists() else {}
-    safety_data = parse_safety_json(safety_path) if safety_path.exists() else {}
     pip_audit_data = parse_pip_audit_json(pip_audit_path) if pip_audit_path.exists() else {}
     trivy_data = parse_trivy_json(trivy_path) if trivy_path.exists() else {}
     grype_data = parse_grype_json(grype_path) if grype_path.exists() else {}
 
     # If no security data found, preserve existing report
-    if not any([bandit_data, semgrep_data, safety_data, pip_audit_data, trivy_data, grype_data]):
+    if not any([bandit_data, semgrep_data, pip_audit_data, trivy_data, grype_data]):
         print(f"No security reports found in {input_dir}", file=sys.stderr)
         if output_path.exists():
             print(f"Preserving existing report: {output_path}")
@@ -435,7 +415,6 @@ def generate_security_report(input_dir: Path, output_path: Path) -> None:
     total_high = (
         bandit_data.get("high", 0)
         + semgrep_data.get("high", 0)
-        + safety_data.get("total_issues", 0)
         + pip_audit_data.get("total_issues", 0)
         + trivy_data.get("high", 0)
         + grype_data.get("high", 0)
@@ -476,14 +455,12 @@ def generate_security_report(input_dir: Path, output_path: Path) -> None:
     # Build tool status table
     bandit_status = "✅ Active" if bandit_data else "⏭️ Skipped"
     semgrep_status = "✅ Active" if semgrep_data else "⏭️ Skipped"
-    safety_status = "✅ Active" if safety_data else "⏭️ Skipped"
     pip_audit_status = "✅ Active" if pip_audit_data else "⏭️ Skipped"
     trivy_status = "✅ Active" if trivy_data else "⏭️ Skipped"
     grype_status = "✅ Active" if grype_data else "⏭️ Skipped"
 
     content += f"""| **Bandit** | SAST | {bandit_status} | {bandit_data.get("total_issues", 0)} |
 | **Semgrep** | SAST | {semgrep_status} | {semgrep_data.get("total_issues", 0)} |
-| **Safety** | Dependency | {safety_status} | {safety_data.get("total_issues", 0)} |
 | **pip-audit** | Dependency | {pip_audit_status} | {pip_audit_data.get("total_issues", 0)} |
 | **Trivy** | Container | {trivy_status} | {trivy_data.get("total_issues", 0)} |
 | **Grype** | Container | {grype_status} | {grype_data.get("total_issues", 0)} |
@@ -534,14 +511,11 @@ def generate_security_report(input_dir: Path, output_path: Path) -> None:
 """
 
     # Dependency findings
-    if (safety_data and safety_data.get("total_issues", 0) > 0) or (
-        pip_audit_data and pip_audit_data.get("total_issues", 0) > 0
-    ):
-        safety_issues = safety_data.get("total_issues", 0)
+    if pip_audit_data and pip_audit_data.get("total_issues", 0) > 0:
         pip_audit_issues = pip_audit_data.get("total_issues", 0)
         content += f"""### Dependency Vulnerabilities
 
-**Safety**: {safety_issues} issues | **pip-audit**: {pip_audit_issues} issues
+**pip-audit**: {pip_audit_issues} issues
 
 """
 

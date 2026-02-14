@@ -66,9 +66,8 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 **Steps**:
 - Checkout code
 - Set up Python 3.12
-- Install security tools (bandit, safety, pip-audit, pip-licenses)
+- Install security tools (bandit, pip-audit, pip-licenses)
 - Run Bandit static analysis
-- Run Safety dependency check
 - Run pip-audit CVE scanning
 - Generate license report
 - Upload security reports as artifacts
@@ -78,7 +77,6 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 
 **Artifacts Generated**:
 - `bandit-report.json` / `bandit-report.txt`
-- `safety-report.json` / `safety-report.txt`
 - `pip-audit-report.json` / `pip-audit-report.md`
 - `licenses.json` / `licenses.md` / `licenses.html`
 

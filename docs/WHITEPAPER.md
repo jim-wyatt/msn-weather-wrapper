@@ -43,7 +43,7 @@ The strategy balances speed and fidelity: unit tests provide rapid feedback; int
 
 ## Security & Supply Chain
 
-Security is shifted left with Bandit and Semgrep in CI, augmented by mypy and Ruff to prevent common defect classes. Dependency risk is managed through Safety, Trivy, and Grype scans, while SBOMs and license reports document supply-chain posture. At runtime, Nginx enforces reverse-proxy controls, Flask applies validation and rate limits, and strict Pydantic models guard the API surface. GitHub Actions jobs run with least-privilege tokens and isolated environments to reduce blast radius.
+Security is shifted left with Bandit and Semgrep in CI, augmented by mypy and Ruff to prevent common defect classes. Dependency risk is managed through Trivy and Grype scans, while SBOMs and license reports document supply-chain posture. At runtime, Nginx enforces reverse-proxy controls, Flask applies validation and rate limits, and strict Pydantic models guard the API surface. GitHub Actions jobs run with least-privilege tokens and isolated environments to reduce blast radius.
 
 The repository ships automated SBOM generation (`tools/generate_sbom.sh` and `generate_sbom_ci.sh`) and stores reports under `artifacts/security-reports/`. License compliance is tracked via `licenses.json`. Container images are built from slim bases and scanned to reduce CVE surface area. Inputs to the API are sanitized; path traversal, command injection, SQLi, and XSS scenarios are covered by dedicated tests in `tests/test_security.py`. Rate limiting is enforced to shield upstream dependencies and mitigate abuse.
 

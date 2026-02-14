@@ -106,7 +106,7 @@ Runs on push to main and pull requests:
 
 - **Bandit**: Python security linting
 - **Semgrep**: Static application security testing (SAST)
-- **Safety & pip-audit**: Dependency vulnerability scanning
+- **pip-audit**: Dependency vulnerability scanning
 - **Trivy**: Container vulnerability scanning
 - **Grype**: SBOM-based vulnerability detection
 - **License Compliance**: Automated license checking

@@ -335,7 +335,7 @@ generate_and_serve_docs() {
     # Run security scan
     log_info "Running security scan..."
     podman-compose -f "$COMPOSE_FILE" exec -T api bash -c \
-        "pip install bandit safety && bandit -r src/ -f json -o bandit-report.json || true" || true
+        "pip install bandit && bandit -r src/ -f json -o bandit-report.json || true" || true
 
     # Copy security report from container
     if [ -n "$API_CONTAINER" ]; then

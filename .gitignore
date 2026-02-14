@@ -59,8 +59,6 @@ dist/
 grype-report.json
 bandit-report.json
 bandit-report.txt
-safety-report.json
-safety-report.txt
 pip-audit-report.json
 pip-audit-report.md
 

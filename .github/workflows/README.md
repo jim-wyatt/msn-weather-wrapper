@@ -14,7 +14,7 @@ This directory contains the GitHub Actions workflows for automated testing, buil
 **Jobs:**
 
 1. **code-quality** - Runs Ruff formatting/linting and mypy type checking
-2. **security** - Runs Bandit security scanning and Safety dependency checks
+2. **security** - Runs Bandit security scanning and pip-audit dependency checks
 3. **unit-tests** - Runs unit and security tests on Python 3.10-3.12 (matrix)
 4. **coverage** - Generates test coverage reports and uploads to Codecov
 5. **container-build** - Builds and tests unified Podman container image
@@ -73,7 +73,7 @@ This directory contains the GitHub Actions workflows for automated testing, buil
    - Creates pull request with outdated packages list
 
 3. **security-audit** - Runs security audits
-   - Python: Safety and pip-audit
+   - Python: pip-audit
    - Frontend: npm audit
    - Uploads audit reports as artifacts
 
