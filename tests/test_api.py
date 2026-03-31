@@ -451,7 +451,7 @@ def test_weather_coordinates_endpoint(client):
     # Test with valid coordinates (Seattle)
     response = client.get("/api/v1/weather/coordinates?lat=47.6062&lon=-122.3321")
     # This might fail if external service is unavailable, but endpoint should respond
-    assert response.status_code in [200, 400, 500]
+    assert response.status_code in [200, 400, 500, 502]
 
 
 def test_weather_coordinates_missing_params(client):
@@ -499,7 +499,7 @@ def test_versioned_weather_get(client):
     """Test versioned weather GET endpoint."""
     response = client.get("/api/v1/weather?city=Seattle&country=USA")
     # Might fail due to external service, but endpoint should respond
-    assert response.status_code in [200, 400, 500]
+    assert response.status_code in [200, 400, 500, 502]
 
 
 @patch("api.get_client")

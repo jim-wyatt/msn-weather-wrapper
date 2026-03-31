@@ -53,7 +53,7 @@ structlog.configure(
 logger = structlog.get_logger()
 
 # Security constants
-DEFAULT_SECRET_KEY_PLACEHOLDER = "change-this-to-a-secure-random-key-in-production"
+DEFAULT_SECRET_KEY_PLACEHOLDER = "change-this-to-a-secure-random-key-in-production"  # nosec B105
 
 app = Flask(__name__)
 
@@ -566,8 +566,8 @@ def get_weather() -> tuple[dict[str, str | float | int | dict[str, str]], int]:
             cached=True,
         )
         # Store in recent searches (city and country are validated non-None above)
-        assert city is not None and country is not None
-        _add_to_recent_searches(city, country)
+        if city is not None and country is not None:
+            _add_to_recent_searches(city, country)
     else:
         logger.error(
             "weather_fetch_failed",
@@ -706,9 +706,9 @@ def get_weather_post() -> tuple[dict[str, str | float | int | dict[str, str]], i
             country=country,
             cached=True,
         )
-        # Store in recent searches
-        assert city is not None and country is not None  # validated above
-        _add_to_recent_searches(city, country)
+        # Store in recent searches (city and country are validated non-None above)
+        if city is not None and country is not None:
+            _add_to_recent_searches(city, country)
     else:
         logger.error(
             "weather_fetch_failed_post",
