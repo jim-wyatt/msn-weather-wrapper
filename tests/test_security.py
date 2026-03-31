@@ -366,8 +366,8 @@ class TestHTTPErrorHandlers:
             data='{"city": "London", "country": "UK"}',
             content_type="application/json",  # No charset specified
         )
-        # Should work or fail gracefully (may be 500 if backend unavailable)
-        assert response.status_code in (200, 400, 500)
+        # Should work or fail gracefully (may be 500/502 if backend unavailable)
+        assert response.status_code in (200, 400, 500, 502)
 
     def test_empty_request_body_post(self, client):
         """Test POST with completely empty body."""
@@ -446,7 +446,7 @@ class TestHTTPErrorHandlers:
         # Spaces encoded as +
         response = client.get("/api/weather?city=New+York&country=USA")
         # Should decode properly and not cause server error
-        assert response.status_code in (200, 400, 500)  # 500 if MSN Weather fails
+        assert response.status_code in (200, 400, 500, 502)  # 500/502 if MSN Weather fails
         # Verify it's not a validation error
         if response.status_code == 400:
             data = json.loads(response.data)
@@ -455,7 +455,7 @@ class TestHTTPErrorHandlers:
 
         # Spaces encoded as %20
         response = client.get("/api/weather?city=New%20York&country=USA")
-        assert response.status_code in (200, 400, 500)  # 500 if MSN Weather fails
+        assert response.status_code in (200, 400, 500, 502)  # 500/502 if MSN Weather fails
         if response.status_code == 400:
             data = json.loads(response.data)
             assert "invalid characters" not in data.get("message", "").lower()
@@ -464,7 +464,7 @@ class TestHTTPErrorHandlers:
         """Test handling of repeated query parameters."""
         response = client.get("/api/weather?city=London&city=Paris&country=UK")
         # Should use first value, reject, or fail if backend unavailable
-        assert response.status_code in (200, 400, 500)
+        assert response.status_code in (200, 400, 500, 502)
 
     def test_parameter_without_value(self, client):
         """Test handling of parameters without values."""
