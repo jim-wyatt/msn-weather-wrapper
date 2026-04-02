@@ -66,10 +66,15 @@ jobs:
       - name: Calculate new version
         id: version
         run: |
-          # Get current version from pyproject.toml
-          CURRENT_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+          # Get current version from latest git tag (source of truth), falling back to pyproject.toml
+          LATEST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1 || echo "")
+          if [ -n "$LATEST_TAG" ]; then
+            CURRENT_VERSION=${LATEST_TAG#v}
+          else
+            CURRENT_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+          fi
           echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-          echo "📦 Current version: $CURRENT_VERSION"
+          echo "📦 Current version: $CURRENT_VERSION (from tag: ${LATEST_TAG:-none})"
 
           # Parse and increment version
           IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
