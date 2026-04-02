@@ -16,27 +16,46 @@ COPY frontend/ .
 # Build frontend
 RUN npm run build
 
-# Stage 2: Python + Nginx unified container
+# Stage 2: Build Python dependencies (requires gcc for compiled extensions)
+FROM python:3.12-slim-trixie AS python-builder
+
+WORKDIR /app
+
+# Install build-only tools (not copied to final image)
+RUN apt-get update && apt-get install -y --no-install-recommends gcc && \
+    rm -rf /var/lib/apt/lists/*
+
+# Create a virtual environment to hold all Python packages
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy Python project files and install dependencies
+COPY pyproject.toml README.md ./
+COPY src/ src/
+# Install as a regular (non-editable) package so all code is embedded in the venv
+# and does not depend on source files being present in the final image
+RUN pip install --no-cache-dir .
+
+# Stage 3: Final runtime image - no build tools, no supervisor
 FROM python:3.12-slim-trixie
 
 WORKDIR /app
 
-# Install system dependencies (nginx, gcc for Python packages, supervisor)
-RUN apt-get update && apt-get install -y \
-    gcc \
+# Install only runtime dependencies (nginx for serving, curl for health check)
+# No gcc, no supervisor (and their transitive vulnerability-carrying deps)
+RUN apt-get update && apt-get install -y --no-install-recommends \
     nginx \
-    supervisor \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy Python project files
-COPY pyproject.toml .
-COPY README.md .
-COPY src/ src/
-COPY api.py .
+# Copy virtual environment with all Python packages from builder stage
+COPY --from=python-builder /opt/venv /opt/venv
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -e .
+# Set PATH to use the virtual environment
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy application code
+COPY api.py .
 
 # Copy built frontend from builder stage
 COPY --from=frontend-builder /frontend/dist /usr/share/nginx/html
@@ -44,9 +63,12 @@ COPY --from=frontend-builder /frontend/dist /usr/share/nginx/html
 # Copy nginx configuration
 COPY config/nginx.conf /etc/nginx/sites-available/default
 
-# Create supervisor configuration
-RUN mkdir -p /var/log/supervisor
-COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# Copy and enable the entrypoint script
+COPY config/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Create log directories for nginx
+RUN mkdir -p /var/log/nginx
 
 # Set production environment variables
 # Note: Override FLASK_SECRET_KEY in production with a secure value
@@ -69,5 +91,5 @@ EXPOSE 80
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:80/api/v1/health/ready || exit 1
 
-# Run supervisor to manage nginx and gunicorn
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Use the entrypoint script to start nginx + gunicorn (replaces supervisor)
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
