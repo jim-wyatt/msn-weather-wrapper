@@ -109,6 +109,13 @@ jobs:
           PR_NUMBER=$(echo "$PR_INFO" | cut -d'|' -f1)
           PR_TITLE=$(echo "$PR_INFO" | cut -d'|' -f2)
 
+          # Skip if the last merged PR was itself a version-bump PR to avoid infinite loops
+          if echo "$PR_TITLE" | grep -qiE "^chore: bump version to"; then
+            echo "Last merged PR was a version bump - skipping auto-version to prevent infinite loop"
+            echo "skip=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
           echo "pr_title=$PR_TITLE" >> $GITHUB_OUTPUT
           echo "Found merged PR #$PR_NUMBER: $PR_TITLE"
