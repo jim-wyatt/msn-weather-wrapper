@@ -67,7 +67,7 @@ jobs:
         id: version
         run: |
           # Get current version from latest git tag (source of truth), falling back to pyproject.toml
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          LATEST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1 || echo "")
           if [ -n "$LATEST_TAG" ]; then
             CURRENT_VERSION=${LATEST_TAG#v}
           else
