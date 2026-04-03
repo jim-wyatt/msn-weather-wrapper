@@ -12,13 +12,9 @@
         <meta name="author" content="Jim Wyatt">
       
       
-        <link rel="canonical" href="https://jim-wyatt.github.io/msn-weather-wrapper/CONTAINER_DEV_SETUP/">
+        <link rel="canonical" href="https://jim-wyatt.github.io/msn-weather-wrapper/PROJECT_STRUCTURE/">
       
       
-        <link rel="prev" href="../DEVELOPMENT/">
-      
-      
-        <link rel="next" href="../MONITOR_DASHBOARD/">
       
       
         
@@ -29,7 +25,7 @@
     
     
       
-        <title>Container Setup - MSN Weather Wrapper</title>
+        <title>Project Structure Guide - MSN Weather Wrapper</title>
       
     
     
@@ -84,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#containerized-development" class="md-skip">
+        <a href="#project-structure-guide" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Container Setup
+              Project Structure Guide
             
           </span>
         </div>
@@ -392,12 +388,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../DEVELOPMENT/" class="md-tabs__link">
           
   
@@ -1433,10 +1427,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -1450,22 +1442,19 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
             
   
   
@@ -1483,7 +1472,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1526,37 +1515,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Container Setup
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../CONTAINER_DEV_SETUP/" class="md-nav__link">
         
   
   
@@ -1572,337 +1534,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#quick-start" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Quick Start
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Prerequisites
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Prerequisites">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#install-podman-and-podman-compose" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Install Podman and podman-compose
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#commands-reference" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Commands Reference
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Commands Reference">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#setup-and-management" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Setup and management
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#development" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Development
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Testing
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#development-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Development Workflow
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Development Workflow">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#making-changes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Making changes
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#adding-dependencies" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Adding dependencies
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#architecture" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Architecture
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Architecture">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#containers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Containers
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#volume-mounts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Volume mounts
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#networking" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Networking
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#troubleshooting" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Troubleshooting
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Troubleshooting">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#containers-will-not-start" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Containers will not start
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#port-conflicts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Port conflicts
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tests-failing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tests failing
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#clean-slate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Clean slate
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#benefits" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Benefits
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#advanced-usage" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Advanced Usage
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Advanced Usage">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#run-a-specific-service" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Run a specific service
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#view-service-logs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        View service logs
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-resources" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Check resources
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        See Also
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2182,10 +1813,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#quick-start" class="md-nav__link">
+  <a href="#start-here" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quick Start
+        Start Here
       
     </span>
   </a>
@@ -2193,22 +1824,77 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
+  <a href="#mental-model" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Prerequisites
+        Mental Model
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Prerequisites">
+    <nav class="md-nav" aria-label="Mental Model">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#install-podman-and-podman-compose" class="md-nav__link">
+  <a href="#srcmsn_weather_wrapper" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Install Podman and podman-compose
+        src/msn_weather_wrapper/
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frontend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frontend/
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tests/
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scripts/
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#infra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        infra/
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        docs/
       
     </span>
   </a>
@@ -2221,210 +1907,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#commands-reference" class="md-nav__link">
+  <a href="#top-level-map" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Commands Reference
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Commands Reference">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#setup-and-management" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Setup and management
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#development" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Development
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#testing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Testing
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#development-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Development Workflow
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Development Workflow">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#making-changes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Making changes
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#adding-dependencies" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Adding dependencies
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#architecture" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Architecture
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Architecture">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#containers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Containers
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#volume-mounts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Volume mounts
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#networking" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Networking
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#troubleshooting" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Troubleshooting
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Troubleshooting">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#containers-will-not-start" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Containers will not start
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#port-conflicts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Port conflicts
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tests-failing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tests failing
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#clean-slate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Clean slate
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#benefits" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Benefits
+        Top-Level Map
       
     </span>
   </a>
@@ -2432,60 +1918,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#advanced-usage" class="md-nav__link">
+  <a href="#rule-of-thumb" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Advanced Usage
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Advanced Usage">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#run-a-specific-service" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Run a specific service
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#view-service-logs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        View service logs
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-resources" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Check resources
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        See Also
+        Rule of Thumb
       
     </span>
   </a>
@@ -2509,7 +1945,7 @@
 
 
   
-    <a href="https://github.com/jim-wyatt/msn-weather-wrapper/edit/main/docs/CONTAINER_DEV_SETUP.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/jim-wyatt/msn-weather-wrapper/edit/main/docs/PROJECT_STRUCTURE.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z"/></svg>
     </a>
@@ -2518,212 +1954,81 @@
     
       
     
-    <a href="https://github.com/jim-wyatt/msn-weather-wrapper/raw/main/docs/CONTAINER_DEV_SETUP.md" title="View source of this page" class="md-content__button md-icon">
+    <a href="https://github.com/jim-wyatt/msn-weather-wrapper/raw/main/docs/PROJECT_STRUCTURE.md" title="View source of this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"/></svg>
     </a>
   
 
 
-<h1 id="containerized-development">Containerized Development<a class="headerlink" href="#containerized-development" title="Permanent link">&para;</a></h1>
-<p>Develop entirely in containers with Podman for a consistent setup, easier onboarding, and fast hot reload.</p>
-<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>./dev.sh<span class="w"> </span>setup<span class="w">   </span><span class="c1"># One-time setup</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>./dev.sh<span class="w"> </span>start<span class="w">   </span><span class="c1"># Start development</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>./dev.sh<span class="w"> </span>logs<span class="w">    </span><span class="c1"># View logs</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>./dev.sh<span class="w"> </span><span class="nb">test</span><span class="w">    </span><span class="c1"># Run all tests</span>
-</span></code></pre></div>
-<p><strong>Services:</strong></p>
-<ul>
-<li>Frontend: <a href="http://localhost:5173">http://localhost:5173</a> (Vite HMR)</li>
-<li>API: <a href="http://localhost:5000">http://localhost:5000</a></li>
-<li>Health: <a href="http://localhost:5000/api/v1/health">http://localhost:5000/api/v1/health</a></li>
-</ul>
-<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
-<h3 id="install-podman-and-podman-compose">Install Podman and <code>podman-compose</code><a class="headerlink" href="#install-podman-and-podman-compose" title="Permanent link">&para;</a></h3>
-<p><strong>Linux:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>podman<span class="w">  </span><span class="c1"># Ubuntu/Debian</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>podman<span class="w">      </span><span class="c1"># Fedora</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>pip3<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>podman-compose
-</span></code></pre></div>
-<p><strong>macOS:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>brew<span class="w"> </span>install<span class="w"> </span>podman
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>pip3<span class="w"> </span>install<span class="w"> </span>podman-compose
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>podman<span class="w"> </span>machine<span class="w"> </span>init<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>podman<span class="w"> </span>machine<span class="w"> </span>start
-</span></code></pre></div>
-<h2 id="commands-reference">Commands Reference<a class="headerlink" href="#commands-reference" title="Permanent link">&para;</a></h2>
-<h3 id="setup-and-management">Setup and management<a class="headerlink" href="#setup-and-management" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>./dev.sh<span class="w"> </span>setup<span class="w">              </span><span class="c1"># Build containers, install dependencies</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>./dev.sh<span class="w"> </span>start<span class="w">              </span><span class="c1"># Start all services</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>./dev.sh<span class="w"> </span>stop<span class="w">               </span><span class="c1"># Stop all services</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>./dev.sh<span class="w"> </span>restart<span class="w">            </span><span class="c1"># Restart services</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>./dev.sh<span class="w"> </span>status<span class="w">             </span><span class="c1"># Check service health</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>./dev.sh<span class="w"> </span>clean<span class="w">              </span><span class="c1"># Remove containers and volumes</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>./dev.sh<span class="w"> </span>clean<span class="w"> </span>--gitignore<span class="w">  </span><span class="c1"># Also remove gitignored files (with preview)</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>./dev.sh<span class="w"> </span>rebuild<span class="w">            </span><span class="c1"># Clean rebuild</span>
-</span></code></pre></div>
-<h3 id="development">Development<a class="headerlink" href="#development" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>./dev.sh<span class="w"> </span>logs<span class="w">            </span><span class="c1"># Follow all logs</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>./dev.sh<span class="w"> </span>shell-api<span class="w">       </span><span class="c1"># API container shell</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>./dev.sh<span class="w"> </span>shell-frontend<span class="w">  </span><span class="c1"># Frontend container shell</span>
-</span></code></pre></div>
-<h3 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>./dev.sh<span class="w"> </span><span class="nb">test</span>
-</span></code></pre></div>
-<p>Inside the API container shell:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pytest<span class="w"> </span>tests/test_api.py<span class="w"> </span>-v
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>pytest<span class="w"> </span>--cov<span class="o">=</span>src<span class="w"> </span>--cov-report<span class="o">=</span>html
-</span></code></pre></div>
-<p>Inside the frontend container shell:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>npm<span class="w"> </span>run<span class="w"> </span>test:e2e
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>npm<span class="w"> </span>run<span class="w"> </span>test:e2e:ui
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>npm<span class="w"> </span>run<span class="w"> </span>type-check
-</span></code></pre></div>
-<h2 id="development-workflow">Development Workflow<a class="headerlink" href="#development-workflow" title="Permanent link">&para;</a></h2>
-<h3 id="making-changes">Making changes<a class="headerlink" href="#making-changes" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Backend:</strong> edit files in <code>src/</code> or <code>api.py</code> and FastAPI reloads automatically.</li>
-<li><strong>Frontend:</strong> edit files in <code>frontend/src/</code> and Vite updates instantly.</li>
-<li><strong>Tests:</strong> edit test files and rerun the relevant checks.</li>
-</ul>
-<p>All source code is mounted as a volume, so changes appear immediately.</p>
-<h3 id="adding-dependencies">Adding dependencies<a class="headerlink" href="#adding-dependencies" title="Permanent link">&para;</a></h3>
-<p><strong>Python:</strong></p>
+<h1 id="project-structure-guide">Project Structure Guide<a class="headerlink" href="#project-structure-guide" title="Permanent link">&para;</a></h1>
+<p>This repository is organized so a beginner can reason about it in <strong>four main zones</strong>.</p>
+<h2 id="start-here">Start Here<a class="headerlink" href="#start-here" title="Permanent link">&para;</a></h2>
+<p>If you're new, explore the project in this order:</p>
 <ol>
-<li>Edit <code>pyproject.toml</code>.</li>
-<li>Run <code>./dev.sh rebuild</code>.</li>
+<li><code>src/msn_weather_wrapper/</code> — the Python backend and library code</li>
+<li><code>frontend/</code> — the React user interface</li>
+<li><code>tests/</code> — examples of how behavior is verified</li>
+<li><code>scripts/</code> — helper scripts for local development and reporting</li>
 </ol>
-<p><strong>Node.js:</strong></p>
-<ol>
-<li>Edit <code>frontend/package.json</code>.</li>
-<li>Rebuild with <code>podman-compose -f infra/compose/podman-compose.dev.yml build frontend</code>.</li>
-</ol>
-<p>Or install temporarily inside a container:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>./dev.sh<span class="w"> </span>shell-api
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>pip<span class="w"> </span>install<span class="w"> </span>package-name
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>./dev.sh<span class="w"> </span>shell-frontend
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>npm<span class="w"> </span>install<span class="w"> </span>package-name
-</span></code></pre></div>
-<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
-<h3 id="containers">Containers<a class="headerlink" href="#containers" title="Permanent link">&para;</a></h3>
+<h2 id="mental-model">Mental Model<a class="headerlink" href="#mental-model" title="Permanent link">&para;</a></h2>
+<h3 id="srcmsn_weather_wrapper"><code>src/msn_weather_wrapper/</code><a class="headerlink" href="#srcmsn_weather_wrapper" title="Permanent link">&para;</a></h3>
+<p>This is the <strong>main backend code</strong>.</p>
 <ul>
-<li><strong>API:</strong> Python 3.12 slim + FastAPI + dev tools on port <code>5000</code></li>
-<li><strong>Frontend:</strong> Node 22 slim + Vite + Playwright on port <code>5173</code></li>
-<li><strong>Test runner:</strong> on-demand checks and browser tests</li>
+<li><code>api/</code> — FastAPI app, routes, request handling, and service logic</li>
+<li><code>client.py</code> — talks to MSN Weather</li>
+<li><code>models.py</code> — shared typed data models</li>
+<li><code>exceptions.py</code> — app-specific errors</li>
 </ul>
-<h3 id="volume-mounts">Volume mounts<a class="headerlink" href="#volume-mounts" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>./src            -&gt; /app/src      (API)
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>./api.py         -&gt; /app/api.py   (API)
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>./tests          -&gt; /app/tests    (API)
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>./frontend/src   -&gt; /app/src      (Frontend)
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>./frontend/tests -&gt; /app/tests    (Frontend)
-</span></code></pre></div>
-<h3 id="networking">Networking<a class="headerlink" href="#networking" title="Permanent link">&para;</a></h3>
+<h3 id="frontend"><code>frontend/</code><a class="headerlink" href="#frontend" title="Permanent link">&para;</a></h3>
+<p>This is the <strong>web app</strong>.</p>
 <ul>
-<li>The API is reachable as <code>api:5000</code> inside the compose network.</li>
-<li>The frontend proxy uses <code>DOCKER_ENV=true</code> in containers.</li>
-<li>Outside containers, browser traffic still uses <code>localhost</code>.</li>
+<li><code>src/components/</code> — reusable UI pieces</li>
+<li><code>src/data/</code> — static data like city lists</li>
+<li><code>tests/e2e/</code> — Playwright browser tests</li>
 </ul>
-<p><strong>Vite proxy example:</strong></p>
-<div class="language-javascript highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nx">proxy</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="s1">&#39;/api&#39;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="nx">target</span><span class="o">:</span><span class="w"> </span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">DOCKER_ENV</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s1">&#39;http://api:5000&#39;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;http://localhost:5000&#39;</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="p">}</span>
-</span></code></pre></div>
-<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
-<h3 id="containers-will-not-start">Containers will not start<a class="headerlink" href="#containers-will-not-start" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>podman<span class="w"> </span>ps<span class="w"> </span>-a
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>podman<span class="w"> </span>logs<span class="w"> </span>msn-weather-api-dev
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>./dev.sh<span class="w"> </span>restart
-</span></code></pre></div>
-<h3 id="port-conflicts">Port conflicts<a class="headerlink" href="#port-conflicts" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>lsof<span class="w"> </span>-i<span class="w"> </span>:5000
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="c1"># Then edit infra/compose/podman-compose.dev.yml if you need different ports</span>
-</span></code></pre></div>
-<h3 id="tests-failing">Tests failing<a class="headerlink" href="#tests-failing" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>./dev.sh<span class="w"> </span>shell-api
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>pytest<span class="w"> </span>-vv<span class="w"> </span>--tb<span class="o">=</span>short
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>./dev.sh<span class="w"> </span>shell-frontend
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>npm<span class="w"> </span>run<span class="w"> </span>test:e2e:headed
-</span></code></pre></div>
-<h3 id="clean-slate">Clean slate<a class="headerlink" href="#clean-slate" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>./dev.sh<span class="w"> </span>clean
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>./dev.sh<span class="w"> </span>clean<span class="w"> </span>--gitignore
-</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>./dev.sh<span class="w"> </span>clean<span class="w"> </span>-g
-</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>./dev.sh<span class="w"> </span>setup
-</span></code></pre></div>
-<p><strong>Gitignore cleanup notes:</strong></p>
+<h3 id="tests"><code>tests/</code><a class="headerlink" href="#tests" title="Permanent link">&para;</a></h3>
+<p>This is the <strong>backend test suite</strong>.</p>
 <ul>
-<li>Shows a preview of files to remove with <code>git clean -ndX</code></li>
-<li>Prompts for confirmation before deletion</li>
-<li>Removes only ignored files such as <code>__pycache__</code> and <code>node_modules</code></li>
-<li>Useful for clearing build artifacts and caches</li>
+<li><code>test_api.py</code> — API behavior</li>
+<li><code>test_client.py</code> — weather client behavior</li>
+<li><code>test_security.py</code> — input validation and security checks</li>
 </ul>
-<h2 id="benefits">Benefits<a class="headerlink" href="#benefits" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Feature</th>
-<th>Container Dev</th>
-<th>Local Dev</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Setup Time</td>
-<td>5-10 minutes</td>
-<td>15-30 minutes</td>
-</tr>
-<tr>
-<td>Consistency</td>
-<td>✅ Identical everywhere</td>
-<td>❌ System dependent</td>
-</tr>
-<tr>
-<td>Dependencies</td>
-<td>✅ Isolated</td>
-<td>❌ Can conflict</td>
-</tr>
-<tr>
-<td>Cleanup</td>
-<td>✅ One command</td>
-<td>❌ Manual</td>
-</tr>
-<tr>
-<td>Hot Reload</td>
-<td>✅ Works</td>
-<td>✅ Works</td>
-</tr>
-<tr>
-<td>CI/CD Match</td>
-<td>✅ Same environment</td>
-<td>⚠️ May differ</td>
-</tr>
-</tbody>
-</table>
-<h2 id="advanced-usage">Advanced Usage<a class="headerlink" href="#advanced-usage" title="Permanent link">&para;</a></h2>
-<h3 id="run-a-specific-service">Run a specific service<a class="headerlink" href="#run-a-specific-service" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>podman-compose<span class="w"> </span>-f<span class="w"> </span>infra/compose/podman-compose.dev.yml<span class="w"> </span>up<span class="w"> </span>api
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>podman-compose<span class="w"> </span>-f<span class="w"> </span>infra/compose/podman-compose.dev.yml<span class="w"> </span>up<span class="w"> </span>frontend
-</span></code></pre></div>
-<h3 id="view-service-logs">View service logs<a class="headerlink" href="#view-service-logs" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>podman-compose<span class="w"> </span>-f<span class="w"> </span>infra/compose/podman-compose.dev.yml<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>api
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>podman-compose<span class="w"> </span>-f<span class="w"> </span>infra/compose/podman-compose.dev.yml<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>frontend
-</span></code></pre></div>
-<h3 id="check-resources">Check resources<a class="headerlink" href="#check-resources" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>podman<span class="w"> </span>stats
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>podman<span class="w"> </span>ps
-</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>podman<span class="w"> </span>images
-</span></code></pre></div>
-<h2 id="see-also">See Also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
+<h3 id="scripts"><code>scripts/</code><a class="headerlink" href="#scripts" title="Permanent link">&para;</a></h3>
+<p>This is the <strong>developer toolbox</strong>.</p>
 <ul>
-<li><a href="../DEVELOPMENT/">Development Guide</a> - Full development documentation</li>
-<li><a href="../TESTING/">Testing Guide</a> - Testing best practices</li>
-<li><a href="../API/">API Documentation</a> - API reference</li>
+<li><code>dev.sh</code> — start, stop, test, and inspect the local dev stack</li>
+<li><code>generate_reports.py</code> — build markdown reports from CI/test artifacts</li>
+<li><code>generate_sbom.sh</code> — software bill of materials generation</li>
 </ul>
+<h3 id="infra"><code>infra/</code><a class="headerlink" href="#infra" title="Permanent link">&para;</a></h3>
+<p>This is the <strong>deployment and container area</strong>.</p>
+<ul>
+<li><code>containers/</code> — production/dev/test container definitions</li>
+<li><code>compose/</code> — local orchestration files</li>
+<li><code>config/</code> — nginx and entrypoint configuration</li>
+</ul>
+<h3 id="docs"><code>docs/</code><a class="headerlink" href="#docs" title="Permanent link">&para;</a></h3>
+<p>This is the <strong>project documentation</strong>.</p>
+<p>Use it when you want explanations, not implementation details.</p>
+<h2 id="top-level-map">Top-Level Map<a class="headerlink" href="#top-level-map" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>msn-weather-wrapper/
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── src/msn_weather_wrapper/  # Backend/library code
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├── frontend/                 # React UI
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>├── tests/                    # Python tests
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>├── scripts/                  # Dev and automation scripts
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>├── infra/                    # Container and deployment config
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>├── docs/                     # Documentation
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>├── api.py                    # Local API entrypoint
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>├── dev.sh                    # Simple wrapper around scripts/dev.sh
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>└── pyproject.toml            # Python project config
+</span></code></pre></div>
+<h2 id="rule-of-thumb">Rule of Thumb<a class="headerlink" href="#rule-of-thumb" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>If you want to <strong>change behavior</strong>, start in <code>src/</code>.
+If you want to <strong>change UI</strong>, go to <code>frontend/</code>.
+If you want to <strong>understand intent</strong>, read <code>tests/</code> and <code>docs/</code>.</p>
+</blockquote>
 
 
 
@@ -2806,44 +2111,6 @@
       
         <footer class="md-footer">
   
-    
-      
-      <nav class="md-footer__inner md-grid" aria-label="Footer" >
-        
-          
-          <a href="../DEVELOPMENT/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Installation Guide">
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
-            </div>
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              <div class="md-ellipsis">
-                Installation Guide
-              </div>
-            </div>
-          </a>
-        
-        
-          
-          <a href="../MONITOR_DASHBOARD/" class="md-footer__link md-footer__link--next" aria-label="Next: DevSecOps Monitor">
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              <div class="md-ellipsis">
-                DevSecOps Monitor
-              </div>
-            </div>
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
-            </div>
-          </a>
-        
-      </nav>
     
   
   <div class="md-footer-meta md-typeset">

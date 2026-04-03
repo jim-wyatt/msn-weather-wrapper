@@ -3046,7 +3046,7 @@
 - <strong>Table</strong> (human-readable)</p>
 <h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
 <h3 id="generate-all-sboms">Generate All SBOMs<a class="headerlink" href="#generate-all-sboms" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>./tools/generate_sbom.sh
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>./scripts/generate_sbom.sh
 </span></code></pre></div>
 <p>This will:
 1. Check/install Syft automatically
@@ -3066,7 +3066,7 @@
 </span></code></pre></div>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
 <h3 id="automatic-installation">Automatic Installation<a class="headerlink" href="#automatic-installation" title="Permanent link">&para;</a></h3>
-<p>The <code>tools/generate_sbom.sh</code> script will automatically install Syft if not found.</p>
+<p>The <code>scripts/generate_sbom.sh</code> script will automatically install Syft if not found.</p>
 <h3 id="manual-installation">Manual Installation<a class="headerlink" href="#manual-installation" title="Permanent link">&para;</a></h3>
 <p><strong>macOS:</strong>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>brew<span class="w"> </span>install<span class="w"> </span>syft
@@ -3083,7 +3083,7 @@
 <h2 id="scripts">Scripts<a class="headerlink" href="#scripts" title="Permanent link">&para;</a></h2>
 <h3 id="1-generate_sbomsh-full-sbom-generation">1. <code>generate_sbom.sh</code> - Full SBOM Generation<a class="headerlink" href="#1-generate_sbomsh-full-sbom-generation" title="Permanent link">&para;</a></h3>
 <p>Complete SBOM generation with multiple formats and comprehensive analysis.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>./tools/generate_sbom.sh
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>./scripts/generate_sbom.sh
 </span></code></pre></div>
 <p><strong>Generates:</strong>
 - Unified container SBOMs (SPDX, CycloneDX, Table)
@@ -3122,7 +3122,7 @@
 <h3 id="1-vulnerability-scanning">1. Vulnerability Scanning<a class="headerlink" href="#1-vulnerability-scanning" title="Permanent link">&para;</a></h3>
 <p>Feed SBOMs into vulnerability scanners like Grype:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Generate SBOM</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>./tools/generate_sbom.sh
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>./scripts/generate_sbom.sh
 </span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
 </span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1"># Scan for vulnerabilities</span>
 </span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>grype<span class="w"> </span>sbom:sbom_output/api_sbom_spdx_*.json
@@ -3273,7 +3273,7 @@
 <h3 id="4-regular-vulnerability-scanning">4. Regular Vulnerability Scanning<a class="headerlink" href="#4-regular-vulnerability-scanning" title="Permanent link">&para;</a></h3>
 <p>Combine Syft with Grype for continuous vulnerability monitoring:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="c1"># Generate and scan</span>
-</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>./tools/generate_sbom.sh
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>./scripts/generate_sbom.sh
 </span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>grype<span class="w"> </span>sbom:sbom_output/container_sbom_spdx_*.json<span class="w"> </span>--fail-on<span class="w"> </span>high
 </span></code></pre></div>
 <h3 id="5-license-auditing">5. License Auditing<a class="headerlink" href="#5-license-auditing" title="Permanent link">&para;</a></h3>
@@ -3298,7 +3298,7 @@
 </span></code></pre></div>
 <h3 id="permission-denied">Permission Denied<a class="headerlink" href="#permission-denied" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="c1"># Make scripts executable</span>
-</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>chmod<span class="w"> </span>+x<span class="w"> </span>tools/generate_sbom.sh<span class="w"> </span>tools/generate_sbom_ci.sh
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>chmod<span class="w"> </span>+x<span class="w"> </span>scripts/generate_sbom.sh<span class="w"> </span>scripts/generate_sbom_ci.sh
 </span></code></pre></div>
 <h3 id="large-sbom-files">Large SBOM Files<a class="headerlink" href="#large-sbom-files" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="c1"># Compress SBOMs</span>

@@ -3496,7 +3496,7 @@ graph TB
 <p>Frontend E2E tests require Node.js 22+ (project standard) and run in a containerized environment.</p>
 <h4 id="containerized-testing">Containerized Testing<a class="headerlink" href="#containerized-testing" title="Permanent link">&para;</a></h4>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Build Playwright container</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>podman<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>Containerfile.playwright<span class="w"> </span>-t<span class="w"> </span>msn-weather-playwright:latest<span class="w"> </span>.
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>podman<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>infra/containers/Containerfile.playwright<span class="w"> </span>-t<span class="w"> </span>msn-weather-playwright:latest<span class="w"> </span>.
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Start frontend server</span>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>podman<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>frontend-srv<span class="w"> </span>--network<span class="w"> </span>test-net<span class="w"> </span>-p<span class="w"> </span><span class="m">5173</span>:5173<span class="w"> </span><span class="se">\</span>
@@ -3933,7 +3933,7 @@ graph TB
 </span></code></pre></div></p>
 <p><strong>Containerized Testing</strong> (Node version independent):
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Build Playwright test image</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>podman<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>Containerfile.playwright<span class="w"> </span>-t<span class="w"> </span>playwright-tests:latest<span class="w"> </span>.
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>podman<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>infra/containers/Containerfile.playwright<span class="w"> </span>-t<span class="w"> </span>playwright-tests:latest<span class="w"> </span>.
 </span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
 </span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># Start frontend dev server</span>
 </span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>podman-compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>frontend-srv
@@ -4147,7 +4147,7 @@ graph TB
 <h3 id="frontend-testing_1">Frontend Testing<a class="headerlink" href="#frontend-testing_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>Node.js Version</strong>: Vite 6.x uses Node 22+ as the project standard (host system has 18.19.1)</li>
-<li><strong>Solution</strong>: Use containerized testing with <code>Containerfile.playwright</code></li>
+<li><strong>Solution</strong>: Use containerized testing with <code>infra/containers/Containerfile.playwright</code></li>
 <li><strong>Visual Baselines</strong>: Not yet established (requires manual review and approval)</li>
 <li><strong>Impact</strong>: Visual regression tests will fail until baselines are updated</li>
 <li><strong>Action</strong>: Run <code>npm run test:e2e -- --update-snapshots</code> after manual verification</li>
