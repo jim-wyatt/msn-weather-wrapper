@@ -21,7 +21,7 @@ Reports are automatically generated during every CI/CD pipeline run:
 - **Generation Process**:
   1. CI pipeline runs tests, coverage analysis, and security scans
   2. Artifacts are collected from all pipeline jobs
-  3. `tools/generate_reports.py` processes artifacts into markdown
+  3. `scripts/generate_reports.py` processes artifacts into markdown
   4. Reports are deployed to GitHub Pages with updated timestamps
 - **Update Frequency**: Real-time (on every commit to main branch)
 - **Timestamp Format**: Each report includes generation timestamp at bottom

@@ -91,7 +91,7 @@ Frontend E2E tests require Node.js 22+ (project standard) and run in a container
 #### Containerized Testing
 ```bash
 # Build Playwright container
-podman build -f Containerfile.playwright -t msn-weather-playwright:latest .
+podman build -f infra/containers/Containerfile.playwright -t msn-weather-playwright:latest .
 
 # Start frontend server
 podman run -d --name frontend-srv --network test-net -p 5173:5173 \
@@ -453,7 +453,7 @@ npm run test:e2e -- --update-snapshots
 **Containerized Testing** (Node version independent):
 ```bash
 # Build Playwright test image
-podman build -f Containerfile.playwright -t playwright-tests:latest .
+podman build -f infra/containers/Containerfile.playwright -t playwright-tests:latest .
 
 # Start frontend dev server
 podman-compose up -d frontend-srv
@@ -698,7 +698,7 @@ When tests fail:
 
 ### Frontend Testing
 - **Node.js Version**: Vite 6.x uses Node 22+ as the project standard (host system has 18.19.1)
-  - **Solution**: Use containerized testing with `Containerfile.playwright`
+  - **Solution**: Use containerized testing with `infra/containers/Containerfile.playwright`
 - **Visual Baselines**: Not yet established (requires manual review and approval)
   - **Impact**: Visual regression tests will fail until baselines are updated
   - **Action**: Run `npm run test:e2e -- --update-snapshots` after manual verification

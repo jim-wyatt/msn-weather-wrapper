@@ -7,6 +7,73 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Modular FastAPI backend structure**
+  - New `src/msn_weather_wrapper/api/` package with `main.py`, `routers/`, `services.py`, `schemas.py`, and `config.py`
+  - Beginner-friendly backend and structure guides in `src/msn_weather_wrapper/api/README.md`, `docs/PROJECT_STRUCTURE.md`, and `infra/README.md`
+
+### Changed
+- **Backend framework and repo layout**
+  - Refactored the monolithic Flask API into a FastAPI-based structure while keeping `api.py` as a compatibility entrypoint
+  - Reorganized the repository to be easier to navigate: deployment assets now live under `infra/` and developer utilities under `scripts/`
+  - Updated container, workflow, and documentation references to match the new layout
+
+### Fixed
+- **Developer workflow and live parsing**
+  - Restored live MSN weather parsing with a more resilient fallback for the current upstream page structure
+  - Corrected compose/container paths after the repository cleanup and resolved editor diagnostics in the FastAPI test compatibility layer
+
+## [2.0.2] - 2026-04-02
+
+### Fixed
+- **Release automation reliability**
+  - Auto-versioning now reads the latest git tag correctly and avoids version-bump loops
+  - Addressed release workflow edge cases found during code review
+
+- **Container security hardening**
+  - Removed `gcc` and `supervisor` from the final production image to eliminate roughly 63 high-severity CVEs
+  - Reduced the runtime image footprint and simplified the final container stage
+
+### Changed
+- **Operational stability**
+  - Hardened the automated release path and production image configuration for safer deployments
+
+## [1.9.17] - 2026-04-02
+
+### Added
+- **Client and monitoring improvements**
+  - Async weather client support with retry logic and more granular exception handling
+  - Compact monitor/dashboard updates optimized for smaller terminal layouts
+  - Node.js 22 LTS adoption for monitoring and frontend tooling support
+
+### Changed
+- **Dependency and tooling refresh**
+  - Updated frontend/tooling dependencies across the React, Vite, and GitHub Actions ecosystem
+  - Refined container base-image choices and pinned versions to improve build stability and scan results
+  - Continued CI/CD maintenance across the 1.9.x line, including test filtering and release workflow cleanup
+
+### Fixed
+- **Compatibility and maintenance**
+  - TypeScript 6 compatibility for the existing frontend path mapping
+  - Vite 8 and `@vitejs/plugin-react` alignment issues
+  - Code scanning findings, failing tests, safety scanner command changes, broken docs links, and auto-version permission issues
+
+## [1.9.0] - 2025-12-05
+
+### Added
+- **Automated versioning and monitoring enhancements**
+  - PR-based auto-versioning and release flow improvements
+  - More compact CI/monitor output with better job-level visibility
+  - Broader documentation consolidation and navigation cleanup
+
+### Changed
+- **Platform and workflow maintenance**
+  - Container base images were refreshed and standardized during the 1.9.0 rollout
+  - Development and monitoring workflows were tuned for clearer output and easier maintenance
+
+### Fixed
+- Broken documentation links and protected-branch issues in the auto-version workflow
+
 ## [1.8.0] - 2025-12-04
 
 ### Added
@@ -247,4 +314,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-Last updated: December 2, 2025
+Last updated: April 3, 2026

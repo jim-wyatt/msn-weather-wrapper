@@ -17,7 +17,7 @@ Syft is a CLI tool and Go library for generating SBOMs from container images and
 ### Generate All SBOMs
 
 ```bash
-./tools/generate_sbom.sh
+./scripts/generate_sbom.sh
 ```
 
 This will:
@@ -44,7 +44,7 @@ cat sbom_output/frontend_sbom_table_*.txt
 
 ### Automatic Installation
 
-The `tools/generate_sbom.sh` script will automatically install Syft if not found.
+The `scripts/generate_sbom.sh` script will automatically install Syft if not found.
 
 ### Manual Installation
 
@@ -75,7 +75,7 @@ syft version
 Complete SBOM generation with multiple formats and comprehensive analysis.
 
 ```bash
-./tools/generate_sbom.sh
+./scripts/generate_sbom.sh
 ```
 
 **Generates:**
@@ -137,7 +137,7 @@ Feed SBOMs into vulnerability scanners like Grype:
 
 ```bash
 # Generate SBOM
-./tools/generate_sbom.sh
+./scripts/generate_sbom.sh
 
 # Scan for vulnerabilities
 grype sbom:sbom_output/api_sbom_spdx_*.json
@@ -341,7 +341,7 @@ Combine Syft with Grype for continuous vulnerability monitoring:
 
 ```bash
 # Generate and scan
-./tools/generate_sbom.sh
+./scripts/generate_sbom.sh
 grype sbom:sbom_output/container_sbom_spdx_*.json --fail-on high
 ```
 
@@ -380,7 +380,7 @@ podman images | grep msn-weather
 
 ```bash
 # Make scripts executable
-chmod +x tools/generate_sbom.sh tools/generate_sbom_ci.sh
+chmod +x scripts/generate_sbom.sh scripts/generate_sbom_ci.sh
 ```
 
 ### Large SBOM Files

@@ -23,8 +23,8 @@ nginx
 
 echo "nginx started"
 
-# Start gunicorn in the background
-gunicorn --bind "$GUNICORN_BIND" --workers "$GUNICORN_WORKERS" --timeout "$GUNICORN_TIMEOUT" api:app &
+# Start gunicorn with the ASGI worker in the background
+gunicorn -k uvicorn.workers.UvicornWorker --bind "$GUNICORN_BIND" --workers "$GUNICORN_WORKERS" --timeout "$GUNICORN_TIMEOUT" api:app &
 GUNICORN_PID=$!
 
 echo "gunicorn started (PID: $GUNICORN_PID)"

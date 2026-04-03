@@ -76,7 +76,7 @@ npm run dev
 
 #### Backend Changes
 1. Edit files in `src/msn_weather_wrapper/` or `api.py`
-2. Flask auto-reloads automatically
+2. FastAPI reloads automatically
 3. Test: `pytest tests/test_*.py`
 4. Check types: `mypy src/`
 5. Format: `ruff format .`
@@ -249,7 +249,7 @@ mkdocs gh-deploy   # Deploy to GitHub Pages
 ### Generate SBOM
 
 ```bash
-./tools/generate_sbom.sh
+./scripts/generate_sbom.sh
 cat sbom_output/SBOM_SUMMARY_*.md
 ```
 
@@ -269,7 +269,7 @@ cd frontend && npm update
 
 ### Architecture
 
-- **API Container**: Python 3.12 slim (Trixie), port 5000, Flask with hot reload
+- **API Container**: Python 3.12 slim (Trixie), port 5000, FastAPI with reload
 - **Frontend Container**: Node 22 Trixie slim, port 5173, Vite with HMR
 - **Volumes**: Source code mounted for hot reload
 
@@ -332,29 +332,20 @@ See the Contributing Guidelines section above for full guidelines.
 
 ```
 msn-weather-wrapper/
-├── src/msn_weather_wrapper/    # Python package
-│   ├── __init__.py             # Package exports
+├── src/msn_weather_wrapper/    # Backend/library code
+│   ├── api/                    # FastAPI app (main, routers, services, schemas)
 │   ├── client.py               # Weather client
 │   ├── models.py               # Pydantic models
+│   ├── exceptions.py           # Domain-specific errors
 │   └── py.typed                # Type marker
-├── tests/                      # Test suite
-│   ├── test_api.py             # API tests
-│   ├── test_client.py          # Client tests
-│   ├── test_models.py          # Model tests
-│   ├── test_security.py        # Security tests
-│   └── test_integration.py     # Integration tests
 ├── frontend/                   # React application
-│   ├── src/                    # TypeScript source
-│   │   ├── components/         # React components
-│   │   ├── data/               # City database
-│   │   ├── App.tsx             # Main app
-│   │   └── main.tsx            # Entry point
-│   └── tests/e2e/              # Playwright tests
-├── api.py                      # Flask REST API
-├── docs/                       # Documentation
-├── Containerfile               # Production container
-├── Containerfile.dev           # Dev container
-├── podman-compose.yml          # Production compose
+│   └── src/                    # UI source code
+├── tests/                      # Backend and integration tests
+├── scripts/                    # Dev and automation scripts
+├── infra/                      # Containers, compose files, and runtime config
+├── docs/                       # Documentation and guides
+├── api.py                      # Local API entrypoint
+├── dev.sh                      # Wrapper around scripts/dev.sh
 └── pyproject.toml              # Python config
 ```
 

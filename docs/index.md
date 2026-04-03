@@ -1,6 +1,6 @@
 # MSN Weather Wrapper Documentation
 
-Modern Python wrapper for MSN Weather with Flask API, React frontend, and production-ready containerized deployment.
+Modern Python wrapper for MSN Weather with a FastAPI backend, React frontend, and production-ready containerized deployment.
 
 [![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://img.shields.io/badge/tests-169%20passing-success)](TESTING.md)
@@ -75,7 +75,7 @@ Modern Python wrapper for MSN Weather with Flask API, React frontend, and produc
 | Feature | Description | Documentation |
 |---------|-------------|---------------|
 | 🐍 **Python Library** | Type-safe weather client | [Usage](API.md) |
-| 🌐 **REST API** | Flask 3.1+ with validation | [API Docs](API.md) |
+| 🌐 **REST API** | FastAPI with typed validation and OpenAPI docs | [API Docs](API.md) |
 | 📖 **Swagger UI** | Interactive API documentation | [Interactive Docs](API.md#interactive-api-documentation) |
 | ⚛️ **React Frontend** | React 19 + TypeScript 5.7 | [Frontend](API.md) |
 | 🐳 **Containerized** | Podman deployment | [Container Dev](CONTAINER_DEV_SETUP.md) |
@@ -87,7 +87,7 @@ Modern Python wrapper for MSN Weather with Flask API, React frontend, and produc
 
 ## Technology Stack
 
-- **Backend**: Python 3.10+, Flask 3.1+, Flasgger (Swagger/OpenAPI), Pydantic 2.12+, Gunicorn 23.0+
+- **Backend**: Python 3.10+, FastAPI, Pydantic 2.12+, Uvicorn, Gunicorn 23.0+
 - **Frontend**: React 19.2, Vite 7.2, TypeScript 5.7+
 - **Testing**: pytest 8.0+, Playwright, 168 tests
 - **Quality**: ruff 0.14+, mypy 1.19+, pre-commit hooks

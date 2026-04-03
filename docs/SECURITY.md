@@ -246,7 +246,7 @@ pytest --cov=src --cov-report=html
 ### SBOM Generation
 ```bash
 # Generate Software Bill of Materials
-./tools/generate_sbom.sh
+./scripts/generate_sbom.sh
 
 # View SBOM summary
 cat sbom_output/SBOM_SUMMARY_*.md

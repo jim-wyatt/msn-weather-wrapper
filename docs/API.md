@@ -1,6 +1,6 @@
 # MSN Weather Wrapper API
 
-Flask REST API for fetching weather data from MSN Weather.
+FastAPI-based REST service for fetching weather data from MSN Weather.
 
 ## API Request Flow
 
@@ -421,9 +421,10 @@ pytest tests/test_security.py -v
 # Session secret (required for production)
 export SESSION_SECRET_KEY='your-secret-key-here'
 
-# Flask configuration
-export FLASK_ENV=production
-export FLASK_DEBUG=0
+# API configuration
+export APP_ENV=production
+export APP_DEBUG=0
+# Legacy `FLASK_*` variables are still accepted for compatibility
 ```
 
 ### Security Considerations
@@ -456,7 +457,7 @@ Both demonstrate how to integrate the API with a Vite + React frontend. Features
 - Input validation and URL encoding
 - Clean UI with weather display
 
-Simply copy the component into your React project and import it after starting the Flask API server.
+Simply copy the component into your React project and import it after starting the FastAPI server.
 
 ## Complete Endpoint Summary
 
@@ -582,18 +583,18 @@ When rate limited (429 response):
 import time
 import requests
 
+
 def get_weather_with_retry(city, country, max_retries=3):
     for attempt in range(max_retries):
         response = requests.get(
-            "http://localhost:5000/api/weather",
-            params={"city": city, "country": country}
+            "http://localhost:5000/api/weather", params={"city": city, "country": country}
         )
 
         if response.status_code == 200:
             return response.json()
 
         if response.status_code == 429:
-            reset_time = int(response.headers.get('X-RateLimit-Reset', 0))
+            reset_time = int(response.headers.get("X-RateLimit-Reset", 0))
             wait_time = max(reset_time - time.time(), 0) + 1
             print(f"Rate limited. Waiting {wait_time}s...")
             time.sleep(wait_time)
@@ -664,7 +665,7 @@ Access-Control-Max-Age: 3600
 - ✅ Dynamic origin handling (no wildcards in production)
 - ✅ Credentials support for session-based authentication
 - ✅ Preflight request (OPTIONS) handling
-- ✅ Both Flask (dev) and Nginx (production) CORS support
+- ✅ Both FastAPI (dev) and Nginx (production) CORS support
 
 **Environment Variables:**
 
@@ -679,7 +680,7 @@ CORS_ORIGINS=https://app1.com,https://app2.com
 CORS_ORIGINS=*
 ```
 
-**Production Deployment:** When using the containerized deployment, Nginx automatically handles CORS headers at the proxy level while preserving Flask's CORS configuration for API-level control.
+**Production Deployment:** When using the containerized deployment, Nginx automatically handles CORS headers at the proxy level while preserving the FastAPI app's CORS configuration for API-level control.
 
 ## Logging
 

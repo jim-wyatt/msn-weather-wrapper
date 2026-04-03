@@ -118,54 +118,142 @@ class BaseWeatherClient:
                         continue
 
                     weather_data = data["WeatherData"]
-                    if "_@STATE@_" not in weather_data:
+                    if not isinstance(weather_data, dict) or "_@STATE@_" not in weather_data:
                         continue
 
                     state = weather_data["_@STATE@_"]
-                    if "forecast" not in state or not isinstance(state["forecast"], list):
+                    if not isinstance(state, dict):
                         continue
 
-                    if len(state["forecast"]) == 0:
+                    current: dict[str, object] | None = None
+
+                    current_condition = state.get("currentCondition")
+                    if isinstance(current_condition, dict):
+                        current = current_condition
+                    else:
+                        forecast = state.get("forecast")
+                        if isinstance(forecast, list) and forecast:
+                            first_forecast = forecast[0]
+                            if isinstance(first_forecast, dict):
+                                hourly = first_forecast.get("hourly")
+                                if isinstance(hourly, list) and hourly:
+                                    first_hourly = hourly[0]
+                                    if isinstance(first_hourly, dict):
+                                        current = first_hourly
+
+                    if not current:
                         continue
 
-                    forecast = state["forecast"][0]
-                    if "hourly" not in forecast or not isinstance(forecast["hourly"], list):
-                        continue
+                    current_raw = current.get("currentRaw")
+                    current_raw_data = current_raw if isinstance(current_raw, dict) else {}
 
-                    if len(forecast["hourly"]) == 0:
-                        continue
+                    temp_value = current.get(
+                        "currentTemperature",
+                        current.get(
+                            "temperature",
+                            current.get("temp", current_raw_data.get("temp", 0)),
+                        ),
+                    )
+                    try:
+                        temperature = float(str(temp_value).replace("°", "").strip())
+                    except (TypeError, ValueError):
+                        temperature = 0.0
 
-                    # Get the first hourly entry (current conditions)
-                    current = forecast["hourly"][0]
+                    degree_setting = str(
+                        current.get("degreeSetting", state.get("unit", "F"))
+                    ).upper()
+                    if "F" in degree_setting:
+                        temperature = round((temperature - 32) * 5 / 9, 1)
+                    else:
+                        temperature = round(temperature, 1)
 
-                    # Extract weather information
-                    temp_f = float(current.get("temperature", 0))
-                    # Convert Fahrenheit to Celsius
-                    temp_c = round((temp_f - 32) * 5 / 9, 1)
+                    condition = (
+                        current.get("shortCap")
+                        or current.get("cap")
+                        or current.get("summary")
+                        or current_raw_data.get("cap")
+                        or current_raw_data.get("pvdrCap")
+                    )
+                    if not condition:
+                        rich_caps = current.get("richCaps")
+                        if isinstance(rich_caps, list) and rich_caps:
+                            condition = rich_caps[0]
+                    condition_text = str(condition or "Unknown")
 
-                    # Get condition from cap or symbol
-                    condition = current.get("cap", current.get("summary", "Unknown"))
+                    humidity_raw = str(current.get("humidity", current_raw_data.get("rh", "50")))
+                    humidity_match = re.search(r"(\d+)", humidity_raw)
+                    humidity = int(humidity_match.group(1)) if humidity_match else 50
 
-                    # Get humidity (remove % sign if present)
-                    humidity_str = str(current.get("humidity", "50"))
-                    humidity = int(humidity_str.rstrip("%"))
-
-                    # Get wind speed (in mph, convert to km/h)
-                    wind_speed_str = str(current.get("windSpeed", "0"))
-                    wind_mph = float(wind_speed_str)
-                    wind_kmh = round(wind_mph * 1.60934, 1)
+                    wind_raw = str(
+                        current.get(
+                            "windSpeedNumber",
+                            current.get("windSpeed", current_raw_data.get("windSpd", "0")),
+                        )
+                    )
+                    wind_match = re.search(r"(-?\d+\.?\d*)", wind_raw)
+                    wind_value = float(wind_match.group(1)) if wind_match else 0.0
+                    wind_units = str(
+                        current.get(
+                            "windSpeedUnit",
+                            current.get("unitsRaw", current.get("windSpeed", "")),
+                        )
+                    ).lower()
+                    wind_speed = (
+                        round(wind_value * 1.60934, 1)
+                        if "mph" in wind_units
+                        else round(wind_value, 1)
+                    )
 
                     return {
-                        "temperature": temp_c,
-                        "condition": condition,
+                        "temperature": temperature,
+                        "condition": condition_text,
                         "humidity": humidity,
-                        "wind_speed": wind_kmh,
+                        "wind_speed": wind_speed,
                     }
 
                 except (json.JSONDecodeError, KeyError, ValueError, AttributeError, TypeError):
                     continue
 
-            return None
+            if '"WeatherData"' not in html:
+                return None
+
+            temp_match = re.search(
+                r'"(?:currentTemperature|temperature|temp)"\s*:\s*"?(-?\d+\.?\d*)',
+                html,
+            )
+            condition_match = re.search(
+                r'"(?:shortCap|cap|summary|pvdrCap)"\s*:\s*"([^\"]+)"',
+                html,
+            )
+            humidity_match = re.search(r'"(?:humidity|rh)"\s*:\s*"?(\d+)', html)
+            wind_match = re.search(
+                r'"(?:windSpeedNumber|windSpd|windSpeed)"\s*:\s*"?(-?\d+\.?\d*)',
+                html,
+            )
+
+            if not any((temp_match, condition_match, humidity_match, wind_match)):
+                return None
+
+            temperature = float(temp_match.group(1)) if temp_match else 0.0
+            if re.search(r'"degreeSetting"\s*:\s*"°?F"', html, re.IGNORECASE):
+                temperature = round((temperature - 32) * 5 / 9, 1)
+            else:
+                temperature = round(temperature, 1)
+
+            humidity = int(humidity_match.group(1)) if humidity_match else 50
+            wind_value = float(wind_match.group(1)) if wind_match else 0.0
+            wind_speed = (
+                round(wind_value * 1.60934, 1)
+                if re.search(r"mph", html, re.IGNORECASE)
+                else round(wind_value, 1)
+            )
+
+            return {
+                "temperature": temperature,
+                "condition": condition_match.group(1) if condition_match else "Unknown",
+                "humidity": humidity,
+                "wind_speed": wind_speed,
+            }
 
         except Exception:
             return None
@@ -192,6 +280,23 @@ class BaseWeatherClient:
                     if "°F" in text or "F" in text:
                         temp = (temp - 32) * 5 / 9
                     return round(temp, 1)
+
+        page_text = " ".join(soup.get_text(" ", strip=True).split())
+        text_patterns = [
+            r"Current weather.*?(-?\d+\.?\d*)\s*°\s*([CF])",
+            r"Current weather.*?(-?\d+\.?\d*)\s*°",
+        ]
+
+        for pattern in text_patterns:
+            match = re.search(pattern, page_text, re.IGNORECASE)
+            if not match:
+                continue
+
+            temp = float(match.group(1))
+            unit = match.group(2).upper() if match.lastindex and match.lastindex > 1 else ""
+            if unit == "F":
+                temp = (temp - 32) * 5 / 9
+            return round(temp, 1)
 
         raise ValueError("Could not extract temperature from page")
 
@@ -327,9 +432,9 @@ class WeatherClient(BaseWeatherClient):
         """
         super().__init__(timeout)
         self.session = requests.Session()
-        self.session.headers.update(
-            {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
-        )
+        self.session.headers.update({
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        })
 
     @retry(  # type: ignore[misc]
         stop=stop_after_attempt(3),

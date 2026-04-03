@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+COMPOSE_FILE="$REPO_ROOT/infra/compose/podman-compose.yml"
+cd "$REPO_ROOT"
+
 echo "=================================================="
 echo "MSN Weather Wrapper - Deployment Test Script"
 echo "=================================================="
@@ -20,7 +25,7 @@ cleanup() {
     echo -e "${BLUE}Cleaning up...${NC}"
 
     # Stop and remove containers
-    podman-compose down 2>/dev/null || true
+    podman-compose -f "$COMPOSE_FILE" down 2>/dev/null || true
 
     # Remove generated test artifacts
     rm -rf htmlcov/ .coverage .pytest_cache/__pycache__ 2>/dev/null || true
@@ -56,7 +61,7 @@ echo ""
 
 # Clean up existing containers
 echo -e "${BLUE}[2/8] Cleaning up existing containers...${NC}"
-podman-compose down 2>/dev/null || true
+podman-compose -f "$COMPOSE_FILE" down 2>/dev/null || true
 echo -e "${GREEN}✓ Containers cleaned${NC}"
 echo ""
 
@@ -80,13 +85,13 @@ echo ""
 
 # Build containers
 echo -e "${BLUE}[5/8] Building containers (this may take a few minutes)...${NC}"
-podman-compose build --no-cache
+podman-compose -f "$COMPOSE_FILE" build --no-cache
 echo -e "${GREEN}✓ Containers built${NC}"
 echo ""
 
 # Start containers
 echo -e "${BLUE}[6/8] Starting containers...${NC}"
-podman-compose up -d
+podman-compose -f "$COMPOSE_FILE" up -d
 echo -e "${GREEN}✓ Containers started${NC}"
 echo ""
 
@@ -143,10 +148,10 @@ echo "  - Application: http://localhost:8080"
 echo "  - API:         http://localhost:8080/api/"
 echo ""
 echo "To view logs:"
-echo "  podman-compose logs -f"
+echo "  podman-compose -f infra/compose/podman-compose.yml logs -f"
 echo ""
 echo "To stop services:"
-echo "  podman-compose down"
+echo "  podman-compose -f infra/compose/podman-compose.yml down"
 echo ""
 
 # Exit with test result code

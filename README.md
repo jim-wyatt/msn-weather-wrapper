@@ -1,6 +1,6 @@
 # MSN Weather Wrapper
 
-> A modern, production-ready Python wrapper for MSN Weather with Flask REST API and React frontend.
+> A modern, production-ready Python wrapper for MSN Weather with a FastAPI backend and React frontend.
 
 [![CI/CD Pipeline](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/ci.yml/badge.svg)](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/ci.yml)
 [![PyPI version](https://img.shields.io/pypi/v/msn-weather-wrapper.svg)](https://pypi.org/project/msn-weather-wrapper/)
@@ -18,13 +18,13 @@
 MSN Weather Wrapper is a comprehensive weather data solution featuring:
 
 - **Python Library** - Type-safe weather client with Pydantic models
-- **REST API** - Production-ready Flask API with OpenAPI/Swagger docs
+- **REST API** - Production-ready FastAPI service with built-in OpenAPI docs
 - **Web Frontend** - Modern React 19 + TypeScript 5.7+ with Vite 7
-- **Containerized** - Podman/Docker deployment with Gunicorn & Nginx
+- **Containerized** - Podman/Docker deployment with Gunicorn, Uvicorn workers, and Nginx
 
 **Technology Stack:**
 
-- **Backend**: Python 3.10+, Flask 3.1+, Pydantic 2.12+, Flasgger, Gunicorn 23.0+
+- **Backend**: Python 3.10+, FastAPI 0.115+, Pydantic 2.12+, Uvicorn, Gunicorn 23.0+
 - **Frontend**: React 19.2, Vite 7.2, TypeScript 5.7+
 - **Testing**: pytest 8.0+, Playwright, 168 tests (128 backend, 40 frontend E2E) with 97% coverage
 - **Quality**: ruff 0.14+, mypy 1.19+, pre-commit hooks
@@ -69,6 +69,17 @@ with WeatherClient() as client:
 # API: http://localhost:5000
 # Health: http://localhost:5000/api/v1/health
 ```
+
+### 🧭 Start Here If You're New
+
+If you're learning the codebase, explore it in this order:
+
+1. `src/msn_weather_wrapper/` — backend logic and the FastAPI app
+2. `frontend/` — the React UI
+3. `tests/` — examples of expected behavior
+4. `scripts/` — helper commands for setup, reports, and deployment tasks
+
+> A detailed walkthrough now lives in `docs/PROJECT_STRUCTURE.md`.
 
 ---
 
@@ -136,7 +147,7 @@ with WeatherClient() as client:
 python api.py
 
 # Production
-gunicorn --bind 0.0.0.0:5000 --workers 4 --timeout 120 api:app
+gunicorn -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:5000 --workers 4 --timeout 120 api:app
 
 # GET request
 curl "http://localhost:5000/api/weather?city=London&country=UK"
@@ -195,7 +206,7 @@ podman build -t msn-weather-wrapper .
 podman run -p 8080:80 msn-weather-wrapper
 ```
 
-**Architecture:** Unified container (Python + Node.js), Nginx (reverse proxy), Gunicorn WSGI (4 workers), Supervisor (process manager), Kubernetes-ready health checks
+**Architecture:** Unified container (Python + Node.js), Nginx reverse proxy, Gunicorn with Uvicorn workers, and Kubernetes-ready health checks
 
 ---
 
@@ -217,13 +228,19 @@ podman run -p 8080:80 msn-weather-wrapper
 
 ```text
 msn-weather-wrapper/
-├── src/msn_weather_wrapper/    # Python package
-├── tests/                      # Test suite (168 tests: 128 backend + 40 frontend E2E, 97% coverage)
+├── src/msn_weather_wrapper/
+│   ├── api/                    # FastAPI app (main, routers, services, schemas)
+│   ├── client.py               # Core MSN weather client
+│   ├── models.py               # Shared Pydantic models
+│   └── exceptions.py           # Domain exceptions
 ├── frontend/                   # React application
-├── api.py                      # Flask REST API with Swagger
-├── docs/                       # Documentation
-├── Containerfile               # Production container
-└── pyproject.toml              # Python config
+├── tests/                      # Backend and integration tests
+├── scripts/                    # Dev, reporting, and deployment helpers
+├── infra/                      # Containers, compose files, and runtime config
+├── docs/                       # Docs and beginner walkthroughs
+├── api.py                      # Local API entrypoint
+├── dev.sh                      # Thin wrapper around `scripts/dev.sh`
+└── pyproject.toml              # Python project configuration
 ```
 
 ---
