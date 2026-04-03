@@ -54,7 +54,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Run Ruff format check
-        run: ruff format --check . --output-format=github
+        run: ruff format --check . --preview --output-format=github
 
       - name: Run Ruff linting
         run: ruff check . --output-format=github

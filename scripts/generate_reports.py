@@ -60,14 +60,12 @@ def parse_junit_xml(xml_path: Path) -> dict[str, Any]:
 
         test_cases = []
         for testcase in root.findall(".//testcase"):
-            test_cases.append(
-                {
-                    "name": testcase.get("name"),
-                    "classname": testcase.get("classname"),
-                    "time": float(testcase.get("time", 0)),
-                    "status": "failed" if testcase.find("failure") is not None else "passed",
-                }
-            )
+            test_cases.append({
+                "name": testcase.get("name"),
+                "classname": testcase.get("classname"),
+                "time": float(testcase.get("time", 0)),
+                "status": "failed" if testcase.find("failure") is not None else "passed",
+            })
 
         return {
             "total": total,
@@ -574,9 +572,9 @@ def parse_grype_json(json_path: Path) -> dict[str, Any]:
 
         matches = data.get("matches", [])
 
-        critical = len(
-            [m for m in matches if m.get("vulnerability", {}).get("severity") == "Critical"]
-        )
+        critical = len([
+            m for m in matches if m.get("vulnerability", {}).get("severity") == "Critical"
+        ])
         high = len([m for m in matches if m.get("vulnerability", {}).get("severity") == "High"])
         medium = len([m for m in matches if m.get("vulnerability", {}).get("severity") == "Medium"])
 

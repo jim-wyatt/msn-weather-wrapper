@@ -583,18 +583,18 @@ When rate limited (429 response):
 import time
 import requests
 
+
 def get_weather_with_retry(city, country, max_retries=3):
     for attempt in range(max_retries):
         response = requests.get(
-            "http://localhost:5000/api/weather",
-            params={"city": city, "country": country}
+            "http://localhost:5000/api/weather", params={"city": city, "country": country}
         )
 
         if response.status_code == 200:
             return response.json()
 
         if response.status_code == 429:
-            reset_time = int(response.headers.get('X-RateLimit-Reset', 0))
+            reset_time = int(response.headers.get("X-RateLimit-Reset", 0))
             wait_time = max(reset_time - time.time(), 0) + 1
             print(f"Rate limited. Waiting {wait_time}s...")
             time.sleep(wait_time)

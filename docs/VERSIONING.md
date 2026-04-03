@@ -140,12 +140,13 @@ Increment when making **breaking changes**:
 
 ```python
 # Before (v1.x.x)
-@app.route('/weather/<city>')
+@app.route("/weather/<city>")
 def get_weather(city):
     return {"city": city, "temp": 20}
 
+
 # After (v2.0.0) - Breaking change: response format changed
-@app.route('/weather/<city>')
+@app.route("/weather/<city>")
 def get_weather(city):
     return {"location": {"name": city}, "current": {"temperature": 20}}
 ```
@@ -165,8 +166,8 @@ Increment when adding **new features** (backward compatible):
 
 ```python
 # v1.1.0 - Added new optional parameter
-@app.route('/weather/<city>')
-def get_weather(city, units='metric'):  # New optional parameter
+@app.route("/weather/<city>")
+def get_weather(city, units="metric"):  # New optional parameter
     return {"city": city, "temp": 20, "units": units}
 ```
 
@@ -184,7 +185,7 @@ Increment when fixing **bugs** (backward compatible):
 
 ```python
 # v1.0.1 - Bug fix
-@app.route('/weather/<city>')
+@app.route("/weather/<city>")
 def get_weather(city):
     city = city.strip()  # Fix: handle whitespace in city names
     return {"city": city, "temp": 20}

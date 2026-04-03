@@ -90,11 +90,13 @@ To add performance benchmarks:
 import pytest
 from msn_weather_wrapper.client import WeatherClient
 
+
 @pytest.mark.benchmark(group="client")
 def test_client_initialization_benchmark(benchmark):
     """Benchmark client initialization."""
     result = benchmark(WeatherClient)
     assert result is not None
+
 
 @pytest.mark.benchmark(group="api")
 def test_weather_fetch_benchmark(benchmark):

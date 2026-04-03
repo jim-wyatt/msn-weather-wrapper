@@ -244,7 +244,7 @@ class BaseWeatherClient:
             wind_value = float(wind_match.group(1)) if wind_match else 0.0
             wind_speed = (
                 round(wind_value * 1.60934, 1)
-                if re.search(r'mph', html, re.IGNORECASE)
+                if re.search(r"mph", html, re.IGNORECASE)
                 else round(wind_value, 1)
             )
 
@@ -432,9 +432,9 @@ class WeatherClient(BaseWeatherClient):
         """
         super().__init__(timeout)
         self.session = requests.Session()
-        self.session.headers.update(
-            {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
-        )
+        self.session.headers.update({
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        })
 
     @retry(  # type: ignore[misc]
         stop=stop_after_attempt(3),
