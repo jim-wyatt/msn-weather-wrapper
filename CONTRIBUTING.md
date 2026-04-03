@@ -343,10 +343,10 @@ Any other relevant information
 pip install -U -e ".[dev]"
 
 # Generate SBOM
-./tools/generate_sbom.sh
+./scripts/generate_sbom.sh
 
 # Test deployment
-./tools/test_deployment.sh
+./scripts/test_deployment.sh
 
 # Build documentation locally
 mkdocs serve

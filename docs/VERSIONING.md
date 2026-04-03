@@ -363,8 +363,8 @@ python -m twine upload --repository testpypi dist/*
 
 **Check:**
 
-1. Does the Containerfile exist?
-2. Are there syntax errors in the Containerfile?
+1. Does the infra/containers/Containerfile exist?
+2. Are there syntax errors in the infra/containers/Containerfile?
 3. Check the Docker workflow logs for details
 
 ## Best Practices

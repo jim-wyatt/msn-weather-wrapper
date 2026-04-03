@@ -81,35 +81,35 @@ jobs:
 
       - name: Generate test report
         run: |
-          python tools/generate_reports.py --type test \
+          python scripts/generate_reports.py --type test \
             --input artifacts/tests/ \
             --output ${{ env.REPORTS_DIR }}/test-report.md
         continue-on-error: true
 
       - name: Generate coverage report
         run: |
-          python tools/generate_reports.py --type coverage \
+          python scripts/generate_reports.py --type coverage \
             --input artifacts/coverage/ \
             --output ${{ env.REPORTS_DIR }}/coverage-report.md
         continue-on-error: true
 
       - name: Generate security report
         run: |
-          python tools/generate_reports.py --type security \
+          python scripts/generate_reports.py --type security \
             --input artifacts/security/ \
             --output ${{ env.REPORTS_DIR }}/security-report.md
         continue-on-error: true
 
       - name: Generate license report
         run: |
-          python tools/generate_reports.py --type license \
+          python scripts/generate_reports.py --type license \
             --input artifacts/security/ \
             --output ${{ env.REPORTS_DIR }}/license-report.md
         continue-on-error: true
 
       - name: Generate CI/CD summary
         run: |
-          python tools/generate_reports.py --type cicd \
+          python scripts/generate_reports.py --type cicd \
             --output ${{ env.REPORTS_DIR }}/ci-cd.md
         continue-on-error: true
 
@@ -132,7 +132,7 @@ jobs:
 
       - name: Generate performance report
         run: |
-          python tools/generate_reports.py --type performance \
+          python scripts/generate_reports.py --type performance \
             --input artifacts/performance/ \
             --output ${{ env.REPORTS_DIR }}/performance-report.md
         continue-on-error: true

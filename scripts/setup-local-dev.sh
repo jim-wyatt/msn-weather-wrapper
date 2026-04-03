@@ -13,7 +13,7 @@ for arg in "$@"; do
   esac
 done
 
-# Resolve repo root (script is in tools/)
+# Resolve repo root (script is in scripts/)
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 

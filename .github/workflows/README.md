@@ -41,7 +41,7 @@ This directory contains the GitHub Actions workflows for automated testing, buil
 **Jobs:**
 
 1. **build-and-push** - Builds multi-platform unified Podman image (amd64/arm64)
-   - Unified image: Built from root Containerfile (includes API + Frontend + Nginx)
+   - Unified image: Built from root infra/containers/Containerfile (includes API + Frontend + Nginx)
    - Pushes to GitHub Container Registry (ghcr.io)
    - Generates SBOM for image
    - Tags: `latest`, `sha-{sha}`, version tags
@@ -214,7 +214,7 @@ gh action-update --dry-run
 ### Troubleshooting
 
 **Podman container build failures:**
-- Check Containerfile syntax
+- Check infra/containers/Containerfile syntax
 - Verify base image availability (python:3.12-slim-trixie, node:22-trixie-slim)
 - Review multi-stage build logs in Actions
 - Ensure frontend build completes successfully

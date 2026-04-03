@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "msn-weather-wrapper"
 version = "2.0.2"
-description = "A production-ready Python wrapper for MSN Weather with automatic versioning and CI/CD"
+description = "A production-ready Python wrapper for MSN Weather with a FastAPI backend and CI/CD"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
@@ -26,11 +26,10 @@ dependencies = [
     "pydantic>=2.12.0",
     "beautifulsoup4>=4.14.0",
     "lxml>=6.0.0",
-    "flask>=3.1.0",
-    "flask-cors>=6.0.0",
-    "flask-limiter>=4.0.0",
-    "flasgger>=0.9.7",
+    "fastapi>=0.115.0",
+    "uvicorn>=0.34.0",
     "gunicorn>=23.0.0",
+    "itsdangerous>=2.2.0",
     "structlog>=24.1.0",
     "geopy>=2.4.0",
     "httpx>=0.28.0",

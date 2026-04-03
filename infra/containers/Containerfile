@@ -1,4 +1,4 @@
-# Multi-stage Dockerfile - Unified Flask API + React Frontend
+# Multi-stage Dockerfile - Unified FastAPI + React Frontend
 # Stage 1: Build React frontend
 FROM node:lts-trixie-slim@sha256:9ad7e7db423b2ca7ddcc01568da872701ef6171505bd823978736247885c7eb4 AS frontend-builder
 
@@ -61,10 +61,10 @@ COPY api.py .
 COPY --from=frontend-builder /frontend/dist /usr/share/nginx/html
 
 # Copy nginx configuration
-COPY config/nginx.conf /etc/nginx/sites-available/default
+COPY infra/config/nginx.conf /etc/nginx/sites-available/default
 
 # Copy and enable the entrypoint script
-COPY config/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY infra/config/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Create log directories for nginx

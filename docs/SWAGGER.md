@@ -169,7 +169,7 @@ OpenAPI template includes:
 
 ### Swagger UI Not Loading
 ```bash
-# Check if Flask is running
+# Check if the API is running
 curl http://localhost:5000/api/health
 
 # Verify Swagger route
