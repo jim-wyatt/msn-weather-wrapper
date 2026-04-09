@@ -121,7 +121,7 @@ jobs:
           pycobertura show --format markdown coverage.xml > coverage-report.md || echo "Coverage: See HTML report" > coverage-report.md
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           files: ./coverage.xml
           flags: unittests
@@ -155,7 +155,7 @@ jobs:
         uses: docker/setup-buildx-action@v3.12.0
 
       - name: Build container image for testing
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: ./infra/containers/Containerfile
