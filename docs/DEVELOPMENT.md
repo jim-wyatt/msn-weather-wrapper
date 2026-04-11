@@ -21,7 +21,7 @@ cd msn-weather-wrapper
 ./dev.sh start
 
 # Access services:
-# - Frontend: http://localhost:5173 (Vite dev server with HMR)
+# - Frontend: http://localhost:3000 (Next.js dev server with HMR)
 # - Backend API: http://localhost:5000
 # - Health Check: http://localhost:5000/api/v1/health
 ```
@@ -82,8 +82,8 @@ npm run dev
 5. Format: `ruff format .`
 
 #### Frontend Changes
-1. Edit files in `frontend/src/`
-2. Vite HMR updates instantly
+1. Edit files in `frontend/app/`
+2. Next.js HMR updates instantly
 3. Test: `npm run test:e2e`
 4. Type check: `npm run type-check`
 5. Build: `npm run build`
@@ -183,8 +183,8 @@ pytest tests/test_integration.py -v
 
 ### Frontend Feature
 
-1. **Create component** in `frontend/src/components/`
-2. **Add types** in `frontend/src/types.ts`
+1. **Create component** in `frontend/app/components/`
+2. **Add types** in `frontend/app/types.ts`
 3. **Add E2E test** in `frontend/tests/e2e/`
 4. **Update styles** as needed
 
@@ -270,7 +270,7 @@ cd frontend && npm update
 ### Architecture
 
 - **API Container**: Python 3.12 slim (Trixie), port 5000, FastAPI with reload
-- **Frontend Container**: Node 22 Trixie slim, port 5173, Vite with HMR
+- **Frontend Container**: Node 22 Trixie slim, port 3000, Next.js dev server with HMR
 - **Volumes**: Source code mounted for hot reload
 
 ### Environment Variables
@@ -338,8 +338,8 @@ msn-weather-wrapper/
 │   ├── models.py               # Pydantic models
 │   ├── exceptions.py           # Domain-specific errors
 │   └── py.typed                # Type marker
-├── frontend/                   # React application
-│   └── src/                    # UI source code
+├── frontend/                   # Next.js application
+│   └── app/                    # App Router source (layout, page, components, data)
 ├── tests/                      # Backend and integration tests
 ├── scripts/                    # Dev and automation scripts
 ├── infra/                      # Containers, compose files, and runtime config
