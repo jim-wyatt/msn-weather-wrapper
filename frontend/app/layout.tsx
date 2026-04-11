@@ -4,9 +4,9 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'MSN Weather Wrapper - Real-time Weather Data',
   description:
-    'A modern, production-ready Python wrapper for MSN Weather with React frontend. Get weather data for 463+ cities worldwide with autocomplete and geolocation support.',
+    'A modern, production-ready Python wrapper for MSN Weather with Next.js frontend. Get weather data for 463+ cities worldwide with autocomplete and geolocation support.',
   keywords:
-    'weather, MSN Weather, weather API, Python, React, Next.js, weather data, temperature, humidity, wind speed',
+    'weather, MSN Weather, weather API, Python, Next.js, React, weather data, temperature, humidity, wind speed',
   authors: [{ name: 'Jim Wyatt' }],
   robots: 'index, follow',
   openGraph: {
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     url: 'https://jim-wyatt.github.io/msn-weather-wrapper/',
     title: 'MSN Weather Wrapper - Real-time Weather Data',
     description:
-      'A modern, production-ready Python wrapper for MSN Weather with React frontend. Get weather data for 463+ cities worldwide.',
+      'A modern, production-ready Python wrapper for MSN Weather with Next.js frontend. Get weather data for 463+ cities worldwide.',
     images: ['https://jim-wyatt.github.io/msn-weather-wrapper/og-image.png'],
   },
   twitter: {
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     site: 'https://jim-wyatt.github.io/msn-weather-wrapper/',
     title: 'MSN Weather Wrapper - Real-time Weather Data',
     description:
-      'A modern, production-ready Python wrapper for MSN Weather with React frontend. Get weather data for 463+ cities worldwide.',
+      'A modern, production-ready Python wrapper for MSN Weather with Next.js frontend. Get weather data for 463+ cities worldwide.',
     images: ['https://jim-wyatt.github.io/msn-weather-wrapper/og-image.png'],
   },
   icons: {
