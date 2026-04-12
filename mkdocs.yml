@@ -1,5 +1,5 @@
 site_name: MSN Weather Wrapper
-site_description: Modern Python wrapper for MSN Weather with Flask API and React frontend
+site_description: Modern Python wrapper for MSN Weather with FastAPI and Next.js frontend
 site_author: Jim Wyatt
 site_url: https://jim-wyatt.github.io/msn-weather-wrapper/
 

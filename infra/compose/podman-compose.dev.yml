@@ -16,8 +16,8 @@ services:
       - ../../tests:/app/tests:z
       - ../../pyproject.toml:/app/pyproject.toml:z
     environment:
-      - FLASK_ENV=development
-      - FLASK_DEBUG=1
+      - APP_ENV=development
+      - APP_DEBUG=1
       - PYTHONUNBUFFERED=1
     command: python api.py
     healthcheck:

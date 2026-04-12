@@ -43,7 +43,7 @@ body:
       description: Which component would this feature affect?
       options:
         - Python Library (msn_weather_wrapper)
-        - REST API (Flask/api.py)
+        - REST API (FastAPI/api.py)
         - Web Frontend (React)
         - Docker/Container
         - CI/CD

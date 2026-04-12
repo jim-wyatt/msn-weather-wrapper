@@ -111,7 +111,7 @@ start_dev() {
     log_success "Containers started!"
     echo ""
     echo "Services available at:"
-    echo "  Frontend:  http://localhost:5173"
+    echo "  Frontend:  http://localhost:3000"
     echo "  API:       http://localhost:5000"
     echo "  Health:    http://localhost:5000/api/v1/health"
     echo ""
@@ -218,10 +218,10 @@ show_status() {
             log_warning "API:       http://localhost:5000 - NOT RESPONDING"
         fi
 
-        if curl -s http://localhost:5173 > /dev/null 2>&1; then
-            log_success "Frontend:  http://localhost:5173 - HEALTHY"
+        if curl -s http://localhost:3000 > /dev/null 2>&1; then
+            log_success "Frontend:  http://localhost:3000 - HEALTHY"
         else
-            log_warning "Frontend:  http://localhost:5173 - NOT RESPONDING"
+            log_warning "Frontend:  http://localhost:3000 - NOT RESPONDING"
         fi
     else
         log_info "Containers are not running. Start with: ./dev.sh start"
@@ -239,15 +239,15 @@ check_port_conflicts() {
         conflicts=$((conflicts + 1))
     fi
 
-    # Check port 5173 (Frontend)
-    if netstat -tuln 2>/dev/null | grep -q ":5173 " || ss -tuln 2>/dev/null | grep -q ":5173 "; then
-        log_error "Port 5173 is already in use (required for Frontend)"
+    # Check port 3000 (Frontend)
+    if netstat -tuln 2>/dev/null | grep -q ":3000 " || ss -tuln 2>/dev/null | grep -q ":3000 "; then
+        log_error "Port 3000 is already in use (required for Frontend)"
         conflicts=$((conflicts + 1))
     fi
 
     if [ $conflicts -gt 0 ]; then
         log_error "Found $conflicts port conflict(s). Please free the ports before starting."
-        echo "  Tip: Use 'lsof -i :5000' or 'lsof -i :5173' to find the process using these ports"
+        echo "  Tip: Use 'lsof -i :5000' or 'lsof -i :3000' to find the process using these ports"
         return 1
     fi
 
@@ -768,13 +768,13 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ../../src:/app/src:z
+      - ../../backend:/app/backend:z
       - ../../api.py:/app/api.py:z
       - ../../tests:/app/tests:z
       - ../../pyproject.toml:/app/pyproject.toml:z
     environment:
-      - FLASK_ENV=development
-      - FLASK_DEBUG=1
+      - APP_ENV=development
+      - APP_DEBUG=1
       - PYTHONUNBUFFERED=1
     command: python api.py
     healthcheck:
@@ -790,14 +790,14 @@ services:
       dockerfile: Containerfile.dev
     container_name: msn-weather-frontend-dev
     ports:
-      - "5173:5173"
+      - "3000:3000"
     volumes:
-      - ../../frontend/src:/app/src:z
+      - ../../frontend/app:/app/app:z
       - ../../frontend/tests:/app/tests:z
       - ../../frontend/public:/app/public:z
     environment:
       - NODE_ENV=development
-    command: npm run dev -- --host 0.0.0.0
+    command: npm run dev -- --hostname 0.0.0.0
     depends_on:
       - api
 
@@ -807,7 +807,7 @@ services:
       dockerfile: infra/containers/Containerfile.dev
     container_name: msn-weather-test-runner
     volumes:
-      - ../../src:/app/src:z
+      - ../../backend:/app/backend:z
       - ../../api.py:/app/api.py:z
       - ../../tests:/app/tests:z
       - ../../pyproject.toml:/app/pyproject.toml:z

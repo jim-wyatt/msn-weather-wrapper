@@ -9,8 +9,8 @@ services:
     ports:
       - "8080:80"
     environment:
-      - FLASK_ENV=production
-      - FLASK_DEBUG=0
+      - APP_ENV=production
+      - APP_DEBUG=0
       - CORS_ORIGINS=http://localhost:8080,http://localhost:3000
       - RATE_LIMIT_ENABLED=true
       - CACHE_ENABLED=true

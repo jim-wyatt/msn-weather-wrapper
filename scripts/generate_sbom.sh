@@ -206,7 +206,7 @@ cat $SBOM_DIR/api_sbom_table_${TIMESTAMP}.txt
 jq '.packages[] | {name: .name, version: .versionInfo}' $SBOM_DIR/api_sbom_spdx_${TIMESTAMP}.json
 
 # Find specific package
-jq '.packages[] | select(.name=="flask")' $SBOM_DIR/api_sbom_spdx_${TIMESTAMP}.json
+jq '.packages[] | select(.name=="fastapi")' $SBOM_DIR/api_sbom_spdx_${TIMESTAMP}.json
 \`\`\`
 
 ## Next Steps

@@ -26,7 +26,7 @@ from backend.api.config import (
 from backend.api.routers.health import router as health_router
 from backend.api.routers.weather import router as weather_router
 from backend.api.services import close_client, logger
-from backend.api.testing import _FlaskStyleTestClient
+from backend.api.testing import _TestClient
 
 
 class _InMemoryRateLimiter:
@@ -114,7 +114,7 @@ def create_app() -> FastAPI:
 
     app.state.testing = TESTING
     app.config = {"TESTING": TESTING}  # type: ignore[attr-defined]
-    app.test_client = lambda: _FlaskStyleTestClient(app)  # type: ignore[attr-defined]
+    app.test_client = lambda: _TestClient(app)  # type: ignore[attr-defined]
 
     app.add_middleware(
         CORSMiddleware,
