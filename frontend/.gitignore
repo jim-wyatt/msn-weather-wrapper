@@ -17,9 +17,6 @@ out
 /playwright-report/
 /playwright/.cache/
 
-# Next.js generated type declarations
-next-env.d.ts
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
