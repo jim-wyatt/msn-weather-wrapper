@@ -768,13 +768,13 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ../../src:/app/src:z
+      - ../../backend:/app/backend:z
       - ../../api.py:/app/api.py:z
       - ../../tests:/app/tests:z
       - ../../pyproject.toml:/app/pyproject.toml:z
     environment:
-            - APP_ENV=development
-            - APP_DEBUG=1
+      - APP_ENV=development
+      - APP_DEBUG=1
       - PYTHONUNBUFFERED=1
     command: python api.py
     healthcheck:
@@ -790,14 +790,14 @@ services:
       dockerfile: Containerfile.dev
     container_name: msn-weather-frontend-dev
     ports:
-    - "3000:3000"
+      - "3000:3000"
     volumes:
-      - ../../frontend/src:/app/src:z
+      - ../../frontend/app:/app/app:z
       - ../../frontend/tests:/app/tests:z
       - ../../frontend/public:/app/public:z
     environment:
       - NODE_ENV=development
-    command: npm run dev -- --host 0.0.0.0
+    command: npm run dev -- --hostname 0.0.0.0
     depends_on:
       - api
 
@@ -807,7 +807,7 @@ services:
       dockerfile: infra/containers/Containerfile.dev
     container_name: msn-weather-test-runner
     volumes:
-      - ../../src:/app/src:z
+      - ../../backend:/app/backend:z
       - ../../api.py:/app/api.py:z
       - ../../tests:/app/tests:z
       - ../../pyproject.toml:/app/pyproject.toml:z

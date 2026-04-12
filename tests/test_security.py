@@ -432,8 +432,8 @@ class TestHTTPErrorHandlers:
         response2 = client.get("/api/v1/health/")
         # FastAPI redirect_slashes behavior: /api/v1/health works, /api/v1/health/ may redirect
         assert response1.status_code == 200
-        # response2 may be 200 or 404 depending on router configuration
-        assert response2.status_code in (200, 404)
+        # response2 may be 200, 307/308 redirect, or 404 depending on router configuration
+        assert response2.status_code in (200, 307, 308, 404)
 
     def test_double_slash_in_path(self, client):
         """Test handling of double slashes in URL path."""
