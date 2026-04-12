@@ -9,7 +9,7 @@ from api import app, validate_input
 
 @pytest.fixture
 def client():
-    """Create a test client for the Flask app."""
+    """Create a test client for the FastAPI app."""
     app.config["TESTING"] = True
     with app.test_client() as client:
         yield client
@@ -291,7 +291,7 @@ class TestHTTPErrorHandlers:
         """Test 404 error handler for non-existent endpoints."""
         response = client.get("/api/nonexistent")
         assert response.status_code == 404
-        # Flask returns HTML for 404 by default, not JSON
+        # FastAPI returns JSON for 404 by default
         assert response.status_code == 404
 
     def test_405_method_not_allowed(self, client):
@@ -430,9 +430,9 @@ class TestHTTPErrorHandlers:
         # Test both with and without trailing slash
         response1 = client.get("/api/v1/health")
         response2 = client.get("/api/v1/health/")
-        # Flask strict_slashes behavior: /api/v1/health works, /api/v1/health/ may 404
+        # FastAPI redirect_slashes behavior: /api/v1/health works, /api/v1/health/ may redirect
         assert response1.status_code == 200
-        # response2 may be 200 or 404 depending on Flask config
+        # response2 may be 200 or 404 depending on router configuration
         assert response2.status_code in (200, 404)
 
     def test_double_slash_in_path(self, client):

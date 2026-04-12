@@ -114,7 +114,7 @@ API endpoints are rate-limited:
 ### CORS Configuration
 
 CORS is configured for secure cross-origin requests:
-- Dual-layer protection (Flask + Nginx)
+- Dual-layer protection (FastAPI + Nginx)
 - Configurable allowed origins
 - Credentials support for authenticated requests
 

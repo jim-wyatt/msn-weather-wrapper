@@ -81,9 +81,9 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 RUN mkdir -p /var/log/nginx
 
 # Set production environment variables
-# Note: Override FLASK_SECRET_KEY in production with a secure value
-ENV FLASK_ENV=production \
-    FLASK_DEBUG=0 \
+# Note: Override APP_SECRET_KEY in production with a secure value
+ENV APP_ENV=production \
+    APP_DEBUG=0 \
     CORS_ORIGINS=* \
     RATE_LIMIT_PER_IP=30 \
     RATE_LIMIT_GLOBAL=200 \
@@ -93,8 +93,8 @@ ENV FLASK_ENV=production \
     NEXTJS_HOSTNAME=127.0.0.1
 
 # Generate a secret key at build time (should be overridden in production)
-# Use docker run -e FLASK_SECRET_KEY=your-key to override
-RUN python -c "import secrets; print(f'FLASK_SECRET_KEY={secrets.token_hex(32)}')" >> /app/.env.production
+# Use docker run -e APP_SECRET_KEY=your-key to override
+RUN python -c "import secrets; print(f'APP_SECRET_KEY={secrets.token_hex(32)}')" >> /app/.env.production
 
 # Expose port 80 (nginx will handle both frontend and API proxying)
 EXPOSE 80

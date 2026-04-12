@@ -1,4 +1,4 @@
-"""Tests for the Flask API."""
+"""Tests for the FastAPI application."""
 
 import json
 from unittest.mock import MagicMock, patch
@@ -11,7 +11,7 @@ from backend.models import Location, WeatherData
 
 @pytest.fixture
 def client():
-    """Create a test client for the Flask app."""
+    """Create a test client for the FastAPI app."""
     app.config["TESTING"] = True
     with app.test_client() as client:
         yield client

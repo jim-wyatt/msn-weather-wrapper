@@ -97,7 +97,7 @@ Precipitation             92%  ✅
 ### API Module (`api.py`) - 92%
 
 **Covered Features:**
-- ✅ Flask route handlers
+- ✅ FastAPI route handlers
 - ✅ Request validation
 - ✅ Input sanitization
 - ✅ CORS configuration
