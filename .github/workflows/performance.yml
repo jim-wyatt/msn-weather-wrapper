@@ -19,7 +19,7 @@ env:
 jobs:
   load-test:
     name: Load Testing
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -156,7 +156,7 @@ jobs:
 
   benchmark:
     name: Benchmark Tests
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6

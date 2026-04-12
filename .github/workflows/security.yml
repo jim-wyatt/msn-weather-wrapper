@@ -20,7 +20,7 @@ env:
 jobs:
   basic-security:
     name: Basic Security Checks
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -73,7 +73,7 @@ jobs:
   container-scan:
     name: Container Security Scan
     if: ${{ inputs.full-scan }}
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       security-events: write
