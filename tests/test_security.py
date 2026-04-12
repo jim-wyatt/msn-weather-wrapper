@@ -5,13 +5,13 @@ import json
 import pytest
 
 from api import app, validate_input
+from backend.api.testing import _TestClient
 
 
 @pytest.fixture
 def client():
-    """Create a test client for the Flask app."""
-    app.config["TESTING"] = True
-    with app.test_client() as client:
+    """Create a test client for the FastAPI app."""
+    with _TestClient(app) as client:
         yield client
 
 
@@ -57,7 +57,7 @@ class TestInputValidation:
     def test_non_string_type(self):
         """Test non-string types are rejected."""
         for invalid_value in [12345, True, [], {}]:
-            value, error = validate_input(invalid_value, "city", 100)
+            value, error = validate_input(invalid_value, "city", 100)  # type: ignore[arg-type]
             assert error is not None
             assert "string" in error.lower()
 
@@ -291,7 +291,7 @@ class TestHTTPErrorHandlers:
         """Test 404 error handler for non-existent endpoints."""
         response = client.get("/api/nonexistent")
         assert response.status_code == 404
-        # Flask returns HTML for 404 by default, not JSON
+        # FastAPI returns JSON for 404 by default
         assert response.status_code == 404
 
     def test_405_method_not_allowed(self, client):
@@ -430,10 +430,10 @@ class TestHTTPErrorHandlers:
         # Test both with and without trailing slash
         response1 = client.get("/api/v1/health")
         response2 = client.get("/api/v1/health/")
-        # Flask strict_slashes behavior: /api/v1/health works, /api/v1/health/ may 404
+        # FastAPI redirect_slashes behavior: /api/v1/health works, /api/v1/health/ may redirect
         assert response1.status_code == 200
-        # response2 may be 200 or 404 depending on Flask config
-        assert response2.status_code in (200, 404)
+        # response2 may be 200, 307/308 redirect, or 404 depending on router configuration
+        assert response2.status_code in (200, 307, 308, 404)
 
     def test_double_slash_in_path(self, client):
         """Test handling of double slashes in URL path."""

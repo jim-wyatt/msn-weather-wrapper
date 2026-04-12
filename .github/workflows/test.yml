@@ -215,7 +215,7 @@ jobs:
           echo "Starting container..."
           set -e
           docker run -d --name msn-weather-app -p 8080:80 \
-            -e FLASK_DEBUG=false \
+            -e APP_DEBUG=false \
             -e CORS_ORIGINS="*" \
             -e RATE_LIMIT_ENABLED=true \
             -e CACHE_ENABLED=true \
