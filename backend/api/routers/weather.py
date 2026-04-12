@@ -7,8 +7,8 @@ from typing import Any
 from fastapi import APIRouter, Request, Response
 from fastapi.responses import JSONResponse
 
-from msn_weather_wrapper.api.config import MAX_CITY_LENGTH, MAX_COUNTRY_LENGTH
-from msn_weather_wrapper.api.services import (
+from backend.api.config import MAX_CITY_LENGTH, MAX_COUNTRY_LENGTH
+from backend.api.services import (
     add_to_recent_searches,
     build_weather_payload,
     clear_recent_search_history,
@@ -19,7 +19,7 @@ from msn_weather_wrapper.api.services import (
     logger,
     validate_input,
 )
-from msn_weather_wrapper.exceptions import LocationNotFoundError, UpstreamError, WeatherError
+from backend.exceptions import LocationNotFoundError, UpstreamError, WeatherError
 
 router = APIRouter(tags=["weather"])
 

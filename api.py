@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uvicorn
 
-from msn_weather_wrapper.api import (
+from backend.api import (
     CACHE_DURATION_MINUTES,
     CACHE_SIZE,
     app,
@@ -12,8 +12,8 @@ from msn_weather_wrapper.api import (
     get_client,
     validate_input,
 )
-from msn_weather_wrapper.api.config import DEBUG, HOST, PORT
-from msn_weather_wrapper.api.services import datetime
+from backend.api.config import DEBUG, HOST, PORT
+from backend.api.services import datetime
 
 __all__ = [
     "app",

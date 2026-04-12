@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.middleware.sessions import SessionMiddleware
 
-from msn_weather_wrapper.api.config import (
+from backend.api.config import (
     DEBUG,
     RATE_LIMIT_GLOBAL,
     RATE_LIMIT_PER_IP,
@@ -23,10 +23,10 @@ from msn_weather_wrapper.api.config import (
     get_cors_origins,
     get_secret_key,
 )
-from msn_weather_wrapper.api.routers.health import router as health_router
-from msn_weather_wrapper.api.routers.weather import router as weather_router
-from msn_weather_wrapper.api.services import close_client, logger
-from msn_weather_wrapper.api.testing import _FlaskStyleTestClient
+from backend.api.routers.health import router as health_router
+from backend.api.routers.weather import router as weather_router
+from backend.api.services import close_client, logger
+from backend.api.testing import _FlaskStyleTestClient
 
 
 class _InMemoryRateLimiter:

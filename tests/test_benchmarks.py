@@ -6,8 +6,8 @@ performance regressions over time.
 
 import pytest
 
-from msn_weather_wrapper import Location, WeatherClient
-from msn_weather_wrapper.models import WeatherData
+from backend import Location, WeatherClient
+from backend.models import WeatherData
 
 
 @pytest.mark.benchmark(group="client")
@@ -71,7 +71,7 @@ def test_temperature_parsing_benchmark(benchmark):
     """Benchmark temperature value parsing."""
     from bs4 import BeautifulSoup
 
-    from msn_weather_wrapper.client import WeatherClient
+    from backend.client import WeatherClient
 
     client = WeatherClient()
     html_content = '<span class="cur-temp">72°</span>'
@@ -89,7 +89,7 @@ def test_condition_parsing_benchmark(benchmark):
     """Benchmark weather condition extraction."""
     from bs4 import BeautifulSoup
 
-    from msn_weather_wrapper.client import WeatherClient
+    from backend.client import WeatherClient
 
     client = WeatherClient()
     html_content = '<div class="condition">Sunny</div>'

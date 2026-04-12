@@ -5,7 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
-from msn_weather_wrapper.api.services import get_client
+from backend.api.services import get_client
 
 router = APIRouter(tags=["health"])
 

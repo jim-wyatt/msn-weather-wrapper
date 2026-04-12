@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from api import app
-from msn_weather_wrapper.models import Location, WeatherData
+from backend.models import Location, WeatherData
 
 
 @pytest.fixture
