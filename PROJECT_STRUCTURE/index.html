@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1836,10 +1836,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#srcmsn_weather_wrapper" class="md-nav__link">
+  <a href="#backendmsn_weather_wrapper" class="md-nav__link">
     <span class="md-ellipsis">
       
-        src/msn_weather_wrapper/
+        backend/msn_weather_wrapper/
       
     </span>
   </a>
@@ -1966,13 +1966,13 @@
 <h2 id="start-here">Start Here<a class="headerlink" href="#start-here" title="Permanent link">&para;</a></h2>
 <p>If you're new, explore the project in this order:</p>
 <ol>
-<li><code>src/msn_weather_wrapper/</code> — the Python backend and library code</li>
+<li><code>backend/msn_weather_wrapper/</code> — the Python backend and library code</li>
 <li><code>frontend/</code> — the React user interface</li>
 <li><code>tests/</code> — examples of how behavior is verified</li>
 <li><code>scripts/</code> — helper scripts for local development and reporting</li>
 </ol>
 <h2 id="mental-model">Mental Model<a class="headerlink" href="#mental-model" title="Permanent link">&para;</a></h2>
-<h3 id="srcmsn_weather_wrapper"><code>src/msn_weather_wrapper/</code><a class="headerlink" href="#srcmsn_weather_wrapper" title="Permanent link">&para;</a></h3>
+<h3 id="backendmsn_weather_wrapper"><code>backend/msn_weather_wrapper/</code><a class="headerlink" href="#backendmsn_weather_wrapper" title="Permanent link">&para;</a></h3>
 <p>This is the <strong>main backend code</strong>.</p>
 <ul>
 <li><code>api/</code> — FastAPI app, routes, request handling, and service logic</li>
@@ -1983,9 +1983,9 @@
 <h3 id="frontend"><code>frontend/</code><a class="headerlink" href="#frontend" title="Permanent link">&para;</a></h3>
 <p>This is the <strong>web app</strong>.</p>
 <ul>
-<li><code>src/components/</code> — reusable UI pieces</li>
-<li><code>src/data/</code> — static data like city lists</li>
+<li><code>app/</code> — Next.js App Router source (layout, page, components, data, types, CSS)</li>
 <li><code>tests/e2e/</code> — Playwright browser tests</li>
+<li><code>next.config.ts</code> — Next.js configuration (API rewrites, standalone output)</li>
 </ul>
 <h3 id="tests"><code>tests/</code><a class="headerlink" href="#tests" title="Permanent link">&para;</a></h3>
 <p>This is the <strong>backend test suite</strong>.</p>
@@ -2013,8 +2013,8 @@
 <p>Use it when you want explanations, not implementation details.</p>
 <h2 id="top-level-map">Top-Level Map<a class="headerlink" href="#top-level-map" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>msn-weather-wrapper/
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── src/msn_weather_wrapper/  # Backend/library code
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├── frontend/                 # React UI
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── backend/msn_weather_wrapper/  # Backend/library code
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├── frontend/                 # Next.js UI
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>├── tests/                    # Python tests
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>├── scripts/                  # Dev and automation scripts
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>├── infra/                    # Container and deployment config
@@ -2025,7 +2025,7 @@
 </span></code></pre></div>
 <h2 id="rule-of-thumb">Rule of Thumb<a class="headerlink" href="#rule-of-thumb" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>If you want to <strong>change behavior</strong>, start in <code>src/</code>.
+<p>If you want to <strong>change behavior</strong>, start in <code>backend/</code>.
 If you want to <strong>change UI</strong>, go to <code>frontend/</code>.
 If you want to <strong>understand intent</strong>, read <code>tests/</code> and <code>docs/</code>.</p>
 </blockquote>
@@ -2163,10 +2163,10 @@ If you want to <strong>understand intent</strong>, read <code>tests/</code> and 
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="../javascripts/extra.js"></script>
       

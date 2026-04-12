@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -3367,7 +3367,7 @@
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>./dev.sh<span class="w"> </span>start
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1"># Access services:</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># - Frontend: http://localhost:5173 (Vite dev server with HMR)</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># - Frontend: http://localhost:3000 (Next.js dev server with HMR)</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="c1"># - Backend API: http://localhost:5000</span>
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="c1"># - Health Check: http://localhost:5000/api/v1/health</span>
 </span></code></pre></div>
@@ -3411,16 +3411,16 @@
 <h3 id="making-code-changes">Making Code Changes<a class="headerlink" href="#making-code-changes" title="Permanent link">&para;</a></h3>
 <h4 id="backend-changes">Backend Changes<a class="headerlink" href="#backend-changes" title="Permanent link">&para;</a></h4>
 <ol>
-<li>Edit files in <code>src/msn_weather_wrapper/</code> or <code>api.py</code></li>
+<li>Edit files in <code>backend/msn_weather_wrapper/</code> or <code>api.py</code></li>
 <li>FastAPI reloads automatically</li>
 <li>Test: <code>pytest tests/test_*.py</code></li>
-<li>Check types: <code>mypy src/</code></li>
+<li>Check types: <code>mypy backend/</code></li>
 <li>Format: <code>ruff format .</code></li>
 </ol>
 <h4 id="frontend-changes">Frontend Changes<a class="headerlink" href="#frontend-changes" title="Permanent link">&para;</a></h4>
 <ol>
-<li>Edit files in <code>frontend/src/</code></li>
-<li>Vite HMR updates instantly</li>
+<li>Edit files in <code>frontend/app/</code></li>
+<li>Next.js HMR updates instantly</li>
 <li>Test: <code>npm run test:e2e</code></li>
 <li>Type check: <code>npm run type-check</code></li>
 <li>Build: <code>npm run build</code></li>
@@ -3436,7 +3436,7 @@
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>ruff<span class="w"> </span>check<span class="w"> </span>.<span class="w"> </span>--fix<span class="w">  </span><span class="c1"># Auto-fix</span>
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># Type checking</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>mypy<span class="w"> </span>src/msn_weather_wrapper
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>mypy<span class="w"> </span>backend/msn_weather_wrapper
 </span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
 </span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="c1"># Run all checks</span>
 </span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>pre-commit<span class="w"> </span>run<span class="w"> </span>--all-files
@@ -3491,7 +3491,7 @@
 <h2 id="adding-features">Adding Features<a class="headerlink" href="#adding-features" title="Permanent link">&para;</a></h2>
 <h3 id="backend-feature">Backend Feature<a class="headerlink" href="#backend-feature" title="Permanent link">&para;</a></h3>
 <ol>
-<li><strong>Write code</strong> in <code>src/msn_weather_wrapper/</code></li>
+<li><strong>Write code</strong> in <code>backend/msn_weather_wrapper/</code></li>
 <li><strong>Add tests</strong> in <code>tests/</code></li>
 <li><strong>Update types</strong> in <code>models.py</code></li>
 <li><strong>Add API endpoint</strong> in <code>api.py</code> (if needed)</li>
@@ -3499,8 +3499,8 @@
 </ol>
 <h3 id="frontend-feature">Frontend Feature<a class="headerlink" href="#frontend-feature" title="Permanent link">&para;</a></h3>
 <ol>
-<li><strong>Create component</strong> in <code>frontend/src/components/</code></li>
-<li><strong>Add types</strong> in <code>frontend/src/types.ts</code></li>
+<li><strong>Create component</strong> in <code>frontend/app/components/</code></li>
+<li><strong>Add types</strong> in <code>frontend/app/types.ts</code></li>
 <li><strong>Add E2E test</strong> in <code>frontend/tests/e2e/</code></li>
 <li><strong>Update styles</strong> as needed</li>
 </ol>
@@ -3560,7 +3560,7 @@
 <h3 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>API Container</strong>: Python 3.12 slim (Trixie), port 5000, FastAPI with reload</li>
-<li><strong>Frontend Container</strong>: Node 22 Trixie slim, port 5173, Vite with HMR</li>
+<li><strong>Frontend Container</strong>: Node 22 Trixie slim, port 3000, Next.js dev server with HMR</li>
 <li><strong>Volumes</strong>: Source code mounted for hot reload</li>
 </ul>
 <h3 id="environment-variables">Environment Variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h3>
@@ -3596,7 +3596,7 @@
 <li>✅ All tests pass: <code>pytest</code></li>
 <li>✅ Code formatted: <code>ruff format .</code></li>
 <li>✅ No lint errors: <code>ruff check .</code></li>
-<li>✅ Types valid: <code>mypy src/</code></li>
+<li>✅ Types valid: <code>mypy backend/</code></li>
 <li>✅ Coverage maintained: <code>pytest --cov=src</code></li>
 <li>✅ Frontend tests pass: <code>npm run test:e2e</code></li>
 <li>✅ Documentation updated</li>
@@ -3606,14 +3606,14 @@
 <hr />
 <h2 id="project-structure">Project Structure<a class="headerlink" href="#project-structure" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>msn-weather-wrapper/
-</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>├── src/msn_weather_wrapper/    # Backend/library code
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>├── backend/msn_weather_wrapper/    # Backend/library code
 </span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>│   ├── api/                    # FastAPI app (main, routers, services, schemas)
 </span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>│   ├── client.py               # Weather client
 </span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>│   ├── models.py               # Pydantic models
 </span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>│   ├── exceptions.py           # Domain-specific errors
 </span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>│   └── py.typed                # Type marker
-</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>├── frontend/                   # React application
-</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>│   └── src/                    # UI source code
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>├── frontend/                   # Next.js application
+</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>│   └── app/                    # App Router source (layout, page, components, data)
 </span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>├── tests/                      # Backend and integration tests
 </span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>├── scripts/                    # Dev and automation scripts
 </span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>├── infra/                      # Containers, compose files, and runtime config
@@ -3807,10 +3807,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="../javascripts/extra.js"></script>
       
