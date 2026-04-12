@@ -58,7 +58,9 @@ function App() {
 
           // Don't retry on client errors (4xx)
           if (response.status >= 400 && response.status < 500) {
-            throw new Error(errorData.message || 'Failed to fetch weather');
+            setError(errorData.message || 'Failed to fetch weather');
+            setWeather(null);
+            break;
           }
 
           // Retry on server errors (5xx) or network issues
@@ -129,8 +131,8 @@ function App() {
           setLoadingLocation(false);
         }
       },
-      (error) => {
-        setError(`Failed to get your location: ${error.message}`);
+      (geoError) => {
+        setError(`Failed to get your location: ${geoError.message}`);
         setLoadingLocation(false);
       }
     );

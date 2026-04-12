@@ -29,6 +29,7 @@ MAX_CITY_LENGTH = MAX_INPUT_LENGTH
 MAX_COUNTRY_LENGTH = MAX_INPUT_LENGTH
 
 CACHE_SIZE = int(os.getenv("CACHE_SIZE", "1000"))
+# CACHE_DURATION env var is expressed in seconds; convert to minutes for bucket arithmetic.
 CACHE_DURATION_MINUTES = int(os.getenv("CACHE_DURATION", "300")) // 60
 
 

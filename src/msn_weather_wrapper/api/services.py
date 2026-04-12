@@ -26,6 +26,7 @@ from msn_weather_wrapper.exceptions import (
     UpstreamError,
     WeatherError,
 )
+from msn_weather_wrapper.models import WeatherData
 
 structlog.configure(
     processors=[
@@ -117,20 +118,9 @@ def close_client() -> None:
         _weather_client = None
 
 
-def build_weather_payload(weather: Any) -> dict[str, Any]:
+def build_weather_payload(weather: WeatherData) -> dict[str, Any]:
     """Serialize the weather model into an API response payload."""
-    return {
-        "location": {
-            "city": weather.location.city,
-            "country": weather.location.country,
-            "latitude": weather.location.latitude,
-            "longitude": weather.location.longitude,
-        },
-        "temperature": weather.temperature,
-        "condition": weather.condition,
-        "humidity": weather.humidity,
-        "wind_speed": weather.wind_speed,
-    }
+    return weather.model_dump()
 
 
 @lru_cache(maxsize=CACHE_SIZE)
