@@ -384,7 +384,7 @@ python -m twine upload --repository testpypi dist/*
 
 ```bash
 # 1. Fix the bug
-vim src/msn_weather_wrapper/client.py
+vim backend/msn_weather_wrapper/client.py
 
 # 2. Update version
 vim pyproject.toml  # 1.0.0 → 1.0.1
@@ -408,7 +408,7 @@ git push origin v1.0.1
 
 ```bash
 # 1. Implement feature
-vim src/msn_weather_wrapper/client.py
+vim backend/msn_weather_wrapper/client.py
 
 # 2. Update version
 vim pyproject.toml  # 1.0.1 → 1.1.0
@@ -432,7 +432,7 @@ git push origin v1.1.0
 
 ```bash
 # 1. Implement breaking changes
-vim src/msn_weather_wrapper/client.py
+vim backend/msn_weather_wrapper/client.py
 
 # 2. Update version
 vim pyproject.toml  # 1.1.0 → 2.0.0

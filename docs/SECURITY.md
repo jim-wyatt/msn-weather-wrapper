@@ -228,7 +228,7 @@ If you discover a security vulnerability:
 ### Static Analysis
 ```bash
 # Run Bandit security scanner
-bandit -r src/
+bandit -r backend/
 
 # Run pip-audit dependency checker
 pip-audit

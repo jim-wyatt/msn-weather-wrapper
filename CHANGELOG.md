@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Modular FastAPI backend structure**
-  - New `src/msn_weather_wrapper/api/` package with `main.py`, `routers/`, `services.py`, `schemas.py`, and `config.py`
-  - Beginner-friendly backend and structure guides in `src/msn_weather_wrapper/api/README.md`, `docs/PROJECT_STRUCTURE.md`, and `infra/README.md`
+  - New `backend/msn_weather_wrapper/api/` package with `main.py`, `routers/`, `services.py`, `schemas.py`, and `config.py`
+  - Beginner-friendly backend and structure guides in `backend/msn_weather_wrapper/api/README.md`, `docs/PROJECT_STRUCTURE.md`, and `infra/README.md`
 
 ### Changed
 - **Backend framework and repo layout**

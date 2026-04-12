@@ -39,8 +39,8 @@ Comprehensive security vulnerability scanning results from CI/CD pipeline.
 
 ```
 Code scanned:
-  - src/msn_weather_wrapper/client.py
-  - src/msn_weather_wrapper/models.py
+  - backend/msn_weather_wrapper/client.py
+  - backend/msn_weather_wrapper/models.py
   - api.py
 
 Total lines of code: 750

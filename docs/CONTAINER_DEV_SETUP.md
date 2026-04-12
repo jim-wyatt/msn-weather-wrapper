@@ -85,7 +85,7 @@ npm run type-check
 
 ### Making changes
 
-- **Backend:** edit files in `src/` or `api.py` and FastAPI reloads automatically.
+- **Backend:** edit files in `backend/` or `api.py` and FastAPI reloads automatically.
 - **Frontend:** edit files in `frontend/app/` and Next.js HMR updates instantly.
 - **Tests:** edit test files and rerun the relevant checks.
 

@@ -26,7 +26,7 @@ RUN pip install --no-cache-dir \
     geopy
 
 # Copy source code (will be overridden by volume in compose)
-COPY src/ src/
+COPY backend/ backend/
 COPY api.py .
 COPY tests/ tests/
 

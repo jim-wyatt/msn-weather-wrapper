@@ -31,7 +31,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy Python project files and install dependencies
 COPY pyproject.toml README.md ./
-COPY src/ src/
+COPY backend/ backend/
 # Install as a regular (non-editable) package so all code is embedded in the venv
 # and does not depend on source files being present in the final image
 RUN pip install --no-cache-dir .
