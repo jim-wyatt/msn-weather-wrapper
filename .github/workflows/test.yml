@@ -112,8 +112,8 @@ jobs:
 
       - name: Generate coverage badge
         run: |
-          pip install coverage-badge
-          coverage-badge -o coverage.svg -f
+          pip install genbadge[coverage]
+          genbadge coverage -i coverage.xml -o coverage.svg
 
       - name: Generate coverage markdown report
         run: |
