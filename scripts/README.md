@@ -2,7 +2,7 @@
 
 This folder contains the small utilities that help you **run**, **inspect**, and **report on** the project.
 
-If you are new to the repo, think of `scripts/` as the **toolbox**, while the real application code lives in `src/` and `frontend/`.
+If you are new to the repo, think of `scripts/` as the **toolbox**, while the real application code lives in `backend/` and `frontend/`.
 
 ## Most useful scripts
 
@@ -70,7 +70,7 @@ Builds the app with containers and runs the deployment-oriented integration chec
 If you are asking **"where do I start?"**:
 
 1. Read `README.md`
-2. Explore `src/msn_weather_wrapper/`
+2. Explore `backend/msn_weather_wrapper/`
 3. Check `tests/` for examples
 4. Use `scripts/` only when you need project tooling
 

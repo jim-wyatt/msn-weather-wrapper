@@ -124,9 +124,11 @@ generate_python_sbom() {
         echo -e "${YELLOW}Creating virtual environment...${NC}"
         python3 -m venv .venv
         source .venv/bin/activate
+        python3 -m pip install --upgrade pip
         pip install -e ".[dev]"
     else
         source .venv/bin/activate
+        python3 -m pip install --upgrade pip
     fi
 
     # Generate SBOM from installed packages

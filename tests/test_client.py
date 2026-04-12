@@ -6,13 +6,13 @@ import pytest
 import requests
 from bs4 import BeautifulSoup
 
-from msn_weather_wrapper.client import WeatherClient
-from msn_weather_wrapper.exceptions import (
+from backend.client import WeatherClient
+from backend.exceptions import (
     LocationNotFoundError,
     UpstreamError,
     WeatherError,
 )
-from msn_weather_wrapper.models import Location
+from backend.models import Location
 
 
 def test_weather_client_initialization() -> None:
@@ -203,7 +203,7 @@ def test_extract_weather_from_json_missing_keys() -> None:
     client.close()
 
 
-@patch("msn_weather_wrapper.client.requests.Session.get")
+@patch("backend.client.requests.Session.get")
 def test_get_weather_with_json_extraction(mock_get) -> None:
     """Test get_weather using JSON extraction."""
     html = """
@@ -245,7 +245,7 @@ def test_get_weather_with_json_extraction(mock_get) -> None:
     client.close()
 
 
-@patch("msn_weather_wrapper.client.requests.Session.get")
+@patch("backend.client.requests.Session.get")
 def test_get_weather_fallback_to_html(mock_get) -> None:
     """Test get_weather falls back to HTML parsing when JSON fails."""
     html = """
@@ -275,7 +275,7 @@ def test_get_weather_fallback_to_html(mock_get) -> None:
     client.close()
 
 
-@patch("msn_weather_wrapper.client.requests.Session.get")
+@patch("backend.client.requests.Session.get")
 def test_get_weather_request_exception(mock_get) -> None:
     """Test get_weather handles request exceptions."""
     mock_get.side_effect = requests.RequestException("Network error")
@@ -466,7 +466,7 @@ def test_humidity_extraction_with_parent_element() -> None:
     client.close()
 
 
-@patch("msn_weather_wrapper.client.Nominatim")
+@patch("backend.client.Nominatim")
 def test_get_weather_by_coordinates_geocode_failure(mock_nominatim: Mock) -> None:
     """Test get_weather_by_coordinates when geocoding fails."""
     mock_geocoder = Mock()
@@ -479,7 +479,7 @@ def test_get_weather_by_coordinates_geocode_failure(mock_nominatim: Mock) -> Non
     client.close()
 
 
-@patch("msn_weather_wrapper.client.Nominatim")
+@patch("backend.client.Nominatim")
 def test_get_weather_by_coordinates_geocode_exception(mock_nominatim: Mock) -> None:
     """Test get_weather_by_coordinates when geocoding raises exception."""
     mock_geocoder = Mock()
@@ -493,13 +493,13 @@ def test_get_weather_by_coordinates_geocode_exception(mock_nominatim: Mock) -> N
 
 
 @pytest.mark.asyncio
-@patch("msn_weather_wrapper.client.Nominatim")
-@patch("msn_weather_wrapper.client.httpx.AsyncClient.get")
+@patch("backend.client.Nominatim")
+@patch("backend.client.httpx.AsyncClient.get")
 async def test_async_get_weather_by_coordinates_success(
     mock_get: Mock, mock_nominatim: Mock
 ) -> None:
     """Test AsyncWeatherClient.get_weather_by_coordinates with successful geocoding."""
-    from msn_weather_wrapper.client import AsyncWeatherClient
+    from backend.client import AsyncWeatherClient
 
     # Mock geocoder
     mock_location = Mock()
@@ -546,10 +546,10 @@ async def test_async_get_weather_by_coordinates_success(
 
 
 @pytest.mark.asyncio
-@patch("msn_weather_wrapper.client.Nominatim")
+@patch("backend.client.Nominatim")
 async def test_async_get_weather_by_coordinates_geocode_failure(mock_nominatim: Mock) -> None:
     """Test AsyncWeatherClient.get_weather_by_coordinates when geocoding fails."""
-    from msn_weather_wrapper.client import AsyncWeatherClient
+    from backend.client import AsyncWeatherClient
 
     mock_geocoder = Mock()
     mock_geocoder.reverse.return_value = None
@@ -563,10 +563,10 @@ async def test_async_get_weather_by_coordinates_geocode_failure(mock_nominatim: 
 
 
 @pytest.mark.asyncio
-@patch("msn_weather_wrapper.client.Nominatim")
+@patch("backend.client.Nominatim")
 async def test_async_get_weather_by_coordinates_geocode_exception(mock_nominatim: Mock) -> None:
     """Test AsyncWeatherClient.get_weather_by_coordinates when geocoding raises exception."""
-    from msn_weather_wrapper.client import AsyncWeatherClient
+    from backend.client import AsyncWeatherClient
 
     mock_geocoder = Mock()
     mock_geocoder.reverse.side_effect = Exception("Geocoding API error")

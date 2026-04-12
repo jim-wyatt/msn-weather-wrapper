@@ -65,6 +65,7 @@ check_podman() {
 check_podman_compose() {
     if ! command -v podman-compose &> /dev/null; then
         log_warning "podman-compose is not installed. Installing..."
+        python3 -m pip install --upgrade pip
         pip3 install --user podman-compose
         log_success "podman-compose installed"
     else
@@ -297,6 +298,7 @@ generate_and_serve_docs() {
     # Check if mkdocs is installed
     if ! command -v mkdocs &> /dev/null; then
         log_warning "mkdocs not found. Installing..."
+        python3 -m pip install --upgrade pip
         pip3 install --user mkdocs mkdocs-material pymdown-extensions
     fi
 
@@ -339,7 +341,7 @@ generate_and_serve_docs() {
     # Run security scan
     log_info "Running security scan..."
     podman-compose -f "$COMPOSE_FILE" exec -T api bash -c \
-        "pip install bandit && bandit -r src/ -f json -o bandit-report.json || true" || true
+        "pip install --upgrade pip && pip install bandit && bandit -r backend/ -f json -o bandit-report.json || true" || true
 
     # Copy security report from container
     if [ -n "$API_CONTAINER" ]; then
@@ -356,7 +358,7 @@ generate_and_serve_docs() {
     # Generate license report
     log_info "Generating license report..."
     podman-compose -f "$COMPOSE_FILE" exec -T api bash -c \
-        "pip install pip-licenses && pip-licenses --format=json --output-file=licenses.json" || true
+        "pip install --upgrade pip && pip install pip-licenses && pip-licenses --format=json --output-file=licenses.json" || true
 
     # Copy license report from container
     if [ -n "$API_CONTAINER" ]; then

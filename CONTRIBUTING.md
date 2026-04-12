@@ -143,10 +143,10 @@ ruff format .
 ruff check .
 
 # Type check
-mypy src/msn_weather_wrapper
+mypy backend/msn_weather_wrapper
 
 # Security scan
-bandit -r src/
+bandit -r backend/
 
 # Run all pre-commit hooks
 pre-commit run --all-files
@@ -376,7 +376,7 @@ pre-commit run --all-files  # Fix all issues at once
 
 **Type errors with mypy**:
 ```bash
-mypy src/msn_weather_wrapper --show-error-codes
+mypy backend/msn_weather_wrapper --show-error-codes
 ```
 
 ## Questions?

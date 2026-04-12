@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from msn_weather_wrapper.models import Location, WeatherData
+from backend.models import Location, WeatherData
 
 
 def test_location_creation() -> None:

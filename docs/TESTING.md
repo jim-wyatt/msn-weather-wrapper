@@ -86,7 +86,7 @@ xdg-open htmlcov/index.html  # Linux
 
 ### Frontend Tests
 
-Frontend E2E tests require Node.js 22+ (project standard) and run in a containerized environment.
+Frontend E2E tests require Node.js 24+ (project standard) and run in a containerized environment.
 
 #### Containerized Testing
 ```bash
@@ -95,7 +95,7 @@ podman build -f infra/containers/Containerfile.playwright -t msn-weather-playwri
 
 # Start frontend server
 podman run -d --name frontend-srv --network test-net -p 3000:3000 \
-  -v ./frontend:/app:Z node:22-trixie-slim sh -c "cd /app && npm install && npm run dev -- --hostname 0.0.0.0"
+  -v ./frontend:/app:Z node:24-trixie-slim sh -c "cd /app && npm install && npm run dev -- --hostname 0.0.0.0"
 
 # Run tests
 podman run --rm --network test-net \
@@ -275,9 +275,9 @@ Running 40 tests using 1 worker
 
 | Module | Statements | Missing | Coverage |
 |--------|-----------|---------|----------|
-| `src/msn_weather_wrapper/__init__.py` | 8 | 0 | 100% |
-| `src/msn_weather_wrapper/client.py` | 145 | 5 | 97% |
-| `src/msn_weather_wrapper/models.py` | 32 | 0 | 100% |
+| `backend/msn_weather_wrapper/__init__.py` | 8 | 0 | 100% |
+| `backend/msn_weather_wrapper/client.py` | 145 | 5 | 97% |
+| `backend/msn_weather_wrapper/models.py` | 32 | 0 | 100% |
 | `api.py` | 186 | 0 | 100% |
 | **TOTAL** | **371** | **5** | **97%** |
 
@@ -305,8 +305,8 @@ Running 40 tests using 1 worker
 4. Run API tests: `pytest tests/test_api.py`
 5. Run frontend tests: `cd frontend && npm run test:e2e`
 6. Verify linting: `ruff check .`
-7. Run type checks: `mypy src/`
-8. Quick mutation check: `mutmut run --paths-to-mutate=src/msn_weather_wrapper/client.py` (optional)
+7. Run type checks: `mypy backend/`
+8. Quick mutation check: `mutmut run --paths-to-mutate=backend/msn_weather_wrapper/client.py` (optional)
 
 ### Writing New Tests
 1. **Use descriptive names**: `test_should_reject_empty_city_name()`
@@ -533,7 +533,7 @@ mutmut show survived
 **Quick validation** (recommended for development):
 ```bash
 # Test subset of mutations
-mutmut run --paths-to-mutate=src/msn_weather_wrapper/client.py
+mutmut run --paths-to-mutate=backend/msn_weather_wrapper/client.py
 
 # View specific mutation details
 mutmut show <mutation-id>
@@ -550,7 +550,7 @@ mutmut run
 Located in `pyproject.toml`:
 ```toml
 [tool.mutmut]
-paths_to_mutate = "src/msn_weather_wrapper/"
+paths_to_mutate = "backend/msn_weather_wrapper/"
 runner = "pytest"
 tests_dir = "tests/"
 ```

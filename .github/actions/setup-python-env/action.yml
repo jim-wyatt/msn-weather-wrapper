@@ -33,4 +33,4 @@ runs:
       shell: bash
       run: |
         python -m pip install --upgrade pip
-        pip install -e ".[${{ inputs.dependency-groups }}]"
+        python -m pip install -e ".[${{ inputs.dependency-groups }}]"

@@ -323,7 +323,7 @@ Comprehensive documentation of our automated CI/CD pipeline infrastructure.
 
 ```yaml
 PYTHON_VERSION: '3.12'
-NODE_VERSION: '20'
+NODE_VERSION: '24'
 REPORTS_DIR: 'docs/reports'
 ```
 

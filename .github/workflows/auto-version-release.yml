@@ -131,8 +131,8 @@ jobs:
           sed -i "s/^version = \".*\"/version = \"$NEW_VERSION\"/" pyproject.toml
 
           # Update __init__.py
-          if [ -f "src/msn_weather_wrapper/__init__.py" ]; then
-            sed -i "s/__version__ = \".*\"/__version__ = \"$NEW_VERSION\"/" src/msn_weather_wrapper/__init__.py
+          if [ -f "backend/__init__.py" ]; then
+            sed -i "s/__version__ = \".*\"/__version__ = \"$NEW_VERSION\"/" backend/__init__.py
           fi
 
           echo "✏️  Updated version files to $NEW_VERSION"
@@ -153,7 +153,7 @@ jobs:
           git checkout -b "$BRANCH_NAME"
 
           # Commit changes
-          git add pyproject.toml src/msn_weather_wrapper/__init__.py
+          git add pyproject.toml backend/__init__.py
           git commit -m "chore: bump version to $NEW_VERSION" \
                      -m "Auto-generated version bump" \
                      -m "Version: ${{ steps.version.outputs.current }} → $NEW_VERSION" \

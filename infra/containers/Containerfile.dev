@@ -15,23 +15,25 @@ RUN apt-get update && apt-get install -y \
 COPY pyproject.toml .
 COPY README.md .
 
+RUN python -m pip install --no-cache-dir --upgrade pip
+
 # Install Python dependencies including dev dependencies
-RUN pip install --no-cache-dir -e ".[dev]"
+RUN python -m pip install --no-cache-dir -e ".[dev]"
 
 # Install additional development tools
-RUN pip install --no-cache-dir \
+RUN python -m pip install --no-cache-dir \
     ipython \
     ipdb \
     pytest-watch \
     geopy
 
 # Copy source code (will be overridden by volume in compose)
-COPY src/ src/
+COPY backend/ backend/
 COPY api.py .
 COPY tests/ tests/
 
 # Ensure package is installed in editable mode
-RUN pip install -e .
+RUN python -m pip install -e .
 
 # Expose API port
 EXPOSE 5000

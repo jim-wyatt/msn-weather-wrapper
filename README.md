@@ -74,7 +74,7 @@ with WeatherClient() as client:
 
 If you're learning the codebase, explore it in this order:
 
-1. `src/msn_weather_wrapper/` — backend logic and the FastAPI app
+1. `backend/msn_weather_wrapper/` — backend logic and the FastAPI app
 2. `frontend/` — the Next.js UI
 3. `tests/` — examples of expected behavior
 4. `scripts/` — helper commands for setup, reports, and deployment tasks
@@ -108,7 +108,7 @@ If you're learning the codebase, explore it in this order:
 ### Prerequisites
 
 - Python 3.10+
-- Node.js 22+ (for frontend development)
+- Node.js 24+ (for frontend development)
 - Podman or Docker (for containerized deployment)
 
 ### From Source
@@ -182,7 +182,7 @@ npm run dev  # http://localhost:3000
 # Code Quality
 ruff format .                    # Format
 ruff check .                     # Lint
-mypy src/msn_weather_wrapper     # Type check
+mypy backend/msn_weather_wrapper     # Type check
 pre-commit run --all-files       # Run all checks
 
 # Testing
@@ -228,7 +228,7 @@ podman run -p 8080:80 msn-weather-wrapper
 
 ```text
 msn-weather-wrapper/
-├── src/msn_weather_wrapper/
+├── backend/msn_weather_wrapper/
 │   ├── api/                    # FastAPI app (main, routers, services, schemas)
 │   ├── client.py               # Core MSN weather client
 │   ├── models.py               # Shared Pydantic models
@@ -251,7 +251,7 @@ Contributions are welcome! Please ensure:
 
 1. ✅ All tests pass: `pytest`
 2. 🎨 Code is formatted: `ruff format .`
-3. 🔍 Type checks pass: `mypy src/`
+3. 🔍 Type checks pass: `mypy backend/`
 4. 🪝 Pre-commit hooks pass
 5. 📝 Documentation is updated
 

@@ -16,13 +16,13 @@ from tenacity import (  # type: ignore[import-not-found]
     wait_exponential,
 )
 
-from msn_weather_wrapper.exceptions import (
+from backend.exceptions import (
     LocationNotFoundError,
     ParsingError,
     UpstreamError,
     WeatherError,
 )
-from msn_weather_wrapper.models import Location, WeatherData
+from backend.models import Location, WeatherData
 
 
 class BaseWeatherClient:

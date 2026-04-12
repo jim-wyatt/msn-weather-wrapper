@@ -65,14 +65,14 @@ Repository = "https://github.com/jim-wyatt/msn-weather-wrapper"
 Issues = "https://github.com/jim-wyatt/msn-weather-wrapper/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/msn_weather_wrapper"]
+packages = ["backend"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
 addopts = [
-    "--cov=msn_weather_wrapper",
+    "--cov=backend",
     "--cov-report=term-missing",
     "--cov-report=html",
     "--junit-xml=junit.xml",
@@ -99,7 +99,7 @@ select = [
 ignore = []
 
 [tool.ruff.lint.isort]
-known-first-party = ["msn_weather_wrapper"]
+known-first-party = ["backend"]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
@@ -122,7 +122,7 @@ module = "tests.*"
 disallow_untyped_defs = false
 
 [[tool.mypy.overrides]]
-module = "msn_weather_wrapper.client"
+module = "backend.client"
 warn_unused_ignores = false
 
 [[tool.mypy.overrides]]
@@ -131,14 +131,14 @@ warn_return_any = false
 disallow_untyped_defs = false
 
 [tool.mutmut]
-paths_to_mutate = "src/"
+paths_to_mutate = "backend/"
 backup = false
 runner = "pytest -x --tb=no -q"
 tests_dir = "tests/"
 
 [tool.semantic_release]
 version_toml = ["pyproject.toml:project.version"]
-version_variables = ["src/msn_weather_wrapper/__init__.py:__version__"]
+version_variables = ["backend/__init__.py:__version__"]
 branch = "main"
 changelog_file = "CHANGELOG.md"
 build_command = "pip install build && python -m build"

@@ -2,7 +2,7 @@
 
 __version__ = "2.0.3"
 
-from msn_weather_wrapper.client import WeatherClient
-from msn_weather_wrapper.models import Location, WeatherData
+from backend.client import WeatherClient
+from backend.models import Location, WeatherData
 
 __all__ = ["WeatherClient", "WeatherData", "Location"]

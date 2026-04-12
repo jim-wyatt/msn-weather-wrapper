@@ -84,10 +84,10 @@ To generate reports locally:
 
 ```bash
 # Run tests with coverage
-pytest --cov=src/msn_weather_wrapper --cov-report=html
+pytest --cov=backend/msn_weather_wrapper --cov-report=html
 
 # Run security scans
-bandit -r src/ -f txt
+bandit -r backend/ -f txt
 pip-audit
 
 # Generate license report

@@ -1,14 +1,18 @@
 # Multi-stage Dockerfile - Unified FastAPI + Next.js Frontend
 # Stage 1: Build Next.js frontend (produces .next/standalone/)
-FROM node:22-trixie-slim@sha256:53737ec3c2e9c0ccace6ba0bbbf7036c3bdf73d71f76b3bd8f60d202299edca1 AS frontend-builder
+FROM node:24-trixie-slim@sha256:9707cd4542f400df5078df04f9652a272429112f15202d22b5b8bdd148df494f AS frontend-builder
 
 WORKDIR /frontend
 
-# Copy frontend package files (including lockfile for reproducible installs)
-COPY frontend/package.json frontend/package-lock.json ./
+RUN npm install -g npm@11.12.1
+
+# Copy frontend package files
+COPY frontend/package.json frontend/package-lock.json* ./
 
 # Install frontend dependencies
-RUN npm ci
+# Use npm install (not npm ci) to allow regeneration of lock file with all dependencies
+# This ensures platform-specific optionalDependencies like @img/sharp-* are included
+RUN npm install
 
 # Copy frontend source
 COPY frontend/ .
@@ -29,12 +33,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc && \
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
+RUN python -m pip install --no-cache-dir --upgrade pip
+
 # Copy Python project files and install dependencies
 COPY pyproject.toml README.md ./
-COPY src/ src/
+COPY backend/ backend/
 # Install as a regular (non-editable) package so all code is embedded in the venv
 # and does not depend on source files being present in the final image
-RUN pip install --no-cache-dir .
+RUN python -m pip install --no-cache-dir .
 
 # Stage 3: Final runtime image - no build tools, no supervisor
 FROM python:3.12-slim-trixie@sha256:fa48eefe2146644c2308b909d6bb7651a768178f84fc9550dcd495e4d6d84d01
