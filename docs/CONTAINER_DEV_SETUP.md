@@ -70,7 +70,7 @@ Inside the API container shell:
 
 ```bash
 pytest tests/test_api.py -v
-pytest --cov=src --cov-report=html
+pytest --cov=backend --cov-report=html
 ```
 
 Inside the frontend container shell:
@@ -124,7 +124,7 @@ npm install package-name
 ### Volume mounts
 
 ```text
-./src            -> /app/src      (API)
+./backend        -> /app/backend  (API)
 ./api.py         -> /app/api.py   (API)
 ./tests          -> /app/tests    (API)
 ./frontend/app   -> /app/app      (Frontend)

@@ -768,13 +768,13 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ../../src:/app/src:z
+      - ../../backend:/app/backend:z
       - ../../api.py:/app/api.py:z
       - ../../tests:/app/tests:z
       - ../../pyproject.toml:/app/pyproject.toml:z
     environment:
-      - FLASK_ENV=development
-      - FLASK_DEBUG=1
+      - APP_ENV=development
+      - APP_DEBUG=1
       - PYTHONUNBUFFERED=1
     command: python api.py
     healthcheck:
@@ -790,14 +790,16 @@ services:
       dockerfile: Containerfile.dev
     container_name: msn-weather-frontend-dev
     ports:
-      - "5173:5173"
+      - "3000:3000"
     volumes:
-      - ../../frontend/src:/app/src:z
+      - ../../frontend/app:/app/app:z
       - ../../frontend/tests:/app/tests:z
       - ../../frontend/public:/app/public:z
+      - ../../frontend/playwright.config.ts:/app/playwright.config.ts:z
     environment:
       - NODE_ENV=development
-    command: npm run dev -- --host 0.0.0.0
+      - API_URL=http://api:5000
+    command: npm run dev -- --hostname 0.0.0.0
     depends_on:
       - api
 
@@ -807,13 +809,13 @@ services:
       dockerfile: infra/containers/Containerfile.dev
     container_name: msn-weather-test-runner
     volumes:
-      - ../../src:/app/src:z
+      - ../../backend:/app/backend:z
       - ../../api.py:/app/api.py:z
       - ../../tests:/app/tests:z
       - ../../pyproject.toml:/app/pyproject.toml:z
     environment:
       - PYTHONUNBUFFERED=1
-    command: pytest --cov=msn_weather_wrapper --cov-report=term-missing --cov-report=html
+    command: pytest --cov=backend --cov-report=term-missing --cov-report=html
     profiles:
       - test
 EOF

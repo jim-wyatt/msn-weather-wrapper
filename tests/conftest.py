@@ -5,9 +5,9 @@ import os
 import pytest
 
 # Set environment variables before any imports that might use them
-# This ensures the Flask app can initialize properly in test mode
-os.environ["FLASK_ENV"] = "development"
-os.environ["FLASK_DEBUG"] = "1"
+# This ensures the app can initialize properly in test mode
+os.environ["APP_ENV"] = "development"
+os.environ["APP_DEBUG"] = "1"
 os.environ["TESTING"] = "1"
 
 # Optional: Set other test-specific environment variables
