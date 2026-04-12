@@ -11,16 +11,16 @@ The frontend includes comprehensive E2E tests using Playwright, covering:
 - `tests/e2e/weather.spec.ts`: Functional E2E tests for weather functionality
 
 ## Requirements
-- **Node.js**: ≥ 20.19.0 or ≥ 22.12.0 (required by Vite 6.x and crypto.hash API)
+- **Node.js**: ≥ 22.0.0 (project standard)
 - **Playwright**: ^1.49.1
 - **@axe-core/playwright**: For automated accessibility scanning
 
 ## Running Tests
 
 ### Prerequisites
-Ensure Node.js 20+ is installed:
+Ensure Node.js 22+ is installed:
 ```bash
-node --version  # Should be >= 20.19.0
+node --version  # Should be >= 22.0.0
 ```
 
 ### Install Dependencies
@@ -67,8 +67,8 @@ npx playwright test --project="Mobile*"
 
 ### Playwright Config (`playwright.config.ts`)
 - **Test Directory**: `./tests/e2e`
-- **Base URL**: `http://localhost:5173`
-- **Browsers**: Chromium, Firefox, WebKit, Mobile Chrome, Mobile Safari
+- **Base URL**: `http://localhost:3000`
+- **Browsers**: Chromium
 - **Reporters**: HTML reporter for detailed results
 - **Screenshots**: Captured on failure
 - **Trace**: Recorded on first retry
@@ -97,7 +97,7 @@ podman build -f Containerfile.dev -t msn-weather-frontend:dev .
 ```bash
 podman run -d \
   --name frontend-dev \
-  -p 5173:5173 \
+  -p 3000:3000 \
   -v $(pwd):/app:Z \
   msn-weather-frontend:dev
 ```
@@ -186,13 +186,6 @@ podman exec frontend-dev npx playwright test
 
 ## Troubleshooting
 
-### Issue: `crypto.hash is not a function`
-**Cause**: Node.js < 22 (project standard) may not expose the crypto.hash API used by Vite 6.x
-
-**Solution**:
-- Upgrade Node.js: `nvm install 22` or use official installer
-- Or use Docker/Podman container with Node 22 (see above)
-
 ### Issue: Playwright browsers not installed
 **Solution**:
 ```bash
@@ -202,7 +195,7 @@ npx playwright install --with-deps
 ### Issue: Tests timing out
 **Solution**:
 - Increase timeout in test: `test.setTimeout(60000)`
-- Check if dev server is running on port 5173
+- Check if dev server is running on port 3000
 - Verify API backend is accessible
 
 ### Issue: Visual regression failures

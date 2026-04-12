@@ -291,7 +291,7 @@ The project includes Gunicorn 23.0+ as a production WSGI server. Use it for prod
 
 ```bash
 # Gunicorn is already included in dependencies
-gunicorn --bind 0.0.0.0:5000 --workers 4 --timeout 120 api:app
+gunicorn -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:5000 --workers 4 --timeout 120 api:app
 ```
 
 **Configuration:**
@@ -448,16 +448,10 @@ podman-compose up -d
 
 ## React Component Examples
 
-Ready-to-use React components are provided in the repository:
-- `WeatherWidget.jsx` - JavaScript version
-- `WeatherWidget.tsx` - TypeScript version
-
-Both demonstrate how to integrate the API with a Vite + React frontend. Features include:
+The frontend application in `frontend/app/` provides a complete example of API integration using Next.js and TypeScript. See `frontend/app/page.tsx` and `frontend/app/components/` for reference implementations featuring:
 - Loading states and error handling
 - Input validation and URL encoding
 - Clean UI with weather display
-
-Simply copy the component into your React project and import it after starting the FastAPI server.
 
 ## Complete Endpoint Summary
 

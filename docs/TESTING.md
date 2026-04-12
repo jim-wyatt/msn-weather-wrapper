@@ -14,7 +14,7 @@ graph TB
 
         I["<b>Integration Tests</b><br/>17 tests<br/>Full API with live endpoints<br/><br/>• Health checks<br/>• Complete workflows<br/>• Error handling"]
 
-        E["<b>End-to-End Tests</b><br/>41 tests<br/>User workflows via Playwright<br/><br/>• Accessibility: 13<br/>• Visual: 15<br/>• Functional: 13"]
+        E["<b>End-to-End Tests</b><br/>40 tests<br/>User workflows via Playwright<br/><br/>• Accessibility: 13<br/>• Visual: 15<br/>• Functional: 12"]
 
         U --> I --> E
     end
@@ -94,12 +94,12 @@ Frontend E2E tests require Node.js 22+ (project standard) and run in a container
 podman build -f infra/containers/Containerfile.playwright -t msn-weather-playwright:latest .
 
 # Start frontend server
-podman run -d --name frontend-srv --network test-net -p 5173:5173 \
-  -v ./frontend:/app:Z node:22-trixie-slim sh -c "cd /app && npm install && npm run dev -- --host 0.0.0.0"
+podman run -d --name frontend-srv --network test-net -p 3000:3000 \
+  -v ./frontend:/app:Z node:22-trixie-slim sh -c "cd /app && npm install && npm run dev -- --hostname 0.0.0.0"
 
 # Run tests
 podman run --rm --network test-net \
-  -e PLAYWRIGHT_BASE_URL=http://frontend-srv:5173 \
+  -e PLAYWRIGHT_BASE_URL=http://frontend-srv:3000 \
   msn-weather-playwright:latest npx playwright test
 ```
 
@@ -302,7 +302,7 @@ Running 40 tests using 1 worker
 1. Run all backend tests: `pytest`
 2. Check coverage: `pytest --cov=src`
 3. Run security tests: `pytest tests/test_security.py`
-4. Run cache tests: `pytest tests/test_cache.py`
+4. Run API tests: `pytest tests/test_api.py`
 5. Run frontend tests: `cd frontend && npm run test:e2e`
 6. Verify linting: `ruff check .`
 7. Run type checks: `mypy src/`
@@ -347,7 +347,7 @@ def test_feature_name():
 **Frontend**:
 - `playwright` - E2E testing framework (1.57.0+)
 - `@axe-core/playwright` - Accessibility testing (added Phase 3)
-- `vite` - Dev server and build tool (6.x, project standard Node 22+)
+- `next` - React framework and dev server (16.x, project standard Node 22+)
 - `typescript` - Type safety
 
 ### Pre-commit Hooks
@@ -380,13 +380,13 @@ Tests run on:
 ## Frontend Testing
 
 ### Requirements
-- **Node.js**: 20.0.0 or higher (required by Vite 6.x)
+- **Node.js**: 22.0.0 or higher (project standard)
 - **Playwright**: 1.57.0
 - **Browsers**: Chromium, Firefox, WebKit (auto-installed)
 
 ### E2E Tests (Playwright)
 
-#### Test Categories (33 tests total)
+#### Test Categories (40 tests total)
 
 **Accessibility Tests (13 tests)** - WCAG 2.1 Level AA compliance:
 - ✅ Page title and language
@@ -420,12 +420,19 @@ Tests run on:
 - ✅ Dark mode rendering (future)
 - ✅ High contrast mode (future)
 
-**Functional E2E Tests (5 tests)**:
+**Functional E2E Tests (12 tests)**:
 - ✅ Weather search flow (success)
 - ✅ Temperature unit conversion
 - ✅ Recent searches interaction
 - ✅ Error handling (invalid city)
 - ✅ Form validation
+- ✅ City autocomplete selection
+- ✅ Geolocation weather fetch
+- ✅ Loading state display
+- ✅ API error handling
+- ✅ Unit toggle persistence
+- ✅ Empty state display
+- ✅ Keyboard navigation
 
 #### Running E2E Tests
 
@@ -461,14 +468,14 @@ podman-compose up -d frontend-srv
 # Run tests in container (Option 1: Direct)
 podman run --rm \
   --network test-net \
-  -e PLAYWRIGHT_BASE_URL=http://frontend-srv:5173 \
+  -e PLAYWRIGHT_BASE_URL=http://frontend-srv:3000 \
   -v ./frontend/test-results:/app/test-results:Z \
   playwright-tests:latest
 
 # Run tests in container (Option 2: Shell)
 podman run --rm -it \
   --network test-net \
-  -e PLAYWRIGHT_BASE_URL=http://frontend-srv:5173 \
+  -e PLAYWRIGHT_BASE_URL=http://frontend-srv:3000 \
   -v ./frontend/test-results:/app/test-results:Z \
   playwright-tests:latest /bin/bash
 # Inside container:
@@ -697,7 +704,7 @@ When tests fail:
 ## Known Limitations
 
 ### Frontend Testing
-- **Node.js Version**: Vite 6.x uses Node 22+ as the project standard (host system has 18.19.1)
+- **Node.js Version**: Project standard is Node 22+ as specified in `.nvmrc` and `package.json`
   - **Solution**: Use containerized testing with `infra/containers/Containerfile.playwright`
 - **Visual Baselines**: Not yet established (requires manual review and approval)
   - **Impact**: Visual regression tests will fail until baselines are updated
