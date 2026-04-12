@@ -98,7 +98,6 @@ def _handle_weather_lookup(request: Request, city: Any, country: Any) -> JSONRes
     return JSONResponse(content=weather_data, status_code=status_code)
 
 
-@router.get("/weather")
 @router.get("/v1/weather")
 async def get_weather(
     request: Request,
@@ -109,7 +108,6 @@ async def get_weather(
     return _handle_weather_lookup(request, city, country)
 
 
-@router.post("/weather")
 @router.post("/v1/weather")
 async def get_weather_post(request: Request) -> JSONResponse:
     """Get weather data from a JSON request body."""
@@ -139,7 +137,6 @@ async def get_weather_post(request: Request) -> JSONResponse:
     return _handle_weather_lookup(request, data.get("city"), data.get("country"))
 
 
-@router.options("/weather", status_code=204)
 @router.options("/v1/weather", status_code=204)
 async def weather_options() -> Response:
     """Handle CORS preflight requests."""

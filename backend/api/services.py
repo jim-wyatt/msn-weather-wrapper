@@ -56,28 +56,6 @@ recent_searches: dict[str, deque[dict[str, str]]] = {}
 _weather_client: WeatherClient | None = None
 
 
-def _resolve_compat_get_client() -> WeatherClient:
-    """Use a patched legacy client provider when available."""
-    try:
-        from api import get_client as compatibility_get_client
-    except Exception:
-        return get_client()
-
-    if compatibility_get_client is get_client:
-        return get_client()
-    return compatibility_get_client()
-
-
-def _resolve_current_datetime() -> datetime:
-    """Use a patched legacy datetime provider when available."""
-    try:
-        from api import datetime as compatibility_datetime
-    except Exception:
-        return datetime.now()
-
-    return compatibility_datetime.now()
-
-
 def validate_input(
     value: str | None, field_name: str, max_length: int
 ) -> tuple[str | None, str | None]:
@@ -130,7 +108,7 @@ def get_cached_weather(city: str, country: str, minute_bucket: int) -> tuple[dic
 
     try:
         location = Location(city=city, country=country, latitude=None, longitude=None)
-        weather = _resolve_compat_get_client().get_weather(location)
+        weather = get_client().get_weather(location)
         return build_weather_payload(weather), 200
     except LocationNotFoundError as exc:
         return {"error": "Location not found", "message": str(exc)}, 404
@@ -146,7 +124,7 @@ def get_cached_weather(city: str, country: str, minute_bucket: int) -> tuple[dic
 
 def get_minute_bucket(now: datetime | None = None) -> int:
     """Return the active cache bucket."""
-    current_time = now or _resolve_current_datetime()
+    current_time = now or datetime.now()
     return current_time.minute // CACHE_DURATION_MINUTES if CACHE_DURATION_MINUTES > 0 else 0
 
 

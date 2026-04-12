@@ -29,7 +29,6 @@ RUN python -m pip install --no-cache-dir \
 
 # Copy source code (will be overridden by volume in compose)
 COPY backend/ backend/
-COPY api.py .
 COPY tests/ tests/
 
 # Ensure package is installed in editable mode
@@ -44,4 +43,4 @@ ENV APP_DEBUG=1
 ENV PYTHONUNBUFFERED=1
 
 # Default command (can be overridden in compose)
-CMD ["python", "api.py"]
+CMD ["uvicorn", "backend.api.main:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]

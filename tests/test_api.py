@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from api import app
+from backend.api.main import app
 from backend.api.testing import _TestClient
 from backend.models import Location, WeatherData
 
@@ -24,14 +24,6 @@ def test_health_check(client):
     data = json.loads(response.data)
     assert data["status"] == "ok"
     assert "service" in data
-
-
-def test_health_check_legacy(client):
-    """Test legacy health check endpoint for backward compatibility."""
-    response = client.get("/api/health")
-    assert response.status_code == 200
-    data = json.loads(response.data)
-    assert data["status"] == "ok"
 
 
 def test_liveness_probe(client):
@@ -56,7 +48,7 @@ def test_readiness_probe(client):
 
 def test_get_weather_missing_parameters(client):
     """Test GET weather endpoint with missing parameters."""
-    response = client.get("/api/weather")
+    response = client.get("/api/v1/weather")
     assert response.status_code == 400
     data = json.loads(response.data)
     assert "error" in data
@@ -64,13 +56,13 @@ def test_get_weather_missing_parameters(client):
 
 def test_get_weather_missing_city(client):
     """Test GET weather endpoint with missing city."""
-    response = client.get("/api/weather?country=USA")
+    response = client.get("/api/v1/weather?country=USA")
     assert response.status_code == 400
     data = json.loads(response.data)
     assert "error" in data
 
 
-@patch("api.get_client")
+@patch("backend.api.services.get_client")
 def test_get_weather_success(mock_get_client, client):
     """Test GET weather endpoint with valid parameters."""
     # Setup mock
@@ -86,7 +78,7 @@ def test_get_weather_success(mock_get_client, client):
     )
     mock_client.get_weather.return_value = mock_weather
 
-    response = client.get("/api/weather?city=Seattle&country=USA")
+    response = client.get("/api/v1/weather?city=Seattle&country=USA")
     assert response.status_code == 200
     data = json.loads(response.data)
     assert "location" in data
@@ -100,7 +92,7 @@ def test_get_weather_success(mock_get_client, client):
 
 def test_post_weather_missing_body(client):
     """Test POST weather endpoint with missing body."""
-    response = client.post("/api/weather", data=json.dumps({}), content_type="application/json")
+    response = client.post("/api/v1/weather", data=json.dumps({}), content_type="application/json")
     assert response.status_code == 400
     data = json.loads(response.data)
     assert "error" in data
@@ -109,14 +101,14 @@ def test_post_weather_missing_body(client):
 def test_post_weather_missing_fields(client):
     """Test POST weather endpoint with missing fields."""
     response = client.post(
-        "/api/weather", data=json.dumps({"city": "Seattle"}), content_type="application/json"
+        "/api/v1/weather", data=json.dumps({"city": "Seattle"}), content_type="application/json"
     )
     assert response.status_code == 400
     data = json.loads(response.data)
     assert "error" in data
 
 
-@patch("api.get_client")
+@patch("backend.api.services.get_client")
 def test_post_weather_success(mock_get_client, client):
     """Test POST weather endpoint with valid data."""
     # Setup mock
@@ -133,7 +125,7 @@ def test_post_weather_success(mock_get_client, client):
     mock_client.get_weather.return_value = mock_weather
 
     response = client.post(
-        "/api/weather",
+        "/api/v1/weather",
         data=json.dumps({"city": "London", "country": "UK"}),
         content_type="application/json",
     )
@@ -151,11 +143,11 @@ def test_post_weather_success(mock_get_client, client):
     assert data["wind_speed"] >= 0
 
 
-@patch("api.get_client")
+@patch("backend.api.services.get_client")
 def test_get_weather_client_error(mock_get_client, client):
     """Test GET weather endpoint when client raises an error."""
     # Clear the cache to ensure mock is used
-    from api import get_cached_weather
+    from backend.api.services import get_cached_weather
 
     get_cached_weather.cache_clear()
 
@@ -164,18 +156,18 @@ def test_get_weather_client_error(mock_get_client, client):
     mock_get_client.return_value = mock_client
     mock_client.get_weather.side_effect = Exception("Network error")
 
-    response = client.get("/api/weather?city=Seattle&country=USA")
+    response = client.get("/api/v1/weather?city=Seattle&country=USA")
     assert response.status_code == 500
     data = json.loads(response.data)
     assert "error" in data
     assert "message" in data
 
 
-@patch("api.get_client")
+@patch("backend.api.services.get_client")
 def test_post_weather_client_error(mock_get_client, client):
     """Test POST weather endpoint when client raises an error."""
     # Clear the cache to ensure mock is used
-    from api import get_cached_weather
+    from backend.api.services import get_cached_weather
 
     get_cached_weather.cache_clear()
 
@@ -185,7 +177,7 @@ def test_post_weather_client_error(mock_get_client, client):
     mock_client.get_weather.side_effect = ValueError("Invalid data")
 
     response = client.post(
-        "/api/weather",
+        "/api/v1/weather",
         data=json.dumps({"city": "Invalid", "country": "XX"}),
         content_type="application/json",
     )
@@ -198,7 +190,7 @@ def test_post_weather_client_error(mock_get_client, client):
 def test_post_weather_invalid_json(client):
     """Test POST weather endpoint with invalid JSON."""
     response = client.post(
-        "/api/weather",
+        "/api/v1/weather",
         data="not valid json",
         content_type="application/json",
     )
@@ -214,10 +206,10 @@ def test_invalid_endpoint(client):
 # Cache Tests
 
 
-@patch("api.get_client")
+@patch("backend.api.services.get_client")
 def test_weather_caching_same_bucket(mock_get_client, client):
     """Test that weather data is cached within the same time bucket."""
-    from api import get_cached_weather
+    from backend.api.services import get_cached_weather
 
     # Clear cache before test
     get_cached_weather.cache_clear()
@@ -234,12 +226,12 @@ def test_weather_caching_same_bucket(mock_get_client, client):
     mock_client.get_weather.return_value = mock_weather
 
     # First request
-    response1 = client.get("/api/weather?city=London&country=UK")
+    response1 = client.get("/api/v1/weather?city=London&country=UK")
     assert response1.status_code == 200
     assert mock_client.get_weather.call_count == 1
 
     # Second request in same bucket should use cache
-    response2 = client.get("/api/weather?city=London&country=UK")
+    response2 = client.get("/api/v1/weather?city=London&country=UK")
     assert response2.status_code == 200
     assert mock_client.get_weather.call_count == 1  # Still 1, cached
 
@@ -248,12 +240,12 @@ def test_weather_caching_same_bucket(mock_get_client, client):
     assert data1 == data2
 
 
-@patch("api.get_client")
-@patch("api.datetime")
+@patch("backend.api.services.get_client")
+@patch("backend.api.services.datetime")
 def test_weather_cache_invalidation(mock_datetime, mock_get_client, client):
     """Test that cache is invalidated across different time buckets."""
 
-    from api import get_cached_weather
+    from backend.api.services import get_cached_weather
 
     get_cached_weather.cache_clear()
 
@@ -274,7 +266,7 @@ def test_weather_cache_invalidation(mock_datetime, mock_get_client, client):
     )
     mock_client.get_weather.return_value = mock_weather1
 
-    response1 = client.get("/api/weather?city=London&country=UK")
+    response1 = client.get("/api/v1/weather?city=London&country=UK")
     assert response1.status_code == 200
     assert mock_client.get_weather.call_count == 1
 
@@ -292,7 +284,7 @@ def test_weather_cache_invalidation(mock_datetime, mock_get_client, client):
     )
     mock_client.get_weather.return_value = mock_weather2
 
-    response2 = client.get("/api/weather?city=London&country=UK")
+    response2 = client.get("/api/v1/weather?city=London&country=UK")
     assert response2.status_code == 200
     assert mock_client.get_weather.call_count == 2  # Cache miss, new bucket
 
@@ -301,10 +293,10 @@ def test_weather_cache_invalidation(mock_datetime, mock_get_client, client):
     assert data2["condition"] == "Sunny"
 
 
-@patch("api.get_client")
+@patch("backend.api.services.get_client")
 def test_cache_with_different_locations(mock_get_client, client):
     """Test that cache stores different locations separately."""
-    from api import get_cached_weather
+    from backend.api.services import get_cached_weather
 
     get_cached_weather.cache_clear()
 
@@ -333,14 +325,14 @@ def test_cache_with_different_locations(mock_get_client, client):
     mock_client.get_weather.side_effect = get_weather_side_effect
 
     # Request London
-    response1 = client.get("/api/weather?city=London&country=UK")
+    response1 = client.get("/api/v1/weather?city=London&country=UK")
     assert response1.status_code == 200
     data1 = json.loads(response1.data)
     assert data1["temperature"] == 20.0
     assert data1["condition"] == "Cloudy"
 
     # Request Paris
-    response2 = client.get("/api/weather?city=Paris&country=France")
+    response2 = client.get("/api/v1/weather?city=Paris&country=France")
     assert response2.status_code == 200
     data2 = json.loads(response2.data)
     assert data2["temperature"] == 25.0
@@ -353,7 +345,7 @@ def test_cache_size_configuration():
     """Test that cache size is configurable."""
     import os
 
-    from api import CACHE_SIZE
+    from backend.api.config import CACHE_SIZE
 
     # Default is 1000 or from environment
     assert CACHE_SIZE == int(os.getenv("CACHE_SIZE", "1000"))
@@ -363,7 +355,7 @@ def test_cache_duration_configuration():
     """Test that cache duration is configurable."""
     import os
 
-    from api import CACHE_DURATION_MINUTES
+    from backend.api.config import CACHE_DURATION_MINUTES
 
     expected = int(os.getenv("CACHE_DURATION", "300")) // 60
     assert CACHE_DURATION_MINUTES == expected
@@ -375,7 +367,7 @@ def test_cache_duration_configuration():
 def test_invalid_content_type_post(client):
     """Test POST with invalid content type."""
     response = client.post(
-        "/api/weather",
+        "/api/v1/weather",
         data="not json",
         content_type="text/plain",
     )
@@ -386,7 +378,7 @@ def test_invalid_content_type_post(client):
 def test_malformed_json_body(client):
     """Test POST with malformed JSON."""
     response = client.post(
-        "/api/weather",
+        "/api/v1/weather",
         data="{invalid json}",
         content_type="application/json",
     )
@@ -397,7 +389,7 @@ def test_oversized_request_body(client):
     """Test request with very large body."""
     huge_data = {"city": "A" * 10000, "country": "B" * 10000}
     response = client.post(
-        "/api/weather",
+        "/api/v1/weather",
         data=json.dumps(huge_data),
         content_type="application/json",
     )
@@ -409,7 +401,7 @@ def test_oversized_request_body(client):
 
 def test_invalid_http_method(client):
     """Test unsupported HTTP method."""
-    response = client.put("/api/weather?city=London&country=UK")
+    response = client.put("/api/v1/weather?city=London&country=UK")
     assert response.status_code == 405  # Method Not Allowed
 
 
@@ -420,7 +412,7 @@ def test_x_request_id_header(client):
     assert "X-Request-ID" in response.headers
 
 
-@patch("api.get_client")
+@patch("backend.api.services.get_client")
 def test_cache_zero_duration(mock_get_client, client, monkeypatch):
     """Test cache behavior when CACHE_DURATION is 0."""
     # Test that the code handles zero cache duration without division by zero
@@ -440,7 +432,7 @@ def test_cache_zero_duration(mock_get_client, client, monkeypatch):
 
     # Should work regardless of cache duration setting
     # When CACHE_DURATION_MINUTES is 0, minute_bucket is also 0 (safe default)
-    response = client.get("/api/weather?city=London&country=UK")
+    response = client.get("/api/v1/weather?city=London&country=UK")
     assert response.status_code == 200
     data = json.loads(response.data)
     assert data["location"]["city"] == "London"
@@ -502,7 +494,7 @@ def test_versioned_weather_get(client):
     assert response.status_code in [200, 400, 500, 502]
 
 
-@patch("api.get_client")
+@patch("backend.api.services.get_client")
 def test_versioned_weather_post(mock_get_client, client):
     """Test versioned weather POST endpoint."""
     mock_client = MagicMock()

@@ -55,8 +55,8 @@ body:
       description: Which component is affected?
       options:
         - Python Library (msn_weather_wrapper)
-        - REST API (FastAPI/api.py)
-        - Web Frontend (React)
+        - REST API (FastAPI)
+        - Web Frontend (Next.js)
         - Docker/Container
         - CI/CD
         - Documentation
