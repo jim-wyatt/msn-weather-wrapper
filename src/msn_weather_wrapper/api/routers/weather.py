@@ -24,6 +24,10 @@ from msn_weather_wrapper.exceptions import LocationNotFoundError, UpstreamError,
 router = APIRouter(tags=["weather"])
 
 
+def _get_request_id(request: Request) -> str | None:
+    return getattr(request.state, "request_id", None)
+
+
 def _invalid_request(
     message: str,
     *,
@@ -37,7 +41,7 @@ def _handle_weather_lookup(request: Request, city: Any, country: Any) -> JSONRes
     if not city or not country:
         logger.warning(
             "missing_parameters",
-            request_id=getattr(request.state, "request_id", None),
+            request_id=_get_request_id(request),
             city=city,
             country=country,
         )
@@ -50,7 +54,7 @@ def _handle_weather_lookup(request: Request, city: Any, country: Any) -> JSONRes
     if city_error:
         logger.warning(
             "invalid_city",
-            request_id=getattr(request.state, "request_id", None),
+            request_id=_get_request_id(request),
             error=city_error,
         )
         return _invalid_request(city_error, error="Invalid input")
@@ -59,14 +63,14 @@ def _handle_weather_lookup(request: Request, city: Any, country: Any) -> JSONRes
     if country_error:
         logger.warning(
             "invalid_country",
-            request_id=getattr(request.state, "request_id", None),
+            request_id=_get_request_id(request),
             error=country_error,
         )
         return _invalid_request(country_error, error="Invalid input")
 
     logger.info(
         "fetching_weather",
-        request_id=getattr(request.state, "request_id", None),
+        request_id=_get_request_id(request),
         city=city,
         country=country,
     )
@@ -76,7 +80,7 @@ def _handle_weather_lookup(request: Request, city: Any, country: Any) -> JSONRes
         add_to_recent_searches(request, city, country)
         logger.info(
             "weather_fetched_successfully",
-            request_id=getattr(request.state, "request_id", None),
+            request_id=_get_request_id(request),
             city=city,
             country=country,
             cached=True,
@@ -84,7 +88,7 @@ def _handle_weather_lookup(request: Request, city: Any, country: Any) -> JSONRes
     else:
         logger.error(
             "weather_fetch_failed",
-            request_id=getattr(request.state, "request_id", None),
+            request_id=_get_request_id(request),
             city=city,
             country=country,
             status_code=status_code,
@@ -178,7 +182,7 @@ async def get_weather_by_coordinates(
     except Exception as exc:  # pragma: no cover - defensive fallback
         logger.error(
             "unexpected_error",
-            request_id=getattr(request.state, "request_id", None),
+            request_id=_get_request_id(request),
             lat=lat,
             lon=lon,
             error=str(exc),
