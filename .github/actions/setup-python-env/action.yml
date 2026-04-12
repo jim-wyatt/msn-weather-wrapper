@@ -32,5 +32,5 @@ runs:
       if: inputs.install-dependencies == 'true'
       shell: bash
       run: |
-        python -m pip install --upgrade pip setuptools
+        python -m pip install --upgrade pip
         pip install -e ".[${{ inputs.dependency-groups }}]"
