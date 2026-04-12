@@ -1,13 +1,16 @@
 # Multi-stage build for Next.js frontend
-FROM node:22-trixie-slim@sha256:53737ec3c2e9c0ccace6ba0bbbf7036c3bdf73d71f76b3bd8f60d202299edca1 AS builder
+FROM node:24-trixie-slim@sha256:9707cd4542f400df5078df04f9652a272429112f15202d22b5b8bdd148df494f AS builder
 
 WORKDIR /app
 
-# Copy package files (including lockfile for reproducible installs)
+RUN npm install -g npm@11.12.1
+
+# Copy package files
 COPY package.json package-lock.json ./
 
-# Install dependencies
-RUN npm ci
+# Use npm install so Docker builds are not blocked by lockfile drift and
+# platform-specific optional dependencies introduced by Next.js tooling.
+RUN npm install
 
 # Copy source files
 COPY . .
@@ -16,7 +19,7 @@ COPY . .
 RUN npm run build
 
 # Production stage - Node.js runtime (no nginx; standalone server serves everything)
-FROM node:22-trixie-slim@sha256:53737ec3c2e9c0ccace6ba0bbbf7036c3bdf73d71f76b3bd8f60d202299edca1 AS runner
+FROM node:24-trixie-slim@sha256:9707cd4542f400df5078df04f9652a272429112f15202d22b5b8bdd148df494f AS runner
 
 WORKDIR /app
 

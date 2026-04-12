@@ -18,9 +18,9 @@ The frontend includes comprehensive E2E tests using Playwright, covering:
 ## Running Tests
 
 ### Prerequisites
-Ensure Node.js 22+ is installed:
+Ensure Node.js 24+ is installed:
 ```bash
-node --version  # Should be >= 22.0.0
+node --version  # Should be >= 24.0.0
 ```
 
 ### Install Dependencies
@@ -168,7 +168,7 @@ podman exec frontend-dev npx playwright test
 - name: Install dependencies
   run: |
     cd frontend
-    npm ci
+    npm install
 
 - name: Install Playwright browsers
   run: npx playwright install --with-deps

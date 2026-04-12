@@ -1,5 +1,6 @@
-FROM node:lts-trixie@sha256:9fabb41bc32c72b02fd332bb6b6a17e01117d7eaa379a497a5adf7e1651baa2b
+FROM node:24-trixie-slim@sha256:9707cd4542f400df5078df04f9652a272429112f15202d22b5b8bdd148df494f
 WORKDIR /app
+RUN npm install -g npm@11.12.1
 COPY frontend/package*.json ./
 RUN npm install
 RUN npx playwright install --with-deps chromium

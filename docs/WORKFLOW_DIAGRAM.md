@@ -371,7 +371,7 @@ All workflows use consistent environment configuration:
 ```yaml
 env:
   PYTHON_VERSION: '3.12'
-  NODE_VERSION: '20'
+    NODE_VERSION: '24'
   REPORTS_DIR: 'docs/reports'
 ```
 

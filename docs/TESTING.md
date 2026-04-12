@@ -86,7 +86,7 @@ xdg-open htmlcov/index.html  # Linux
 
 ### Frontend Tests
 
-Frontend E2E tests require Node.js 22+ (project standard) and run in a containerized environment.
+Frontend E2E tests require Node.js 24+ (project standard) and run in a containerized environment.
 
 #### Containerized Testing
 ```bash
@@ -95,7 +95,7 @@ podman build -f infra/containers/Containerfile.playwright -t msn-weather-playwri
 
 # Start frontend server
 podman run -d --name frontend-srv --network test-net -p 3000:3000 \
-  -v ./frontend:/app:Z node:22-trixie-slim sh -c "cd /app && npm install && npm run dev -- --hostname 0.0.0.0"
+  -v ./frontend:/app:Z node:24-trixie-slim sh -c "cd /app && npm install && npm run dev -- --hostname 0.0.0.0"
 
 # Run tests
 podman run --rm --network test-net \

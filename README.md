@@ -108,7 +108,7 @@ If you're learning the codebase, explore it in this order:
 ### Prerequisites
 
 - Python 3.10+
-- Node.js 22+ (for frontend development)
+- Node.js 24+ (for frontend development)
 - Podman or Docker (for containerized deployment)
 
 ### From Source
