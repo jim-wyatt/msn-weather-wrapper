@@ -25,7 +25,8 @@ router = APIRouter(tags=["weather"])
 
 
 def _get_request_id(request: Request) -> str | None:
-    return getattr(request.state, "request_id", None)
+    value = getattr(request.state, "request_id", None)
+    return str(value) if value is not None else None
 
 
 def _invalid_request(
