@@ -3460,7 +3460,7 @@
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>pytest<span class="w"> </span>tests/test_api.py<span class="w"> </span>-v
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
 </span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># With coverage</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>pytest<span class="w"> </span>--cov<span class="o">=</span>src<span class="w"> </span>--cov-report<span class="o">=</span>html
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>pytest<span class="w"> </span>--cov<span class="o">=</span>backend<span class="w"> </span>--cov-report<span class="o">=</span>html
 </span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
 </span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="c1"># Security tests</span>
 </span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>pytest<span class="w"> </span>tests/test_security.py<span class="w"> </span>-v
@@ -3565,7 +3565,7 @@
 </ul>
 <h3 id="environment-variables">Environment Variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>API</strong>: <code>FLASK_ENV=development</code>, <code>FLASK_DEBUG=1</code></li>
+<li><strong>API</strong>: <code>APP_ENV=development</code>, <code>APP_DEBUG=1</code></li>
 <li><strong>Frontend</strong>: <code>NODE_ENV=development</code></li>
 </ul>
 <hr />
@@ -3597,7 +3597,7 @@
 <li>✅ Code formatted: <code>ruff format .</code></li>
 <li>✅ No lint errors: <code>ruff check .</code></li>
 <li>✅ Types valid: <code>mypy backend/</code></li>
-<li>✅ Coverage maintained: <code>pytest --cov=src</code></li>
+<li>✅ Coverage maintained: <code>pytest --cov=backend</code></li>
 <li>✅ Frontend tests pass: <code>npm run test:e2e</code></li>
 <li>✅ Documentation updated</li>
 <li>✅ CHANGELOG.md updated</li>

@@ -3486,7 +3486,7 @@ graph TB
 </span></code></pre></div>
 <h4 id="with-coverage">With Coverage<a class="headerlink" href="#with-coverage" title="Permanent link">&para;</a></h4>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Generate coverage report</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>pytest<span class="w"> </span>--cov<span class="o">=</span>src<span class="w"> </span>--cov<span class="o">=</span>api<span class="w"> </span>--cov-report<span class="o">=</span>html
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>pytest<span class="w"> </span>--cov<span class="o">=</span>backend<span class="w"> </span>--cov<span class="o">=</span>api<span class="w"> </span>--cov-report<span class="o">=</span>html
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># View report</span>
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>open<span class="w"> </span>htmlcov/index.html<span class="w">  </span><span class="c1"># macOS</span>
@@ -3798,7 +3798,7 @@ graph TB
 <h3 id="before-committing">Before Committing<a class="headerlink" href="#before-committing" title="Permanent link">&para;</a></h3>
 <ol>
 <li>Run all backend tests: <code>pytest</code></li>
-<li>Check coverage: <code>pytest --cov=src</code></li>
+<li>Check coverage: <code>pytest --cov=backend</code></li>
 <li>Run security tests: <code>pytest tests/test_security.py</code></li>
 <li>Run API tests: <code>pytest tests/test_api.py</code></li>
 <li>Run frontend tests: <code>cd frontend &amp;&amp; npm run test:e2e</code></li>
@@ -3842,7 +3842,7 @@ graph TB
 <p><strong>Frontend</strong>:
 - <code>playwright</code> - E2E testing framework (1.57.0+)
 - <code>@axe-core/playwright</code> - Accessibility testing (added Phase 3)
-- <code>next</code> - React framework and dev server (16.x, project standard Node 22+)
+- <code>next</code> - React framework and dev server (16.x, project standard Node 24+)
 - <code>typescript</code> - Type safety</p>
 <h3 id="pre-commit-hooks">Pre-commit Hooks<a class="headerlink" href="#pre-commit-hooks" title="Permanent link">&para;</a></h3>
 <p>Automatically run before each commit:

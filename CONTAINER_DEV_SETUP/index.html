@@ -2572,7 +2572,7 @@
 </span></code></pre></div>
 <p>Inside the API container shell:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pytest<span class="w"> </span>tests/test_api.py<span class="w"> </span>-v
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>pytest<span class="w"> </span>--cov<span class="o">=</span>src<span class="w"> </span>--cov-report<span class="o">=</span>html
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>pytest<span class="w"> </span>--cov<span class="o">=</span>backend<span class="w"> </span>--cov-report<span class="o">=</span>html
 </span></code></pre></div>
 <p>Inside the frontend container shell:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>npm<span class="w"> </span>run<span class="w"> </span>test:e2e
@@ -2613,7 +2613,7 @@
 <li><strong>Test runner:</strong> on-demand checks and browser tests</li>
 </ul>
 <h3 id="volume-mounts">Volume mounts<a class="headerlink" href="#volume-mounts" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>./src            -&gt; /app/src      (API)
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>./backend        -&gt; /app/backend  (API)
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>./api.py         -&gt; /app/api.py   (API)
 </span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>./tests          -&gt; /app/tests    (API)
 </span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>./frontend/app   -&gt; /app/app      (Frontend)
