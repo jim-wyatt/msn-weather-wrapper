@@ -75,10 +75,10 @@ npm run dev
 ### Making Code Changes
 
 #### Backend Changes
-1. Edit files in `src/msn_weather_wrapper/` or `api.py`
+1. Edit files in `backend/msn_weather_wrapper/` or `api.py`
 2. FastAPI reloads automatically
 3. Test: `pytest tests/test_*.py`
-4. Check types: `mypy src/`
+4. Check types: `mypy backend/`
 5. Format: `ruff format .`
 
 #### Frontend Changes
@@ -103,7 +103,7 @@ ruff check .
 ruff check . --fix  # Auto-fix
 
 # Type checking
-mypy src/msn_weather_wrapper
+mypy backend/msn_weather_wrapper
 
 # Run all checks
 pre-commit run --all-files
@@ -175,7 +175,7 @@ pytest tests/test_integration.py -v
 
 ### Backend Feature
 
-1. **Write code** in `src/msn_weather_wrapper/`
+1. **Write code** in `backend/msn_weather_wrapper/`
 2. **Add tests** in `tests/`
 3. **Update types** in `models.py`
 4. **Add API endpoint** in `api.py` (if needed)
@@ -318,7 +318,7 @@ Before submitting PR:
 1. ✅ All tests pass: `pytest`
 2. ✅ Code formatted: `ruff format .`
 3. ✅ No lint errors: `ruff check .`
-4. ✅ Types valid: `mypy src/`
+4. ✅ Types valid: `mypy backend/`
 5. ✅ Coverage maintained: `pytest --cov=src`
 6. ✅ Frontend tests pass: `npm run test:e2e`
 7. ✅ Documentation updated
@@ -332,7 +332,7 @@ See the Contributing Guidelines section above for full guidelines.
 
 ```
 msn-weather-wrapper/
-├── src/msn_weather_wrapper/    # Backend/library code
+├── backend/msn_weather_wrapper/    # Backend/library code
 │   ├── api/                    # FastAPI app (main, routers, services, schemas)
 │   ├── client.py               # Weather client
 │   ├── models.py               # Pydantic models

@@ -22,9 +22,9 @@ Detailed code coverage analysis from automated testing.
 
 | Module | Statements | Missing | Excluded | Coverage |
 |--------|-----------|---------|----------|----------|
-| `src/msn_weather_wrapper/__init__.py` | 5 | 0 | 0 | 100% ✅ |
-| `src/msn_weather_wrapper/client.py` | 245 | 22 | 0 | 91% ✅ |
-| `src/msn_weather_wrapper/models.py` | 180 | 9 | 0 | 95% ✅ |
+| `backend/msn_weather_wrapper/__init__.py` | 5 | 0 | 0 | 100% ✅ |
+| `backend/msn_weather_wrapper/client.py` | 245 | 22 | 0 | 91% ✅ |
+| `backend/msn_weather_wrapper/models.py` | 180 | 9 | 0 | 95% ✅ |
 | `api.py` | 320 | 25 | 0 | 92% ✅ |
 | **Total** | **750** | **56** | **0** | **90%** |
 
@@ -218,7 +218,7 @@ Generate coverage report locally:
 
 ```bash
 # Run tests with coverage
-pytest --cov=src/msn_weather_wrapper \
+pytest --cov=backend/msn_weather_wrapper \
        --cov-report=html \
        --cov-report=term \
        --cov-report=xml
@@ -240,7 +240,7 @@ Our coverage configuration (`.coveragerc`):
 
 ```ini
 [run]
-source = src/msn_weather_wrapper
+source = backend/msn_weather_wrapper
 omit =
     */tests/*
     */venv/*

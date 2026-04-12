@@ -304,7 +304,7 @@ graph LR
    - `fix:`, `bugfix:`, `chore:`, `perf:`, `refactor:`, `docs:` → **patch** version bump
    - `breaking:`, `feat!:`, `BREAKING CHANGE:` → **major** version bump
 2. Calculates new version
-3. Updates `pyproject.toml` and `src/msn_weather_wrapper/__init__.py`
+3. Updates `pyproject.toml` and `backend/msn_weather_wrapper/__init__.py`
 4. Creates version bump PR
 5. Auto-merges the PR (if branch protection allows)
 6. Creates git tag (format: `v*.*.*`)

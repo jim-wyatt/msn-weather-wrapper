@@ -6,14 +6,14 @@ This repository is organized so a beginner can reason about it in **four main zo
 
 If you're new, explore the project in this order:
 
-1. `src/msn_weather_wrapper/` — the Python backend and library code
+1. `backend/msn_weather_wrapper/` — the Python backend and library code
 2. `frontend/` — the React user interface
 3. `tests/` — examples of how behavior is verified
 4. `scripts/` — helper scripts for local development and reporting
 
 ## Mental Model
 
-### `src/msn_weather_wrapper/`
+### `backend/msn_weather_wrapper/`
 
 This is the **main backend code**.
 
@@ -64,7 +64,7 @@ Use it when you want explanations, not implementation details.
 
 ```text
 msn-weather-wrapper/
-├── src/msn_weather_wrapper/  # Backend/library code
+├── backend/msn_weather_wrapper/  # Backend/library code
 ├── frontend/                 # Next.js UI
 ├── tests/                    # Python tests
 ├── scripts/                  # Dev and automation scripts
@@ -77,6 +77,6 @@ msn-weather-wrapper/
 
 ## Rule of Thumb
 
-> If you want to **change behavior**, start in `src/`.
+> If you want to **change behavior**, start in `backend/`.
 > If you want to **change UI**, go to `frontend/`.
 > If you want to **understand intent**, read `tests/` and `docs/`.

@@ -14,7 +14,7 @@ If you are changing **application behavior**, you usually do **not** need this f
 
 Start in:
 
-- `src/msn_weather_wrapper/` for backend code
+- `backend/msn_weather_wrapper/` for backend code
 - `frontend/` for UI code
 - `tests/` for examples of expected behavior
 
