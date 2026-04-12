@@ -393,7 +393,9 @@ class TestHTTPErrorHandlers:
     def test_unicode_normalization_attack(self, client):
         """Test handling of unicode normalization attacks."""
         # Unicode characters that might be normalized differently
-        response = client.get("/api/v1/weather?city=\u0041\u030a&country=UK")  # Å as combining chars
+        response = client.get(
+            "/api/v1/weather?city=\u0041\u030a&country=UK"
+        )  # Å as combining chars
         # Should either work or fail gracefully with 400
         assert response.status_code in (200, 400)
 
