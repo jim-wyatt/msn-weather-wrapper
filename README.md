@@ -1,6 +1,6 @@
 # MSN Weather Wrapper
 
-> A modern, production-ready Python wrapper for MSN Weather with a FastAPI backend and React frontend.
+> A modern, production-ready Python wrapper for MSN Weather with a FastAPI backend and Next.js frontend.
 
 [![CI/CD Pipeline](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/ci.yml/badge.svg)](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/ci.yml)
 [![PyPI version](https://img.shields.io/pypi/v/msn-weather-wrapper.svg)](https://pypi.org/project/msn-weather-wrapper/)
@@ -75,7 +75,7 @@ with WeatherClient() as client:
 If you're learning the codebase, explore it in this order:
 
 1. `src/msn_weather_wrapper/` — backend logic and the FastAPI app
-2. `frontend/` — the React UI
+2. `frontend/` — the Next.js UI
 3. `tests/` — examples of expected behavior
 4. `scripts/` — helper commands for setup, reports, and deployment tasks
 

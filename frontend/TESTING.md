@@ -12,7 +12,7 @@ The frontend includes comprehensive E2E tests using Playwright, covering:
 
 ## Requirements
 - **Node.js**: ≥ 22.0.0 (project standard)
-- **Playwright**: ^1.49.1
+- **Playwright**: ^1.59.1 (matches `@playwright/test` in `frontend/package.json`)
 - **@axe-core/playwright**: For automated accessibility scanning
 
 ## Running Tests

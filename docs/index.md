@@ -77,7 +77,7 @@ Modern Python wrapper for MSN Weather with a FastAPI backend, React frontend, an
 | 🐍 **Python Library** | Type-safe weather client | [Usage](API.md) |
 | 🌐 **REST API** | FastAPI with typed validation and OpenAPI docs | [API Docs](API.md) |
 | 📖 **Swagger UI** | Interactive API documentation | [Interactive Docs](API.md#interactive-api-documentation) |
-| ⚛️ **React Frontend** | Next.js 16, React 19 + TypeScript 6 | [Frontend](API.md) |
+| ⚛️ **Next.js Frontend** | Next.js 16, React 19 + TypeScript 6 | [Frontend](API.md) |
 | 🐳 **Containerized** | Podman deployment | [Container Dev](CONTAINER_DEV_SETUP.md) |
 | ✅ **Tested** | 168 tests (128 backend, 40 frontend), 97% coverage | [Testing](TESTING.md) |
 | 🔒 **Secure** | Enhanced security scanning | [Security](SECURITY.md) |

@@ -381,8 +381,8 @@ Tests run on:
 
 ### Requirements
 - **Node.js**: 22.0.0 or higher (project standard)
-- **Playwright**: 1.57.0
-- **Browsers**: Chromium, Firefox, WebKit (auto-installed)
+- **Playwright**: version specified in `frontend/package.json`
+- **Browsers**: Chromium (configured in `frontend/playwright.config.ts`; installed automatically by Playwright)
 
 ### E2E Tests (Playwright)
 
@@ -704,7 +704,7 @@ When tests fail:
 ## Known Limitations
 
 ### Frontend Testing
-- **Node.js Version**: Project standard is Node 22+ as specified in `.nvmrc` and `package.json`
+- **Node.js Version**: Project standard is Node 22+ as specified in `frontend/.nvmrc` and `package.json`
   - **Solution**: Use containerized testing with `infra/containers/Containerfile.playwright`
 - **Visual Baselines**: Not yet established (requires manual review and approval)
   - **Impact**: Visual regression tests will fail until baselines are updated

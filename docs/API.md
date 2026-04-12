@@ -446,7 +446,7 @@ podman run -p 8080:80 -e SESSION_SECRET_KEY='secret' msn-weather-wrapper
 podman-compose up -d
 ```
 
-## React Component Examples
+## Next.js Frontend Examples
 
 The frontend application in `frontend/app/` provides a complete example of API integration using Next.js and TypeScript. See `frontend/app/page.tsx` and `frontend/app/components/` for reference implementations featuring:
 - Loading states and error handling
