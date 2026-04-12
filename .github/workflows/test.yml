@@ -112,8 +112,54 @@ jobs:
 
       - name: Generate coverage badge
         run: |
-          pip install coverage-badge
-          coverage-badge -o coverage.svg -f
+          python - <<'PY'
+          import json
+          import math
+
+          with open("coverage.json", "r", encoding="utf-8") as f:
+              data = json.load(f)
+
+          pct = float(data.get("totals", {}).get("percent_covered", 0.0))
+          value_text = f"{pct:.0f}%"
+
+          if pct >= 90:
+              color = "#4c1"
+          elif pct >= 75:
+              color = "#97CA00"
+          elif pct >= 60:
+              color = "#dfb317"
+          else:
+              color = "#e05d44"
+
+          # Approximate text width for a simple static badge.
+          left_width = 72
+          right_width = max(40, int(math.ceil(len(value_text) * 7.5 + 10)))
+          total_width = left_width + right_width
+
+          svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{total_width}" height="20" role="img" aria-label="coverage: {value_text}">
+            <linearGradient id="g" x2="0" y2="100%">
+              <stop offset="0" stop-color="#fff" stop-opacity=".7"/>
+              <stop offset=".1" stop-color="#aaa" stop-opacity=".1"/>
+              <stop offset=".9" stop-opacity=".3"/>
+              <stop offset="1" stop-opacity=".5"/>
+            </linearGradient>
+            <mask id="m"><rect width="{total_width}" height="20" rx="3" fill="#fff"/></mask>
+            <g mask="url(#m)">
+              <rect width="{left_width}" height="20" fill="#555"/>
+              <rect x="{left_width}" width="{right_width}" height="20" fill="{color}"/>
+              <rect width="{total_width}" height="20" fill="url(#g)"/>
+            </g>
+            <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
+              <text x="{left_width / 2}" y="15" fill="#010101" fill-opacity=".3">coverage</text>
+              <text x="{left_width / 2}" y="14">coverage</text>
+              <text x="{left_width + right_width / 2}" y="15" fill="#010101" fill-opacity=".3">{value_text}</text>
+              <text x="{left_width + right_width / 2}" y="14">{value_text}</text>
+            </g>
+          </svg>'''
+
+          with open("coverage.svg", "w", encoding="utf-8") as f:
+              f.write(svg)
+          PY
 
       - name: Generate coverage markdown report
         run: |
