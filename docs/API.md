@@ -419,7 +419,7 @@ pytest tests/test_security.py -v
 
 ```bash
 # Session secret (required for production)
-export SESSION_SECRET_KEY='your-secret-key-here'
+export APP_SECRET_KEY='your-secret-key-here'
 
 # API configuration
 export APP_ENV=production
@@ -440,7 +440,7 @@ export APP_DEBUG=0
 ```bash
 # Build and run
 podman build -t msn-weather-wrapper .
-podman run -p 8080:80 -e SESSION_SECRET_KEY='secret' msn-weather-wrapper
+podman run -p 8080:80 -e APP_SECRET_KEY='secret' msn-weather-wrapper
 
 # Using compose
 podman-compose up -d

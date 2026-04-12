@@ -77,7 +77,7 @@ pytest tests/test_integration.py -v
 #### With Coverage
 ```bash
 # Generate coverage report
-pytest --cov=src --cov=api --cov-report=html
+pytest --cov=backend --cov=api --cov-report=html
 
 # View report
 open htmlcov/index.html  # macOS
@@ -300,7 +300,7 @@ Running 40 tests using 1 worker
 
 ### Before Committing
 1. Run all backend tests: `pytest`
-2. Check coverage: `pytest --cov=src`
+2. Check coverage: `pytest --cov=backend`
 3. Run security tests: `pytest tests/test_security.py`
 4. Run API tests: `pytest tests/test_api.py`
 5. Run frontend tests: `cd frontend && npm run test:e2e`
@@ -347,7 +347,7 @@ def test_feature_name():
 **Frontend**:
 - `playwright` - E2E testing framework (1.57.0+)
 - `@axe-core/playwright` - Accessibility testing (added Phase 3)
-- `next` - React framework and dev server (16.x, project standard Node 22+)
+- `next` - React framework and dev server (16.x, project standard Node 24+)
 - `typescript` - Type safety
 
 ### Pre-commit Hooks

@@ -111,7 +111,7 @@ start_dev() {
     log_success "Containers started!"
     echo ""
     echo "Services available at:"
-    echo "  Frontend:  http://localhost:3000"
+    echo "  Frontend:  http://localhost:5173"
     echo "  API:       http://localhost:5000"
     echo "  Health:    http://localhost:5000/api/v1/health"
     echo ""
@@ -218,10 +218,10 @@ show_status() {
             log_warning "API:       http://localhost:5000 - NOT RESPONDING"
         fi
 
-        if curl -s http://localhost:3000 > /dev/null 2>&1; then
-            log_success "Frontend:  http://localhost:3000 - HEALTHY"
+        if curl -s http://localhost:5173 > /dev/null 2>&1; then
+            log_success "Frontend:  http://localhost:5173 - HEALTHY"
         else
-            log_warning "Frontend:  http://localhost:3000 - NOT RESPONDING"
+            log_warning "Frontend:  http://localhost:5173 - NOT RESPONDING"
         fi
     else
         log_info "Containers are not running. Start with: ./dev.sh start"
@@ -239,15 +239,15 @@ check_port_conflicts() {
         conflicts=$((conflicts + 1))
     fi
 
-    # Check port 3000 (Frontend)
-    if netstat -tuln 2>/dev/null | grep -q ":3000 " || ss -tuln 2>/dev/null | grep -q ":3000 "; then
-        log_error "Port 3000 is already in use (required for Frontend)"
+    # Check port 5173 (Frontend)
+    if netstat -tuln 2>/dev/null | grep -q ":5173 " || ss -tuln 2>/dev/null | grep -q ":5173 "; then
+        log_error "Port 5173 is already in use (required for Frontend)"
         conflicts=$((conflicts + 1))
     fi
 
     if [ $conflicts -gt 0 ]; then
         log_error "Found $conflicts port conflict(s). Please free the ports before starting."
-        echo "  Tip: Use 'lsof -i :5000' or 'lsof -i :3000' to find the process using these ports"
+        echo "  Tip: Use 'lsof -i :5000' or 'lsof -i :5173' to find the process using these ports"
         return 1
     fi
 
@@ -795,8 +795,10 @@ services:
       - ../../frontend/app:/app/app:z
       - ../../frontend/tests:/app/tests:z
       - ../../frontend/public:/app/public:z
+      - ../../frontend/playwright.config.ts:/app/playwright.config.ts:z
     environment:
       - NODE_ENV=development
+      - API_URL=http://api:5000
     command: npm run dev -- --hostname 0.0.0.0
     depends_on:
       - api
@@ -813,7 +815,7 @@ services:
       - ../../pyproject.toml:/app/pyproject.toml:z
     environment:
       - PYTHONUNBUFFERED=1
-    command: pytest --cov=msn_weather_wrapper --cov-report=term-missing --cov-report=html
+    command: pytest --cov=backend --cov-report=term-missing --cov-report=html
     profiles:
       - test
 EOF

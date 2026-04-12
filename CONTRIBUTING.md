@@ -36,7 +36,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
 ### Prerequisites
 
 - Python 3.10 or higher
-- Node.js 22+ (for frontend development)
+- Node.js 24+ (for frontend development)
 - Podman (for containerized development)
 
 ### Local Development Setup
@@ -191,13 +191,13 @@ podman-compose up -d
 pytest tests/test_integration.py -v
 
 # With coverage
-pytest --cov=src --cov-report=html
+pytest --cov=backend --cov-report=html
 ```
 
 ### Writing Tests
 
 - **Write tests for all new features**
-- **Maintain or improve test coverage** (currently 90%)
+- **Maintain or improve test coverage** (currently 97%)
 - **Include edge cases** and error conditions
 - **Use descriptive test names** that explain what is being tested
 - **Follow the AAA pattern**: Arrange, Act, Assert
@@ -352,7 +352,7 @@ pip install -U -e ".[dev]"
 mkdocs serve
 
 # View coverage report
-pytest --cov=src --cov-report=html
+pytest --cov=backend --cov-report=html
 open htmlcov/index.html
 ```
 

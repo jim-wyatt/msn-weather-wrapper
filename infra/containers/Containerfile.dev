@@ -39,8 +39,8 @@ RUN python -m pip install -e .
 EXPOSE 5000
 
 # Set environment variables for development
-ENV FLASK_ENV=development
-ENV FLASK_DEBUG=1
+ENV APP_ENV=development
+ENV APP_DEBUG=1
 ENV PYTHONUNBUFFERED=1
 
 # Default command (can be overridden in compose)
