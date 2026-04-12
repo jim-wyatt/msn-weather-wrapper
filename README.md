@@ -1,6 +1,6 @@
 # MSN Weather Wrapper
 
-> A modern, production-ready Python wrapper for MSN Weather with a FastAPI backend and React frontend.
+> A modern, production-ready Python wrapper for MSN Weather with a FastAPI backend and Next.js frontend.
 
 [![CI/CD Pipeline](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/ci.yml/badge.svg)](https://github.com/jim-wyatt/msn-weather-wrapper/actions/workflows/ci.yml)
 [![PyPI version](https://img.shields.io/pypi/v/msn-weather-wrapper.svg)](https://pypi.org/project/msn-weather-wrapper/)
@@ -19,14 +19,14 @@ MSN Weather Wrapper is a comprehensive weather data solution featuring:
 
 - **Python Library** - Type-safe weather client with Pydantic models
 - **REST API** - Production-ready FastAPI service with built-in OpenAPI docs
-- **Web Frontend** - Modern React 19 + TypeScript 5.7+ with Vite 7
+- **Web Frontend** - Modern Next.js 16 + React 19 + TypeScript 6
 - **Containerized** - Podman/Docker deployment with Gunicorn, Uvicorn workers, and Nginx
 
 **Technology Stack:**
 
 - **Backend**: Python 3.10+, FastAPI 0.115+, Pydantic 2.12+, Uvicorn, Gunicorn 23.0+
-- **Frontend**: React 19.2, Vite 7.2, TypeScript 5.7+
-- **Testing**: pytest 8.0+, Playwright, 168 tests (128 backend, 40 frontend E2E) with 97% coverage
+- **Frontend**: Next.js 16, React 19.2, TypeScript 6+
+- **Testing**: pytest 9.0+, Playwright, 168 tests (128 backend, 40 frontend E2E) with 97% coverage
 - **Quality**: ruff 0.14+, mypy 1.19+, pre-commit hooks
 - **Security**: Bandit, Semgrep, pip-audit, Trivy, Grype, weekly automated scans
 - **Deployment**: Podman/Docker, Nginx, multi-stage builds
@@ -65,7 +65,7 @@ with WeatherClient() as client:
 ./dev.sh setup   # One-time setup
 ./dev.sh start   # Start dev servers
 ./dev.sh status  # Check health
-# Frontend: http://localhost:5173
+# Frontend: http://localhost:3000
 # API: http://localhost:5000
 # Health: http://localhost:5000/api/v1/health
 ```
@@ -75,7 +75,7 @@ with WeatherClient() as client:
 If you're learning the codebase, explore it in this order:
 
 1. `src/msn_weather_wrapper/` — backend logic and the FastAPI app
-2. `frontend/` — the React UI
+2. `frontend/` — the Next.js UI
 3. `tests/` — examples of expected behavior
 4. `scripts/` — helper commands for setup, reports, and deployment tasks
 
@@ -86,7 +86,7 @@ If you're learning the codebase, explore it in this order:
 ## Features
 
 - 🌤️ Weather data extraction from MSN Weather
-- 🌍 406+ cities worldwide with autocomplete
+- 🌍 463+ cities worldwide with autocomplete
 - 🔌 RESTful API with comprehensive validation
 - 📚 **Interactive API docs** (Swagger UI at `/apidocs/`)
 - ⚛️ Modern web interface with React + TypeScript
@@ -108,7 +108,7 @@ If you're learning the codebase, explore it in this order:
 ### Prerequisites
 
 - Python 3.10+
-- Node.js 20+ (for frontend development)
+- Node.js 22+ (for frontend development)
 - Podman or Docker (for containerized deployment)
 
 ### From Source
@@ -163,10 +163,10 @@ curl -X POST http://localhost:5000/api/weather \
 ```bash
 cd frontend
 npm install
-npm run dev  # http://localhost:5173
+npm run dev  # http://localhost:3000
 ```
 
-**Features:** City autocomplete (406+ cities), temperature unit toggle (°C/°F), geolocation support, responsive design, WCAG 2.1 Level AA accessibility
+**Features:** City autocomplete (463+ cities), temperature unit toggle (°C/°F), geolocation support, responsive design, WCAG 2.1 Level AA accessibility
 
 ---
 

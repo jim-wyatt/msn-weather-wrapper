@@ -13,7 +13,7 @@ Develop entirely in containers with Podman for a consistent setup, easier onboar
 
 **Services:**
 
-- Frontend: <http://localhost:5173> (Vite HMR)
+- Frontend: <http://localhost:3000> (Next.js HMR)
 - API: <http://localhost:5000>
 - Health: <http://localhost:5000/api/v1/health>
 
@@ -86,7 +86,7 @@ npm run type-check
 ### Making changes
 
 - **Backend:** edit files in `src/` or `api.py` and FastAPI reloads automatically.
-- **Frontend:** edit files in `frontend/src/` and Vite updates instantly.
+- **Frontend:** edit files in `frontend/app/` and Next.js HMR updates instantly.
 - **Tests:** edit test files and rerun the relevant checks.
 
 All source code is mounted as a volume, so changes appear immediately.
@@ -118,7 +118,7 @@ npm install package-name
 ### Containers
 
 - **API:** Python 3.12 slim + FastAPI + dev tools on port `5000`
-- **Frontend:** Node 22 slim + Vite + Playwright on port `5173`
+- **Frontend:** Node 22 slim + Next.js + Playwright on port `3000`
 - **Test runner:** on-demand checks and browser tests
 
 ### Volume mounts
@@ -127,24 +127,29 @@ npm install package-name
 ./src            -> /app/src      (API)
 ./api.py         -> /app/api.py   (API)
 ./tests          -> /app/tests    (API)
-./frontend/src   -> /app/src      (Frontend)
+./frontend/app   -> /app/app      (Frontend)
 ./frontend/tests -> /app/tests    (Frontend)
 ```
 
 ### Networking
 
 - The API is reachable as `api:5000` inside the compose network.
-- The frontend proxy uses `DOCKER_ENV=true` in containers.
+- The frontend proxy uses `API_URL=http://api:5000` in containers.
 - Outside containers, browser traffic still uses `localhost`.
 
-**Vite proxy example:**
+**Next.js rewrites example:**
 
-```javascript
-proxy: {
-  '/api': {
-    target: process.env.DOCKER_ENV ? 'http://api:5000' : 'http://localhost:5000'
-  }
-}
+```typescript
+// next.config.ts
+async rewrites() {
+  const apiUrl = process.env.API_URL ?? 'http://localhost:5000';
+  return [
+    {
+      source: '/api/:path*',
+      destination: `${apiUrl}/api/:path*`,
+    },
+  ];
+},
 ```
 
 ## Troubleshooting
