@@ -5,13 +5,13 @@ import json
 import pytest
 
 from api import app, validate_input
+from backend.api.testing import _TestClient
 
 
 @pytest.fixture
 def client():
     """Create a test client for the FastAPI app."""
-    app.config["TESTING"] = True
-    with app.test_client() as client:
+    with _TestClient(app) as client:
         yield client
 
 
@@ -57,7 +57,7 @@ class TestInputValidation:
     def test_non_string_type(self):
         """Test non-string types are rejected."""
         for invalid_value in [12345, True, [], {}]:
-            value, error = validate_input(invalid_value, "city", 100)
+            value, error = validate_input(invalid_value, "city", 100)  # type: ignore[arg-type]
             assert error is not None
             assert "string" in error.lower()
 

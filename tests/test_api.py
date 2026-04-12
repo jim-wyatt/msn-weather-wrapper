@@ -6,14 +6,14 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from api import app
+from backend.api.testing import _TestClient
 from backend.models import Location, WeatherData
 
 
 @pytest.fixture
 def client():
     """Create a test client for the FastAPI app."""
-    app.config["TESTING"] = True
-    with app.test_client() as client:
+    with _TestClient(app) as client:
         yield client
 
 
