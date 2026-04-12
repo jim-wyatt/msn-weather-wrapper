@@ -246,7 +246,6 @@ from msn_weather_wrapper import WeatherClient
 client = WeatherClient()
 weather = client.get_weather_by_coordinates(47.6062, -122.3321)
 print(f"Weather in {weather.location.city}: {weather.temperature}°C")
-
 ```
 
 **Frontend Example:**
@@ -665,7 +664,6 @@ def get_weather_with_retry(city, country, max_retries=3):
         response.raise_for_status()
 
     raise Exception("Max retries exceeded")
-
 ```
 
 ### Response Caching
