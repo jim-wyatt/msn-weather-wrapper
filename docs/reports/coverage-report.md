@@ -94,7 +94,7 @@ Wind                      95%  ✅
 Precipitation             92%  ✅
 ```
 
-### API Module (`api.py`) - 92%
+### API Module (`backend/api/main.py`) - 92%
 
 **Covered Features:**
 - ✅ FastAPI route handlers
@@ -113,10 +113,10 @@ Precipitation             92%  ✅
 
 **Coverage by Endpoint:**
 ```
-/api/health               100% ✅
-/api/weather (GET)        95%  ✅
-/api/weather (POST)       94%  ✅
-/api/cities               90%  ✅
+/api/v1/health            100% ✅
+/api/v1/weather (GET)     95%  ✅
+/api/v1/weather (POST)    94%  ✅
+/api/v1/cities            90%  ✅
 Error handlers            88%  ⚠️
 ```
 

@@ -56,7 +56,7 @@ body:
       options:
         - Python Library (msn_weather_wrapper)
         - REST API (FastAPI)
-        - Web Frontend (React)
+        - Web Frontend (Next.js)
         - Docker/Container
         - CI/CD
         - Documentation
