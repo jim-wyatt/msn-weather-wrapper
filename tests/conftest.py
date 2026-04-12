@@ -19,7 +19,7 @@ os.environ.setdefault("RATE_LIMIT_GLOBAL", "1000")
 def clear_cache():
     """Clear LRU cache before each test to avoid cross-test contamination."""
     # Import after environment variables are set
-    from api import get_cached_weather
+    from backend.api.services import get_cached_weather
 
     # Clear the cache before each test
     get_cached_weather.cache_clear()

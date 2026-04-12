@@ -768,15 +768,14 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ../../src:/app/src:z
-      - ../../api.py:/app/api.py:z
+      - ../../backend:/app/backend:z
       - ../../tests:/app/tests:z
       - ../../pyproject.toml:/app/pyproject.toml:z
     environment:
             - APP_ENV=development
             - APP_DEBUG=1
       - PYTHONUNBUFFERED=1
-    command: python api.py
+    command: uvicorn backend.api.main:app --host 0.0.0.0 --port 5000 --reload
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/api/v1/health"]
       interval: 30s
@@ -792,12 +791,12 @@ services:
     ports:
     - "3000:3000"
     volumes:
-      - ../../frontend/src:/app/src:z
+      - ../../frontend/app:/app/app:z
       - ../../frontend/tests:/app/tests:z
       - ../../frontend/public:/app/public:z
     environment:
       - NODE_ENV=development
-    command: npm run dev -- --host 0.0.0.0
+    command: npm run dev -- --hostname 0.0.0.0
     depends_on:
       - api
 
@@ -807,13 +806,12 @@ services:
       dockerfile: infra/containers/Containerfile.dev
     container_name: msn-weather-test-runner
     volumes:
-      - ../../src:/app/src:z
-      - ../../api.py:/app/api.py:z
+      - ../../backend:/app/backend:z
       - ../../tests:/app/tests:z
       - ../../pyproject.toml:/app/pyproject.toml:z
     environment:
       - PYTHONUNBUFFERED=1
-    command: pytest --cov=msn_weather_wrapper --cov-report=term-missing --cov-report=html
+    command: pytest --cov=backend --cov-report=term-missing --cov-report=html
     profiles:
       - test
 EOF

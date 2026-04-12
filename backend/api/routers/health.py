@@ -10,7 +10,6 @@ from backend.api.services import get_client
 router = APIRouter(tags=["health"])
 
 
-@router.get("/health")
 @router.get("/v1/health")
 async def health_check() -> dict[str, str]:
     """Return a basic service health response."""

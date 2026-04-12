@@ -14,7 +14,7 @@ sequenceDiagram
     participant MSN as MSN Service
     participant Response as Response
 
-    Client->>API: GET /api/weather<br/>?city=Seattle&country=USA
+    Client->>API: GET /api/v1/weather<br/>?city=Seattle&country=USA
     activate API
 
     API->>Valid: Sanitize input
@@ -69,7 +69,7 @@ The Swagger UI provides:
 
 Check if the API is running.
 
-**Endpoint:** `GET /api/health`
+**Endpoint:** `GET /api/v1/health`
 
 **Response:**
 ```json
@@ -83,9 +83,7 @@ Check if the API is running.
 
 Fetch weather data for a specific location using query parameters.
 
-**Endpoints:**
-- `GET /api/weather` (legacy)
-- `GET /api/v1/weather` (versioned)
+**Endpoint:** `GET /api/v1/weather`
 
 **Query Parameters:**
 - `city` (required): City name
@@ -93,7 +91,7 @@ Fetch weather data for a specific location using query parameters.
 
 **Example Request:**
 ```bash
-curl "http://localhost:5000/api/weather?city=Seattle&country=USA"
+curl "http://localhost:5000/api/v1/weather?city=Seattle&country=USA"
 ```
 
 **Success Response (200):**
@@ -124,9 +122,7 @@ curl "http://localhost:5000/api/weather?city=Seattle&country=USA"
 
 Fetch weather data for a specific location using JSON body.
 
-**Endpoints:**
-- `POST /api/weather` (legacy)
-- `POST /api/v1/weather` (versioned)
+**Endpoint:** `POST /api/v1/weather`
 
 **Request Body:**
 ```json
@@ -138,7 +134,7 @@ Fetch weather data for a specific location using JSON body.
 
 **Example Request:**
 ```bash
-curl -X POST http://localhost:5000/api/weather \
+curl -X POST http://localhost:5000/api/v1/weather \
   -H "Content-Type: application/json" \
   -d '{"city": "London", "country": "UK"}'
 ```
@@ -335,7 +331,7 @@ CORS is enabled with credentials support for session management:
 // Fetch weather data
 async function getWeather(city: string, country: string) {
   const response = await fetch(
-    `http://localhost:5000/api/weather?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`
+    `http://localhost:5000/api/v1/weather?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`
   );
 
   if (!response.ok) {
@@ -424,7 +420,6 @@ export SESSION_SECRET_KEY='your-secret-key-here'
 # API configuration
 export APP_ENV=production
 export APP_DEBUG=0
-# Legacy `FLASK_*` variables are still accepted for compatibility
 ```
 
 ### Security Considerations
@@ -457,13 +452,10 @@ The frontend application in `frontend/app/` provides a complete example of API i
 
 | Method | Endpoint | Description | Version |
 |--------|----------|-------------|---------|
-| GET | `/api/health` | Basic health check | Legacy |
 | GET | `/api/v1/health` | Basic health check | v1 |
 | GET | `/api/v1/health/live` | Liveness probe | v1 |
 | GET | `/api/v1/health/ready` | Readiness probe | v1 |
-| GET | `/api/weather` | Get weather by city | Legacy |
 | GET | `/api/v1/weather` | Get weather by city | v1 |
-| POST | `/api/weather` | Get weather by city | Legacy |
 | POST | `/api/v1/weather` | Get weather by city | v1 |
 | GET | `/api/v1/weather/coordinates` | Get weather by coordinates | v1 |
 | GET | `/api/v1/recent-searches` | Get recent searches | v1 |
@@ -552,7 +544,7 @@ The API implements rate limiting to prevent abuse and ensure fair usage:
 Check remaining quota using response headers:
 
 ```bash
-curl -i "http://localhost:5000/api/weather?city=Seattle&country=USA"
+curl -i "http://localhost:5000/api/v1/weather?city=Seattle&country=USA"
 ```
 
 ```
@@ -581,7 +573,7 @@ import requests
 def get_weather_with_retry(city, country, max_retries=3):
     for attempt in range(max_retries):
         response = requests.get(
-            "http://localhost:5000/api/weather", params={"city": city, "country": country}
+            "http://localhost:5000/api/v1/weather", params={"city": city, "country": country}
         )
 
         if response.status_code == 200:

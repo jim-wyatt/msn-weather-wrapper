@@ -17,6 +17,8 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from backend.api.config import (
     DEBUG,
+    HOST,
+    PORT,
     RATE_LIMIT_GLOBAL,
     RATE_LIMIT_PER_IP,
     TESTING,
@@ -26,7 +28,6 @@ from backend.api.config import (
 from backend.api.routers.health import router as health_router
 from backend.api.routers.weather import router as weather_router
 from backend.api.services import close_client, logger
-from backend.api.testing import _TestClient
 
 
 class _InMemoryRateLimiter:
@@ -113,8 +114,6 @@ def create_app() -> FastAPI:
     )
 
     app.state.testing = TESTING
-    app.config = {"TESTING": TESTING}  # type: ignore[attr-defined]
-    app.test_client = lambda: _TestClient(app)  # type: ignore[attr-defined]
 
     app.add_middleware(
         CORSMiddleware,
@@ -175,3 +174,9 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("backend.api.main:app", host=HOST, port=PORT, reload=DEBUG)
