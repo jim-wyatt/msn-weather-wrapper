@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useRef, useEffect, ChangeEvent, KeyboardEvent } from 'react';
 import { cities } from '../data/cities';
 import type { City } from '../types';
@@ -31,9 +33,9 @@ export default function CityAutocomplete({ onCitySelect }: CityAutocompleteProps
     setSelectedIndex(-1);
 
     if (value.trim().length > 0) {
-      const filtered = cities.filter((city: City) =>
-        city.name.toLowerCase().includes(value.toLowerCase())
-      ).slice(0, 8);
+      const filtered = cities
+        .filter((city: City) => city.name.toLowerCase().includes(value.toLowerCase()))
+        .slice(0, 8);
       setFilteredCities(filtered);
       setShowSuggestions(true);
     } else {
@@ -90,9 +92,7 @@ export default function CityAutocomplete({ onCitySelect }: CityAutocompleteProps
         role="combobox"
         aria-expanded={showSuggestions && filteredCities.length > 0}
         aria-controls="city-suggestions"
-        aria-activedescendant={
-          selectedIndex >= 0 ? `city-option-${selectedIndex}` : undefined
-        }
+        aria-activedescendant={selectedIndex >= 0 ? `city-option-${selectedIndex}` : undefined}
         aria-autocomplete="list"
         aria-label="Search for a city to get weather information"
       />

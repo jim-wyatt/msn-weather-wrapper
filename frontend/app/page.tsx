@@ -1,7 +1,8 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import CityAutocomplete from './components/CityAutocomplete';
 import type { City, WeatherData, RecentSearch } from './types';
-import './App.css';
 
 type TempUnit = 'C' | 'F';
 
@@ -11,13 +12,15 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
   const [loadingLocation, setLoadingLocation] = useState<boolean>(false);
-  const [unit, setUnit] = useState<TempUnit>(() => {
-    const saved = localStorage.getItem('tempUnit');
-    return (saved === 'C' || saved === 'F') ? saved : 'C';
-  });
+  // Defer localStorage read to avoid SSR/client hydration mismatch
+  const [unit, setUnit] = useState<TempUnit>('C');
 
-  // Load recent searches on mount
+  // Load unit preference and recent searches on mount
   useEffect(() => {
+    const saved = localStorage.getItem('tempUnit');
+    if (saved === 'C' || saved === 'F') {
+      setUnit(saved);
+    }
     fetchRecentSearches();
   }, []);
 
@@ -36,7 +39,7 @@ function App() {
   };
 
   const convertTemp = (tempC: number, to: TempUnit): number => {
-    return to === 'F' ? (tempC * 9 / 5) + 32 : tempC;
+    return to === 'F' ? (tempC * 9) / 5 + 32 : tempC;
   };
 
   const fetchWeatherWithRetry = async (city: City, retries = 3): Promise<void> => {
@@ -60,11 +63,13 @@ function App() {
 
           // Retry on server errors (5xx) or network issues
           if (attempt === retries) {
-            throw new Error(errorData.message || 'Failed to fetch weather after multiple attempts');
+            throw new Error(
+              errorData.message || 'Failed to fetch weather after multiple attempts'
+            );
           }
 
           // Wait before retrying (exponential backoff)
-          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+          await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
           continue;
         }
 
@@ -80,7 +85,7 @@ function App() {
           setWeather(null);
         } else {
           // Wait before retrying
-          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+          await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
         }
       }
     }
@@ -248,7 +253,9 @@ function App() {
           >
             <div className="weather-header">
               <div className="location-info">
-                <h2 className="location-name" id="weather-location">{weather.location.city}</h2>
+                <h2 className="location-name" id="weather-location">
+                  {weather.location.city}
+                </h2>
                 <p className="location-country">{weather.location.country}</p>
               </div>
               <div className="weather-icon-large" aria-hidden="true">
@@ -258,7 +265,9 @@ function App() {
 
             <div className="temperature-section">
               <div className="temperature-main">
-                <span aria-label={`Temperature: ${Math.round(convertTemp(weather.temperature, unit))} degrees ${unit === 'C' ? 'Celsius' : 'Fahrenheit'}`}>
+                <span
+                  aria-label={`Temperature: ${Math.round(convertTemp(weather.temperature, unit))} degrees ${unit === 'C' ? 'Celsius' : 'Fahrenheit'}`}
+                >
                   {Math.round(convertTemp(weather.temperature, unit))}°{unit}
                 </span>
                 <button
@@ -278,7 +287,9 @@ function App() {
               <div className="detail-item" role="listitem">
                 <span className="detail-icon" aria-hidden="true">💧</span>
                 <div className="detail-content">
-                  <span className="detail-label" id="humidity-label">Humidity</span>
+                  <span className="detail-label" id="humidity-label">
+                    Humidity
+                  </span>
                   <span className="detail-value" aria-labelledby="humidity-label">
                     {weather.humidity}%
                   </span>
@@ -288,7 +299,9 @@ function App() {
               <div className="detail-item" role="listitem">
                 <span className="detail-icon" aria-hidden="true">💨</span>
                 <div className="detail-content">
-                  <span className="detail-label" id="wind-label">Wind Speed</span>
+                  <span className="detail-label" id="wind-label">
+                    Wind Speed
+                  </span>
                   <span className="detail-value" aria-labelledby="wind-label">
                     {weather.wind_speed.toFixed(1)} kilometers per hour
                   </span>

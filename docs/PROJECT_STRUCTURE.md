@@ -26,9 +26,9 @@ This is the **main backend code**.
 
 This is the **web app**.
 
-- `src/components/` — reusable UI pieces
-- `src/data/` — static data like city lists
+- `app/` — Next.js App Router source (layout, page, components, data, types, CSS)
 - `tests/e2e/` — Playwright browser tests
+- `next.config.ts` — Next.js configuration (API rewrites, standalone output)
 
 ### `tests/`
 
@@ -65,7 +65,7 @@ Use it when you want explanations, not implementation details.
 ```text
 msn-weather-wrapper/
 ├── src/msn_weather_wrapper/  # Backend/library code
-├── frontend/                 # React UI
+├── frontend/                 # Next.js UI
 ├── tests/                    # Python tests
 ├── scripts/                  # Dev and automation scripts
 ├── infra/                    # Container and deployment config

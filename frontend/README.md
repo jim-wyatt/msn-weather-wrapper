@@ -1,22 +1,22 @@
 # MSN Weather Frontend
 
-A modern React + Vite frontend for the MSN Weather Wrapper API.
+A modern Next.js frontend for the MSN Weather Wrapper API.
 
 ## Features
 
-- 🔍 **Smart City Autocomplete** - Instant search through 130+ cities worldwide
+- 🔍 **Smart City Autocomplete** - Instant search through 463+ cities worldwide
 - 🎨 **Beautiful UI** - Modern gradient design with smooth animations
 - 📱 **Fully Responsive** - Perfect on desktop, tablet, and mobile
-- ⚡ **Lightning Fast** - Powered by Vite for instant hot module replacement
-- 🌐 **API Proxy** - Seamless integration with Flask backend
+- ⚡ **Lightning Fast** - Powered by Next.js App Router with server-side rendering
+- 🌐 **API Proxy** - Seamless integration with FastAPI backend via Next.js rewrites
 - ♿ **Accessible** - Keyboard navigation support for autocomplete
 
 ## Quick Start
 
 ### Prerequisites
 
-- Node.js 16+ and npm
-- Flask API server running on `http://localhost:5000`
+- Node.js 22+ and npm
+- FastAPI server running on `http://localhost:5000`
 
 ### Installation
 
@@ -48,19 +48,44 @@ npm run preview
 
 ## API Integration
 
-The frontend uses Vite's proxy feature to forward API requests to the Flask backend:
+The frontend uses Next.js rewrites to proxy API requests to the FastAPI backend:
 
-```javascript
-// In vite.config.js
-proxy: {
-  '/api': {
-    target: 'http://localhost:5000',
-    changeOrigin: true,
-  }
-}
+```typescript
+// In next.config.ts
+async rewrites() {
+  const apiUrl = process.env.API_URL ?? 'http://localhost:5000';
+  return [
+    {
+      source: '/api/:path*',
+      destination: `${apiUrl}/api/:path*`,
+    },
+  ];
+},
 ```
 
-This means frontend code can make requests to `/api/weather` and they'll be automatically routed to `http://localhost:5000/api/weather`.
+This means frontend code can make requests to `/api/v1/weather` and they'll be automatically routed to `http://localhost:5000/api/v1/weather`. In production, nginx handles this proxying instead.
+
+## Project Structure
+
+```
+frontend/
+├── app/                 # Next.js App Router directory
+│   ├── layout.tsx       # Root layout with metadata and global CSS
+│   ├── page.tsx         # Main weather app page (client component)
+│   ├── globals.css      # Global styles
+│   ├── types.ts         # TypeScript interfaces
+│   ├── components/      # Reusable UI components
+│   │   ├── CityAutocomplete.tsx
+│   │   └── CityAutocomplete.css
+│   └── data/
+│       └── cities.ts    # Static city list (463 cities)
+├── public/              # Static assets (SVG, manifest)
+├── tests/e2e/           # Playwright browser tests
+├── next.config.ts       # Next.js configuration (rewrites, standalone output)
+├── playwright.config.ts # Playwright test configuration
+├── tsconfig.json        # TypeScript configuration
+└── package.json         # Dependencies and scripts
+```
 
 ## Components
 
@@ -72,22 +97,23 @@ A smart autocomplete input component with:
 - Click-outside to close
 - Visual selection indicator
 
-### App
+### App (page.tsx)
 
 Main weather application with:
 - Weather data fetching and display
 - Loading states
-- Error handling
+- Error handling with retry logic
 - Weather icons based on conditions
 - Temperature, humidity, and wind speed display
+- Temperature unit toggle (°C / °F) with localStorage persistence
 
 ## Customization
 
 ### Adding More Cities
 
-Edit `src/data/cities.js` to add more cities:
+Edit `app/data/cities.ts` to add more cities:
 
-```javascript
+```typescript
 export const cities = [
   { name: "Your City", country: "Your Country" },
   // ... more cities
@@ -96,13 +122,14 @@ export const cities = [
 
 ### Styling
 
-- Global styles: `src/App.css`
-- Autocomplete styles: `src/components/CityAutocomplete.css`
+- Global styles: `app/globals.css`
+- Autocomplete styles: `app/components/CityAutocomplete.css`
 
 ## Tech Stack
 
-- **React 18** - UI library
-- **Vite 5** - Build tool and dev server
+- **Next.js 16** - React framework with App Router and standalone output
+- **React 19** - UI library
+- **TypeScript** - Type safety
 - **Vanilla CSS** - No CSS framework needed, custom styles included
 
 ## Browser Support
