@@ -135,7 +135,7 @@ pytest
 pytest tests/test_api.py -v
 
 # With coverage
-pytest --cov=src --cov-report=html
+pytest --cov=backend --cov-report=html
 
 # Security tests
 pytest tests/test_security.py -v
@@ -275,7 +275,7 @@ cd frontend && npm update
 
 ### Environment Variables
 
-- **API**: `FLASK_ENV=development`, `FLASK_DEBUG=1`
+- **API**: `APP_ENV=development`, `APP_DEBUG=1`
 - **Frontend**: `NODE_ENV=development`
 
 ---
@@ -319,7 +319,7 @@ Before submitting PR:
 2. ✅ Code formatted: `ruff format .`
 3. ✅ No lint errors: `ruff check .`
 4. ✅ Types valid: `mypy backend/`
-5. ✅ Coverage maintained: `pytest --cov=src`
+5. ✅ Coverage maintained: `pytest --cov=backend`
 6. ✅ Frontend tests pass: `npm run test:e2e`
 7. ✅ Documentation updated
 8. ✅ CHANGELOG.md updated

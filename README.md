@@ -187,7 +187,7 @@ pre-commit run --all-files       # Run all checks
 
 # Testing
 pytest                           # All tests
-pytest --cov=src --cov-report=html  # With coverage
+pytest --cov=backend --cov-report=html  # With coverage
 pytest tests/test_client.py -v   # Specific file
 ```
 

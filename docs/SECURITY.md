@@ -122,7 +122,7 @@ The project uses a **comprehensive security scanning workflow** integrated into 
 ### Test Coverage
 - **25 Security Tests**: All passing ✅
 - **Fuzzing Coverage**: 23+ attack vectors tested
-- **90% Code Coverage**: Including security validation paths
+- **97% Code Coverage**: Including security validation paths
 - **Integration Tests**: Security validation on live API
 - **6 Security Tools**: Coverage across SAST, dependencies, and containers
 
@@ -221,7 +221,7 @@ If you discover a security vulnerability:
 - ✅ Rate limiting implemented
 - ✅ Security documentation completed
 - ✅ All security tests passing
-- ✅ 90% code coverage achieved
+- ✅ 97% code coverage achieved
 
 ## Security Tools Integration
 
@@ -240,7 +240,7 @@ pip-audit
 pytest tests/test_security.py -v
 
 # Run all tests including security
-pytest --cov=src --cov-report=html
+pytest --cov=backend --cov-report=html
 ```
 
 ### SBOM Generation
