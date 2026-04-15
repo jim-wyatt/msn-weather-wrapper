@@ -97,16 +97,15 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PR_INFO=$(gh pr list --state merged --base main --limit 1 --json number,title -q '.[] | "\(.number)|\(.title)"')
+          PR_NUMBER=$(gh pr list --state merged --base main --limit 1 --json number -q '.[0].number')
 
-          if [[ -z "$PR_INFO" ]]; then
+          if [[ -z "$PR_NUMBER" ]]; then
             echo "No recent merged PR found - skipping auto-version"
             echo "skip=true" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-          PR_NUMBER=$(echo "$PR_INFO" | cut -d'|' -f1)
-          PR_TITLE=$(echo "$PR_INFO" | cut -d'|' -f2)
+          PR_TITLE=$(gh pr view "$PR_NUMBER" --json title --jq '.title')
 
           # Skip if the last merged PR was itself a version-bump PR to avoid infinite loops
           if echo "$PR_TITLE" | grep -qiE "^chore: bump version to"; then
@@ -116,17 +115,23 @@ jobs:
           fi
 
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
-          echo "pr_title=$PR_TITLE" >> $GITHUB_OUTPUT
+          {
+            echo "pr_title<<EOF"
+            echo "$PR_TITLE"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
           echo "Found merged PR #$PR_NUMBER: $PR_TITLE"
 
       - name: Trigger Auto-Version-Release workflow
         if: steps.pr_info.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.pr_info.outputs.pr_number }}
+          PR_TITLE: ${{ steps.pr_info.outputs.pr_title }}
         run: |
           gh workflow run auto-version-release.yml \
-            -f pr_number="${{ steps.pr_info.outputs.pr_number }}" \
-            -f pr_title="${{ steps.pr_info.outputs.pr_title }}" \
+            -f pr_number="$PR_NUMBER" \
+            -f pr_title="$PR_TITLE" \
             -f pr_merged="true"
 
-          echo "✓ Triggered auto-version-release workflow for PR #${{ steps.pr_info.outputs.pr_number }}"
+          echo "✓ Triggered auto-version-release workflow for PR #$PR_NUMBER"
