@@ -5,18 +5,19 @@ from __future__ import annotations
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
+from backend.api.schemas import HealthResponse
 from backend.api.services import get_client
 
 router = APIRouter(tags=["health"])
 
 
-@router.get("/v1/health")
+@router.get("/v1/health", response_model=HealthResponse)
 async def health_check() -> dict[str, str]:
     """Return a basic service health response."""
     return {"status": "ok", "service": "MSN Weather Wrapper API", "version": "1.0"}
 
 
-@router.get("/v1/health/live")
+@router.get("/v1/health/live", response_model=HealthResponse)
 async def liveness_probe() -> dict[str, str]:
     """Return a Kubernetes-friendly liveness probe response."""
     return {"status": "alive", "service": "MSN Weather Wrapper API"}

@@ -217,7 +217,7 @@ function App() {
             >
               {recentSearches.map((search, index) => (
                 <button
-                  key={index}
+                  key={`${search.city}-${search.country}-${index}`}
                   className="recent-search-item"
                   onClick={() => handleRecentSearchClick(search)}
                   role="listitem"
