@@ -4,7 +4,7 @@ FROM python:3.12-slim-trixie@sha256:fa48eefe2146644c2308b909d6bb7651a768178f84fc
 WORKDIR /app
 
 # Install system dependencies including development tools
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     gcc \
     curl \
     git \
@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
 COPY pyproject.toml .
 COPY README.md .
 
-RUN python -m pip install --no-cache-dir --upgrade pip
+RUN python -m pip install --no-cache-dir "pip>=25.3"
 
 # Install Python dependencies including dev dependencies
 RUN python -m pip install --no-cache-dir -e ".[dev]"
