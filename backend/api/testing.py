@@ -1,7 +1,16 @@
 """Test adapter for the FastAPI application.
 
 Provides a thin compatibility layer so tests can use
-``app.test_client()`` / ``response.data`` against the FastAPI app.
+``_TestClient(app)`` / ``response.data`` against the FastAPI app.
+
+Import ``_TestClient`` directly from ``backend.api.testing`` to create
+a test client instance::
+
+    from backend.api.testing import _TestClient
+    from backend.api.main import create_app
+
+    app = create_app()
+    client = _TestClient(app)
 """
 
 from __future__ import annotations

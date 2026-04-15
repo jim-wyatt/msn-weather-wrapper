@@ -4,7 +4,8 @@ import json
 
 import pytest
 
-from api import app, validate_input
+from backend.api.main import app
+from backend.api.services import validate_input
 from backend.api.testing import _TestClient
 
 
@@ -103,7 +104,7 @@ class TestAPISecurityGET:
             "admin\x00null",  # Null byte injection
         ]
         for payload in sql_injections:
-            response = client.get(f"/api/weather?city={payload}&country={payload}")
+            response = client.get(f"/api/v1/weather?city={payload}&country={payload}")
             assert response.status_code == 400
             data = json.loads(response.data)
             assert "error" in data
@@ -117,7 +118,7 @@ class TestAPISecurityGET:
             "<img src=x onerror=alert(1)>",
         ]
         for payload in xss_attempts:
-            response = client.get(f"/api/weather?city={payload}&country={payload}")
+            response = client.get(f"/api/v1/weather?city={payload}&country={payload}")
             assert response.status_code == 400
             data = json.loads(response.data)
             assert "error" in data
@@ -129,7 +130,7 @@ class TestAPISecurityGET:
             "..\\..\\..\\windows\\system32",
         ]
         for payload in path_traversals:
-            response = client.get(f"/api/weather?city={payload}&country={payload}")
+            response = client.get(f"/api/v1/weather?city={payload}&country={payload}")
             assert response.status_code == 400
             data = json.loads(response.data)
             assert "error" in data
@@ -143,20 +144,20 @@ class TestAPISecurityGET:
             "$(cat /etc/passwd)",
         ]
         for payload in commands:
-            response = client.get(f"/api/weather?city={payload}&country={payload}")
+            response = client.get(f"/api/v1/weather?city={payload}&country={payload}")
             assert response.status_code == 400
             data = json.loads(response.data)
             assert "error" in data
 
     def test_null_bytes(self, client):
         """Test null bytes are blocked."""
-        response = client.get("/api/weather?city=test\x00&country=test\x00")
+        response = client.get("/api/v1/weather?city=test\x00&country=test\x00")
         assert response.status_code == 400
 
     def test_oversized_input(self, client):
         """Test oversized inputs are rejected."""
         oversized = "A" * 10000
-        response = client.get(f"/api/weather?city={oversized}&country={oversized}")
+        response = client.get(f"/api/v1/weather?city={oversized}&country={oversized}")
         assert response.status_code == 400
         data = json.loads(response.data)
         assert "error" in data
@@ -164,14 +165,14 @@ class TestAPISecurityGET:
 
     def test_empty_parameters(self, client):
         """Test empty parameters are rejected."""
-        response = client.get("/api/weather?city=&country=")
+        response = client.get("/api/v1/weather?city=&country=")
         assert response.status_code == 400
         data = json.loads(response.data)
         assert "error" in data
 
     def test_whitespace_only_parameters(self, client):
         """Test whitespace-only parameters are rejected."""
-        response = client.get("/api/weather?city=   &country=   ")
+        response = client.get("/api/v1/weather?city=   &country=   ")
         assert response.status_code == 400
         data = json.loads(response.data)
         assert "error" in data
@@ -189,7 +190,7 @@ class TestAPISecurityPOST:
         ]
         for payload in malformed:
             response = client.post(
-                "/api/weather",
+                "/api/v1/weather",
                 data=payload,
                 headers={"Content-Type": "application/json"},
             )
@@ -208,7 +209,7 @@ class TestAPISecurityPOST:
         ]
         for payload in invalid_types:
             response = client.post(
-                "/api/weather",
+                "/api/v1/weather",
                 json=payload,
             )
             assert response.status_code == 400
@@ -220,7 +221,7 @@ class TestAPISecurityPOST:
     def test_sql_injection_in_json(self, client):
         """Test SQL injection in JSON values is blocked."""
         response = client.post(
-            "/api/weather",
+            "/api/v1/weather",
             json={"city": "1; DROP TABLE users", "country": "admin'--"},
         )
         assert response.status_code == 400
@@ -230,7 +231,7 @@ class TestAPISecurityPOST:
     def test_xss_in_json(self, client):
         """Test XSS in JSON values is blocked."""
         response = client.post(
-            "/api/weather",
+            "/api/v1/weather",
             json={"city": "<script>alert(1)</script>", "country": "USA"},
         )
         assert response.status_code == 400
@@ -248,7 +249,7 @@ class TestAPISecurityPOST:
         ]
         for payload in invalid_json:
             response = client.post(
-                "/api/weather",
+                "/api/v1/weather",
                 json=payload,
             )
             assert response.status_code == 400
@@ -258,7 +259,7 @@ class TestAPISecurityPOST:
     def test_oversized_json_values(self, client):
         """Test oversized JSON values are rejected."""
         response = client.post(
-            "/api/weather",
+            "/api/v1/weather",
             json={"city": "A" * 10000, "country": "USA"},
         )
         assert response.status_code == 400
@@ -279,7 +280,7 @@ class TestAPIRateLimiting:
     def test_multiple_invalid_requests(self, client):
         """Test multiple invalid requests are handled gracefully."""
         for _ in range(10):
-            response = client.get("/api/weather?city=<script>&country=alert")
+            response = client.get("/api/v1/weather?city=<script>&country=alert")
             # Should be 400 for invalid input, but may be 429 if rate limited
             assert response.status_code in (400, 429)
 
@@ -301,14 +302,14 @@ class TestHTTPErrorHandlers:
         assert response.status_code == 405
 
         # Try other unsupported methods
-        response = client.delete("/api/weather?city=London&country=UK")
+        response = client.delete("/api/v1/weather?city=London&country=UK")
         assert response.status_code == 405
 
     def test_413_payload_too_large(self, client):
         """Test handling of extremely large payloads."""
         huge_payload = {"city": "X" * 1_000_000, "country": "Y" * 1_000_000}
         response = client.post(
-            "/api/weather",
+            "/api/v1/weather",
             data=json.dumps(huge_payload),
             content_type="application/json",
         )
@@ -325,7 +326,7 @@ class TestHTTPErrorHandlers:
         ]
         for payload in test_cases:
             response = client.post(
-                "/api/weather",
+                "/api/v1/weather",
                 json=payload,
             )
             assert response.status_code == 400
@@ -336,7 +337,7 @@ class TestHTTPErrorHandlers:
         """Test 415 error for unsupported content types."""
         # Try sending XML when JSON is expected
         response = client.post(
-            "/api/weather",
+            "/api/v1/weather",
             data="<xml><city>London</city></xml>",
             content_type="application/xml",
         )
@@ -353,7 +354,7 @@ class TestHTTPErrorHandlers:
         ]
         for malformed in malformed_jsons:
             response = client.post(
-                "/api/weather",
+                "/api/v1/weather",
                 data=malformed,
                 content_type="application/json",
             )
@@ -362,7 +363,7 @@ class TestHTTPErrorHandlers:
     def test_content_type_without_charset(self, client):
         """Test handling of content-type without charset."""
         response = client.post(
-            "/api/weather",
+            "/api/v1/weather",
             data='{"city": "London", "country": "UK"}',
             content_type="application/json",  # No charset specified
         )
@@ -372,7 +373,7 @@ class TestHTTPErrorHandlers:
     def test_empty_request_body_post(self, client):
         """Test POST with completely empty body."""
         response = client.post(
-            "/api/weather",
+            "/api/v1/weather",
             data="",
             content_type="application/json",
         )
@@ -380,26 +381,28 @@ class TestHTTPErrorHandlers:
 
     def test_null_bytes_in_input(self, client):
         """Test handling of null bytes in input."""
-        response = client.get("/api/weather?city=London\x00&country=UK")
+        response = client.get("/api/v1/weather?city=London\x00&country=UK")
         assert response.status_code == 400
 
     def test_very_long_query_string(self, client):
         """Test handling of extremely long query strings."""
         long_city = "A" * 10000
-        response = client.get(f"/api/weather?city={long_city}&country=UK")
+        response = client.get(f"/api/v1/weather?city={long_city}&country=UK")
         assert response.status_code == 400
 
     def test_unicode_normalization_attack(self, client):
         """Test handling of unicode normalization attacks."""
         # Unicode characters that might be normalized differently
-        response = client.get("/api/weather?city=\u0041\u030a&country=UK")  # Å as combining chars
+        response = client.get(
+            "/api/v1/weather?city=\u0041\u030a&country=UK"
+        )  # Å as combining chars
         # Should either work or fail gracefully with 400
         assert response.status_code in (200, 400)
 
     def test_header_injection_attempts(self, client):
         """Test that header injection attempts don't succeed."""
         # Try to inject headers via input
-        response = client.get("/api/weather?city=London\r\nX-Injected: true&country=UK")
+        response = client.get("/api/v1/weather?city=London\r\nX-Injected: true&country=UK")
         assert response.status_code == 400
         # Ensure injected header is not present
         assert "X-Injected" not in response.headers
@@ -407,7 +410,7 @@ class TestHTTPErrorHandlers:
     def test_multiple_content_types(self, client):
         """Test handling of multiple content-type headers."""
         response = client.post(
-            "/api/weather",
+            "/api/v1/weather",
             data='{"city": "London", "country": "UK"}',
             headers={
                 "Content-Type": "application/json, text/plain",
@@ -432,8 +435,8 @@ class TestHTTPErrorHandlers:
         response2 = client.get("/api/v1/health/")
         # FastAPI redirect_slashes behavior: /api/v1/health works, /api/v1/health/ may redirect
         assert response1.status_code == 200
-        # response2 may be 200, 307/308 redirect, or 404 depending on router configuration
-        assert response2.status_code in (200, 307, 308, 404)
+        # response2 may be 200 or 404 depending on router configuration
+        assert response2.status_code in (200, 404)
 
     def test_double_slash_in_path(self, client):
         """Test handling of double slashes in URL path."""
@@ -444,7 +447,7 @@ class TestHTTPErrorHandlers:
     def test_url_encoding_in_parameters(self, client):
         """Test proper handling of URL-encoded parameters."""
         # Spaces encoded as +
-        response = client.get("/api/weather?city=New+York&country=USA")
+        response = client.get("/api/v1/weather?city=New+York&country=USA")
         # Should decode properly and not cause server error
         assert response.status_code in (200, 400, 500, 502)  # 500/502 if MSN Weather fails
         # Verify it's not a validation error
@@ -454,7 +457,7 @@ class TestHTTPErrorHandlers:
             assert "invalid characters" not in data.get("message", "").lower()
 
         # Spaces encoded as %20
-        response = client.get("/api/weather?city=New%20York&country=USA")
+        response = client.get("/api/v1/weather?city=New%20York&country=USA")
         assert response.status_code in (200, 400, 500, 502)  # 500/502 if MSN Weather fails
         if response.status_code == 400:
             data = json.loads(response.data)
@@ -462,18 +465,18 @@ class TestHTTPErrorHandlers:
 
     def test_repeated_parameters(self, client):
         """Test handling of repeated query parameters."""
-        response = client.get("/api/weather?city=London&city=Paris&country=UK")
+        response = client.get("/api/v1/weather?city=London&city=Paris&country=UK")
         # Should use first value, reject, or fail if backend unavailable
         assert response.status_code in (200, 400, 500, 502)
 
     def test_parameter_without_value(self, client):
         """Test handling of parameters without values."""
-        response = client.get("/api/weather?city=&country=UK")
+        response = client.get("/api/v1/weather?city=&country=UK")
         assert response.status_code == 400
 
     def test_cors_preflight_request(self, client):
         """Test CORS preflight OPTIONS request."""
-        response = client.options("/api/weather")
+        response = client.options("/api/v1/weather")
         # Should return 200 or 204 for OPTIONS
         assert response.status_code in (200, 204)
 

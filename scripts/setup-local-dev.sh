@@ -71,6 +71,6 @@ How to use:
 - Run backend tests: pytest
 - Run lint: ruff check .
 - Run type check: mypy .
-- Start API (example): python api.py
+- Start API (example): uvicorn backend.api.main:app --reload
 - Frontend dev: cd frontend && npm run dev
 SUMMARY

@@ -37,13 +37,13 @@ jobs:
 
       - name: Run Bandit (fail on HIGH/CRITICAL)
         run: |
-          bandit -r backend/ api.py -ll -f txt -o security-reports/bandit-report.txt || true
-          bandit -r backend/ api.py -f json -o security-reports/bandit-report.json || true
+          bandit -r backend/ -ll -f txt -o security-reports/bandit-report.txt || true
+          bandit -r backend/ -f json -o security-reports/bandit-report.json || true
 
       - name: Run Semgrep SAST scan
         run: |
-          semgrep --config=auto backend/ api.py --json --output=security-reports/semgrep-report.json || true
-          semgrep --config=auto backend/ api.py --output=security-reports/semgrep-report.txt || true
+          semgrep --config=auto backend/ --json --output=security-reports/semgrep-report.json || true
+          semgrep --config=auto backend/ --output=security-reports/semgrep-report.txt || true
 
       - name: Run pip-audit (check for vulnerabilities)
         run: |

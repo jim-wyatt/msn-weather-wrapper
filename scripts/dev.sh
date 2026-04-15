@@ -769,14 +769,13 @@ services:
       - "5000:5000"
     volumes:
       - ../../backend:/app/backend:z
-      - ../../api.py:/app/api.py:z
       - ../../tests:/app/tests:z
       - ../../pyproject.toml:/app/pyproject.toml:z
     environment:
       - APP_ENV=development
       - APP_DEBUG=1
       - PYTHONUNBUFFERED=1
-    command: python api.py
+    command: uvicorn backend.api.main:app --host 0.0.0.0 --port 5000 --reload
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/api/v1/health"]
       interval: 30s
@@ -810,7 +809,6 @@ services:
     container_name: msn-weather-test-runner
     volumes:
       - ../../backend:/app/backend:z
-      - ../../api.py:/app/api.py:z
       - ../../tests:/app/tests:z
       - ../../pyproject.toml:/app/pyproject.toml:z
     environment:

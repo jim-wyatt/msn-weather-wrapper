@@ -60,7 +60,7 @@ COPY --from=python-builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy application code
-COPY api.py .
+# (backend package is installed via pyproject.toml; no separate copy needed)
 
 # Copy Node.js binary from the frontend builder (needed to run Next.js standalone server)
 COPY --from=frontend-builder /usr/local/bin/node /usr/local/bin/node
