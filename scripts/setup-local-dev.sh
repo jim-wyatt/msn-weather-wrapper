@@ -71,6 +71,6 @@ How to use:
 - Run backend tests: pytest
 - Run lint: ruff check .
 - Run type check: mypy .
-- Start API (example): uvicorn backend.api.main:app --reload
+- Start API (example): uvicorn backend.api.main:app --reload --host 0.0.0.0 --port 5000
 - Frontend dev: cd frontend && npm run dev
 SUMMARY
