@@ -215,9 +215,9 @@ function App() {
               role="list"
               aria-labelledby="recent-searches-heading"
             >
-              {recentSearches.map((search, index) => (
+              {recentSearches.map((search) => (
                 <button
-                  key={`${search.city}-${search.country}-${index}`}
+                  key={`${search.city}-${search.country}`}
                   className="recent-search-item"
                   onClick={() => handleRecentSearchClick(search)}
                   role="listitem"
