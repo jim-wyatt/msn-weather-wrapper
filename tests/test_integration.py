@@ -67,7 +67,7 @@ class TestContainerizedAPI:
 
     def test_get_weather_missing_params(self, containers, api_url):
         """Test GET request with missing parameters."""
-        response = requests.get(f"{api_url}/api/weather", timeout=10)
+        response = requests.get(f"{api_url}/api/v1/weather", timeout=10)
         assert response.status_code == 400
         data = response.json()
         assert "error" in data
@@ -76,7 +76,7 @@ class TestContainerizedAPI:
     def test_get_weather_with_valid_params(self, containers, api_url):
         """Test GET request with valid city and country."""
         params = {"city": "Seattle", "country": "USA"}
-        response = requests.get(f"{api_url}/api/weather", params=params, timeout=10)
+        response = requests.get(f"{api_url}/api/v1/weather", params=params, timeout=10)
         # Should return either 200 with data or 500 if MSN is unreachable
         assert response.status_code in [200, 500]
         data = response.json()
@@ -90,7 +90,7 @@ class TestContainerizedAPI:
         """Test POST request with valid JSON."""
         payload = {"city": "London", "country": "UK"}
         response = requests.post(
-            f"{api_url}/api/weather",
+            f"{api_url}/api/v1/weather",
             json=payload,
             timeout=10,
         )
@@ -112,7 +112,7 @@ class TestContainerizedAPI:
         ]
         for payload in sql_payloads:
             response = requests.get(
-                f"{api_url}/api/weather",
+                f"{api_url}/api/v1/weather",
                 params={"city": payload, "country": payload},
                 timeout=10,
             )
@@ -130,7 +130,7 @@ class TestContainerizedAPI:
         ]
         for payload in xss_payloads:
             response = requests.get(
-                f"{api_url}/api/weather",
+                f"{api_url}/api/v1/weather",
                 params={"city": payload, "country": "USA"},
                 timeout=10,
             )
@@ -146,7 +146,7 @@ class TestContainerizedAPI:
         ]
         for payload in traversal_payloads:
             response = requests.get(
-                f"{api_url}/api/weather",
+                f"{api_url}/api/v1/weather",
                 params={"city": payload, "country": "USA"},
                 timeout=10,
             )
@@ -164,7 +164,7 @@ class TestContainerizedAPI:
         ]
         for payload in command_payloads:
             response = requests.get(
-                f"{api_url}/api/weather",
+                f"{api_url}/api/v1/weather",
                 params={"city": payload, "country": "USA"},
                 timeout=10,
             )
@@ -176,7 +176,7 @@ class TestContainerizedAPI:
         """Test that oversized inputs are blocked."""
         oversized = "A" * 10000
         response = requests.get(
-            f"{api_url}/api/weather",
+            f"{api_url}/api/v1/weather",
             params={"city": oversized, "country": "USA"},
             timeout=10,
         )
@@ -197,7 +197,7 @@ class TestContainerizedAPI:
         ]
         for payload in invalid_payloads:
             response = requests.post(
-                f"{api_url}/api/weather",
+                f"{api_url}/api/v1/weather",
                 json=payload,
                 timeout=10,
             )
@@ -208,7 +208,7 @@ class TestContainerizedAPI:
     def test_malformed_json_post(self, containers, api_url):
         """Test that malformed JSON is handled properly."""
         response = requests.post(
-            f"{api_url}/api/weather",
+            f"{api_url}/api/v1/weather",
             data="{invalid json}",
             headers={"Content-Type": "application/json"},
             timeout=10,
@@ -220,7 +220,7 @@ class TestContainerizedAPI:
     def test_empty_parameters_blocked(self, containers, api_url):
         """Test that empty parameters are rejected."""
         response = requests.get(
-            f"{api_url}/api/weather",
+            f"{api_url}/api/v1/weather",
             params={"city": "", "country": ""},
             timeout=10,
         )
@@ -231,7 +231,7 @@ class TestContainerizedAPI:
     def test_whitespace_only_blocked(self, containers, api_url):
         """Test that whitespace-only parameters are rejected."""
         response = requests.get(
-            f"{api_url}/api/weather",
+            f"{api_url}/api/v1/weather",
             params={"city": "   ", "country": "   "},
             timeout=10,
         )

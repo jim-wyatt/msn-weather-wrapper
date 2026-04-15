@@ -315,7 +315,7 @@ curl -X DELETE http://localhost:5000/api/v1/recent-searches
 ### Development Mode
 
 ```bash
-python api.py
+uvicorn backend.api.main:app --host 0.0.0.0 --port 5000 --reload
 
 ```
 
@@ -323,12 +323,12 @@ The API will be available at `http://localhost:5000`
 
 ### Production Mode (Recommended)
 
-The project includes Gunicorn 23.0+ as a production WSGI server. Use it for production deployments:
+The project includes Gunicorn 23.0+ as a production ASGI server. Use it for production deployments:
 
 ```bash
 # Gunicorn is already included in dependencies
 
-gunicorn -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:5000 --workers 4 --timeout 120 api:app
+gunicorn -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:5000 --workers 4 --timeout 120 backend.api.main:app
 
 ```
 

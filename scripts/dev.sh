@@ -772,8 +772,8 @@ services:
       - ../../tests:/app/tests:z
       - ../../pyproject.toml:/app/pyproject.toml:z
     environment:
-            - APP_ENV=development
-            - APP_DEBUG=1
+      - APP_ENV=development
+      - APP_DEBUG=1
       - PYTHONUNBUFFERED=1
     command: uvicorn backend.api.main:app --host 0.0.0.0 --port 5000 --reload
     healthcheck:
@@ -789,7 +789,7 @@ services:
       dockerfile: Containerfile.dev
     container_name: msn-weather-frontend-dev
     ports:
-    - "3000:3000"
+      - "3000:3000"
     volumes:
       - ../../frontend/app:/app/app:z
       - ../../frontend/tests:/app/tests:z

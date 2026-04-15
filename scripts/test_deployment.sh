@@ -103,7 +103,7 @@ RETRY_COUNT=0
 APP_READY=false
 
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-    if curl -s http://localhost:8080/api/health > /dev/null 2>&1; then
+    if curl -s http://localhost:8080/api/v1/health > /dev/null 2>&1; then
         APP_READY=true
         echo ""
         echo -e "${GREEN}✓ Application is ready${NC}"
@@ -119,7 +119,7 @@ if [ "$APP_READY" = false ]; then
     echo -e "${YELLOW}⚠ Application not responding, attempting restart...${NC}"
     podman restart msn-weather-app
     sleep 20
-    if curl -s http://localhost:8080/api/health > /dev/null 2>&1; then
+    if curl -s http://localhost:8080/api/v1/health > /dev/null 2>&1; then
         echo -e "${GREEN}✓ Application is ready after restart${NC}"
     else
         echo "ERROR: Application failed to start"
