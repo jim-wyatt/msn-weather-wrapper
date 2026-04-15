@@ -1137,10 +1137,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#security-tests-46-tests_1" class="md-nav__link">
+  <a href="#security-test-matrix-46-tests" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Security Tests (46 tests)
+        Security Test Matrix (46 tests)
       
     </span>
   </a>
@@ -1670,10 +1670,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#frontend-testing_1" class="md-nav__link">
+  <a href="#frontend-testing-limitations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Frontend Testing
+        Frontend Testing Limitations
       
     </span>
   </a>
@@ -1681,10 +1681,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#mutation-testing_1" class="md-nav__link">
+  <a href="#mutation-testing-limitations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Mutation Testing
+        Mutation Testing Limitations
       
     </span>
   </a>
@@ -2721,10 +2721,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#security-tests-46-tests_1" class="md-nav__link">
+  <a href="#security-test-matrix-46-tests" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Security Tests (46 tests)
+        Security Test Matrix (46 tests)
       
     </span>
   </a>
@@ -3254,10 +3254,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#frontend-testing_1" class="md-nav__link">
+  <a href="#frontend-testing-limitations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Frontend Testing
+        Frontend Testing Limitations
       
     </span>
   </a>
@@ -3265,10 +3265,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#mutation-testing_1" class="md-nav__link">
+  <a href="#mutation-testing-limitations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Mutation Testing
+        Mutation Testing Limitations
       
     </span>
   </a>
@@ -3473,39 +3473,48 @@ graph TB
 </span></code></pre></div>
 <h4 id="run-specific-test-categories">Run Specific Test Categories<a class="headerlink" href="#run-specific-test-categories" title="Permanent link">&para;</a></h4>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Unit tests only (fast, no network)</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>pytest<span class="w"> </span>tests/test_client.py<span class="w"> </span>tests/test_models.py<span class="w"> </span>tests/test_api.py
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Security tests (46 tests)</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>pytest<span class="w"> </span>tests/test_security.py<span class="w"> </span>-v
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>pytest<span class="w"> </span>tests/test_client.py<span class="w"> </span>tests/test_models.py<span class="w"> </span>tests/test_api.py
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># Security tests (46 tests)</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># Cache edge case tests (12 tests)</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>pytest<span class="w"> </span>tests/test_api.py::test_cache*<span class="w"> </span>-v
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># Integration tests (requires running API)</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>pytest<span class="w"> </span>tests/test_integration.py<span class="w"> </span>-v
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>pytest<span class="w"> </span>tests/test_security.py<span class="w"> </span>-v
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1"># Cache edge case tests (12 tests)</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>pytest<span class="w"> </span>tests/test_api.py::test_cache*<span class="w"> </span>-v
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="c1"># Integration tests (requires running API)</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>pytest<span class="w"> </span>tests/test_integration.py<span class="w"> </span>-v
 </span></code></pre></div>
 <h4 id="with-coverage">With Coverage<a class="headerlink" href="#with-coverage" title="Permanent link">&para;</a></h4>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Generate coverage report</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>pytest<span class="w"> </span>--cov<span class="o">=</span>backend<span class="w"> </span>--cov<span class="o">=</span>api<span class="w"> </span>--cov-report<span class="o">=</span>html
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># View report</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>open<span class="w"> </span>htmlcov/index.html<span class="w">  </span><span class="c1"># macOS</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>xdg-open<span class="w"> </span>htmlcov/index.html<span class="w">  </span><span class="c1"># Linux</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>pytest<span class="w"> </span>--cov<span class="o">=</span>backend<span class="w"> </span>--cov<span class="o">=</span>api<span class="w"> </span>--cov-report<span class="o">=</span>html
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># View report</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>open<span class="w"> </span>htmlcov/index.html<span class="w">  </span><span class="c1"># macOS</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>xdg-open<span class="w"> </span>htmlcov/index.html<span class="w">  </span><span class="c1"># Linux</span>
 </span></code></pre></div>
 <h3 id="frontend-tests">Frontend Tests<a class="headerlink" href="#frontend-tests" title="Permanent link">&para;</a></h3>
 <p>Frontend E2E tests require Node.js 24+ (project standard) and run in a containerized environment.</p>
 <h4 id="containerized-testing">Containerized Testing<a class="headerlink" href="#containerized-testing" title="Permanent link">&para;</a></h4>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Build Playwright container</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>podman<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>infra/containers/Containerfile.playwright<span class="w"> </span>-t<span class="w"> </span>msn-weather-playwright:latest<span class="w"> </span>.
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Start frontend server</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>podman<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>frontend-srv<span class="w"> </span>--network<span class="w"> </span>test-net<span class="w"> </span>-p<span class="w"> </span><span class="m">3000</span>:3000<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span>-v<span class="w"> </span>./frontend:/app:Z<span class="w"> </span>node:24-trixie-slim<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;cd /app &amp;&amp; npm install &amp;&amp; npm run dev -- --hostname 0.0.0.0&quot;</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># Run tests</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--network<span class="w"> </span>test-net<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">PLAYWRIGHT_BASE_URL</span><span class="o">=</span>http://frontend-srv:3000<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">  </span>msn-weather-playwright:latest<span class="w"> </span>npx<span class="w"> </span>playwright<span class="w"> </span><span class="nb">test</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>podman<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>infra/containers/Containerfile.playwright<span class="w"> </span>-t<span class="w"> </span>msn-weather-playwright:latest<span class="w"> </span>.
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># Start frontend server</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>podman<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>frontend-srv<span class="w"> </span>--network<span class="w"> </span>test-net<span class="w"> </span>-p<span class="w"> </span><span class="m">3000</span>:3000<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">  </span>-v<span class="w"> </span>./frontend:/app:Z<span class="w"> </span>node:24-trixie-slim<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;cd /app &amp;&amp; npm install &amp;&amp; npm run dev -- --hostname 0.0.0.0&quot;</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># Run tests</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--network<span class="w"> </span>test-net<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">PLAYWRIGHT_BASE_URL</span><span class="o">=</span>http://frontend-srv:3000<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">  </span>msn-weather-playwright:latest<span class="w"> </span>npx<span class="w"> </span>playwright<span class="w"> </span><span class="nb">test</span>
 </span></code></pre></div>
 <h3 id="test-breakdown">Test Breakdown<a class="headerlink" href="#test-breakdown" title="Permanent link">&para;</a></h3>
 <h3 id="backend-tests-111-tests">Backend Tests (111 tests)<a class="headerlink" href="#backend-tests-111-tests" title="Permanent link">&para;</a></h3>
@@ -3542,7 +3551,7 @@ graph TB
 <li>Error responses</li>
 <li>CORS configuration</li>
 </ul>
-<h3 id="security-tests-46-tests_1">Security Tests (46 tests)<a class="headerlink" href="#security-tests-46-tests_1" title="Permanent link">&para;</a></h3>
+<h3 id="security-test-matrix-46-tests">Security Test Matrix (46 tests)<a class="headerlink" href="#security-test-matrix-46-tests" title="Permanent link">&para;</a></h3>
 <h4 id="input-validation-9-tests">Input Validation (9 tests)<a class="headerlink" href="#input-validation-9-tests" title="Permanent link">&para;</a></h4>
 <ul>
 <li>✅ Empty input rejection</li>
@@ -3832,40 +3841,52 @@ graph TB
 </span></code></pre></div>
 <h2 id="continuous-integration">Continuous Integration<a class="headerlink" href="#continuous-integration" title="Permanent link">&para;</a></h2>
 <h3 id="testing-tools">Testing Tools<a class="headerlink" href="#testing-tools" title="Permanent link">&para;</a></h3>
-<p><strong>Backend</strong>:
-- <code>pytest</code> - Test framework
-- <code>pytest-cov</code> - Coverage reporting
-- <code>pytest-asyncio</code> - Async test support
-- <code>mutmut</code> - Mutation testing (added Phase 3)
-- <code>ruff</code> - Linting and formatting
-- <code>mypy</code> - Type checking</p>
-<p><strong>Frontend</strong>:
-- <code>playwright</code> - E2E testing framework (1.57.0+)
-- <code>@axe-core/playwright</code> - Accessibility testing (added Phase 3)
-- <code>next</code> - React framework and dev server (16.x, project standard Node 24+)
-- <code>typescript</code> - Type safety</p>
+<p><strong>Backend</strong>:</p>
+<ul>
+<li><code>pytest</code> - Test framework</li>
+<li><code>pytest-cov</code> - Coverage reporting</li>
+<li><code>pytest-asyncio</code> - Async test support</li>
+<li><code>mutmut</code> - Mutation testing (added Phase 3)</li>
+<li><code>ruff</code> - Linting and formatting</li>
+<li><code>mypy</code> - Type checking</li>
+</ul>
+<p><strong>Frontend</strong>:</p>
+<ul>
+<li><code>playwright</code> - E2E testing framework (1.57.0+)</li>
+<li><code>@axe-core/playwright</code> - Accessibility testing (added Phase 3)</li>
+<li><code>next</code> - React framework and dev server (16.x, project standard Node 24+)</li>
+<li><code>typescript</code> - Type safety</li>
+</ul>
 <h3 id="pre-commit-hooks">Pre-commit Hooks<a class="headerlink" href="#pre-commit-hooks" title="Permanent link">&para;</a></h3>
-<p>Automatically run before each commit:
+<p>Automatically run before each commit:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Install hooks</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>pre-commit<span class="w"> </span>install
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Run manually</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>pre-commit<span class="w"> </span>run<span class="w"> </span>--all-files
-</span></code></pre></div></p>
-<p>Hooks include:
-- Ruff formatting
-- Ruff linting
-- mypy type checking
-- pytest (fast tests only)</p>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>pre-commit<span class="w"> </span>install
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1"># Run manually</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>pre-commit<span class="w"> </span>run<span class="w"> </span>--all-files
+</span></code></pre></div>
+<p>Hooks include:</p>
+<ul>
+<li>Ruff formatting</li>
+<li>Ruff linting</li>
+<li>mypy type checking</li>
+<li>pytest (fast tests only)</li>
+</ul>
 <h3 id="github-actions">GitHub Actions<a class="headerlink" href="#github-actions" title="Permanent link">&para;</a></h3>
-<p>Automated testing on:
-- Every push to main
-- Every pull request
-- Manual workflow dispatch</p>
-<p>Tests run on:
-- Python 3.10, 3.11, 3.12
-- Ubuntu latest
-- Container builds</p>
+<p>Automated testing on:</p>
+<ul>
+<li>Every push to main</li>
+<li>Every pull request</li>
+<li>Manual workflow dispatch</li>
+</ul>
+<p>Tests run on:</p>
+<ul>
+<li>Python 3.10, 3.11, 3.12</li>
+<li>Ubuntu latest</li>
+<li>Container builds</li>
+</ul>
 <h2 id="frontend-testing">Frontend Testing<a class="headerlink" href="#frontend-testing" title="Permanent link">&para;</a></h2>
 <h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h3>
 <ul>
@@ -3875,97 +3896,116 @@ graph TB
 </ul>
 <h3 id="e2e-tests-playwright">E2E Tests (Playwright)<a class="headerlink" href="#e2e-tests-playwright" title="Permanent link">&para;</a></h3>
 <h4 id="test-categories-40-tests-total">Test Categories (40 tests total)<a class="headerlink" href="#test-categories-40-tests-total" title="Permanent link">&para;</a></h4>
-<p><strong>Accessibility Tests (13 tests)</strong> - WCAG 2.1 Level AA compliance:
-- ✅ Page title and language
-- ✅ Heading structure (h1-h6 hierarchy)
-- ✅ ARIA landmarks and labels
-- ✅ Color contrast ratios
-- ✅ Keyboard navigation
-- ✅ Focus management
-- ✅ Screen reader compatibility
-- ✅ Alt text for images
-- ✅ Form labels and error messages
-- ✅ Interactive element roles
-- ✅ Skip navigation links
-- ✅ Consistent page structure
-- ✅ Clear error identification</p>
-<p><strong>Visual Regression Tests (15 tests)</strong>:
-- ✅ Header layout and styling
-- ✅ Empty state display
-- ✅ Search form components
-- ✅ Weather card layout (with data)
-- ✅ Temperature display formatting
-- ✅ Weather condition icons
-- ✅ Unit toggle button states
-- ✅ Recent searches list
-- ✅ Error message styling
-- ✅ Loading states
-- ✅ Mobile responsive layout (375px)
-- ✅ Tablet layout (768px)
-- ✅ Desktop layout (1920px)
-- ✅ Dark mode rendering (future)
-- ✅ High contrast mode (future)</p>
-<p><strong>Functional E2E Tests (12 tests)</strong>:
-- ✅ Weather search flow (success)
-- ✅ Temperature unit conversion
-- ✅ Recent searches interaction
-- ✅ Error handling (invalid city)
-- ✅ Form validation
-- ✅ City autocomplete selection
-- ✅ Geolocation weather fetch
-- ✅ Loading state display
-- ✅ API error handling
-- ✅ Unit toggle persistence
-- ✅ Empty state display
-- ✅ Keyboard navigation</p>
+<p><strong>Accessibility Tests (13 tests)</strong> - WCAG 2.1 Level AA compliance:</p>
+<ul>
+<li>✅ Page title and language</li>
+<li>✅ Heading structure (h1-h6 hierarchy)</li>
+<li>✅ ARIA landmarks and labels</li>
+<li>✅ Color contrast ratios</li>
+<li>✅ Keyboard navigation</li>
+<li>✅ Focus management</li>
+<li>✅ Screen reader compatibility</li>
+<li>✅ Alt text for images</li>
+<li>✅ Form labels and error messages</li>
+<li>✅ Interactive element roles</li>
+<li>✅ Skip navigation links</li>
+<li>✅ Consistent page structure</li>
+<li>✅ Clear error identification</li>
+</ul>
+<p><strong>Visual Regression Tests (15 tests)</strong>:</p>
+<ul>
+<li>✅ Header layout and styling</li>
+<li>✅ Empty state display</li>
+<li>✅ Search form components</li>
+<li>✅ Weather card layout (with data)</li>
+<li>✅ Temperature display formatting</li>
+<li>✅ Weather condition icons</li>
+<li>✅ Unit toggle button states</li>
+<li>✅ Recent searches list</li>
+<li>✅ Error message styling</li>
+<li>✅ Loading states</li>
+<li>✅ Mobile responsive layout (375px)</li>
+<li>✅ Tablet layout (768px)</li>
+<li>✅ Desktop layout (1920px)</li>
+<li>✅ Dark mode rendering (future)</li>
+<li>✅ High contrast mode (future)</li>
+</ul>
+<p><strong>Functional E2E Tests (12 tests)</strong>:</p>
+<ul>
+<li>✅ Weather search flow (success)</li>
+<li>✅ Temperature unit conversion</li>
+<li>✅ Recent searches interaction</li>
+<li>✅ Error handling (invalid city)</li>
+<li>✅ Form validation</li>
+<li>✅ City autocomplete selection</li>
+<li>✅ Geolocation weather fetch</li>
+<li>✅ Loading state display</li>
+<li>✅ API error handling</li>
+<li>✅ Unit toggle persistence</li>
+<li>✅ Empty state display</li>
+<li>✅ Keyboard navigation</li>
+</ul>
 <h4 id="running-e2e-tests">Running E2E Tests<a class="headerlink" href="#running-e2e-tests" title="Permanent link">&para;</a></h4>
-<p><strong>Local Development</strong> (requires Node 22+):
+<p><strong>Local Development</strong> (requires Node 22+):</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nb">cd</span><span class="w"> </span>frontend
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1"># Install dependencies (first time)</span>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>npm<span class="w"> </span>install
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>npx<span class="w"> </span>playwright<span class="w"> </span>install<span class="w"> </span>--with-deps
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="c1"># Run all E2E tests</span>
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>npm<span class="w"> </span>run<span class="w"> </span>test:e2e
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>npm<span class="w"> </span>install
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>npx<span class="w"> </span>playwright<span class="w"> </span>install<span class="w"> </span>--with-deps
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="c1"># Run all E2E tests</span>
 </span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>
-</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="c1"># Run with UI (interactive debugging)</span>
-</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>npm<span class="w"> </span>run<span class="w"> </span>test:e2e:ui
-</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>
-</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="c1"># Run in headed mode (visible browser)</span>
-</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>npm<span class="w"> </span>run<span class="w"> </span>test:e2e:headed
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>npm<span class="w"> </span>run<span class="w"> </span>test:e2e
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="c1"># Run with UI (interactive debugging)</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>npm<span class="w"> </span>run<span class="w"> </span>test:e2e:ui
 </span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>
-</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="c1"># Update visual regression baselines</span>
-</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>npm<span class="w"> </span>run<span class="w"> </span>test:e2e<span class="w"> </span>--<span class="w"> </span>--update-snapshots
-</span></code></pre></div></p>
-<p><strong>Containerized Testing</strong> (Node version independent):
+</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="c1"># Run in headed mode (visible browser)</span>
+</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>
+</span><span id="__span-8-18"><a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>npm<span class="w"> </span>run<span class="w"> </span>test:e2e:headed
+</span><span id="__span-8-19"><a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>
+</span><span id="__span-8-20"><a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a><span class="c1"># Update visual regression baselines</span>
+</span><span id="__span-8-21"><a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a>
+</span><span id="__span-8-22"><a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>npm<span class="w"> </span>run<span class="w"> </span>test:e2e<span class="w"> </span>--<span class="w"> </span>--update-snapshots
+</span></code></pre></div>
+<p><strong>Containerized Testing</strong> (Node version independent):</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Build Playwright test image</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>podman<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>infra/containers/Containerfile.playwright<span class="w"> </span>-t<span class="w"> </span>playwright-tests:latest<span class="w"> </span>.
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># Start frontend dev server</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>podman-compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>frontend-srv
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>podman<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>infra/containers/Containerfile.playwright<span class="w"> </span>-t<span class="w"> </span>playwright-tests:latest<span class="w"> </span>.
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="c1"># Start frontend dev server</span>
 </span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="c1"># Run tests in container (Option 1: Direct)</span>
-</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">  </span>--network<span class="w"> </span>test-net<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">PLAYWRIGHT_BASE_URL</span><span class="o">=</span>http://frontend-srv:3000<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">  </span>-v<span class="w"> </span>./frontend/test-results:/app/test-results:Z<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">  </span>playwright-tests:latest
-</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>
-</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="c1"># Run tests in container (Option 2: Shell)</span>
-</span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a><span class="w">  </span>--network<span class="w"> </span>test-net<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">PLAYWRIGHT_BASE_URL</span><span class="o">=</span>http://frontend-srv:3000<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a><span class="w">  </span>-v<span class="w"> </span>./frontend/test-results:/app/test-results:Z<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a><span class="w">  </span>playwright-tests:latest<span class="w"> </span>/bin/bash
-</span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a><span class="c1"># Inside container:</span>
-</span><span id="__span-9-21"><a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a>npm<span class="w"> </span>run<span class="w"> </span>test:e2e
-</span></code></pre></div></p>
-<p><strong>Troubleshooting</strong>:
-- If <code>ECONNREFUSED</code>: Ensure frontend-srv is running (<code>podman ps</code>)
-- If tests hang: Check frontend-srv logs (<code>podman logs frontend-srv</code>)
-- If visual diffs fail: Update baselines with <code>--update-snapshots</code>
-- If accessibility failures: Check browser console for axe-core violations</p>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>podman-compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>frontend-srv
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="c1"># Run tests in container (Option 1: Direct)</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">  </span>--network<span class="w"> </span>test-net<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">PLAYWRIGHT_BASE_URL</span><span class="o">=</span>http://frontend-srv:3000<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="w">  </span>-v<span class="w"> </span>./frontend/test-results:/app/test-results:Z<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a><span class="w">  </span>playwright-tests:latest
+</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>
+</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a><span class="c1"># Run tests in container (Option 2: Shell)</span>
+</span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>
+</span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>podman<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a><span class="w">  </span>--network<span class="w"> </span>test-net<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-21"><a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">PLAYWRIGHT_BASE_URL</span><span class="o">=</span>http://frontend-srv:3000<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-22"><a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a><span class="w">  </span>-v<span class="w"> </span>./frontend/test-results:/app/test-results:Z<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-23"><a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a><span class="w">  </span>playwright-tests:latest<span class="w"> </span>/bin/bash
+</span><span id="__span-9-24"><a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a>
+</span><span id="__span-9-25"><a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a><span class="c1"># Inside container:</span>
+</span><span id="__span-9-26"><a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a>
+</span><span id="__span-9-27"><a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a>npm<span class="w"> </span>run<span class="w"> </span>test:e2e
+</span></code></pre></div>
+<p><strong>Troubleshooting</strong>:</p>
+<ul>
+<li>If <code>ECONNREFUSED</code>: Ensure frontend-srv is running (<code>podman ps</code>)</li>
+<li>If tests hang: Check frontend-srv logs (<code>podman logs frontend-srv</code>)</li>
+<li>If visual diffs fail: Update baselines with <code>--update-snapshots</code></li>
+<li>If accessibility failures: Check browser console for axe-core violations</li>
+</ul>
 <h4 id="e2e-test-coverage">E2E Test Coverage<a class="headerlink" href="#e2e-test-coverage" title="Permanent link">&para;</a></h4>
 <ul>
 <li>Basic functionality (header, empty state, buttons)</li>
@@ -3996,35 +4036,41 @@ graph TB
 <li><strong>Survived Mutants</strong>: 7 (require additional tests)</li>
 </ul>
 <h3 id="running-mutation-tests">Running Mutation Tests<a class="headerlink" href="#running-mutation-tests" title="Permanent link">&para;</a></h3>
-<p><strong>Full mutation test run</strong>:
+<p><strong>Full mutation test run</strong>:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Generate and test all mutations (slow: ~5-10 minutes)</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>mutmut<span class="w"> </span>run
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># Show results summary</span>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>mutmut<span class="w"> </span>results
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>mutmut<span class="w"> </span>run
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="c1"># Show results summary</span>
 </span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
-</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="c1"># Show survived mutations (need better tests)</span>
-</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>mutmut<span class="w"> </span>show<span class="w"> </span>survived
-</span></code></pre></div></p>
-<p><strong>Quick validation</strong> (recommended for development):
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>mutmut<span class="w"> </span>results
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="c1"># Show survived mutations (need better tests)</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>mutmut<span class="w"> </span>show<span class="w"> </span>survived
+</span></code></pre></div>
+<p><strong>Quick validation</strong> (recommended for development):</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Test subset of mutations</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>mutmut<span class="w"> </span>run<span class="w"> </span>--paths-to-mutate<span class="o">=</span>backend/msn_weather_wrapper/client.py
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c1"># View specific mutation details</span>
-</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>mutmut<span class="w"> </span>show<span class="w"> </span>&lt;mutation-id&gt;
-</span></code></pre></div></p>
-<p><strong>Reset mutation testing</strong>:
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>mutmut<span class="w"> </span>run<span class="w"> </span>--paths-to-mutate<span class="o">=</span>backend/msn_weather_wrapper/client.py
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="c1"># View specific mutation details</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>mutmut<span class="w"> </span>show<span class="w"> </span>&lt;mutation-id&gt;
+</span></code></pre></div>
+<p><strong>Reset mutation testing</strong>:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Clear cache and start fresh</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>rm<span class="w"> </span>-f<span class="w"> </span>.mutmut-cache
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>mutmut<span class="w"> </span>run
-</span></code></pre></div></p>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>rm<span class="w"> </span>-f<span class="w"> </span>.mutmut-cache
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>mutmut<span class="w"> </span>run
+</span></code></pre></div>
 <h3 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h3>
-<p>Located in <code>pyproject.toml</code>:
+<p>Located in <code>pyproject.toml</code>:</p>
 <div class="language-toml highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">[tool.mutmut]</span>
 </span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">paths_to_mutate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;backend/msn_weather_wrapper/&quot;</span>
 </span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">runner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;pytest&quot;</span>
 </span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="n">tests_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;tests/&quot;</span>
-</span></code></pre></div></p>
+</span></code></pre></div>
 <h3 id="interpreting-results">Interpreting Results<a class="headerlink" href="#interpreting-results" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>Killed</strong>: Test detected the mutation (✅ good)</li>
@@ -4043,10 +4089,12 @@ graph TB
 <h2 id="performance-testing">Performance Testing<a class="headerlink" href="#performance-testing" title="Permanent link">&para;</a></h2>
 <h3 id="load-testing">Load Testing<a class="headerlink" href="#load-testing" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Install locust</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>pip<span class="w"> </span>install<span class="w"> </span>locust
-</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
-</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="c1"># Run load test</span>
-</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>locust<span class="w"> </span>-f<span class="w"> </span>tests/load_test.py
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>pip<span class="w"> </span>install<span class="w"> </span>locust
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="c1"># Run load test</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>locust<span class="w"> </span>-f<span class="w"> </span>tests/load_test.py
 </span></code></pre></div>
 <h3 id="benchmark-results">Benchmark Results<a class="headerlink" href="#benchmark-results" title="Permanent link">&para;</a></h3>
 <ul>
@@ -4057,40 +4105,48 @@ graph TB
 </ul>
 <h2 id="troubleshooting-tests">Troubleshooting Tests<a class="headerlink" href="#troubleshooting-tests" title="Permanent link">&para;</a></h2>
 <h3 id="tests-fail-locally">Tests Fail Locally<a class="headerlink" href="#tests-fail-locally" title="Permanent link">&para;</a></h3>
-<p><strong>Issue</strong>: Import errors
+<p><strong>Issue</strong>: Import errors</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Solution: Install in editable mode</span>
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev]&quot;</span>
-</span></code></pre></div></p>
-<p><strong>Issue</strong>: Integration tests fail
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev]&quot;</span>
+</span></code></pre></div>
+<p><strong>Issue</strong>: Integration tests fail</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Solution: Ensure API is running</span>
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>python<span class="w"> </span>api.py<span class="w">  </span><span class="c1"># Terminal 1</span>
-</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>pytest<span class="w"> </span>tests/test_integration.py<span class="w">  </span><span class="c1"># Terminal 2</span>
-</span></code></pre></div></p>
-<p><strong>Issue</strong>: E2E tests fail
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>python<span class="w"> </span>api.py<span class="w">  </span><span class="c1"># Terminal 1</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>pytest<span class="w"> </span>tests/test_integration.py<span class="w">  </span><span class="c1"># Terminal 2</span>
+</span></code></pre></div>
+<p><strong>Issue</strong>: E2E tests fail</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Solution: Install Playwright browsers</span>
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="nb">cd</span><span class="w"> </span>frontend
-</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>npx<span class="w"> </span>playwright<span class="w"> </span>install<span class="w"> </span>--with-deps
-</span></code></pre></div></p>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="nb">cd</span><span class="w"> </span>frontend
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>npx<span class="w"> </span>playwright<span class="w"> </span>install<span class="w"> </span>--with-deps
+</span></code></pre></div>
 <h3 id="tests-pass-locally-but-fail-in-ci">Tests Pass Locally but Fail in CI<a class="headerlink" href="#tests-pass-locally-but-fail-in-ci" title="Permanent link">&para;</a></h3>
-<p><strong>Check</strong>:
-1. Python version differences
-2. Missing environment variables
-3. Network/firewall issues
-4. Container build problems</p>
-<p><strong>Debug</strong>:
+<p><strong>Check</strong>:</p>
+<ol>
+<li>Python version differences</li>
+<li>Missing environment variables</li>
+<li>Network/firewall issues</li>
+<li>Container build problems</li>
+</ol>
+<p><strong>Debug</strong>:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># Run in container (matches CI)</span>
-</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>./dev.sh<span class="w"> </span>shell-api
-</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>pytest<span class="w"> </span>-vv<span class="w"> </span>--tb<span class="o">=</span>short
-</span></code></pre></div></p>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>./dev.sh<span class="w"> </span>shell-api
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>pytest<span class="w"> </span>-vv<span class="w"> </span>--tb<span class="o">=</span>short
+</span></code></pre></div>
 <h3 id="slow-tests">Slow Tests<a class="headerlink" href="#slow-tests" title="Permanent link">&para;</a></h3>
-<p><strong>Identify slow tests</strong>:
+<p><strong>Identify slow tests</strong>:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>pytest<span class="w"> </span>--durations<span class="o">=</span><span class="m">10</span>
-</span></code></pre></div></p>
-<p><strong>Speed up</strong>:
-1. Mock external API calls
-2. Use fixtures for setup
-3. Run unit tests separately from integration
-4. Parallelize with pytest-xdist</p>
+</span></code></pre></div>
+<p><strong>Speed up</strong>:</p>
+<ol>
+<li>Mock external API calls</li>
+<li>Use fixtures for setup</li>
+<li>Run unit tests separately from integration</li>
+<li>Parallelize with pytest-xdist</li>
+</ol>
 <h2 id="test-coverage-goals">Test Coverage Goals<a class="headerlink" href="#test-coverage-goals" title="Permanent link">&para;</a></h2>
 <h3 id="current-coverage-97">Current Coverage: 97%<a class="headerlink" href="#current-coverage-97" title="Permanent link">&para;</a></h3>
 <ul>
@@ -4109,11 +4165,13 @@ graph TB
 <li>Rare network timeout scenarios</li>
 </ul>
 <h3 id="target-maintain-97">Target: Maintain 97%+<a class="headerlink" href="#target-maintain-97" title="Permanent link">&para;</a></h3>
-<p>Coverage goals by module:
-- <code>client.py</code>: ≥ 95% (achieved: 97%)
-- <code>models.py</code>: 100% (achieved: 100%)
-- <code>api.py</code>: ≥ 95% (achieved: 100%)
-- Overall: ≥ 95% (achieved: 97%)</p>
+<p>Coverage goals by module:</p>
+<ul>
+<li><code>client.py</code>: ≥ 95% (achieved: 97%)</li>
+<li><code>models.py</code>: 100% (achieved: 100%)</li>
+<li><code>api.py</code>: ≥ 95% (achieved: 100%)</li>
+<li>Overall: ≥ 95% (achieved: 97%)</li>
+</ul>
 <h3 id="quality-metrics">Quality Metrics<a class="headerlink" href="#quality-metrics" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>Test Count</strong>: 168 (128 backend, 40 frontend)</li>
@@ -4134,12 +4192,14 @@ graph TB
 <h3 id="mock-responses">Mock Responses<a class="headerlink" href="#mock-responses" title="Permanent link">&para;</a></h3>
 <p>Located in <code>tests/fixtures/</code> for consistent testing.</p>
 <h2 id="reporting-issues">Reporting Issues<a class="headerlink" href="#reporting-issues" title="Permanent link">&para;</a></h2>
-<p>When tests fail:
-1. <strong>Capture output</strong>: Save full pytest output
-2. <strong>Note environment</strong>: Python version, OS, container/local
-3. <strong>Include steps</strong>: How to reproduce
-4. <strong>Check logs</strong>: Include API logs if relevant
-5. <strong>Create issue</strong>: With all above information</p>
+<p>When tests fail:</p>
+<ol>
+<li><strong>Capture output</strong>: Save full pytest output</li>
+<li><strong>Note environment</strong>: Python version, OS, container/local</li>
+<li><strong>Include steps</strong>: How to reproduce</li>
+<li><strong>Check logs</strong>: Include API logs if relevant</li>
+<li><strong>Create issue</strong>: With all above information</li>
+</ol>
 <h2 id="resources">Resources<a class="headerlink" href="#resources" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="https://docs.pytest.org/">pytest documentation</a></li>
@@ -4151,18 +4211,26 @@ graph TB
 <li><a href="https://docs.python-guide.org/writing/tests/">Testing best practices</a></li>
 </ul>
 <h2 id="known-limitations">Known Limitations<a class="headerlink" href="#known-limitations" title="Permanent link">&para;</a></h2>
-<h3 id="frontend-testing_1">Frontend Testing<a class="headerlink" href="#frontend-testing_1" title="Permanent link">&para;</a></h3>
+<h3 id="frontend-testing-limitations">Frontend Testing Limitations<a class="headerlink" href="#frontend-testing-limitations" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>Node.js Version</strong>: Project standard is Node 22+ as specified in <code>frontend/.nvmrc</code> and <code>package.json</code></li>
-<li><strong>Solution</strong>: Use containerized testing with <code>infra/containers/Containerfile.playwright</code></li>
-<li><strong>Visual Baselines</strong>: Not yet established (requires manual review and approval)</li>
+<li>
+<p><strong>Solution</strong>: Use containerized testing with <code>infra/containers/Containerfile.playwright</code></p>
+</li>
+<li>
+<p><strong>Visual Baselines</strong>: Not yet established (requires manual review and approval)</p>
+</li>
 <li><strong>Impact</strong>: Visual regression tests will fail until baselines are updated</li>
-<li><strong>Action</strong>: Run <code>npm run test:e2e -- --update-snapshots</code> after manual verification</li>
-<li><strong>Backend Dependency</strong>: 28 of 40 E2E tests require running backend API</li>
+<li>
+<p><strong>Action</strong>: Run <code>npm run test:e2e -- --update-snapshots</code> after manual verification</p>
+</li>
+<li>
+<p><strong>Backend Dependency</strong>: 28 of 40 E2E tests require running backend API</p>
+</li>
 <li><strong>Workaround</strong>: 11 tests cover UI rendering and accessibility without backend</li>
 <li><strong>Full Test</strong>: Start backend API before running complete E2E suite</li>
 </ul>
-<h3 id="mutation-testing_1">Mutation Testing<a class="headerlink" href="#mutation-testing_1" title="Permanent link">&para;</a></h3>
+<h3 id="mutation-testing-limitations">Mutation Testing Limitations<a class="headerlink" href="#mutation-testing-limitations" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>Kill Rate</strong>: 77% (below 80% target)</li>
 <li><strong>Survived Mutants</strong>: 7 mutations not caught by current tests</li>
@@ -4199,10 +4267,12 @@ graph TB
 <h2 id="end-to-end-workflow-automation-test">🤖 End-to-End Workflow Automation Test<a class="headerlink" href="#end-to-end-workflow-automation-test" title="Permanent link">&para;</a></h2>
 <p>This section documents the automated release workflow testing.</p>
 <h3 id="test-date-december-4-2025">Test Date: December 4, 2025<a class="headerlink" href="#test-date-december-4-2025" title="Permanent link">&para;</a></h3>
-<p>Workflow automation has been fully implemented to:
-1. Automatically version bump on PR merge (based on conventional commits)
-2. Automatically create and push git tags
-3. Automatically publish to PyPI and create GitHub Release</p>
+<p>Workflow automation has been fully implemented to:</p>
+<ol>
+<li>Automatically version bump on PR merge (based on conventional commits)</li>
+<li>Automatically create and push git tags</li>
+<li>Automatically publish to PyPI and create GitHub Release</li>
+</ol>
 <p>All automation is now hands-off requiring zero manual intervention.</p>
 
 
