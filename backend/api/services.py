@@ -169,7 +169,6 @@ __all__ = [
     "build_weather_payload",
     "clear_recent_search_history",
     "close_client",
-    "datetime",
     "get_cached_weather",
     "get_client",
     "get_minute_bucket",

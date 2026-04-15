@@ -196,7 +196,7 @@ jobs:
           fi
 
       - name: Run integration tests
-        run: pytest tests/test_integration.py -v --tb=short
+        run: pytest tests/test_integration.py -v --tb=short --override-ini="addopts="
 
       - name: Show container logs on failure
         if: failure()

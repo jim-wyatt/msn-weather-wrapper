@@ -8,6 +8,7 @@ from fastapi import APIRouter, Request, Response
 from fastapi.responses import JSONResponse
 
 from backend.api.config import MAX_CITY_LENGTH, MAX_COUNTRY_LENGTH
+from backend.api.schemas import MessageResponse, RecentSearchesResponse, WeatherResponse
 from backend.api.services import (
     add_to_recent_searches,
     build_weather_payload,
@@ -98,7 +99,7 @@ def _handle_weather_lookup(request: Request, city: Any, country: Any) -> JSONRes
     return JSONResponse(content=weather_data, status_code=status_code)
 
 
-@router.get("/v1/weather")
+@router.get("/v1/weather", response_model=WeatherResponse)
 async def get_weather(
     request: Request,
     city: str | None = None,
@@ -108,7 +109,7 @@ async def get_weather(
     return _handle_weather_lookup(request, city, country)
 
 
-@router.post("/v1/weather")
+@router.post("/v1/weather", response_model=WeatherResponse)
 async def get_weather_post(request: Request) -> JSONResponse:
     """Get weather data from a JSON request body."""
     content_type = request.headers.get("content-type", "")
@@ -143,7 +144,7 @@ async def weather_options() -> Response:
     return Response(status_code=204)
 
 
-@router.get("/v1/weather/coordinates")
+@router.get("/v1/weather/coordinates", response_model=WeatherResponse)
 async def get_weather_by_coordinates(
     request: Request,
     lat: str | None = None,
@@ -188,13 +189,13 @@ async def get_weather_by_coordinates(
         return _invalid_request(str(exc), error="Internal server error", status_code=500)
 
 
-@router.get("/v1/recent-searches")
+@router.get("/v1/recent-searches", response_model=RecentSearchesResponse)
 async def get_recent_searches(request: Request) -> dict[str, list[dict[str, str]]]:
     """Return recent searches for the current session."""
     return {"recent_searches": get_recent_search_history(request)}
 
 
-@router.delete("/v1/recent-searches")
+@router.delete("/v1/recent-searches", response_model=MessageResponse)
 async def clear_recent_searches(request: Request) -> dict[str, str]:
     """Clear recent searches for the current session."""
     clear_recent_search_history(request)
