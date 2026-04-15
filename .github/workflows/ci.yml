@@ -123,10 +123,12 @@ jobs:
         if: steps.pr_info.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.pr_info.outputs.pr_number }}
+          PR_TITLE: ${{ steps.pr_info.outputs.pr_title }}
         run: |
           gh workflow run auto-version-release.yml \
-            -f pr_number="${{ steps.pr_info.outputs.pr_number }}" \
-            -f pr_title="${{ steps.pr_info.outputs.pr_title }}" \
+            -f pr_number="$PR_NUMBER" \
+            -f pr_title="$PR_TITLE" \
             -f pr_merged="true"
 
-          echo "✓ Triggered auto-version-release workflow for PR #${{ steps.pr_info.outputs.pr_number }}"
+          echo "✓ Triggered auto-version-release workflow for PR #$PR_NUMBER"
