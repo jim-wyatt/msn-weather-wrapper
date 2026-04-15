@@ -1,17 +1,17 @@
 ---
 title: "Modern Software Engineering in Practice: MSN Weather Wrapper"
 author: "MSN Weather Wrapper Team"
-date: "2025-12-05"
-subtitle: "A Case Study in DevEx, Quality, Security, and Delivery"
+date: "2026-04-15"
+subtitle: "A Case Study in DevEx, Quality, Security, and Delivery — v2"
 ---
 
 # Executive Summary
 
-MSN Weather Wrapper demonstrates a modern, production-grade software system that ships a Python API and library, a React/TypeScript frontend, and containerized deployment. This whitepaper distills the engineering practices used in the project—covering architecture, testing, security, CI/CD, supply chain, and developer experience—and offers patterns that can generalize to similar services.
+MSN Weather Wrapper demonstrates a modern, production-grade software system that ships a Python API and library, a Next.js/TypeScript frontend, and containerized deployment. This whitepaper (v2, updated April 2026 for the v2.0 release line) distills the engineering practices used in the project—covering architecture, testing, security, CI/CD, supply chain, and developer experience—and offers patterns that can generalize to similar services. The v2 release represents a significant evolution: the backend was migrated from Flask to FastAPI with a modular router/service structure, and the frontend was migrated from a Vite/React SPA to a Next.js App Router application.
 
 ## System Overview
 
-The product spans three cooperating surfaces: a typed Python client and library, a FastAPI-based REST API, and a React 19 + TypeScript 5.7 web frontend. Services are fronted by Nginx and executed by Gunicorn with Uvicorn workers for resilience. Delivery targets multiple channels: PyPI packages for library consumers, container images for operators, and GitHub Pages for documentation. Development and validation are containerized (Podman/Docker Compose), while end-to-end tests run Playwright in containers to mirror production topology.
+The product spans three cooperating surfaces: a typed Python client and library, a FastAPI-based REST API, and a Next.js 16 + TypeScript web frontend. Services are fronted by Nginx and executed by Gunicorn with Uvicorn workers for resilience. Delivery targets multiple channels: PyPI packages for library consumers, container images for operators, and GitHub Pages for documentation. Development and validation are containerized (Podman/Docker Compose), while end-to-end tests run Playwright in containers to mirror production topology.
 
 At the data layer, the client wraps MSN Weather endpoints with retry, caching, and validation. The API exposes health probes (live/ready), OpenAPI/Swagger documentation, and defensive rate limiting. The frontend consumes the API via typed contracts, offering geolocation hints, city autocomplete across hundreds of locales, unit toggles, and responsive layout. Operationally, the same container artifacts run in development, CI, and production, shrinking environment drift and shortening time-to-debug.
 
@@ -19,7 +19,7 @@ The design treats portability and reproducibility as first-class requirements: c
 
 ## Architecture Patterns
 
-Boundaries are explicit: the `backend/msn_weather_wrapper` package holds the client and Pydantic v2 models, `api.py` exposes the REST interface and health endpoints, and `frontend/` contains the React UI. Typed contracts and JSON/OpenAPI schemas prevent drift across layers. The API applies rate limiting, validation, and five-minute response caching to balance performance with freshness. The frontend ships accessibility-conscious components, geolocation, autocomplete, and unit toggles. Deployment relies on multi-stage Containerfiles, Nginx for reverse proxying, Gunicorn for Python concurrency, and Supervisor to manage processes consistently across environments.
+Boundaries are explicit: the `backend` package holds the client and Pydantic v2 models, the modular `backend/api/` package exposes the REST interface and health endpoints via FastAPI routers and services, and `frontend/` contains the Next.js UI. Typed contracts and JSON/OpenAPI schemas prevent drift across layers. The API applies rate limiting, validation, and five-minute response caching to balance performance with freshness. The frontend ships accessibility-conscious components, geolocation, autocomplete, and unit toggles. Deployment relies on multi-stage Containerfiles, Nginx for reverse proxying, Gunicorn for Python concurrency, and Supervisor to manage processes consistently across environments.
 
 Cross-cutting concerns are centralized: logging, error handling, and validation live near the API boundary; environment configuration is twelve-factor aligned; container images encapsulate runtime dependencies. The multi-stage builds produce lean images and cache Python and Node dependencies separately. Reverse proxy rules in `infra/config/nginx.conf` enforce gzip, caching directives, and header hygiene. Supervisor coordinates Gunicorn and ancillary processes, simplifying PID 1 semantics in containers.
 
@@ -35,7 +35,7 @@ The team optimizes for cognitive load and flow efficiency: consistent make-like 
 
 ## Quality & Testing Strategy
 
-Testing follows a deliberate pyramid: 111 backend unit tests validate client parsing, validation, and cache behavior; 17 integration tests exercise live API flows and health endpoints; 40 Playwright end-to-end tests cover accessibility, visual regression, and functional scenarios. Coverage sits near 97 percent, with cache TTL edge cases and security error paths explicitly covered. CI gates enforce pytest, coverage thresholds, lint, type checks, and Playwright runs so defects are caught before merge.
+Testing follows a deliberate pyramid: 126 backend unit tests validate client parsing, validation, security controls, and cache behavior; 17 integration tests exercise live API flows and health endpoints; 40 Playwright end-to-end tests cover accessibility, visual regression, and functional scenarios. Coverage sits near 97 percent, with cache TTL edge cases and security error paths explicitly covered. CI gates enforce pytest, coverage thresholds, lint, type checks, and Playwright runs so defects are caught before merge.
 
 Backend tests emphasize contract correctness and robustness under malformed input, rate limits, and network edge cases. Integration tests run against the real API process, verifying health probes, success and failure responses, and caching semantics. Frontend E2E tests run inside containers against a live dev server, capturing accessibility (axe-core), visual baselines, and core user journeys such as searching, toggling units, and handling geolocation prompts. Coverage artifacts (`htmlcov/index.html`) and JUnit reports feed CI dashboards for traceability.
 
@@ -83,7 +83,7 @@ Treating accessibility as a gate aligns with WCAG 2.1 guidance and the inclusive
 
 ## Implementation Highlights (Code Pointers)
 
-Typed payloads originate in `backend/msn_weather_wrapper/models.py`, mirrored by the client logic in `client.py` that wraps MSN Weather calls with retries and caching. The REST surface in `api.py` layers validation, error handling, health checks, and Swagger UI exposure. The Next.js code in `frontend/app` is typed via `types.ts` and instrumented for accessibility. Operational glue lives in `dev.sh`, which centralizes container lifecycle, testing, coverage, security scans, and CI monitoring. The `.github/workflows/ci.yml` file orchestrates reusable jobs for tests, security, performance, documentation, and automated releases.
+Typed payloads originate in `backend/models.py`, mirrored by the client logic in `backend/client.py` that wraps MSN Weather calls with retries and caching. The REST surface is organized as a modular FastAPI application in `backend/api/main.py`, with routers in `backend/api/routers/`, shared services in `backend/api/services.py`, and Pydantic API schemas in `backend/api/schemas.py`. The Next.js code in `frontend/app` is typed via `types.ts` and instrumented for accessibility. Operational glue lives in `dev.sh`, which centralizes container lifecycle, testing, coverage, security scans, and CI monitoring. The `.github/workflows/ci.yml` file orchestrates reusable jobs for tests, security, performance, documentation, and automated releases.
 
 Other noteworthy artifacts include `infra/compose/podman-compose.yml` for local orchestration, `infra/containers/Containerfile` and `infra/containers/Containerfile.dev` for prod and dev images, and `infra/containers/Containerfile.playwright` for hermetic E2E runs. Configuration for Nginx and Supervisor lives in `infra/config/`. Documentation in `docs/` covers API reference, testing, security, SBOM guidance, and workflow diagrams, providing a consistent knowledge base.
 
