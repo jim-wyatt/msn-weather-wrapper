@@ -23,7 +23,7 @@ async def liveness_probe() -> dict[str, str]:
     return {"status": "alive", "service": "MSN Weather Wrapper API"}
 
 
-@router.get("/v1/health/ready")
+@router.get("/v1/health/ready", response_model=HealthResponse)
 async def readiness_probe() -> JSONResponse:
     """Return the service readiness state and dependency checks."""
     checks: dict[str, bool] = {}
