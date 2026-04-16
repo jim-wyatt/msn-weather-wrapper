@@ -15,7 +15,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 COPY pyproject.toml .
 COPY README.md .
 
-RUN python -m pip install --no-cache-dir "pip==25.3"
+RUN python -m pip install --no-cache-dir "pip==26.0.1"
 
 # Install Python dependencies including dev dependencies
 RUN python -m pip install --no-cache-dir -e ".[dev]"
