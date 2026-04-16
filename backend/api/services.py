@@ -112,16 +112,25 @@ def get_cached_weather(city: str, country: str, minute_bucket: int) -> tuple[dic
         return build_weather_payload(weather), 200
     except LocationNotFoundError as exc:
         logger.warning("location_not_found", city=city, country=country, error=str(exc))
-        return {"error": "Location not found", "message": "The requested location could not be found."}, 404
+        return {
+            "error": "Location not found",
+            "message": "The requested location could not be found.",
+        }, 404
     except UpstreamError as exc:
         logger.error("upstream_error", city=city, country=country, error=str(exc))
-        return {"error": "Upstream service error", "message": "Failed to fetch weather data from the upstream service."}, 502
+        return {
+            "error": "Upstream service error",
+            "message": "Failed to fetch weather data from the upstream service.",
+        }, 502
     except ParsingError as exc:
         logger.error("parsing_error", city=city, country=country, error=str(exc))
         return {"error": "Data parsing error", "message": "Failed to parse weather data."}, 500
     except WeatherError as exc:
         logger.error("weather_error", city=city, country=country, error=str(exc))
-        return {"error": "Weather service error", "message": "The weather service encountered an error."}, 500
+        return {
+            "error": "Weather service error",
+            "message": "The weather service encountered an error.",
+        }, 500
     except Exception as exc:  # pragma: no cover - defensive fallback
         logger.error("unexpected_error", city=city, country=country, error=str(exc))
         return {"error": "Internal server error", "message": "An unexpected error occurred."}, 500
