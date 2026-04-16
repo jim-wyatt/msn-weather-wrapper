@@ -187,7 +187,11 @@ async def get_weather_by_coordinates(
             lon=lon,
             error=str(exc),
         )
-        return _invalid_request("The requested location could not be found.", error="Location not found", status_code=404)
+        return _invalid_request(
+            "The requested location could not be found.",
+            error="Location not found",
+            status_code=404,
+        )
     except UpstreamError as exc:
         logger.error(
             "upstream_error",
@@ -196,7 +200,11 @@ async def get_weather_by_coordinates(
             lon=lon,
             error=str(exc),
         )
-        return _invalid_request("Failed to fetch weather data.", error="Upstream service error", status_code=502)
+        return _invalid_request(
+            "Failed to fetch weather data.",
+            error="Upstream service error",
+            status_code=502,
+        )
     except WeatherError as exc:
         logger.error(
             "weather_error",
@@ -205,7 +213,11 @@ async def get_weather_by_coordinates(
             lon=lon,
             error=str(exc),
         )
-        return _invalid_request("Weather service unavailable.", error="Weather service error", status_code=500)
+        return _invalid_request(
+            "Weather service unavailable.",
+            error="Weather service error",
+            status_code=500,
+        )
     except Exception as exc:  # pragma: no cover - defensive fallback
         logger.error(
             "unexpected_error",
@@ -214,7 +226,11 @@ async def get_weather_by_coordinates(
             lon=lon,
             error=str(exc),
         )
-        return _invalid_request("An unexpected error occurred.", error="Internal server error", status_code=500)
+        return _invalid_request(
+            "An unexpected error occurred.",
+            error="Internal server error",
+            status_code=500,
+        )
 
 
 @router.get("/v1/recent-searches", response_model=RecentSearchesResponse)
