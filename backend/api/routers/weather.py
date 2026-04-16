@@ -219,7 +219,7 @@ async def get_weather_by_coordinates(
             status_code=500,
         )
     except Exception as exc:  # pragma: no cover - defensive fallback
-        logger.error(
+        logger.exception(
             "unexpected_error",
             request_id=_get_request_id(request),
             lat=lat,

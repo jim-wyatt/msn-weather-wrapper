@@ -132,7 +132,7 @@ def get_cached_weather(city: str, country: str, minute_bucket: int) -> tuple[dic
             "message": "The weather service encountered an error.",
         }, 500
     except Exception as exc:  # pragma: no cover - defensive fallback
-        logger.error("unexpected_error", city=city, country=country, error=str(exc))
+        logger.exception("unexpected_error", city=city, country=country, error=str(exc))
         return {"error": "Internal server error", "message": "An unexpected error occurred."}, 500
 
 
