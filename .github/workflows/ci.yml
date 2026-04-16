@@ -30,6 +30,8 @@ jobs:
   # Test Phase: Run all tests including smoke, unit, integration, and coverage
   test:
     name: Run Tests
+    permissions:
+      contents: read
     uses: ./.github/workflows/test.yml
     with:
       python-version: '3.12'
@@ -38,6 +40,9 @@ jobs:
   # Security Phase: Run security scans (full on main branch and tags, basic on PR)
   security:
     name: Run Security Scans
+    permissions:
+      contents: read
+      security-events: write
     uses: ./.github/workflows/security.yml
     with:
       python-version: '3.12'
@@ -47,6 +52,9 @@ jobs:
   build:
     name: Build Artifacts
     needs: [test, security]
+    permissions:
+      contents: read
+      packages: write
     uses: ./.github/workflows/build.yml
     with:
       python-version: '3.12'
@@ -57,6 +65,8 @@ jobs:
   integration-tests:
     name: Integration Tests
     needs: [build]
+    permissions:
+      contents: read
     uses: ./.github/workflows/test.yml
     with:
       python-version: '3.12'
@@ -68,6 +78,8 @@ jobs:
     name: Performance Tests
     needs: [build]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
     uses: ./.github/workflows/performance.yml
     with:
       python-version: '3.12'
@@ -77,6 +89,8 @@ jobs:
     name: Deploy Documentation
     needs: [integration-tests, performance]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: write
     uses: ./.github/workflows/deploy.yml
     with:
       python-version: '3.12'
@@ -88,6 +102,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')
     needs: [test, security, build, integration-tests, deploy]
+    permissions:
+      contents: read
+      actions: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v6

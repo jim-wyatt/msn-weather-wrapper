@@ -166,27 +166,71 @@ async def get_weather_by_coordinates(
         if not (-180 <= longitude <= 180):
             raise ValueError("Longitude must be between -180 and 180")
     except ValueError as exc:
-        return _invalid_request(str(exc), error="Invalid coordinates")
+        logger.warning(
+            "invalid_coordinates",
+            request_id=_get_request_id(request),
+            lat=lat,
+            lon=lon,
+            error=str(exc),
+        )
+        return _invalid_request("Invalid coordinate values provided.", error="Invalid coordinates")
 
     try:
         weather = get_client().get_weather_by_coordinates(latitude, longitude)
         payload = build_weather_payload(weather)
         return JSONResponse(content=payload, status_code=200)
     except LocationNotFoundError as exc:
-        return _invalid_request(str(exc), error="Location not found", status_code=404)
+        logger.warning(
+            "location_not_found",
+            request_id=_get_request_id(request),
+            lat=lat,
+            lon=lon,
+            error=str(exc),
+        )
+        return _invalid_request(
+            "The requested location could not be found.",
+            error="Location not found",
+            status_code=404,
+        )
     except UpstreamError as exc:
-        return _invalid_request(str(exc), error="Upstream service error", status_code=502)
-    except WeatherError as exc:
-        return _invalid_request(str(exc), error="Weather service error", status_code=500)
-    except Exception as exc:  # pragma: no cover - defensive fallback
         logger.error(
+            "upstream_error",
+            request_id=_get_request_id(request),
+            lat=lat,
+            lon=lon,
+            error=str(exc),
+        )
+        return _invalid_request(
+            "Failed to fetch weather data.",
+            error="Upstream service error",
+            status_code=502,
+        )
+    except WeatherError as exc:
+        logger.error(
+            "weather_error",
+            request_id=_get_request_id(request),
+            lat=lat,
+            lon=lon,
+            error=str(exc),
+        )
+        return _invalid_request(
+            "Weather service unavailable.",
+            error="Weather service error",
+            status_code=500,
+        )
+    except Exception as exc:  # pragma: no cover - defensive fallback
+        logger.exception(
             "unexpected_error",
             request_id=_get_request_id(request),
             lat=lat,
             lon=lon,
             error=str(exc),
         )
-        return _invalid_request(str(exc), error="Internal server error", status_code=500)
+        return _invalid_request(
+            "An unexpected error occurred.",
+            error="Internal server error",
+            status_code=500,
+        )
 
 
 @router.get("/v1/recent-searches", response_model=RecentSearchesResponse)
