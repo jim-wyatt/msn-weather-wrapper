@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "msn-weather-wrapper"
-version = "2.0.9"
+version = "2.0.10"
 description = "A production-ready Python wrapper for MSN Weather with a FastAPI backend and CI/CD"
 readme = "README.md"
 requires-python = ">=3.10"
