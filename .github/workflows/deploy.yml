@@ -20,6 +20,7 @@ jobs:
   generate-reports:
     name: Generate Report Documentation
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -149,6 +150,7 @@ jobs:
   deploy-docs:
     name: Deploy Documentation to GitHub Pages
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: [generate-reports]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     permissions:
