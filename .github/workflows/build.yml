@@ -81,8 +81,10 @@ jobs:
         if: ${{ !inputs.push-image }}
         run: |
           docker rm -f test-app || true
+          test_secret="$(openssl rand -hex 32)"
+          echo "::add-mask::$test_secret"
           docker run --rm -d --name test-app -p 8080:80 \
-            -e APP_SECRET_KEY=ci-only-session-secret \
+            -e "APP_SECRET_KEY=$test_secret" \
             msn-weather-app:test
           sleep 15
           curl -f http://localhost:8080/api/v1/health || exit 1

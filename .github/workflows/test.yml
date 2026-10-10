@@ -172,9 +172,11 @@ jobs:
         run: |
           echo "Starting container..."
           set -e
+          test_secret="$(openssl rand -hex 32)"
+          echo "::add-mask::$test_secret"
           docker run -d --name msn-weather-app -p 8080:80 \
             -e APP_DEBUG=false \
-            -e APP_SECRET_KEY=ci-only-session-secret \
+            -e "APP_SECRET_KEY=$test_secret" \
             -e CORS_ORIGINS=http://localhost:3000 \
             -e RATE_LIMIT_ENABLED=true \
             -e CACHE_ENABLED=true \

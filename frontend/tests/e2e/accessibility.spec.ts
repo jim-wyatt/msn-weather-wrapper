@@ -169,15 +169,9 @@ test.describe('Accessibility Tests', () => {
   });
 
   test('should have proper focus management', async ({ page }) => {
-    const initialFocus = await page.evaluate(() => document.activeElement?.tagName);
-    expect(initialFocus).toBeDefined();
-
-    // Click button
-    await page.click('button');
-
-    // Focus should be managed properly
-    const newFocus = await page.evaluate(() => document.activeElement?.tagName);
-    expect(newFocus).toBeDefined();
+    const weatherButton = page.getByRole('button', { name: /get weather|use my location/i });
+    await weatherButton.click();
+    await expect(weatherButton).toBeFocused();
 
     // Check for focus-visible issues
     const accessibilityScanResults = await new AxeBuilder({ page })

@@ -39,7 +39,7 @@ jobs:
 
       - name: Run Bandit (fail on HIGH severity)
         run: |
-          if bandit -r backend/ -lll --exit-zero -f json -o security-reports/bandit-report.json; then
+          if bandit -r backend/ -lll -f json -o security-reports/bandit-report.json; then
             echo 0 > security-reports/bandit-exit-code
           else
             echo "$?" > security-reports/bandit-exit-code
@@ -47,7 +47,7 @@ jobs:
 
       - name: Run Semgrep SAST scan
         run: |
-          if semgrep --error --config=auto backend/ --json --output=security-reports/semgrep-report.json; then
+          if semgrep --error --config=p/python --metrics=off backend/ --json --output=security-reports/semgrep-report.json; then
             echo 0 > security-reports/semgrep-exit-code
           else
             echo "$?" > security-reports/semgrep-exit-code

@@ -38,7 +38,10 @@ def get_cors_origins() -> list[str]:
     raw_value = os.getenv("CORS_ORIGINS", "")
     origins = [origin.strip() for origin in raw_value.split(",") if origin.strip()]
     if "*" in origins:
-        raise ValueError("CORS_ORIGINS must list explicit origins; '*' is not allowed")
+        raise ValueError(
+            "CORS_ORIGINS must list explicit origins; '*' is not allowed. "
+            "Set it to a comma-separated list, e.g. https://app.example.com"
+        )
     return origins
 
 
