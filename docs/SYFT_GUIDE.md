@@ -196,7 +196,7 @@ syft localhost/msn-weather-wrapper:latest -o syft-json > container_sbom.json
 syft dir:. -o spdx-json > project_sbom.json
 
 # Scan specific directory
-syft dir:./src -o table
+syft dir:./backend -o table
 
 # Scan Python virtual environment
 syft dir:./.venv -o spdx-json > venv_sbom.json
@@ -236,10 +236,10 @@ jobs:
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
 
       - name: Build containers
-        run: podman-compose build
+        run: podman-compose -f infra/compose/podman-compose.yml build
 
       - name: Generate SBOMs
-        run: ./generate_sbom_ci.sh
+        run: ./scripts/generate_sbom_ci.sh
 
       - name: Upload SBOMs
         uses: actions/upload-artifact@v4
@@ -262,8 +262,8 @@ generate-sbom:
   script:
     - apt-get update && apt-get install -y curl podman
     - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-    - podman-compose build
-    - ./generate_sbom_ci.sh
+    - podman-compose -f infra/compose/podman-compose.yml build
+    - ./scripts/generate_sbom_ci.sh
   artifacts:
     paths:
       - sbom_output/
@@ -280,7 +280,7 @@ pipeline {
             steps {
                 sh '''
                     curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-                    ./generate_sbom_ci.sh
+                    ./scripts/generate_sbom_ci.sh
                 '''
                 archiveArtifacts artifacts: 'sbom_output/**', fingerprint: true
             }
@@ -370,7 +370,7 @@ export PATH=$PATH:/usr/local/bin
 
 ```bash
 # Build containers first
-podman-compose build
+podman-compose -f infra/compose/podman-compose.yml build
 
 # Verify images exist
 podman images | grep msn-weather
@@ -421,4 +421,4 @@ sbom_output/
 
 For issues or questions:
 - Syft Issues: https://github.com/anchore/syft/issues
-- Project Issues: https://github.com/yourusername/msn-weather-wrapper/issues
+- Project Issues: https://github.com/jim-wyatt/msn-weather-wrapper/issues

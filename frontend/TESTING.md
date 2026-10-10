@@ -6,12 +6,12 @@ The frontend includes comprehensive E2E tests using Playwright, covering:
 - **Visual Regression Testing**: Screenshot comparison across viewports and states
 
 ## Test Files
-- `tests/e2e/accessibility.spec.ts`: 13 accessibility tests covering ARIA, keyboard navigation, color contrast, semantic HTML, and screen reader support
-- `tests/e2e/visual.spec.ts`: 15 visual regression tests with baseline screenshots across breakpoints
+- `tests/e2e/accessibility.spec.ts`: Accessibility tests covering ARIA, keyboard navigation, color contrast, semantic HTML, and screen reader support
+- `tests/e2e/visual.spec.ts`: Visual regression tests with baseline screenshots across breakpoints
 - `tests/e2e/weather.spec.ts`: Functional E2E tests for weather functionality
 
 ## Requirements
-- **Node.js**: ≥ 22.0.0 (project standard)
+- **Node.js**: ≥ 24.0.0 (matches `engines` in `frontend/package.json`)
 - **Playwright**: ^1.59.1 (matches `@playwright/test` in `frontend/package.json`)
 - **@axe-core/playwright**: For automated accessibility scanning
 
@@ -53,14 +53,8 @@ npx playwright test --update-snapshots
 
 ### Run Tests in Specific Browsers
 ```bash
-# Chromium only
+# Chromium (the only project configured in playwright.config.ts)
 npx playwright test --project=chromium
-
-# All desktop browsers
-npx playwright test --project="Desktop*"
-
-# Mobile browsers
-npx playwright test --project="Mobile*"
 ```
 
 ## Test Configuration
@@ -178,7 +172,7 @@ podman exec frontend-dev npx playwright test
 
 - name: Upload test results
   if: failure()
-  uses: actions/upload-artifact@v3
+  uses: actions/upload-artifact@v7
   with:
     name: playwright-report
     path: frontend/playwright-report/
@@ -214,7 +208,7 @@ npx playwright install --with-deps
 
 1. **Run accessibility tests on every PR** - catch issues early
 2. **Update visual baselines deliberately** - review diffs before accepting
-3. **Test across all browsers** - WebKit may catch issues Chrome/Firefox miss
+3. **Test across browsers** - only Chromium is configured today; WebKit/Firefox projects would catch additional issues
 4. **Use semantic HTML** - reduces need for ARIA overrides
 5. **Test keyboard navigation** - don't rely solely on mouse/touch
 6. **Verify focus indicators** - ensure visible focus states

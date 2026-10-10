@@ -4,13 +4,13 @@ This project uses **automated semantic versioning** - every merged pull request 
 
 ## How It Works
 
-When a PR is merged to `main`, the Auto-Version and Release workflow:
+When a PR is merged to `main`, the CI/CD pipeline (`ci.yml`) runs on the push and, once it succeeds, dispatches the Auto-Version and Release workflow (`auto-version-release.yml`), which:
 
-1. **Determines the version bump type** based on PR labels, title, or branch prefix
-2. **Increments the version** in `pyproject.toml` following semantic versioning
-3. **Commits the version bump** back to the main branch
+1. **Determines the version bump type** based on the merged PR's title
+2. **Increments the version** in `pyproject.toml` and `backend/__init__.py` following semantic versioning
+3. **Opens and merges a version bump PR** against the main branch
 4. **Creates a git tag** for the new version
-5. **Triggers the CI/CD pipeline** which builds and publishes to PyPI
+5. **Triggers the publish workflow** (`publish-release.yml`) which builds and publishes to PyPI
 
 ## Version Bump Rules
 
@@ -21,9 +21,7 @@ The workflow follows [Semantic Versioning 2.0.0](https://semver.org/):
 Increments the major version and resets minor/patch to 0.
 
 **Triggered by:**
-- PR labels: `major`, `breaking`
-- PR title: `feat!:` or `feature!:` (with exclamation mark)
-- Branch prefix: `breaking/` or `major/`
+- PR title: `feat!:`, `feature!:`, or `breaking!:` (with exclamation mark)
 
 **Example:** `1.2.3` → `2.0.0`
 
@@ -38,9 +36,7 @@ Increments the major version and resets minor/patch to 0.
 Increments the minor version and resets patch to 0.
 
 **Triggered by:**
-- PR labels: `minor`, `feature`, `enhancement`
 - PR title: `feat:` or `feature:`
-- Branch prefix: `feat/` or `feature/`
 
 **Example:** `1.2.3` → `1.3.0`
 
@@ -55,9 +51,7 @@ Increments the minor version and resets patch to 0.
 Increments only the patch version. **This is the default** if no specific indicators are found.
 
 **Triggered by:**
-- PR labels: `patch`, `fix`, `bugfix`
-- PR title: `fix:`, `bugfix:`, `perf:`, `refactor:`
-- Branch prefix: `fix/`, `bugfix/`, `hotfix/`
+- PR title: `fix:`, `bugfix:`, `chore:`, `perf:`, `refactor:`, `docs:`
 - **Default for all other PRs**
 
 **Example:** `1.2.3` → `1.2.4`
@@ -73,25 +67,14 @@ Increments only the patch version. **This is the default** if no specific indica
 
 ## Priority Order
 
-The workflow checks for version bump indicators in this order:
+The workflow checks only the merged PR's title:
 
-1. **PR Labels** (highest priority)
-2. **PR Title** (conventional commit format)
-3. **Branch Prefix**
-4. **Default to patch** (if nothing matches)
+1. **PR Title** (conventional commit format, optional scope such as `feat(api):`)
+2. **Default to patch** (if nothing matches)
+
+PR labels and branch prefixes are not used to determine the bump.
 
 ## Examples
-
-### Using PR Labels
-
-```bash
-# Create PR with label
-gh pr create --label "feature" --title "Add new weather endpoint"
-# Result: Minor version bump (e.g., 1.2.3 → 1.3.0)
-
-gh pr create --label "breaking" --title "Remove deprecated API"
-# Result: Major version bump (e.g., 1.2.3 → 2.0.0)
-```
 
 ### Using Conventional Commit Titles
 
@@ -109,22 +92,6 @@ gh pr create --title "fix: correct humidity calculation"
 # Result: 1.2.3 → 1.2.4
 ```
 
-### Using Branch Prefixes
-
-```bash
-# Feature branch (minor bump)
-git checkout -b feat/add-wind-direction
-# When PR merged: 1.2.3 → 1.3.0
-
-# Fix branch (patch bump)
-git checkout -b fix/temperature-conversion
-# When PR merged: 1.2.3 → 1.2.4
-
-# Breaking change branch (major bump)
-git checkout -b breaking/remove-v1-api
-# When PR merged: 1.2.3 → 2.0.0
-```
-
 ## Workflow Integration
 
 ### Creating a PR with Proper Versioning
@@ -134,40 +101,45 @@ git checkout -b breaking/remove-v1-api
 git checkout -b fix/issue-description
 # ... make changes ...
 git commit -m "fix: description of fix"
-gh pr create --title "fix: description" --label "bugfix"
+gh pr create --title "fix: description"
 
 # For a new feature (minor):
 git checkout -b feat/feature-name
 # ... make changes ...
 git commit -m "feat: description of feature"
-gh pr create --title "feat: description" --label "feature"
+gh pr create --title "feat: description"
 
 # For a breaking change (major):
 git checkout -b breaking/change-description
 # ... make changes ...
 git commit -m "feat!: description of breaking change"
-gh pr create --title "feat!: description" --label "breaking"
+gh pr create --title "feat!: description"
 ```
 
 ### What Happens After Merge
 
-1. **Auto-Version workflow runs** (takes ~10 seconds)
-   - Determines bump type
-   - Updates `pyproject.toml`
-   - Commits to main
-   - Creates version tag
+1. **CI/CD Pipeline runs on main** (`ci.yml`)
+   - Runs all tests and security scans
+   - Builds and pushes the container image
+   - Deploys documentation
+   - Dispatches the Auto-Version workflow
 
-2. **CI/CD Pipeline triggers** (takes ~5-10 minutes)
-   - Runs all tests
+2. **Auto-Version workflow runs** (`auto-version-release.yml`)
+   - Determines bump type
+   - Updates `pyproject.toml` and `backend/__init__.py`
+   - Opens and merges a version bump PR
+   - Creates version tag
+   - Dispatches the publish workflow
+
+3. **Publish workflow runs** (`publish-release.yml`)
    - Builds Python package
    - Publishes to PyPI
    - Creates GitHub Release
-   - Generates SBOM and security reports
 
-3. **Release is live!**
+4. **Release is live!**
    - PyPI: `pip install msn-weather-wrapper==X.Y.Z`
    - GitHub: Release with artifacts
-   - Containers: `ghcr.io/jim-wyatt/msn-weather-wrapper:X.Y.Z`
+   - Containers: `ghcr.io/jim-wyatt/msn-weather-wrapper:latest` (pushed by `ci.yml` on main)
 
 ## Monitoring Releases
 
@@ -175,7 +147,7 @@ gh pr create --title "feat!: description" --label "breaking"
 
 ```bash
 # View workflow runs
-gh run list --workflow=auto-tag-release.yml --limit 5
+gh run list --workflow=auto-version-release.yml --limit 5
 
 # View specific run
 gh run view <run-id>
@@ -187,9 +159,8 @@ gh run view <run-id>
 # View CI/CD runs
 gh run list --workflow=ci.yml --limit 5
 
-# Check if tag triggered release
-gh run list --json event,headBranch,conclusion | \
-  jq '.[] | select(.event == "push" and (.headBranch | startswith("refs/tags/")))'
+# Check the publish workflow
+gh run list --workflow=publish-release.yml --limit 5
 ```
 
 ### Verify Publication
@@ -223,11 +194,11 @@ Fixed stuff
 Changes
 ```
 
-### 2. Apply Appropriate Labels
+### 2. Get the Title Prefix Right
 
-- Use GitHub labels to explicitly control version bumps
-- Labels override title and branch detection
-- Useful when branch names don't follow conventions
+- The PR title is the only input to the version bump
+- Labels and branch names are for humans; they do not change the bump
+- Edit the PR title before merging if the prefix is wrong
 
 ### 3. Group Related Changes
 
@@ -272,15 +243,15 @@ If the workflow reports "Version Already Exists":
 ### Tag Created But No Release
 
 If tag is created but PyPI release fails:
-1. Check CI/CD pipeline status
-2. Look for build or test failures
-3. PyPI credentials might need updating
+1. Check the `publish-release.yml` run status
+2. Look for build failures
+3. PyPI trusted publishing configuration might need updating (see [PYPI_SETUP.md](PYPI_SETUP.md))
 
 ### Wrong Version Bump
 
 If the version bumped incorrectly:
-1. Check which indicator was used (label, title, or branch)
-2. Remember labels have highest priority
+1. Check the merged PR's title prefix
+2. Remember labels and branch names are ignored
 3. Default is patch if nothing matches
 
 To fix:
@@ -304,9 +275,5 @@ If you previously used manual version bumps:
 
 1. **No action needed** - The workflow now handles all versioning
 2. **Remove manual version bump PRs** - These are no longer necessary
-3. **Update contribution docs** - Instruct contributors on labeling
+3. **Update contribution docs** - Instruct contributors on PR title prefixes
 4. **Communicate changes** - Inform team about new automated process
-
----
-
-*Last updated: December 3, 2025*

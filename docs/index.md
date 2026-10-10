@@ -1,10 +1,8 @@
 # MSN Weather Wrapper Documentation
 
-Modern Python wrapper for MSN Weather with a FastAPI backend, React frontend, and production-ready containerized deployment.
+Modern Python wrapper for MSN Weather with a FastAPI backend, Next.js frontend, and production-ready containerized deployment.
 
 [![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-168%20passing-success)](TESTING.md)
-[![Coverage](https://img.shields.io/badge/coverage-97%25-success)](TESTING.md)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/jim-wyatt/msn-weather-wrapper/blob/main/LICENSE)
 
 ---
@@ -30,7 +28,7 @@ Modern Python wrapper for MSN Weather with a FastAPI backend, React frontend, an
 
 ### 🚀 Deployment & Operations
 
-- **[Container Setup](CONTAINER_DEV_SETUP.md)** - Production deployment
+- **[Container Setup](CONTAINER_DEV_SETUP.md)** - Containerized environment
 - **[SBOM Generation](SYFT_GUIDE.md)** - Software bill of materials
 - **[PyPI Setup](PYPI_SETUP.md)** - Automated PyPI publishing
 
@@ -79,7 +77,7 @@ Modern Python wrapper for MSN Weather with a FastAPI backend, React frontend, an
 | 📖 **Swagger UI** | Interactive API documentation | [Interactive Docs](API.md#interactive-api-documentation) |
 | ⚛️ **Next.js Frontend** | Next.js 16, React 19 + TypeScript 6 | [Frontend](API.md) |
 | 🐳 **Containerized** | Podman deployment | [Container Dev](CONTAINER_DEV_SETUP.md) |
-| ✅ **Tested** | 168 tests (128 backend, 40 frontend), 97% coverage | [Testing](TESTING.md) |
+| ✅ **Tested** | Backend (pytest) and frontend (Playwright) test suites | [Testing](TESTING.md) |
 | 🔒 **Secure** | Enhanced security scanning | [Security](SECURITY.md) |
 | 📋 **SBOM** | Supply chain security | [SBOM Guide](SYFT_GUIDE.md) |
 
@@ -89,8 +87,8 @@ Modern Python wrapper for MSN Weather with a FastAPI backend, React frontend, an
 
 - **Backend**: Python 3.10+, FastAPI, Pydantic 2.12+, Uvicorn, Gunicorn 23.0+
 - **Frontend**: Next.js 16, React 19.2, TypeScript 6+
-- **Testing**: pytest 9.0+, Playwright, 168 tests
-- **Quality**: ruff 0.14+, mypy 1.19+, pre-commit hooks
+- **Testing**: pytest 9.0+, Playwright
+- **Quality**: ruff 0.14+, mypy 1.8+, pre-commit hooks
 - **Deployment**: Podman/Docker, Nginx, multi-stage builds
 
 ---
@@ -98,7 +96,6 @@ Modern Python wrapper for MSN Weather with a FastAPI backend, React frontend, an
 ## Support & Resources
 
 - 🐛 [Report Issues](https://github.com/jim-wyatt/msn-weather-wrapper/issues)
-- 💬 [Discussions](https://github.com/jim-wyatt/msn-weather-wrapper/discussions)
 - 📖 [Source Code](https://github.com/jim-wyatt/msn-weather-wrapper)
 - 🎉 [Releases](https://github.com/jim-wyatt/msn-weather-wrapper/releases)
 

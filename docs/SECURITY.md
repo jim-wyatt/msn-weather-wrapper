@@ -76,7 +76,7 @@ graph TD
 | Type Confusion | Validates data types | ✅ Blocked |
 
 ### Rate Limiting
-- **Weather Endpoints**: 30 requests per minute per IP
+- **Per IP**: 30 requests per minute (all endpoints)
 - **Global Limit**: 200 requests per hour total
 - **Protection**: DoS and DDoS mitigation
 
@@ -88,43 +88,41 @@ The project uses a **comprehensive security scanning workflow** integrated into 
 
 **SAST (Static Application Security Testing):**
 - **Bandit**: Detects hardcoded passwords, insecure patterns, common security issues
-- **Semgrep**: Advanced pattern-based SAST with community security rules (main branch only)
+- **Semgrep**: Advanced pattern-based SAST with community security rules
 
 **Dependency Vulnerability Scanning:**
-- **pip-audit**: OSV database vulnerability checking (main branch only)
-- **Dependency Tree**: Complete dependency mapping for audit trails
+- **pip-audit**: Vulnerability checking of installed dependencies
 
 **Container Security:**
-- **Trivy**: Multi-layer container image vulnerability scanning with SARIF upload to GitHub Security (main branch only)
-- **Grype**: SBOM-based vulnerability detection and analysis (main branch only)
+- **Trivy**: Multi-layer container image vulnerability scanning with SARIF upload to GitHub Security (main branch and tags only)
+- **Grype**: SBOM-based vulnerability detection and analysis (main branch and tags only)
 
 **License Compliance:**
-- **pip-licenses**: Dependency license checking on all branches
-- **Automated GPL/AGPL detection** for compliance violations
+- **pip-licenses**: Dependency license report on all branches
 
 **Execution Strategy:**
-- **Pull Requests**: Basic security checks (Bandit + licenses) - fast feedback
-- **Main Branch & Tags**: Full comprehensive scanning (all 6 tools) - complete validation
-- **Manual Trigger**: On-demand full scans via workflow dispatch
+- **Pull Requests**: Basic security checks (Bandit, Semgrep, pip-audit, pip-licenses) - fast feedback
+- **Main Branch & Tags**: Basic checks plus container scanning (Trivy, Grype) - complete validation
+- **Manual Trigger**: On-demand runs via workflow dispatch of `ci.yml`
 
 **Artifact Management:**
-- 7-day retention for PR artifacts
-- 30-day retention for main branch artifacts
-- All reports uploaded to GitHub Security tab
+- 3-day retention for the `security-reports` artifact (not uploaded on PRs)
+- 30-day retention for the `container-security-reports` artifact
+- Trivy results uploaded to GitHub Security tab
 - Automated markdown reports generated for documentation site
 
 **CI/CD Integration:**
-- Critical security checks run on every PR (fast)
-- Full comprehensive scans on main branch and tags (thorough)
-- Results uploaded to GitHub Security tab with SARIF format
+- Basic security checks run on every PR (fast)
+- Container scans on main branch and tags (thorough)
+- Trivy results uploaded to GitHub Security tab with SARIF format
 - Automated reports generated in docs/reports/security-report.md
 
 ### Test Coverage
-- **25 Security Tests**: All passing ✅
-- **Fuzzing Coverage**: 23+ attack vectors tested
-- **97% Code Coverage**: Including security validation paths
+- **Security Tests**: `tests/test_security.py`
+- **Fuzzing Coverage**: Common attack payloads tested
+- **Code Coverage**: Includes security validation paths
 - **Integration Tests**: Security validation on live API
-- **6 Security Tools**: Coverage across SAST, dependencies, and containers
+- **Security Tools**: Coverage across SAST, dependencies, and containers
 
 ### Test Methodology
 1. **Unit Tests**: Validate input sanitization logic
@@ -137,45 +135,45 @@ The project uses a **comprehensive security scanning workflow** integrated into 
 **SQL Injection Attempts:**
 ```bash
 # Test 1: Classic SQL injection
-curl "http://localhost:5000/api/weather?city='; DROP TABLE users--&country=USA"
-# Response: {"error": "Invalid request", "message": "city contains invalid characters"}
+curl "http://localhost:5000/api/v1/weather?city='; DROP TABLE users--&country=USA"
+# Response: {"error": "Invalid input", "message": "city contains invalid characters"}
 
 # Test 2: UNION-based injection
-curl "http://localhost:5000/api/weather?city=1' UNION SELECT * FROM users--&country=USA"
-# Response: {"error": "Invalid request", "message": "city contains invalid characters"}
+curl "http://localhost:5000/api/v1/weather?city=1' UNION SELECT * FROM users--&country=USA"
+# Response: {"error": "Invalid input", "message": "city contains invalid characters"}
 ```
 
 **XSS Attempts:**
 ```bash
 # Test 1: Script tag injection
-curl "http://localhost:5000/api/weather?city=<script>alert('xss')</script>&country=USA"
-# Response: {"error": "Invalid request", "message": "city contains invalid characters"}
+curl "http://localhost:5000/api/v1/weather?city=<script>alert('xss')</script>&country=USA"
+# Response: {"error": "Invalid input", "message": "city contains invalid characters"}
 
 # Test 2: JavaScript protocol
-curl "http://localhost:5000/api/weather?city=javascript:alert(1)&country=USA"
-# Response: {"error": "Invalid request", "message": "city contains invalid characters"}
+curl "http://localhost:5000/api/v1/weather?city=javascript:alert(1)&country=USA"
+# Response: {"error": "Invalid input", "message": "city contains invalid characters"}
 ```
 
 **Path Traversal Attempts:**
 ```bash
 # Test 1: Directory traversal
-curl "http://localhost:5000/api/weather?city=../../../etc/passwd&country=USA"
-# Response: {"error": "Invalid request", "message": "city contains invalid characters"}
+curl "http://localhost:5000/api/v1/weather?city=../../../etc/passwd&country=USA"
+# Response: {"error": "Invalid input", "message": "city contains invalid characters"}
 
 # Test 2: Encoded traversal
-curl "http://localhost:5000/api/weather?city=..%2F..%2Fetc%2Fpasswd&country=USA"
-# Response: {"error": "Invalid request", "message": "city contains invalid characters"}
+curl "http://localhost:5000/api/v1/weather?city=..%2F..%2Fetc%2Fpasswd&country=USA"
+# Response: {"error": "Invalid input", "message": "city contains invalid characters"}
 ```
 
 **Command Injection Attempts:**
 ```bash
 # Test 1: Shell command
-curl "http://localhost:5000/api/weather?city=Seattle; cat /etc/passwd&country=USA"
-# Response: {"error": "Invalid request", "message": "city contains invalid characters"}
+curl "http://localhost:5000/api/v1/weather?city=Seattle; cat /etc/passwd&country=USA"
+# Response: {"error": "Invalid input", "message": "city contains invalid characters"}
 
 # Test 2: Pipe command
-curl "http://localhost:5000/api/weather?city=Seattle | whoami&country=USA"
-# Response: {"error": "Invalid request", "message": "city contains invalid characters"}
+curl "http://localhost:5000/api/v1/weather?city=Seattle | whoami&country=USA"
+# Response: {"error": "Invalid input", "message": "city contains invalid characters"}
 ```
 
 ## Security Best Practices
@@ -205,7 +203,7 @@ curl "http://localhost:5000/api/weather?city=Seattle | whoami&country=USA"
 If you discover a security vulnerability:
 
 1. **Do NOT** open a public issue
-2. Email security concerns to: [your-security-email]
+2. Email security concerns to: the.jim.wyatt@outlook.com
 3. Include:
    - Description of the vulnerability
    - Steps to reproduce
@@ -216,12 +214,12 @@ If you discover a security vulnerability:
 ## Security Audit History
 
 ### December 2025
-- ✅ Comprehensive security test suite added (25 tests)
+- ✅ Comprehensive security test suite added
 - ✅ Input validation hardened
 - ✅ Rate limiting implemented
 - ✅ Security documentation completed
 - ✅ All security tests passing
-- ✅ 97% code coverage achieved
+- ✅ High code coverage achieved
 
 ## Security Tools Integration
 
@@ -280,9 +278,5 @@ Before each release:
 
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [CWE Top 25](https://cwe.mitre.org/top25/)
-- [Flask Security](https://flask.palletsprojects.com/en/latest/security/)
+- [FastAPI Security](https://fastapi.tiangolo.com/tutorial/security/)
 - [Pydantic Validation](https://docs.pydantic.dev/)
-
----
-
-Last updated: December 2, 2025

@@ -134,7 +134,7 @@ graph TB
 
 **Flow:**
 1. **Test Phase** - Calls `test.yml` for smoke tests, code quality, unit tests, and coverage
-2. **Security Phase** - Calls `security.yml` (full scan on PR, basic on main)
+2. **Security Phase** - Calls `security.yml` (full scan on main/tags, basic on PR)
 3. **Build Phase** - Calls `build.yml` (builds Docker images, SBOM, docs)
 4. **Integration Phase** - Calls `test.yml` again with integration tests enabled
 5. **Performance Phase** - Calls `performance.yml` (main branch only)
@@ -142,7 +142,7 @@ graph TB
 7. **Trigger Auto-Version** - Triggers `auto-version-release.yml` (main branch only)
 
 **Benefits:**
-- Modular architecture with ~120 lines orchestrator workflow
+- Modular architecture with a short orchestrator workflow
 - Clear separation of concerns
 - Easy to maintain and extend
 - Consistent execution across all environments
@@ -154,12 +154,13 @@ graph TB
 **Inputs:**
 - `python-version` - Python version to use (default: '3.12')
 - `run-integration` - Whether to run integration tests (default: false)
+- `artifact-suffix` - Suffix for artifact names to avoid conflicts (default: '')
 
 **Jobs:**
 1. **Smoke Tests** - Quick validation (imports, syntax)
 2. **Code Quality** - Ruff format check, linting, mypy type checking
-3. **Unit Tests** - Multi-version Python testing (3.10, 3.11, 3.12)
-4. **Coverage** - Test coverage with reports (target: 97%+)
+3. **Unit Tests** - Multi-version Python testing (3.10, 3.11, 3.12; 3.12 only on pull requests)
+4. **Coverage** - Test coverage with reports
 5. **Integration Tests** - Tests against containerized API (when enabled)
 
 **Called by:** `ci.yml` (twice - once for unit tests, once for integration)
@@ -175,21 +176,19 @@ graph TB
 
 **Jobs:**
 
-1. **Basic Security Checks** - Bandit (hardcoded secrets), pip-audit, pip-licenses (always runs)
-2. **SAST** - Static Application Security Testing (full scan only)
+1. **Basic Security Checks** - always runs
    - Bandit (code analysis & hardcoded secrets)
    - Semgrep (pattern-based security analysis)
-3. **Dependency Vulnerabilities** - Full dependency scanning (full scan only)
    - pip-audit (package auditing)
-   - Dependency tree generation
-4. **Container Security Scan** - Image & SBOM analysis (full scan only)
+   - pip-licenses (license report)
+2. **Container Security Scan** - Image & SBOM analysis (full scan only)
    - Trivy (container image vulnerabilities)
    - Grype (SBOM vulnerability analysis)
 
 **Execution Strategy:**
 
-- **Pull Requests:** Basic security checks only (Bandit + licenses) - fast feedback
-- **Main Branch & Tags:** Full comprehensive security suite (all 6 tools) - complete validation
+- **Pull Requests:** Basic security checks only (Bandit, Semgrep, pip-audit, pip-licenses) - fast feedback
+- **Main Branch & Tags:** Basic checks plus container scan (Trivy, Grype) - complete validation
 
 **Called by:** `ci.yml` (full scan on main/tags, basic on PR)
 
@@ -201,35 +200,27 @@ graph LR
     SEC["security.yml<br/>Orchestrator"]
 
     subgraph "Always On (All Branches)"
-        BASIC["Basic Security<br/>✓ Bandit<br/>✓ pip-audit<br/>✓ pip-licenses"]
+        BASIC["Basic Security<br/>✓ Bandit<br/>✓ Semgrep<br/>✓ pip-audit<br/>✓ pip-licenses"]
     end
 
     subgraph "Full Scan (Main/Tags Only)"
-        SAST["SAST Scanning<br/>✓ Bandit<br/>✓ Semgrep"]
-        DEP["Dependency Scanning<br/>✓ pip-audit<br/>✓ Dep Tree"]
         CONT["Container Scanning<br/>✓ Trivy<br/>✓ Grype"]
     end
 
     SEC --> BASIC
-    SEC --> SAST
-    SEC --> DEP
     SEC --> CONT
 
-    SAST -->|SARIF Upload| GHSEC["GitHub Security Tab"]
-    CONT -->|SARIF Upload| GHSEC
+    CONT -->|SARIF Upload| GHSEC["GitHub Security Tab"]
     BASIC -->|Reports| REPORTS["security-reports artifact"]
-    SAST -->|Reports| REPORTS
-    DEP -->|Reports| REPORTS
-    CONT -->|Reports| REPORTS
+    CONT -->|Reports| REPORTS2["container-security-reports artifact"]
 
     %% Muted palette consistent with site blues
     style SEC fill:#26A69A,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
     style BASIC fill:#64B5F6,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
-    style SAST fill:#90CAF9,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
-    style DEP fill:#BA68C8,stroke:#6A1B9A,stroke-width:1.5px,color:#0F172A
     style CONT fill:#4DD0E1,stroke:#00838F,stroke-width:1.5px,color:#0F172A
     style GHSEC fill:#CFD8DC,stroke:#90A4AE,stroke-width:1.5px,color:#0F172A
     style REPORTS fill:#BBDEFB,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style REPORTS2 fill:#BBDEFB,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
 ```
 
 ### Reusable Workflow: Build (`build.yml`)
@@ -273,8 +264,6 @@ graph LR
 
 **Called by:** `ci.yml` (main branch only)
 
-**Also triggers:** Independently on push/PR to performance-related files
-
 ### Standalone Workflow: Dependencies (`dependencies.yml`)
 
 **Purpose:** Automated dependency updates on a weekly schedule.
@@ -301,10 +290,10 @@ graph LR
 **Process:**
 1. Analyzes merged PR title to determine version bump type:
    - `feat:`, `feature:` → **minor** version bump
-   - `fix:`, `bugfix:`, `chore:`, `perf:`, `refactor:`, `docs:` → **patch** version bump
-   - `breaking:`, `feat!:`, `BREAKING CHANGE:` → **major** version bump
+   - `fix:`, `bugfix:`, `chore:`, `perf:`, `refactor:`, `docs:` → **patch** version bump (also the default)
+   - `feat!:`, `feature!:`, `breaking!:` → **major** version bump
 2. Calculates new version
-3. Updates `pyproject.toml` and `backend/msn_weather_wrapper/__init__.py`
+3. Updates `pyproject.toml` and `backend/__init__.py`
 4. Creates version bump PR
 5. Auto-merges the PR (if branch protection allows)
 6. Creates git tag (format: `v*.*.*`)
@@ -332,7 +321,7 @@ graph LR
 | security.yml | - | - | - | - | - | ✓ |
 | build.yml | - | - | - | - | - | ✓ |
 | deploy.yml | - | - | - | - | - | ✓ |
-| performance.yml | ✓ | ✓ | - | - | - | ✓ |
+| performance.yml | - | - | - | - | - | ✓ |
 | dependencies.yml | - | - | - | ✓ | ✓ | - |
 | auto-version-release.yml | - | - | - | ✓ | - | Triggered by ci.yml |
 | publish-release.yml | - | - | ✓ | ✓ | - | Triggered by auto-version |
@@ -345,7 +334,7 @@ graph LR
 - **Maintainability:** Changes are isolated to specific workflow files
 
 ### 2. Simplification
-- **Main CI/CD:** Reduced from 662 lines to ~120 lines
+- **Main CI/CD:** Reduced from one large workflow to a short orchestrator
 - **Clear Flow:** Easy to understand the overall CI/CD process
 - **Less Duplication:** Common logic is in reusable workflows
 
@@ -356,12 +345,12 @@ graph LR
 
 ### 4. Efficiency
 - **Parallel Execution:** Independent workflows can run in parallel
-- **Smart Scheduling:** Performance tests only on main, full security scan only on PR
+- **Smart Scheduling:** Performance tests only on main, full security scan only on main and tags
 - **Resource Optimization:** Only necessary steps run based on context
 
 ### 5. Testability
 - **Isolated Testing:** Individual workflows can be tested independently
-- **Manual Triggers:** All workflows support manual dispatch for testing
+- **Manual Triggers:** `ci.yml` and the standalone workflows support manual dispatch for testing
 - **Clear Dependencies:** Easy to see what depends on what
 
 ## Environment Variables
@@ -371,7 +360,7 @@ All workflows use consistent environment configuration:
 ```yaml
 env:
   PYTHON_VERSION: '3.12'
-    NODE_VERSION: '24'
+  NODE_VERSION: '24'
   REPORTS_DIR: 'docs/reports'
 ```
 

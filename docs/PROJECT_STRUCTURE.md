@@ -6,18 +6,18 @@ This repository is organized so a beginner can reason about it in **four main zo
 
 If you're new, explore the project in this order:
 
-1. `backend/msn_weather_wrapper/` — the Python backend and library code
-2. `frontend/` — the React user interface
+1. `backend/` — the Python backend and library code
+2. `frontend/` — the Next.js user interface
 3. `tests/` — examples of how behavior is verified
 4. `scripts/` — helper scripts for local development and reporting
 
 ## Mental Model
 
-### `backend/msn_weather_wrapper/`
+### `backend/`
 
 This is the **main backend code**.
 
-- `api/` — FastAPI app, routes, request handling, and service logic
+- `api/` — FastAPI app (`main.py`), routes (`routers/`), request handling, and service logic
 - `client.py` — talks to MSN Weather
 - `models.py` — shared typed data models
 - `exceptions.py` — app-specific errors
@@ -36,7 +36,10 @@ This is the **backend test suite**.
 
 - `test_api.py` — API behavior
 - `test_client.py` — weather client behavior
+- `test_models.py` — data model validation
 - `test_security.py` — input validation and security checks
+- `test_integration.py` — checks against the running container
+- `test_benchmarks.py` — performance benchmarks
 
 ### `scripts/`
 
@@ -64,13 +67,12 @@ Use it when you want explanations, not implementation details.
 
 ```text
 msn-weather-wrapper/
-├── backend/msn_weather_wrapper/  # Backend/library code
+├── backend/                  # Backend/library code
 ├── frontend/                 # Next.js UI
 ├── tests/                    # Python tests
 ├── scripts/                  # Dev and automation scripts
 ├── infra/                    # Container and deployment config
 ├── docs/                     # Documentation
-├── api.py                    # Local API entrypoint
 ├── dev.sh                    # Simple wrapper around scripts/dev.sh
 └── pyproject.toml            # Python project config
 ```

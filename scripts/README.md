@@ -70,7 +70,7 @@ Builds the app with containers and runs the deployment-oriented integration chec
 If you are asking **"where do I start?"**:
 
 1. Read `README.md`
-2. Explore `backend/msn_weather_wrapper/`
+2. Explore `backend/`
 3. Check `tests/` for examples
 4. Use `scripts/` only when you need project tooling
 

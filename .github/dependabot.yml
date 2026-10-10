@@ -17,8 +17,6 @@ updates:
       - "python"
     assignees:
       - "jim-wyatt"
-    reviewers:
-      - "jim-wyatt"
     commit-message:
       prefix: "chore"
       include: "scope"
@@ -50,8 +48,6 @@ updates:
       - "frontend"
       - "javascript"
     assignees:
-      - "jim-wyatt"
-    reviewers:
       - "jim-wyatt"
     commit-message:
       prefix: "chore"
@@ -97,19 +93,14 @@ updates:
       - "github-actions"
     assignees:
       - "jim-wyatt"
-    reviewers:
-      - "jim-wyatt"
     commit-message:
       prefix: "chore"
       include: "scope"
     groups:
-      # Group all GitHub Actions updates
+      # Group all GitHub Actions updates (including majors) into one PR
       github-actions:
         patterns:
           - "*"
-        update-types:
-          - "minor"
-          - "patch"
 
   # Note: Docker updater is disabled because this project uses Containerfiles (Podman)
   # instead of Dockerfiles. Dependabot's docker package-ecosystem only supports Dockerfile

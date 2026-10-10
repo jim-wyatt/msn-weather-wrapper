@@ -50,15 +50,15 @@ sequenceDiagram
 
 **Swagger UI** is available for interactive API exploration and testing:
 
-- **Local Development**: [http://localhost:5000/apidocs/](http://localhost:5000/apidocs/)
-- **Container Deployment**: [http://localhost:8080/apidocs/](http://localhost:8080/apidocs/)
+- **Local Development**: [http://localhost:5000/apidocs](http://localhost:5000/apidocs)
+- **Container Deployment**: the bundled Nginx config only proxies `/api/` to the backend, so `/apidocs` and `/apispec.json` are not reachable through port 8080
 
 The Swagger UI provides:
 
 - 📖 Complete API documentation with request/response examples
 - 🧪 Interactive endpoint testing directly from your browser
 - 🔍 Request/response schema validation
-- 🏷️ Organized endpoints by category (health, weather, searches)
+- 🏷️ Organized endpoints by category (health, weather)
 - 🔐 Session-based authentication support for recent searches
 
 **OpenAPI Specification**: Available at `/apispec.json` for API clients and tools
@@ -78,7 +78,8 @@ Check if the API is running.
 ```json
 {
   "status": "ok",
-  "service": "MSN Weather Wrapper API"
+  "service": "MSN Weather Wrapper API",
+  "version": "1.0"
 }
 
 ```
@@ -176,18 +177,18 @@ curl -X POST http://localhost:5000/api/v1/weather \
 
 ```json
 {
-  "error": "Missing required fields",
-  "message": "Both 'city' and 'country' fields are required"
+  "error": "Missing required parameters",
+  "message": "Both 'city' and 'country' parameters are required"
 }
 
 ```
 
-**Error Response (500):**
+**Error Response (502):**
 
 ```json
 {
-  "error": "Failed to fetch weather data",
-  "message": "Error details here"
+  "error": "Upstream service error",
+  "message": "Failed to fetch weather data from the upstream service."
 }
 
 ```
@@ -233,7 +234,7 @@ curl "http://localhost:5000/api/v1/weather/coordinates?lat=47.6062&lon=-122.3321
 ```json
 {
   "error": "Invalid coordinates",
-  "message": "Latitude must be between -90 and 90"
+  "message": "Invalid coordinate values provided."
 }
 
 ```
@@ -241,7 +242,7 @@ curl "http://localhost:5000/api/v1/weather/coordinates?lat=47.6062&lon=-122.3321
 **Python Example:**
 
 ```python
-from msn_weather_wrapper import WeatherClient
+from backend import WeatherClient
 
 client = WeatherClient()
 weather = client.get_weather_by_coordinates(47.6062, -122.3321)
@@ -345,8 +346,8 @@ The Podman container automatically uses Gunicorn with these production settings.
 
 ### Rate Limiting
 
-- **Weather endpoints**: 30 requests per minute per IP
-- **Global limit**: 200 requests per hour total
+- **Per IP**: 30 requests per minute (applies to every endpoint; `RATE_LIMIT_PER_IP`)
+- **Global limit**: 200 requests per hour total (`RATE_LIMIT_GLOBAL`)
 - Protection against DoS attacks
 
 ### Caching
@@ -455,9 +456,9 @@ pytest
 
 pytest tests/test_api.py -v
 
-# Integration tests (requires running API)
+# Integration tests (requires the app container on http://localhost:8080)
 
-pytest tests/test_integration.py -v
+pytest tests/test_integration.py -v --override-ini="addopts="
 
 # Security tests
 
@@ -495,7 +496,7 @@ export CORS_ORIGINS=https://your-frontend.example.com
 ```bash
 # Build and run
 
-podman build -t msn-weather-wrapper .
+podman build -f infra/containers/Containerfile -t msn-weather-wrapper .
 podman run -p 8080:80 \
   -e APP_SECRET_KEY="${APP_SECRET_KEY:?Set APP_SECRET_KEY first}" \
   -e CORS_ORIGINS="${CORS_ORIGINS:-}" \
@@ -503,7 +504,8 @@ podman run -p 8080:80 \
 
 # Using compose
 
-podman-compose up -d
+export APP_SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"  # required by the production compose file
+podman-compose -f infra/compose/podman-compose.yml up -d
 
 ```
 
@@ -538,10 +540,12 @@ The API uses standard HTTP status codes and returns consistent error response fo
 | ------ | -------- | ------------- |
 | 200 | OK | Request successful |
 | 400 | Bad Request | Invalid or missing parameters |
-| 404 | Not Found | Endpoint not found |
+| 404 | Not Found | Location or endpoint not found |
+| 415 | Unsupported Media Type | POST body is not `application/json` |
 | 429 | Too Many Requests | Rate limit exceeded |
 | 500 | Internal Server Error | Server error occurred |
-| 503 | Service Unavailable | Service temporarily unavailable |
+| 502 | Bad Gateway | Upstream MSN Weather request failed |
+| 503 | Service Unavailable | Readiness probe reports not ready |
 
 ### Error Response Format
 
@@ -571,8 +575,8 @@ All errors follow this JSON structure:
 
 ```json
 {
-  "error": "city contains invalid characters",
-  "message": "Only letters, spaces, hyphens, and Unicode characters are allowed"
+  "error": "Invalid input",
+  "message": "city contains invalid characters"
 }
 
 ```
@@ -582,27 +586,28 @@ All errors follow this JSON structure:
 ```json
 {
   "error": "Rate limit exceeded",
-  "message": "Too many requests. Please try again later."
+  "message": "Too many requests. Please try again later.",
+  "retry_after": "42"
 }
 
 ```
 
-**Geocoding Failed (400):**
+**Location Not Found (404):**
 
 ```json
 {
-  "error": "Geocoding failed",
-  "message": "Could not find location for coordinates"
+  "error": "Location not found",
+  "message": "The requested location could not be found."
 }
 
 ```
 
-**Server Error (500):**
+**Upstream Error (502):**
 
 ```json
 {
-  "error": "Failed to fetch weather data",
-  "message": "Connection timeout to weather service"
+  "error": "Upstream service error",
+  "message": "Failed to fetch weather data from the upstream service."
 }
 
 ```
@@ -619,7 +624,7 @@ The API implements rate limiting to prevent abuse and ensure fair usage:
 
 ### Rate Limit Headers
 
-Check remaining quota using response headers:
+A rate-limited request returns `429` with a `Retry-After` header (seconds until the limit window frees up). Every response also carries an `X-Request-ID` header:
 
 ```bash
 curl -i "http://localhost:5000/api/v1/weather?city=Seattle&country=USA"
@@ -627,10 +632,9 @@ curl -i "http://localhost:5000/api/v1/weather?city=Seattle&country=USA"
 ```
 
 ```http
-HTTP/1.1 200 OK
-X-RateLimit-Limit: 30
-X-RateLimit-Remaining: 29
-X-RateLimit-Reset: 1734045600
+HTTP/1.1 429 Too Many Requests
+Retry-After: 42
+X-Request-ID: 6f1c2f0e-3b0a-4c0e-9a51-2d0c3c1f4b7a
 ```
 
 ### Handling Rate Limits
@@ -638,7 +642,7 @@ X-RateLimit-Reset: 1734045600
 When rate limited (429 response):
 
 1. **Respect the limit**: Wait before retrying
-2. **Check X-RateLimit-Reset**: Unix timestamp when limit resets
+2. **Check Retry-After**: Number of seconds to wait before retrying
 3. **Implement backoff**: Exponential backoff for retries
 4. **Cache responses**: Store results locally (5 min cache recommended)
 
@@ -659,8 +663,7 @@ def get_weather_with_retry(city, country, max_retries=3):
             return response.json()
 
         if response.status_code == 429:
-            reset_time = int(response.headers.get("X-RateLimit-Reset", 0))
-            wait_time = max(reset_time - time.time(), 0) + 1
+            wait_time = int(response.headers.get("Retry-After", 1))
             print(f"Rate limited. Waiting {wait_time}s...")
             time.sleep(wait_time)
             continue
@@ -674,9 +677,9 @@ def get_weather_with_retry(city, country, max_retries=3):
 
 The API caches responses for 5 minutes to improve performance:
 
-- **Cache Key**: `{city}:{country}` or `{lat}:{lon}`
-- **Cache Duration**: 300 seconds (5 minutes)
-- **Cache Hit**: Returns cached data (90%+ faster)
+- **Cache Key**: city, country, and the current time bucket (coordinate lookups are not cached)
+- **Cache Duration**: 300 seconds (5 minutes; `CACHE_DURATION`)
+- **Cache Hit**: Returns cached data without contacting MSN Weather
 - **Cache Miss**: Fetches fresh data from MSN Weather
 
 **Benefits:**
@@ -691,7 +694,7 @@ All inputs are validated for security and data integrity:
 
 ### City/Country Names
 
-- **Allowed**: Letters, spaces, hyphens, apostrophes, periods, Unicode characters
+- **Allowed**: Letters, spaces, hyphens, periods, commas, Unicode characters
 - **Max Length**: 100 characters
 - **Blocked**: Special characters `<>;&|$\`
 - **Trimmed**: Leading/trailing whitespace removed
@@ -757,14 +760,13 @@ Structured JSON logging with request tracking:
 
 ```json
 {
-  "timestamp": "2025-12-02T15:30:45.123Z",
-  "level": "info",
-  "event": "weather_request",
-  "request_id": "abc123",
+  "event": "request_started",
+  "request_id": "6f1c2f0e-3b0a-4c0e-9a51-2d0c3c1f4b7a",
+  "method": "GET",
+  "path": "/api/v1/weather",
   "ip": "192.168.1.1",
-  "city": "Seattle",
-  "country": "USA",
-  "duration_ms": 245
+  "level": "info",
+  "timestamp": "2025-12-02T15:30:45.123456Z"
 }
 
 ```
@@ -772,28 +774,15 @@ Structured JSON logging with request tracking:
 **Log Levels:**
 
 - `INFO`: Normal requests
-- `WARNING`: Rate limits, validation errors
-- `ERROR`: Server errors, exceptions
+- `WARNING`: Validation errors, locations not found
+- `ERROR`: Upstream failures, server errors, exceptions
 
 **Configure logging:**
 
-```bash
-# Set log level
-
-export LOG_LEVEL=INFO  # DEBUG, INFO, WARNING, ERROR
-
-# Enable/disable logging
-
-export ENABLE_LOGGING=true
-
-```
+Logging is configured with `structlog` in `backend/api/services.py` (JSON renderer). The application does not currently read any logging-related environment variables.
 
 ## See Also
 
 - [Security Documentation](SECURITY.md) - Input validation and security
 - [Testing Guide](TESTING.md) - Comprehensive testing guide
 - [Development Guide](DEVELOPMENT.md) - Local development setup
-
----
-
-Last updated: December 2, 2025

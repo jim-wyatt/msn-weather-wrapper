@@ -38,7 +38,7 @@ pip install -e ".[dev]"
 pre-commit install
 
 # Start backend
-python api.py
+uvicorn backend.api.main:app --reload --port 5000
 
 # Frontend setup (separate terminal)
 cd frontend
@@ -61,7 +61,7 @@ npm run dev
 ./dev.sh restart  # Restart services
 
 # Testing
-./dev.sh test     # Run all tests
+./dev.sh test     # Run backend tests
 ./dev.sh shell-api      # Backend shell
 ./dev.sh shell-frontend # Frontend shell
 
@@ -75,10 +75,10 @@ npm run dev
 ### Making Code Changes
 
 #### Backend Changes
-1. Edit files in `backend/msn_weather_wrapper/` or `api.py`
+1. Edit files in `backend/`
 2. FastAPI reloads automatically
 3. Test: `pytest tests/test_*.py`
-4. Check types: `mypy backend/`
+4. Check types: `mypy backend`
 5. Format: `ruff format .`
 
 #### Frontend Changes
@@ -103,7 +103,7 @@ ruff check .
 ruff check . --fix  # Auto-fix
 
 # Type checking
-mypy backend/msn_weather_wrapper
+mypy backend
 
 # Run all checks
 pre-commit run --all-files
@@ -162,11 +162,12 @@ npm run test:e2e:headed
 ### Integration Testing
 
 ```bash
-# Start API first
-python api.py
+# Start the app container first (serves on http://localhost:8080)
+export APP_SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"  # required by the production compose file
+podman-compose -f infra/compose/podman-compose.yml up -d
 
-# Run integration tests
-pytest tests/test_integration.py -v
+# Run integration tests (the default pytest options deselect them)
+pytest tests/test_integration.py -v --override-ini="addopts="
 ```
 
 ---
@@ -175,10 +176,10 @@ pytest tests/test_integration.py -v
 
 ### Backend Feature
 
-1. **Write code** in `backend/msn_weather_wrapper/`
+1. **Write code** in `backend/`
 2. **Add tests** in `tests/`
-3. **Update types** in `models.py`
-4. **Add API endpoint** in `api.py` (if needed)
+3. **Update types** in `backend/models.py`
+4. **Add API endpoint** in `backend/api/routers/` (if needed)
 5. **Update docs** in `docs/API.md`
 
 ### Frontend Feature
@@ -270,7 +271,7 @@ cd frontend && npm update
 ### Architecture
 
 - **API Container**: Python 3.12 slim (Trixie), port 5000, FastAPI with reload
-- **Frontend Container**: Node 22 Trixie slim, port 3000, Next.js dev server with HMR
+- **Frontend Container**: Node 24 Trixie slim, port 3000, Next.js dev server with HMR
 - **Volumes**: Source code mounted for hot reload
 
 ### Environment Variables
@@ -318,13 +319,13 @@ Before submitting PR:
 1. ✅ All tests pass: `pytest`
 2. ✅ Code formatted: `ruff format .`
 3. ✅ No lint errors: `ruff check .`
-4. ✅ Types valid: `mypy backend/`
+4. ✅ Types valid: `mypy backend`
 5. ✅ Coverage maintained: `pytest --cov=backend`
 6. ✅ Frontend tests pass: `npm run test:e2e`
 7. ✅ Documentation updated
 8. ✅ CHANGELOG.md updated
 
-See the Contributing Guidelines section above for full guidelines.
+See [CONTRIBUTING.md](https://github.com/jim-wyatt/msn-weather-wrapper/blob/main/CONTRIBUTING.md) for full guidelines.
 
 ---
 
@@ -332,8 +333,8 @@ See the Contributing Guidelines section above for full guidelines.
 
 ```
 msn-weather-wrapper/
-├── backend/msn_weather_wrapper/    # Backend/library code
-│   ├── api/                    # FastAPI app (main, routers, services, schemas)
+├── backend/                    # Backend/library code
+│   ├── api/                    # FastAPI app (main, config, routers, services, schemas)
 │   ├── client.py               # Weather client
 │   ├── models.py               # Pydantic models
 │   ├── exceptions.py           # Domain-specific errors
@@ -344,7 +345,6 @@ msn-weather-wrapper/
 ├── scripts/                    # Dev and automation scripts
 ├── infra/                      # Containers, compose files, and runtime config
 ├── docs/                       # Documentation and guides
-├── api.py                      # Local API entrypoint
 ├── dev.sh                      # Wrapper around scripts/dev.sh
 └── pyproject.toml              # Python config
 ```
@@ -363,4 +363,3 @@ msn-weather-wrapper/
 
 **Need Help?**
 - 🐛 [Report Issues](https://github.com/jim-wyatt/msn-weather-wrapper/issues)
-- 💬 [Discussions](https://github.com/jim-wyatt/msn-weather-wrapper/discussions)

@@ -8,7 +8,7 @@ Develop entirely in containers with Podman for a consistent setup, easier onboar
 ./dev.sh setup   # One-time setup
 ./dev.sh start   # Start development
 ./dev.sh logs    # View logs
-./dev.sh test    # Run all tests
+./dev.sh test    # Run backend tests
 ```
 
 **Services:**
@@ -85,7 +85,7 @@ npm run type-check
 
 ### Making changes
 
-- **Backend:** edit files in `backend/` or `api.py` and FastAPI reloads automatically.
+- **Backend:** edit files in `backend/` and FastAPI reloads automatically.
 - **Frontend:** edit files in `frontend/app/` and Next.js HMR updates instantly.
 - **Tests:** edit test files and rerun the relevant checks.
 
@@ -118,17 +118,18 @@ npm install package-name
 ### Containers
 
 - **API:** Python 3.12 slim + FastAPI + dev tools on port `5000`
-- **Frontend:** Node 22 slim + Next.js + Playwright on port `3000`
-- **Test runner:** on-demand checks and browser tests
+- **Frontend:** Node 24 slim + Next.js + Playwright on port `3000`
+- **Test runner:** on-demand backend test run (`test` compose profile)
 
 ### Volume mounts
 
 ```text
-./backend        -> /app/backend  (API)
-./api.py         -> /app/api.py   (API)
-./tests          -> /app/tests    (API)
-./frontend/app   -> /app/app      (Frontend)
-./frontend/tests -> /app/tests    (Frontend)
+./backend         -> /app/backend         (API)
+./tests           -> /app/tests           (API)
+./pyproject.toml  -> /app/pyproject.toml  (API)
+./frontend/app    -> /app/app             (Frontend)
+./frontend/tests  -> /app/tests           (Frontend)
+./frontend/public -> /app/public          (Frontend)
 ```
 
 ### Networking
@@ -235,4 +236,3 @@ podman images
 - [Development Guide](DEVELOPMENT.md) - Full development documentation
 - [Testing Guide](TESTING.md) - Testing best practices
 - [API Documentation](API.md) - API reference
-
