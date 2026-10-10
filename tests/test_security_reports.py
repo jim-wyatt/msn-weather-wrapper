@@ -2,6 +2,8 @@
 
 import json
 
+import pytest
+
 from scripts.evaluate_security_reports import evaluate_reports
 
 
@@ -52,4 +54,43 @@ def test_scanner_error_and_missing_report_fail(tmp_path):
     assert "Semgrep reported findings or scan errors" in failures
     assert any(
         "pip-audit-report.json: could not read scan report" in failure for failure in failures
+    )
+
+
+@pytest.mark.parametrize(
+    ("report_name", "required_field"),
+    [
+        ("bandit-report.json", "results"),
+        ("semgrep-report.json", "results"),
+        ("pip-audit-report.json", "dependencies"),
+    ],
+)
+def test_missing_required_report_fields_fail(tmp_path, report_name, required_field):
+    reports = clean_reports()
+    del reports[report_name][required_field]
+    write_reports(tmp_path, reports)
+
+    assert any(
+        f"{report_name}: required '{required_field}' field must be a JSON array" in failure
+        for failure in evaluate_reports(tmp_path)
+    )
+
+
+@pytest.mark.parametrize(
+    ("report_name", "required_field"),
+    [
+        ("bandit-report.json", "results"),
+        ("semgrep-report.json", "results"),
+        ("pip-audit-report.json", "dependencies"),
+    ],
+)
+@pytest.mark.parametrize("invalid_value", [None, {}])
+def test_required_report_fields_must_be_lists(tmp_path, report_name, required_field, invalid_value):
+    reports = clean_reports()
+    reports[report_name][required_field] = invalid_value
+    write_reports(tmp_path, reports)
+
+    assert any(
+        f"{report_name}: required '{required_field}' field must be a JSON array" in failure
+        for failure in evaluate_reports(tmp_path)
     )

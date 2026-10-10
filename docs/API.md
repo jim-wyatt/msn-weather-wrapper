@@ -725,7 +725,7 @@ Access-Control-Allow-Origin: <configured-origin>
 Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS
 Access-Control-Allow-Headers: Content-Type, Authorization
 Access-Control-Allow-Credentials: true
-Access-Control-Max-Age: 3600
+Access-Control-Max-Age: 600
 
 ```
 

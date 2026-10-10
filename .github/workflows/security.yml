@@ -46,7 +46,7 @@ jobs:
       - name: Run Semgrep SAST scan
         run: |
           status=0
-          semgrep --error --config=p/python --metrics=off backend/ --json --output=security-reports/semgrep-report.json || status=$?
+          semgrep --error --config=.semgrep.yml --metrics=off backend/ --json --output=security-reports/semgrep-report.json || status=$?
           echo "$status" > security-reports/semgrep-exit-code
 
       - name: Run pip-audit (check for vulnerabilities)

@@ -13,7 +13,7 @@ def evaluate_reports(reports: Path) -> list[str]:
     findings: dict[str, bool] = {}
     scan_errors: dict[str, bool] = {}
 
-    def load_report(name: str) -> dict[str, Any]:
+    def load_report(name: str, required_list_field: str) -> dict[str, Any]:
         try:
             report = json.loads((reports / name).read_text())
         except (OSError, json.JSONDecodeError) as error:
@@ -22,9 +22,12 @@ def evaluate_reports(reports: Path) -> list[str]:
         if not isinstance(report, dict):
             failures.append(f"{name}: scan report must contain a JSON object")
             return {}
+        if not isinstance(report.get(required_list_field), list):
+            failures.append(f"{name}: required '{required_list_field}' field must be a JSON array")
+            return {}
         return report
 
-    bandit = load_report("bandit-report.json")
+    bandit = load_report("bandit-report.json", "results")
     bandit_findings = [
         item
         for item in bandit.get("results", [])
@@ -35,13 +38,13 @@ def evaluate_reports(reports: Path) -> list[str]:
     if findings["bandit"] or scan_errors["bandit"]:
         failures.append("Bandit reported HIGH findings or scan errors")
 
-    semgrep = load_report("semgrep-report.json")
+    semgrep = load_report("semgrep-report.json", "results")
     findings["semgrep"] = bool(semgrep.get("results"))
     scan_errors["semgrep"] = bool(semgrep.get("errors"))
     if findings["semgrep"] or scan_errors["semgrep"]:
         failures.append("Semgrep reported findings or scan errors")
 
-    pip_audit = load_report("pip-audit-report.json")
+    pip_audit = load_report("pip-audit-report.json", "dependencies")
     dependencies = pip_audit.get("dependencies", [])
     vulnerabilities = (
         [
