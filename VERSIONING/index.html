@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1449,21 +1449,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#required-secret" class="md-nav__link">
+  <a href="#trusted-publishing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Required Secret
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#getting-a-pypi-token" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Getting a PyPI Token
+        Trusted Publishing
       
     </span>
   </a>
@@ -1510,10 +1499,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#version-mismatch-error" class="md-nav__link">
+  <a href="#version-mismatch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Version Mismatch Error
+        Version Mismatch
       
     </span>
   </a>
@@ -2576,21 +2565,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#required-secret" class="md-nav__link">
+  <a href="#trusted-publishing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Required Secret
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#getting-a-pypi-token" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Getting a PyPI Token
+        Trusted Publishing
       
     </span>
   </a>
@@ -2637,10 +2615,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#version-mismatch-error" class="md-nav__link">
+  <a href="#version-mismatch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Version Mismatch Error
+        Version Mismatch
       
     </span>
   </a>
@@ -2784,10 +2762,10 @@
 <h2 id="automated-versioning-primary-method">Automated Versioning (Primary Method)<a class="headerlink" href="#automated-versioning-primary-method" title="Permanent link">&para;</a></h2>
 <p><strong>The project uses automated PR-based versioning</strong> where every merged pull request automatically increments the version and publishes to PyPI. See <a href="../AUTOMATED_VERSIONING/">AUTOMATED_VERSIONING.md</a> for the complete guide.</p>
 <p><strong>Quick summary:</strong>
-- PR labels, title, or branch prefix determine version bump type
-- Major (breaking changes): <code>major</code>, <code>breaking</code> labels or <code>feat!:</code> title
-- Minor (new features): <code>minor</code>, <code>feature</code> labels or <code>feat:</code> title
-- Patch (bug fixes): <code>patch</code>, <code>fix</code> labels or <code>fix:</code> title (default)</p>
+- The merged PR's title determines version bump type
+- Major (breaking changes): <code>feat!:</code> title
+- Minor (new features): <code>feat:</code> title
+- Patch (bug fixes): <code>fix:</code> title (default)</p>
 <h2 id="manual-release-process-alternative">Manual Release Process (Alternative)<a class="headerlink" href="#manual-release-process-alternative" title="Permanent link">&para;</a></h2>
 <p>If you need to release manually without the automated system:</p>
 <h2 id="version-format">Version Format<a class="headerlink" href="#version-format" title="Permanent link">&para;</a></h2>
@@ -2805,15 +2783,15 @@
 <p>The project uses automated PR-based versioning. When a PR is merged to main:</p>
 <ol>
 <li><strong>Auto-Version Workflow Triggers</strong></li>
-<li><code>auto-version-release.yml</code> automatically runs</li>
+<li><code>ci.yml</code> dispatches <code>auto-version-release.yml</code> after a successful run on main</li>
 <li>
-<p>Determines version bump from PR labels, title, or branch prefix</p>
+<p>Determines version bump from the PR title</p>
 </li>
 <li>
 <p><strong>Version Bump PR Created</strong></p>
 </li>
 <li>The workflow creates a PR with version updates</li>
-<li>Updates <code>pyproject.toml</code> and <code>CHANGELOG.md</code></li>
+<li>Updates <code>pyproject.toml</code> and <code>backend/__init__.py</code></li>
 <li>
 <p>Auto-merge is enabled</p>
 </li>
@@ -2824,12 +2802,10 @@
 <p>When the version bump PR merges, a git tag is created (e.g., <code>v1.2.3</code>)</p>
 </li>
 <li>
-<p><strong>CI/CD Pipeline Runs Automatically</strong></p>
+<p><strong>Publish Workflow Runs Automatically</strong> (<code>publish-release.yml</code>)</p>
 </li>
 <li>Build Python package</li>
 <li>Publish to PyPI</li>
-<li>Build container images</li>
-<li>Generate SBOM</li>
 <li>Create GitHub Release with artifacts</li>
 </ol>
 <p>See <a href="../AUTOMATED_VERSIONING/">AUTOMATED_VERSIONING.md</a> for complete details.</p>
@@ -2838,8 +2814,9 @@
 <h3 id="1-update-version">1. Update Version<a class="headerlink" href="#1-update-version" title="Permanent link">&para;</a></h3>
 <p>Edit <code>pyproject.toml</code>:</p>
 <div class="language-toml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">[project]</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;1.2.3&quot;</span><span class="w">  </span><span class="c1"># Update this line</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"1.2.3"</span><span class="w">  </span><span class="c1"># Update this line</span>
 </span></code></pre></div>
+<p>Also update <code>__version__</code> in <code>backend/__init__.py</code> to the same value.</p>
 <h3 id="2-update-changelog">2. Update Changelog<a class="headerlink" href="#2-update-changelog" title="Permanent link">&para;</a></h3>
 <p>Edit <code>CHANGELOG.md</code> following <a href="https://keepachangelog.com/">Keep a Changelog</a>:</p>
 <div class="language-markdown highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="gu">## [1.2.3] - 2024-01-15</span>
@@ -2857,31 +2834,35 @@
 </span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="k">-</span><span class="w"> </span>Security fix descriptions
 </span></code></pre></div>
 <h3 id="3-commit-changes">3. Commit Changes<a class="headerlink" href="#3-commit-changes" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>git<span class="w"> </span>add<span class="w"> </span>pyproject.toml<span class="w"> </span>CHANGELOG.md
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;chore: bump version to 1.2.3&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>git<span class="w"> </span>add<span class="w"> </span>pyproject.toml<span class="w"> </span>backend/__init__.py<span class="w"> </span>CHANGELOG.md
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"chore: bump version to 1.2.3"</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main
 </span></code></pre></div>
 <h3 id="4-create-release-tag-manual-process-only">4. Create Release Tag (Manual Process Only)<a class="headerlink" href="#4-create-release-tag-manual-process-only" title="Permanent link">&para;</a></h3>
 <p><strong>Note</strong>: This step is automated when using the Automated Release workflow.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Create annotated tag</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.2.3<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Release version 1.2.3&quot;</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.2.3<span class="w"> </span>-m<span class="w"> </span><span class="s2">"Release version 1.2.3"</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Push tag to trigger release</span>
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>v1.2.3
 </span></code></pre></div>
 <h3 id="5-automated-cicd-pipeline">5. Automated CI/CD Pipeline<a class="headerlink" href="#5-automated-cicd-pipeline" title="Permanent link">&para;</a></h3>
-<p>The CI/CD pipeline will automatically:</p>
+<p>Pushing the tag triggers two workflows:</p>
 <ol>
-<li><strong>Validate version</strong> - Verifies tag matches <code>pyproject.toml</code></li>
-<li><strong>Run tests</strong> - Ensures all tests pass</li>
+<li><strong><code>publish-release.yml</code></strong></li>
+<li><strong>Set version</strong> - Writes the tag version into <code>pyproject.toml</code> for the build</li>
 <li><strong>Build package</strong> - Creates wheel and source distribution</li>
-<li><strong>Publish to PyPI</strong> - Uploads package automatically</li>
-<li><strong>Build containers</strong> - Creates multi-platform images with semantic version tags:</li>
+<li><strong>Check package</strong> - Runs <code>twine check</code></li>
+<li><strong>Publish to PyPI</strong> - Uploads package automatically (trusted publishing)</li>
+<li><strong>Create GitHub Release</strong> - Publishes release with artifacts</li>
+<li><strong><code>ci.yml</code></strong></li>
+<li><strong>Run tests</strong> - Tests and security scans</li>
+<li><strong>Build containers</strong> - Pushes the image with semantic version tags:<ul>
 <li><code>ghcr.io/owner/repo:1.2.3</code> (exact version)</li>
 <li><code>ghcr.io/owner/repo:1.2</code> (minor version)</li>
 <li><code>ghcr.io/owner/repo:1</code> (major version)</li>
-<li><code>ghcr.io/owner/repo:latest</code> (if not a prerelease)</li>
-<li><strong>Create GitHub Release</strong> - Publishes release with artifacts</li>
+</ul>
+</li>
 </ol>
 <h2 id="version-increment-guidelines">Version Increment Guidelines<a class="headerlink" href="#version-increment-guidelines" title="Permanent link">&para;</a></h2>
 <h3 id="major-version-x00">MAJOR Version (X.0.0)<a class="headerlink" href="#major-version-x00" title="Permanent link">&para;</a></h3>
@@ -2896,15 +2877,15 @@
 </ul>
 <p><strong>Example:</strong></p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Before (v1.x.x)</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/weather/&lt;city&gt;&quot;</span><span class="p">)</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_weather</span><span class="p">(</span><span class="n">city</span><span class="p">):</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;city&quot;</span><span class="p">:</span> <span class="n">city</span><span class="p">,</span> <span class="s2">&quot;temp&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">}</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/weather/</span><span class="si">{city}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_weather</span><span class="p">(</span><span class="n">city</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">"city"</span><span class="p">:</span> <span class="n">city</span><span class="p">,</span> <span class="s2">"temp"</span><span class="p">:</span> <span class="mi">20</span><span class="p">}</span>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
 </span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># After (v2.0.0) - Breaking change: response format changed</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/weather/&lt;city&gt;&quot;</span><span class="p">)</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_weather</span><span class="p">(</span><span class="n">city</span><span class="p">):</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">city</span><span class="p">},</span> <span class="s2">&quot;current&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">}}</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/weather/</span><span class="si">{city}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_weather</span><span class="p">(</span><span class="n">city</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">"location"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="n">city</span><span class="p">},</span> <span class="s2">"current"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"temperature"</span><span class="p">:</span> <span class="mi">20</span><span class="p">}}</span>
 </span></code></pre></div>
 <h3 id="minor-version-0x0">MINOR Version (0.X.0)<a class="headerlink" href="#minor-version-0x0" title="Permanent link">&para;</a></h3>
 <p>Increment when adding <strong>new features</strong> (backward compatible):</p>
@@ -2918,9 +2899,9 @@
 </ul>
 <p><strong>Example:</strong></p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># v1.1.0 - Added new optional parameter</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/weather/&lt;city&gt;&quot;</span><span class="p">)</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_weather</span><span class="p">(</span><span class="n">city</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;metric&quot;</span><span class="p">):</span>  <span class="c1"># New optional parameter</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;city&quot;</span><span class="p">:</span> <span class="n">city</span><span class="p">,</span> <span class="s2">&quot;temp&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="n">units</span><span class="p">}</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/weather/</span><span class="si">{city}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_weather</span><span class="p">(</span><span class="n">city</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"metric"</span><span class="p">):</span>  <span class="c1"># New optional parameter</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">"city"</span><span class="p">:</span> <span class="n">city</span><span class="p">,</span> <span class="s2">"temp"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">"units"</span><span class="p">:</span> <span class="n">units</span><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="patch-version-00x">PATCH Version (0.0.X)<a class="headerlink" href="#patch-version-00x" title="Permanent link">&para;</a></h3>
 <p>Increment when fixing <strong>bugs</strong> (backward compatible):</p>
@@ -2933,16 +2914,16 @@
 </ul>
 <p><strong>Example:</strong></p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># v1.0.1 - Bug fix</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/weather/&lt;city&gt;&quot;</span><span class="p">)</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_weather</span><span class="p">(</span><span class="n">city</span><span class="p">):</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/weather/</span><span class="si">{city}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_weather</span><span class="p">(</span><span class="n">city</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 </span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="n">city</span> <span class="o">=</span> <span class="n">city</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>  <span class="c1"># Fix: handle whitespace in city names</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;city&quot;</span><span class="p">:</span> <span class="n">city</span><span class="p">,</span> <span class="s2">&quot;temp&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">}</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">"city"</span><span class="p">:</span> <span class="n">city</span><span class="p">,</span> <span class="s2">"temp"</span><span class="p">:</span> <span class="mi">20</span><span class="p">}</span>
 </span></code></pre></div>
 <h2 id="prerelease-versions">Prerelease Versions<a class="headerlink" href="#prerelease-versions" title="Permanent link">&para;</a></h2>
 <p>Use prerelease identifiers for testing:</p>
 <h3 id="alpha-early-testing">Alpha (Early Testing)<a class="headerlink" href="#alpha-early-testing" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># First alpha of v1.2.0</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.2.0-alpha.1<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Alpha release 1 for v1.2.0&quot;</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.2.0-alpha.1<span class="w"> </span>-m<span class="w"> </span><span class="s2">"Alpha release 1 for v1.2.0"</span>
 </span></code></pre></div>
 <ul>
 <li>Unstable, may have missing features</li>
@@ -2951,7 +2932,7 @@
 </ul>
 <h3 id="beta-feature-complete">Beta (Feature Complete)<a class="headerlink" href="#beta-feature-complete" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># First beta of v1.2.0</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.2.0-beta.1<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Beta release 1 for v1.2.0&quot;</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.2.0-beta.1<span class="w"> </span>-m<span class="w"> </span><span class="s2">"Beta release 1 for v1.2.0"</span>
 </span></code></pre></div>
 <ul>
 <li>Feature complete but may have bugs</li>
@@ -2960,7 +2941,7 @@
 </ul>
 <h3 id="release-candidate-final-testing">Release Candidate (Final Testing)<a class="headerlink" href="#release-candidate-final-testing" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># First release candidate for v1.2.0</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.2.0-rc.1<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Release candidate 1 for v1.2.0&quot;</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.2.0-rc.1<span class="w"> </span>-m<span class="w"> </span><span class="s2">"Release candidate 1 for v1.2.0"</span>
 </span></code></pre></div>
 <ul>
 <li>Nearly production-ready</li>
@@ -2968,7 +2949,7 @@
 <li>Ready for production testing</li>
 </ul>
 <h2 id="container-image-tags">Container Image Tags<a class="headerlink" href="#container-image-tags" title="Permanent link">&para;</a></h2>
-<p>The Docker workflow automatically creates multiple tags:</p>
+<p>The build workflow (<code>build.yml</code>) creates multiple tags:</p>
 <table>
 <thead>
 <tr>
@@ -2996,7 +2977,7 @@
 <tr>
 <td><code>latest</code></td>
 <td><code>latest</code></td>
-<td>Latest stable release</td>
+<td>Latest build from <code>main</code></td>
 </tr>
 <tr>
 <td><code>X.Y.Z-alpha.N</code></td>
@@ -3025,7 +3006,7 @@
 </span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="c1"># Use latest minor version (auto-updates with new features)</span>
 </span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/owner/msn-weather-wrapper:1
 </span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>
-</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="c1"># Use latest stable (not recommended for production)</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="c1"># Use latest build from main (not recommended for production)</span>
 </span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/owner/msn-weather-wrapper:latest
 </span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>
 </span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="c1"># Test prerelease</span>
@@ -3033,88 +3014,51 @@
 </span></code></pre></div>
 <h2 id="pypi-publishing">PyPI Publishing<a class="headerlink" href="#pypi-publishing" title="Permanent link">&para;</a></h2>
 <p>Packages are automatically published to PyPI on tagged releases.</p>
-<h3 id="required-secret">Required Secret<a class="headerlink" href="#required-secret" title="Permanent link">&para;</a></h3>
-<p>Configure the <code>PYPI_TOKEN</code> secret in your repository:</p>
-<ol>
-<li>Go to <strong>Settings</strong> → <strong>Secrets and variables</strong> → <strong>Actions</strong></li>
-<li>Click <strong>New repository secret</strong></li>
-<li>Name: <code>PYPI_TOKEN</code></li>
-<li>Value: Your PyPI API token</li>
-<li>Click <strong>Add secret</strong></li>
-</ol>
-<h3 id="getting-a-pypi-token">Getting a PyPI Token<a class="headerlink" href="#getting-a-pypi-token" title="Permanent link">&para;</a></h3>
-<ol>
-<li>Go to <a href="https://pypi.org/manage/account/">PyPI Account Settings</a></li>
-<li>Scroll to <strong>API tokens</strong></li>
-<li>Click <strong>Add API token</strong></li>
-<li>Name: <code>msn-weather-wrapper-github-actions</code></li>
-<li>Scope: <strong>Project: msn-weather-wrapper</strong> (after first manual upload) or <strong>Entire account</strong></li>
-<li>Click <strong>Add token</strong></li>
-<li>Copy the token (starts with <code>pypi-</code>)</li>
-</ol>
+<h3 id="trusted-publishing">Trusted Publishing<a class="headerlink" href="#trusted-publishing" title="Permanent link">&para;</a></h3>
+<p>Publishing uses PyPI trusted publishing (OIDC) through the <code>pypi</code> environment in <code>publish-release.yml</code>. No <code>PYPI_TOKEN</code> secret is used. See <a href="../PYPI_SETUP/">PYPI_SETUP.md</a> for how to configure the trusted publisher.</p>
 <h3 id="first-release-setup">First Release Setup<a class="headerlink" href="#first-release-setup" title="Permanent link">&para;</a></h3>
 <p>For the first release, you need to manually upload a package to claim the project name:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Build package</span>
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>python<span class="w"> </span>-m<span class="w"> </span>build
 </span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1"># Upload to PyPI (you&#39;ll be prompted for credentials)</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1"># Upload to PyPI (you'll be prompted for credentials)</span>
 </span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>upload<span class="w"> </span>dist/*
 </span></code></pre></div>
 <p>After the first manual upload, all subsequent releases will be automated.</p>
 <h2 id="version-validation">Version Validation<a class="headerlink" href="#version-validation" title="Permanent link">&para;</a></h2>
-<p>The CI/CD pipeline validates:</p>
+<p>The release workflows rely on:</p>
 <ol>
-<li><strong>Tag format</strong> - Must match <code>vX.Y.Z</code> or <code>vX.Y.Z-prerelease.N</code></li>
-<li><strong>Version consistency</strong> - Tag must match <code>pyproject.toml</code> version</li>
-<li><strong>Semantic versioning</strong> - Follows semver rules</li>
-<li><strong>Unique version</strong> - Version doesn't exist on PyPI</li>
+<li><strong>Tag format</strong> - <code>publish-release.yml</code> and <code>ci.yml</code> trigger on tags matching <code>v*.*.*</code></li>
+<li><strong>Version from tag</strong> - The package version is taken from the tag, not validated against <code>pyproject.toml</code></li>
+<li><strong>Package check</strong> - <code>twine check</code> must pass</li>
+<li><strong>Unique version</strong> - PyPI rejects a version that already exists</li>
 </ol>
-<p>If validation fails, the release is aborted with a clear error message.</p>
 <h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
-<h3 id="version-mismatch-error">Version Mismatch Error<a class="headerlink" href="#version-mismatch-error" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Error: Version mismatch!
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>Git tag: v1.2.3
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>pyproject.toml: 1.2.2
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>Please update pyproject.toml version to match the tag
-</span></code></pre></div>
-<p><strong>Solution:</strong> Update <code>pyproject.toml</code> to match the tag:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Fix the version</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>vim<span class="w"> </span>pyproject.toml<span class="w">  </span><span class="c1"># Change version to 1.2.3</span>
-</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
-</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="c1"># Amend the commit</span>
-</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>git<span class="w"> </span>add<span class="w"> </span>pyproject.toml
-</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>git<span class="w"> </span>commit<span class="w"> </span>--amend<span class="w"> </span>--no-edit
-</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main<span class="w"> </span>--force
-</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>
-</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="c1"># Delete and recreate the tag</span>
-</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>git<span class="w"> </span>tag<span class="w"> </span>-d<span class="w"> </span>v1.2.3
-</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>:refs/tags/v1.2.3
-</span><span id="__span-14-12"><a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.2.3<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Release version 1.2.3&quot;</span>
-</span><span id="__span-14-13"><a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>v1.2.3
-</span></code></pre></div>
+<h3 id="version-mismatch">Version Mismatch<a class="headerlink" href="#version-mismatch" title="Permanent link">&para;</a></h3>
+<p>The publish workflow overwrites the version in <code>pyproject.toml</code> with the tag version at build time, so a mismatch does not abort the release. <code>__version__</code> in <code>backend/__init__.py</code> is not rewritten, so keep it in sync with the tag when releasing manually.</p>
 <h3 id="pypi-upload-fails">PyPI Upload Fails<a class="headerlink" href="#pypi-upload-fails" title="Permanent link">&para;</a></h3>
 <p><strong>Check:</strong></p>
 <ol>
-<li>Is <code>PYPI_TOKEN</code> configured correctly?</li>
+<li>Is the PyPI trusted publisher configured correctly?</li>
 <li>Does the version already exist on PyPI?</li>
 <li>Is the package name available?</li>
 </ol>
 <p><strong>Test locally:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Build package</span>
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>python<span class="w"> </span>-m<span class="w"> </span>build
-</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
-</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="c1"># Check package validity</span>
-</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>check<span class="w"> </span>dist/*
-</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
-</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="c1"># Upload to TestPyPI first</span>
-</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>upload<span class="w"> </span>--repository<span class="w"> </span>testpypi<span class="w"> </span>dist/*
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Build package</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>python<span class="w"> </span>-m<span class="w"> </span>build
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="c1"># Check package validity</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>check<span class="w"> </span>dist/*
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="c1"># Upload to TestPyPI first</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>upload<span class="w"> </span>--repository<span class="w"> </span>testpypi<span class="w"> </span>dist/*
 </span></code></pre></div>
 <h3 id="container-build-fails">Container Build Fails<a class="headerlink" href="#container-build-fails" title="Permanent link">&para;</a></h3>
 <p><strong>Check:</strong></p>
 <ol>
 <li>Does the infra/containers/Containerfile exist?</li>
 <li>Are there syntax errors in the infra/containers/Containerfile?</li>
-<li>Check the Docker workflow logs for details</li>
+<li>Check the <code>build.yml</code> job logs for details</li>
 </ol>
 <h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
 <ol>
@@ -3128,72 +3072,72 @@
 </ol>
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
 <h3 id="patch-release-bug-fix">Patch Release (Bug Fix)<a class="headerlink" href="#patch-release-bug-fix" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># 1. Fix the bug</span>
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>vim<span class="w"> </span>backend/msn_weather_wrapper/client.py
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># 1. Fix the bug</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>vim<span class="w"> </span>backend/client.py
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="c1"># 2. Update version</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>vim<span class="w"> </span>pyproject.toml<span class="w">  </span><span class="c1"># 1.0.0 → 1.0.1</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="c1"># 3. Update changelog</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>vim<span class="w"> </span>CHANGELOG.md
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="c1"># Add:</span>
+</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="c1"># ## [1.0.1] - 2024-01-15</span>
+</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="c1"># ### Fixed</span>
+</span><span id="__span-14-12"><a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="c1"># - Fixed city name whitespace handling</span>
+</span><span id="__span-14-13"><a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>
+</span><span id="__span-14-14"><a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a><span class="c1"># 4. Commit and tag</span>
+</span><span id="__span-14-15"><a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a>git<span class="w"> </span>add<span class="w"> </span>.
+</span><span id="__span-14-16"><a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"fix: handle whitespace in city names"</span>
+</span><span id="__span-14-17"><a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main
+</span><span id="__span-14-18"><a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.0.1<span class="w"> </span>-m<span class="w"> </span><span class="s2">"Release version 1.0.1"</span>
+</span><span id="__span-14-19"><a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>v1.0.1
+</span></code></pre></div>
+<h3 id="minor-release-new-feature">Minor Release (New Feature)<a class="headerlink" href="#minor-release-new-feature" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># 1. Implement feature</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>vim<span class="w"> </span>backend/client.py
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="c1"># 2. Update version</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>vim<span class="w"> </span>pyproject.toml<span class="w">  </span><span class="c1"># 1.0.1 → 1.1.0</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="c1"># 3. Update changelog</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>vim<span class="w"> </span>CHANGELOG.md
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="c1"># Add:</span>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="c1"># ## [1.1.0] - 2024-01-20</span>
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="c1"># ### Added</span>
+</span><span id="__span-15-12"><a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="c1"># - Added forecast endpoint with 7-day predictions</span>
+</span><span id="__span-15-13"><a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a>
+</span><span id="__span-15-14"><a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a><span class="c1"># 4. Commit and tag</span>
+</span><span id="__span-15-15"><a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a>git<span class="w"> </span>add<span class="w"> </span>.
+</span><span id="__span-15-16"><a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"feat: add 7-day weather forecast endpoint"</span>
+</span><span id="__span-15-17"><a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main
+</span><span id="__span-15-18"><a id="__codelineno-15-18" name="__codelineno-15-18" href="#__codelineno-15-18"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.1.0<span class="w"> </span>-m<span class="w"> </span><span class="s2">"Release version 1.1.0"</span>
+</span><span id="__span-15-19"><a id="__codelineno-15-19" name="__codelineno-15-19" href="#__codelineno-15-19"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>v1.1.0
+</span></code></pre></div>
+<h3 id="major-release-breaking-change">Major Release (Breaking Change)<a class="headerlink" href="#major-release-breaking-change" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># 1. Implement breaking changes</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>vim<span class="w"> </span>backend/client.py
 </span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
 </span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="c1"># 2. Update version</span>
-</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>vim<span class="w"> </span>pyproject.toml<span class="w">  </span><span class="c1"># 1.0.0 → 1.0.1</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>vim<span class="w"> </span>pyproject.toml<span class="w">  </span><span class="c1"># 1.1.0 → 2.0.0</span>
 </span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>
 </span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="c1"># 3. Update changelog</span>
 </span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>vim<span class="w"> </span>CHANGELOG.md
 </span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="c1"># Add:</span>
-</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="c1"># ## [1.0.1] - 2024-01-15</span>
-</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="c1"># ### Fixed</span>
-</span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="c1"># - Fixed city name whitespace handling</span>
-</span><span id="__span-16-13"><a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>
-</span><span id="__span-16-14"><a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a><span class="c1"># 4. Commit and tag</span>
-</span><span id="__span-16-15"><a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>git<span class="w"> </span>add<span class="w"> </span>.
-</span><span id="__span-16-16"><a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;fix: handle whitespace in city names&quot;</span>
-</span><span id="__span-16-17"><a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main
-</span><span id="__span-16-18"><a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.0.1<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Release version 1.0.1&quot;</span>
-</span><span id="__span-16-19"><a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>v1.0.1
-</span></code></pre></div>
-<h3 id="minor-release-new-feature">Minor Release (New Feature)<a class="headerlink" href="#minor-release-new-feature" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># 1. Implement feature</span>
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>vim<span class="w"> </span>backend/msn_weather_wrapper/client.py
-</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
-</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># 2. Update version</span>
-</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>vim<span class="w"> </span>pyproject.toml<span class="w">  </span><span class="c1"># 1.0.1 → 1.1.0</span>
-</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>
-</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="c1"># 3. Update changelog</span>
-</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>vim<span class="w"> </span>CHANGELOG.md
-</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="c1"># Add:</span>
-</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="c1"># ## [1.1.0] - 2024-01-20</span>
-</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="c1"># ### Added</span>
-</span><span id="__span-17-12"><a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a><span class="c1"># - Added forecast endpoint with 7-day predictions</span>
-</span><span id="__span-17-13"><a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>
-</span><span id="__span-17-14"><a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a><span class="c1"># 4. Commit and tag</span>
-</span><span id="__span-17-15"><a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a>git<span class="w"> </span>add<span class="w"> </span>.
-</span><span id="__span-17-16"><a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;feat: add 7-day weather forecast endpoint&quot;</span>
-</span><span id="__span-17-17"><a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main
-</span><span id="__span-17-18"><a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.1.0<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Release version 1.1.0&quot;</span>
-</span><span id="__span-17-19"><a id="__codelineno-17-19" name="__codelineno-17-19" href="#__codelineno-17-19"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>v1.1.0
-</span></code></pre></div>
-<h3 id="major-release-breaking-change">Major Release (Breaking Change)<a class="headerlink" href="#major-release-breaking-change" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># 1. Implement breaking changes</span>
-</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>vim<span class="w"> </span>backend/msn_weather_wrapper/client.py
-</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
-</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="c1"># 2. Update version</span>
-</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>vim<span class="w"> </span>pyproject.toml<span class="w">  </span><span class="c1"># 1.1.0 → 2.0.0</span>
-</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>
-</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="c1"># 3. Update changelog</span>
-</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>vim<span class="w"> </span>CHANGELOG.md
-</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="c1"># Add:</span>
-</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="c1"># ## [2.0.0] - 2024-02-01</span>
-</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="c1"># ### Changed</span>
-</span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="c1"># - **BREAKING**: Changed response format for weather endpoints</span>
-</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="c1"># - **BREAKING**: Renamed `temp` field to `temperature`</span>
-</span><span id="__span-18-14"><a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a><span class="c1"># - See MIGRATION.md for upgrade guide</span>
-</span><span id="__span-18-15"><a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a>
-</span><span id="__span-18-16"><a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a><span class="c1"># 4. Create migration guide</span>
-</span><span id="__span-18-17"><a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a>vim<span class="w"> </span>docs/MIGRATION.md
-</span><span id="__span-18-18"><a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a>
-</span><span id="__span-18-19"><a id="__codelineno-18-19" name="__codelineno-18-19" href="#__codelineno-18-19"></a><span class="c1"># 5. Commit and tag</span>
-</span><span id="__span-18-20"><a id="__codelineno-18-20" name="__codelineno-18-20" href="#__codelineno-18-20"></a>git<span class="w"> </span>add<span class="w"> </span>.
-</span><span id="__span-18-21"><a id="__codelineno-18-21" name="__codelineno-18-21" href="#__codelineno-18-21"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;feat!: redesign API response format&quot;</span>
-</span><span id="__span-18-22"><a id="__codelineno-18-22" name="__codelineno-18-22" href="#__codelineno-18-22"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main
-</span><span id="__span-18-23"><a id="__codelineno-18-23" name="__codelineno-18-23" href="#__codelineno-18-23"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v2.0.0<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Release version 2.0.0&quot;</span>
-</span><span id="__span-18-24"><a id="__codelineno-18-24" name="__codelineno-18-24" href="#__codelineno-18-24"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>v2.0.0
+</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="c1"># ## [2.0.0] - 2024-02-01</span>
+</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="c1"># ### Changed</span>
+</span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="c1"># - **BREAKING**: Changed response format for weather endpoints</span>
+</span><span id="__span-16-13"><a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a><span class="c1"># - **BREAKING**: Renamed `temp` field to `temperature`</span>
+</span><span id="__span-16-14"><a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a><span class="c1"># - See MIGRATION.md for upgrade guide</span>
+</span><span id="__span-16-15"><a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>
+</span><span id="__span-16-16"><a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a><span class="c1"># 4. Create migration guide</span>
+</span><span id="__span-16-17"><a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a>vim<span class="w"> </span>docs/MIGRATION.md
+</span><span id="__span-16-18"><a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a>
+</span><span id="__span-16-19"><a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a><span class="c1"># 5. Commit and tag</span>
+</span><span id="__span-16-20"><a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a>git<span class="w"> </span>add<span class="w"> </span>.
+</span><span id="__span-16-21"><a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"feat!: redesign API response format"</span>
+</span><span id="__span-16-22"><a id="__codelineno-16-22" name="__codelineno-16-22" href="#__codelineno-16-22"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main
+</span><span id="__span-16-23"><a id="__codelineno-16-23" name="__codelineno-16-23" href="#__codelineno-16-23"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v2.0.0<span class="w"> </span>-m<span class="w"> </span><span class="s2">"Release version 2.0.0"</span>
+</span><span id="__span-16-24"><a id="__codelineno-16-24" name="__codelineno-16-24" href="#__codelineno-16-24"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>v2.0.0
 </span></code></pre></div>
 <h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3378,7 +3322,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../javascripts/extra.js"></script>
       

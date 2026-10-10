@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -2505,7 +2505,7 @@
 <li><strong>Owner</strong>: Your GitHub username</li>
 <li><strong>Repository name</strong>: <code>msn-weather-wrapper</code></li>
 <li><strong>Workflow name</strong>: <code>publish-release.yml</code></li>
-<li><strong>Environment name</strong>: Leave blank (or use <code>pypi</code>)</li>
+<li><strong>Environment name</strong>: <code>pypi</code> (the environment used by <code>publish-release.yml</code>)</li>
 <li>Click <strong>Add</strong></li>
 </ol>
 <p><strong>IMPORTANT:</strong> The pending publisher must be confirmed from PyPI before the first automated release!</p>
@@ -2561,10 +2561,10 @@
 <td><code>feat!: redesign API</code></td>
 </tr>
 <tr>
-<td><code>fix!:</code></td>
-<td>Breaking Fix</td>
+<td><code>breaking!:</code></td>
+<td>Breaking Change</td>
 <td>Major (X.0.0)</td>
-<td><code>fix!: change response format</code></td>
+<td><code>breaking!: change response format</code></td>
 </tr>
 <tr>
 <td><code>docs:</code></td>
@@ -2641,7 +2641,7 @@
 <li>Verify version bump PR was merged</li>
 <li>Manually create tag if needed:</li>
 </ol>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.2.3<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Release v1.2.3&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.2.3<span class="w"> </span>-m<span class="w"> </span><span class="s2">"Release v1.2.3"</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>v1.2.3
 </span></code></pre></div>
 <hr />
@@ -2658,7 +2658,7 @@
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>upload<span class="w"> </span>dist/*
 </span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
 </span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="c1"># Create GitHub release manually</span>
-</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>gh<span class="w"> </span>release<span class="w"> </span>create<span class="w"> </span>v1.2.3<span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;Release v1.2.3&quot;</span><span class="w"> </span>dist/*
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>gh<span class="w"> </span>release<span class="w"> </span>create<span class="w"> </span>v1.2.3<span class="w"> </span>--title<span class="w"> </span><span class="s2">"Release v1.2.3"</span><span class="w"> </span>dist/*
 </span></code></pre></div>
 <hr />
 <h2 id="security-best-practices">Security Best Practices<a class="headerlink" href="#security-best-practices" title="Permanent link">&para;</a></h2>
@@ -2680,7 +2680,7 @@
 <hr />
 <h2 id="useful-commands">Useful Commands<a class="headerlink" href="#useful-commands" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Check current package version</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>grep<span class="w"> </span><span class="s1">&#39;^version&#39;</span><span class="w"> </span>pyproject.toml
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>grep<span class="w"> </span><span class="s1">'^version'</span><span class="w"> </span>pyproject.toml
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Build package locally</span>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>python<span class="w"> </span>-m<span class="w"> </span>build
@@ -2710,7 +2710,7 @@
 <li><a href="https://pypi.org/help/">PyPI Documentation</a></li>
 <li><a href="https://docs.pypi.org/trusted-publishers/">Trusted Publishing Guide</a></li>
 <li><a href="https://packaging.python.org/">Python Packaging Guide</a></li>
-<li><a href="https://setuptools.pypa.io/">setuptools Documentation</a></li>
+<li><a href="https://hatch.pypa.io/">Hatch Documentation</a></li>
 <li><a href="https://twine.readthedocs.io/">twine Documentation</a></li>
 </ul>
 <hr />
@@ -2895,7 +2895,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../javascripts/extra.js"></script>
       

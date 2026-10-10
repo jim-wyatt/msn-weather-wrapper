@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1238,32 +1238,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#using-pr-labels" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using PR Labels
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#using-conventional-commit-titles" class="md-nav__link">
     <span class="md-ellipsis">
       
         Using Conventional Commit Titles
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-branch-prefixes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using Branch Prefixes
       
     </span>
   </a>
@@ -1388,10 +1366,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-apply-appropriate-labels" class="md-nav__link">
+  <a href="#2-get-the-title-prefix-right" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Apply Appropriate Labels
+        2. Get the Title Prefix Right
       
     </span>
   </a>
@@ -2321,32 +2299,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#using-pr-labels" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using PR Labels
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#using-conventional-commit-titles" class="md-nav__link">
     <span class="md-ellipsis">
       
         Using Conventional Commit Titles
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-branch-prefixes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using Branch Prefixes
       
     </span>
   </a>
@@ -2471,10 +2427,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-apply-appropriate-labels" class="md-nav__link">
+  <a href="#2-get-the-title-prefix-right" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Apply Appropriate Labels
+        2. Get the Title Prefix Right
       
     </span>
   </a>
@@ -2638,22 +2594,20 @@
 <h1 id="automated-semantic-versioning">Automated Semantic Versioning<a class="headerlink" href="#automated-semantic-versioning" title="Permanent link">&para;</a></h1>
 <p>This project uses <strong>automated semantic versioning</strong> - every merged pull request automatically increments the version number and publishes a new release to PyPI.</p>
 <h2 id="how-it-works">How It Works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
-<p>When a PR is merged to <code>main</code>, the Auto-Version and Release workflow:</p>
+<p>When a PR is merged to <code>main</code>, the CI/CD pipeline (<code>ci.yml</code>) runs on the push and, once it succeeds, dispatches the Auto-Version and Release workflow (<code>auto-version-release.yml</code>), which:</p>
 <ol>
-<li><strong>Determines the version bump type</strong> based on PR labels, title, or branch prefix</li>
-<li><strong>Increments the version</strong> in <code>pyproject.toml</code> following semantic versioning</li>
-<li><strong>Commits the version bump</strong> back to the main branch</li>
+<li><strong>Determines the version bump type</strong> based on the merged PR's title</li>
+<li><strong>Increments the version</strong> in <code>pyproject.toml</code> and <code>backend/__init__.py</code> following semantic versioning</li>
+<li><strong>Opens and merges a version bump PR</strong> against the main branch</li>
 <li><strong>Creates a git tag</strong> for the new version</li>
-<li><strong>Triggers the CI/CD pipeline</strong> which builds and publishes to PyPI</li>
+<li><strong>Triggers the publish workflow</strong> (<code>publish-release.yml</code>) which builds and publishes to PyPI</li>
 </ol>
 <h2 id="version-bump-rules">Version Bump Rules<a class="headerlink" href="#version-bump-rules" title="Permanent link">&para;</a></h2>
 <p>The workflow follows <a href="https://semver.org/">Semantic Versioning 2.0.0</a>:</p>
 <h3 id="major-version-x00-breaking-changes">Major Version (X.0.0) - Breaking Changes<a class="headerlink" href="#major-version-x00-breaking-changes" title="Permanent link">&para;</a></h3>
 <p>Increments the major version and resets minor/patch to 0.</p>
 <p><strong>Triggered by:</strong>
-- PR labels: <code>major</code>, <code>breaking</code>
-- PR title: <code>feat!:</code> or <code>feature!:</code> (with exclamation mark)
-- Branch prefix: <code>breaking/</code> or <code>major/</code></p>
+- PR title: <code>feat!:</code>, <code>feature!:</code>, or <code>breaking!:</code> (with exclamation mark)</p>
 <p><strong>Example:</strong> <code>1.2.3</code> → <code>2.0.0</code></p>
 <p><strong>Use when:</strong>
 - Breaking API changes
@@ -2663,9 +2617,7 @@
 <h3 id="minor-version-0x0-new-features">Minor Version (0.X.0) - New Features<a class="headerlink" href="#minor-version-0x0-new-features" title="Permanent link">&para;</a></h3>
 <p>Increments the minor version and resets patch to 0.</p>
 <p><strong>Triggered by:</strong>
-- PR labels: <code>minor</code>, <code>feature</code>, <code>enhancement</code>
-- PR title: <code>feat:</code> or <code>feature:</code>
-- Branch prefix: <code>feat/</code> or <code>feature/</code></p>
+- PR title: <code>feat:</code> or <code>feature:</code></p>
 <p><strong>Example:</strong> <code>1.2.3</code> → <code>1.3.0</code></p>
 <p><strong>Use when:</strong>
 - Adding new features
@@ -2675,9 +2627,7 @@
 <h3 id="patch-version-00x-bug-fixes-maintenance">Patch Version (0.0.X) - Bug Fixes &amp; Maintenance<a class="headerlink" href="#patch-version-00x-bug-fixes-maintenance" title="Permanent link">&para;</a></h3>
 <p>Increments only the patch version. <strong>This is the default</strong> if no specific indicators are found.</p>
 <p><strong>Triggered by:</strong>
-- PR labels: <code>patch</code>, <code>fix</code>, <code>bugfix</code>
-- PR title: <code>fix:</code>, <code>bugfix:</code>, <code>perf:</code>, <code>refactor:</code>
-- Branch prefix: <code>fix/</code>, <code>bugfix/</code>, <code>hotfix/</code>
+- PR title: <code>fix:</code>, <code>bugfix:</code>, <code>chore:</code>, <code>perf:</code>, <code>refactor:</code>, <code>docs:</code>
 - <strong>Default for all other PRs</strong></p>
 <p><strong>Example:</strong> <code>1.2.3</code> → <code>1.2.4</code></p>
 <p><strong>Use when:</strong>
@@ -2689,137 +2639,122 @@
 - Dependency updates
 - CI/CD improvements</p>
 <h2 id="priority-order">Priority Order<a class="headerlink" href="#priority-order" title="Permanent link">&para;</a></h2>
-<p>The workflow checks for version bump indicators in this order:</p>
+<p>The workflow checks only the merged PR's title:</p>
 <ol>
-<li><strong>PR Labels</strong> (highest priority)</li>
-<li><strong>PR Title</strong> (conventional commit format)</li>
-<li><strong>Branch Prefix</strong></li>
+<li><strong>PR Title</strong> (conventional commit format, optional scope such as <code>feat(api):</code>)</li>
 <li><strong>Default to patch</strong> (if nothing matches)</li>
 </ol>
+<p>PR labels and branch prefixes are not used to determine the bump.</p>
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
-<h3 id="using-pr-labels">Using PR Labels<a class="headerlink" href="#using-pr-labels" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Create PR with label</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--label<span class="w"> </span><span class="s2">&quot;feature&quot;</span><span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;Add new weather endpoint&quot;</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Result: Minor version bump (e.g., 1.2.3 → 1.3.0)</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--label<span class="w"> </span><span class="s2">&quot;breaking&quot;</span><span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;Remove deprecated API&quot;</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># Result: Major version bump (e.g., 1.2.3 → 2.0.0)</span>
-</span></code></pre></div>
 <h3 id="using-conventional-commit-titles">Using Conventional Commit Titles<a class="headerlink" href="#using-conventional-commit-titles" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Feature (minor bump)</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;feat: add temperature forecast&quot;</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># Result: 1.2.3 → 1.3.0</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># Breaking change (major bump)</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;feat!: redesign API response format&quot;</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># Result: 1.2.3 → 2.0.0</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1"># Bug fix (patch bump)</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;fix: correct humidity calculation&quot;</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="c1"># Result: 1.2.3 → 1.2.4</span>
-</span></code></pre></div>
-<h3 id="using-branch-prefixes">Using Branch Prefixes<a class="headerlink" href="#using-branch-prefixes" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Feature branch (minor bump)</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feat/add-wind-direction
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># When PR merged: 1.2.3 → 1.3.0</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># Fix branch (patch bump)</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>fix/temperature-conversion
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># When PR merged: 1.2.3 → 1.2.4</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="c1"># Breaking change branch (major bump)</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>breaking/remove-v1-api
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="c1"># When PR merged: 1.2.3 → 2.0.0</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Feature (minor bump)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">"feat: add temperature forecast"</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Result: 1.2.3 → 1.3.0</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># Breaking change (major bump)</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">"feat!: redesign API response format"</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># Result: 1.2.3 → 2.0.0</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># Bug fix (patch bump)</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">"fix: correct humidity calculation"</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># Result: 1.2.3 → 1.2.4</span>
 </span></code></pre></div>
 <h2 id="workflow-integration">Workflow Integration<a class="headerlink" href="#workflow-integration" title="Permanent link">&para;</a></h2>
 <h3 id="creating-a-pr-with-proper-versioning">Creating a PR with Proper Versioning<a class="headerlink" href="#creating-a-pr-with-proper-versioning" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># For a bug fix (patch):</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>fix/issue-description
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># ... make changes ...</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;fix: description of fix&quot;</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;fix: description&quot;</span><span class="w"> </span>--label<span class="w"> </span><span class="s2">&quot;bugfix&quot;</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># For a new feature (minor):</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feat/feature-name
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># ... make changes ...</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;feat: description of feature&quot;</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;feat: description&quot;</span><span class="w"> </span>--label<span class="w"> </span><span class="s2">&quot;feature&quot;</span>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="c1"># For a breaking change (major):</span>
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>breaking/change-description
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="c1"># ... make changes ...</span>
-</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;feat!: description of breaking change&quot;</span>
-</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;feat!: description&quot;</span><span class="w"> </span>--label<span class="w"> </span><span class="s2">&quot;breaking&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># For a bug fix (patch):</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>fix/issue-description
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># ... make changes ...</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"fix: description of fix"</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">"fix: description"</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># For a new feature (minor):</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feat/feature-name
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1"># ... make changes ...</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"feat: description of feature"</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">"feat: description"</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="c1"># For a breaking change (major):</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>breaking/change-description
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="c1"># ... make changes ...</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"feat!: description of breaking change"</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">"feat!: description"</span>
 </span></code></pre></div>
 <h3 id="what-happens-after-merge">What Happens After Merge<a class="headerlink" href="#what-happens-after-merge" title="Permanent link">&para;</a></h3>
 <ol>
-<li><strong>Auto-Version workflow runs</strong> (takes ~10 seconds)</li>
+<li><strong>CI/CD Pipeline runs on main</strong> (<code>ci.yml</code>)</li>
+<li>Runs all tests and security scans</li>
+<li>Builds and pushes the container image</li>
+<li>Deploys documentation</li>
+<li>
+<p>Dispatches the Auto-Version workflow</p>
+</li>
+<li>
+<p><strong>Auto-Version workflow runs</strong> (<code>auto-version-release.yml</code>)</p>
+</li>
 <li>Determines bump type</li>
-<li>Updates <code>pyproject.toml</code></li>
-<li>Commits to main</li>
+<li>Updates <code>pyproject.toml</code> and <code>backend/__init__.py</code></li>
+<li>Opens and merges a version bump PR</li>
+<li>Creates version tag</li>
 <li>
-<p>Creates version tag</p>
+<p>Dispatches the publish workflow</p>
 </li>
 <li>
-<p><strong>CI/CD Pipeline triggers</strong> (takes ~5-10 minutes)</p>
+<p><strong>Publish workflow runs</strong> (<code>publish-release.yml</code>)</p>
 </li>
-<li>Runs all tests</li>
 <li>Builds Python package</li>
 <li>Publishes to PyPI</li>
-<li>Creates GitHub Release</li>
 <li>
-<p>Generates SBOM and security reports</p>
+<p>Creates GitHub Release</p>
 </li>
 <li>
 <p><strong>Release is live!</strong></p>
 </li>
 <li>PyPI: <code>pip install msn-weather-wrapper==X.Y.Z</code></li>
 <li>GitHub: Release with artifacts</li>
-<li>Containers: <code>ghcr.io/jim-wyatt/msn-weather-wrapper:X.Y.Z</code></li>
+<li>Containers: <code>ghcr.io/jim-wyatt/msn-weather-wrapper:latest</code> (pushed by <code>ci.yml</code> on main)</li>
 </ol>
 <h2 id="monitoring-releases">Monitoring Releases<a class="headerlink" href="#monitoring-releases" title="Permanent link">&para;</a></h2>
 <h3 id="check-version-bump-status">Check Version Bump Status<a class="headerlink" href="#check-version-bump-status" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># View workflow runs</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>gh<span class="w"> </span>run<span class="w"> </span>list<span class="w"> </span>--workflow<span class="o">=</span>auto-tag-release.yml<span class="w"> </span>--limit<span class="w"> </span><span class="m">5</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># View specific run</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>gh<span class="w"> </span>run<span class="w"> </span>view<span class="w"> </span>&lt;run-id&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># View workflow runs</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>gh<span class="w"> </span>run<span class="w"> </span>list<span class="w"> </span>--workflow<span class="o">=</span>auto-version-release.yml<span class="w"> </span>--limit<span class="w"> </span><span class="m">5</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># View specific run</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>gh<span class="w"> </span>run<span class="w"> </span>view<span class="w"> </span>&lt;run-id&gt;
 </span></code></pre></div>
 <h3 id="check-release-pipeline">Check Release Pipeline<a class="headerlink" href="#check-release-pipeline" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># View CI/CD runs</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>gh<span class="w"> </span>run<span class="w"> </span>list<span class="w"> </span>--workflow<span class="o">=</span>ci.yml<span class="w"> </span>--limit<span class="w"> </span><span class="m">5</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Check if tag triggered release</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>gh<span class="w"> </span>run<span class="w"> </span>list<span class="w"> </span>--json<span class="w"> </span>event,headBranch,conclusion<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span>jq<span class="w"> </span><span class="s1">&#39;.[] | select(.event == &quot;push&quot; and (.headBranch | startswith(&quot;refs/tags/&quot;)))&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># View CI/CD runs</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>gh<span class="w"> </span>run<span class="w"> </span>list<span class="w"> </span>--workflow<span class="o">=</span>ci.yml<span class="w"> </span>--limit<span class="w"> </span><span class="m">5</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Check the publish workflow</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>gh<span class="w"> </span>run<span class="w"> </span>list<span class="w"> </span>--workflow<span class="o">=</span>publish-release.yml<span class="w"> </span>--limit<span class="w"> </span><span class="m">5</span>
 </span></code></pre></div>
 <h3 id="verify-publication">Verify Publication<a class="headerlink" href="#verify-publication" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Check PyPI</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>pip<span class="w"> </span>index<span class="w"> </span>versions<span class="w"> </span>msn-weather-wrapper
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Check GitHub releases</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>gh<span class="w"> </span>release<span class="w"> </span>list<span class="w"> </span>--limit<span class="w"> </span><span class="m">5</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># Check containers</span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>gh<span class="w"> </span>api<span class="w"> </span>/user/packages/container/msn-weather-wrapper/versions
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Check PyPI</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>pip<span class="w"> </span>index<span class="w"> </span>versions<span class="w"> </span>msn-weather-wrapper
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Check GitHub releases</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>gh<span class="w"> </span>release<span class="w"> </span>list<span class="w"> </span>--limit<span class="w"> </span><span class="m">5</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># Check containers</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>gh<span class="w"> </span>api<span class="w"> </span>/user/packages/container/msn-weather-wrapper/versions
 </span></code></pre></div>
 <h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
 <h3 id="1-use-descriptive-pr-titles">1. Use Descriptive PR Titles<a class="headerlink" href="#1-use-descriptive-pr-titles" title="Permanent link">&para;</a></h3>
 <p>Good:
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>feat: add weather alerts endpoint
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>fix: correct temperature unit conversion
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>refactor: improve caching logic
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>feat: add weather alerts endpoint
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>fix: correct temperature unit conversion
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>refactor: improve caching logic
 </span></code></pre></div></p>
 <p>Bad:
-<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Updated code
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>Fixed stuff
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>Changes
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Updated code
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>Fixed stuff
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>Changes
 </span></code></pre></div></p>
-<h3 id="2-apply-appropriate-labels">2. Apply Appropriate Labels<a class="headerlink" href="#2-apply-appropriate-labels" title="Permanent link">&para;</a></h3>
+<h3 id="2-get-the-title-prefix-right">2. Get the Title Prefix Right<a class="headerlink" href="#2-get-the-title-prefix-right" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Use GitHub labels to explicitly control version bumps</li>
-<li>Labels override title and branch detection</li>
-<li>Useful when branch names don't follow conventions</li>
+<li>The PR title is the only input to the version bump</li>
+<li>Labels and branch names are for humans; they do not change the bump</li>
+<li>Edit the PR title before merging if the prefix is wrong</li>
 </ul>
 <h3 id="3-group-related-changes">3. Group Related Changes<a class="headerlink" href="#3-group-related-changes" title="Permanent link">&para;</a></h3>
 <ul>
@@ -2846,7 +2781,7 @@
 <ol>
 <li>The workflow cannot be easily skipped (by design)</li>
 <li>If needed, manually delete the created tag before CI/CD completes:
-   <div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>:refs/tags/vX.Y.Z
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>:refs/tags/vX.Y.Z
 </span></code></pre></div></li>
 <li>Consider using draft PRs for work that shouldn't be released</li>
 </ol>
@@ -2858,19 +2793,19 @@
 - The workflow will skip and not create a duplicate</p>
 <h3 id="tag-created-but-no-release">Tag Created But No Release<a class="headerlink" href="#tag-created-but-no-release" title="Permanent link">&para;</a></h3>
 <p>If tag is created but PyPI release fails:
-1. Check CI/CD pipeline status
-2. Look for build or test failures
-3. PyPI credentials might need updating</p>
+1. Check the <code>publish-release.yml</code> run status
+2. Look for build failures
+3. PyPI trusted publishing configuration might need updating (see <a href="../PYPI_SETUP/">PYPI_SETUP.md</a>)</p>
 <h3 id="wrong-version-bump">Wrong Version Bump<a class="headerlink" href="#wrong-version-bump" title="Permanent link">&para;</a></h3>
 <p>If the version bumped incorrectly:
-1. Check which indicator was used (label, title, or branch)
-2. Remember labels have highest priority
+1. Check the merged PR's title prefix
+2. Remember labels and branch names are ignored
 3. Default is patch if nothing matches</p>
 <p>To fix:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Delete the tag</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>:refs/tags/vX.Y.Z
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># Create a new PR with correct versioning indicators</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Delete the tag</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>:refs/tags/vX.Y.Z
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># Create a new PR with correct versioning indicators</span>
 </span></code></pre></div></p>
 <h2 id="related-documentation">Related Documentation<a class="headerlink" href="#related-documentation" title="Permanent link">&para;</a></h2>
 <ul>
@@ -2884,11 +2819,9 @@
 <ol>
 <li><strong>No action needed</strong> - The workflow now handles all versioning</li>
 <li><strong>Remove manual version bump PRs</strong> - These are no longer necessary</li>
-<li><strong>Update contribution docs</strong> - Instruct contributors on labeling</li>
+<li><strong>Update contribution docs</strong> - Instruct contributors on PR title prefixes</li>
 <li><strong>Communicate changes</strong> - Inform team about new automated process</li>
 </ol>
-<hr />
-<p><em>Last updated: December 3, 2025</em></p>
 
 
 
@@ -3064,7 +2997,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../javascripts/extra.js"></script>
       

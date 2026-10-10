@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -2594,14 +2594,14 @@ graph TB
 - Manual dispatch</p>
 <p><strong>Flow:</strong>
 1. <strong>Test Phase</strong> - Calls <code>test.yml</code> for smoke tests, code quality, unit tests, and coverage
-2. <strong>Security Phase</strong> - Calls <code>security.yml</code> (full scan on PR, basic on main)
+2. <strong>Security Phase</strong> - Calls <code>security.yml</code> (full scan on main/tags, basic on PR)
 3. <strong>Build Phase</strong> - Calls <code>build.yml</code> (builds Docker images, SBOM, docs)
 4. <strong>Integration Phase</strong> - Calls <code>test.yml</code> again with integration tests enabled
 5. <strong>Performance Phase</strong> - Calls <code>performance.yml</code> (main branch only)
 6. <strong>Deploy Phase</strong> - Calls <code>deploy.yml</code> (main branch only)
 7. <strong>Trigger Auto-Version</strong> - Triggers <code>auto-version-release.yml</code> (main branch only)</p>
 <p><strong>Benefits:</strong>
-- Modular architecture with ~120 lines orchestrator workflow
+- Modular architecture with a short orchestrator workflow
 - Clear separation of concerns
 - Easy to maintain and extend
 - Consistent execution across all environments</p>
@@ -2609,12 +2609,13 @@ graph TB
 <p><strong>Purpose:</strong> Handles all testing phases including smoke tests, unit tests, coverage, and integration tests.</p>
 <p><strong>Inputs:</strong>
 - <code>python-version</code> - Python version to use (default: '3.12')
-- <code>run-integration</code> - Whether to run integration tests (default: false)</p>
+- <code>run-integration</code> - Whether to run integration tests (default: false)
+- <code>artifact-suffix</code> - Suffix for artifact names to avoid conflicts (default: '')</p>
 <p><strong>Jobs:</strong>
 1. <strong>Smoke Tests</strong> - Quick validation (imports, syntax)
 2. <strong>Code Quality</strong> - Ruff format check, linting, mypy type checking
-3. <strong>Unit Tests</strong> - Multi-version Python testing (3.10, 3.11, 3.12)
-4. <strong>Coverage</strong> - Test coverage with reports (target: 97%+)
+3. <strong>Unit Tests</strong> - Multi-version Python testing (3.10, 3.11, 3.12; 3.12 only on pull requests)
+4. <strong>Coverage</strong> - Test coverage with reports
 5. <strong>Integration Tests</strong> - Tests against containerized API (when enabled)</p>
 <p><strong>Called by:</strong> <code>ci.yml</code> (twice - once for unit tests, once for integration)</p>
 <h3 id="reusable-workflow-security-securityyml">Reusable Workflow: Security (<code>security.yml</code>)<a class="headerlink" href="#reusable-workflow-security-securityyml" title="Permanent link">&para;</a></h3>
@@ -2626,21 +2627,19 @@ graph TB
 </ul>
 <p><strong>Jobs:</strong></p>
 <ol>
-<li><strong>Basic Security Checks</strong> - Bandit (hardcoded secrets), pip-audit, pip-licenses (always runs)</li>
-<li><strong>SAST</strong> - Static Application Security Testing (full scan only)</li>
+<li><strong>Basic Security Checks</strong> - always runs</li>
 <li>Bandit (code analysis &amp; hardcoded secrets)</li>
 <li>Semgrep (pattern-based security analysis)</li>
-<li><strong>Dependency Vulnerabilities</strong> - Full dependency scanning (full scan only)</li>
 <li>pip-audit (package auditing)</li>
-<li>Dependency tree generation</li>
+<li>pip-licenses (license report)</li>
 <li><strong>Container Security Scan</strong> - Image &amp; SBOM analysis (full scan only)</li>
 <li>Trivy (container image vulnerabilities)</li>
 <li>Grype (SBOM vulnerability analysis)</li>
 </ol>
 <p><strong>Execution Strategy:</strong></p>
 <ul>
-<li><strong>Pull Requests:</strong> Basic security checks only (Bandit + licenses) - fast feedback</li>
-<li><strong>Main Branch &amp; Tags:</strong> Full comprehensive security suite (all 6 tools) - complete validation</li>
+<li><strong>Pull Requests:</strong> Basic security checks only (Bandit, Semgrep, pip-audit, pip-licenses) - fast feedback</li>
+<li><strong>Main Branch &amp; Tags:</strong> Basic checks plus container scan (Trivy, Grype) - complete validation</li>
 </ul>
 <p><strong>Called by:</strong> <code>ci.yml</code> (full scan on main/tags, basic on PR)</p>
 <h4 id="security-tools-architecture">Security Tools Architecture<a class="headerlink" href="#security-tools-architecture" title="Permanent link">&para;</a></h4>
@@ -2649,35 +2648,27 @@ graph LR
     SEC["security.yml&lt;br/&gt;Orchestrator"]
 
     subgraph "Always On (All Branches)"
-        BASIC["Basic Security&lt;br/&gt;✓ Bandit&lt;br/&gt;✓ pip-audit&lt;br/&gt;✓ pip-licenses"]
+        BASIC["Basic Security&lt;br/&gt;✓ Bandit&lt;br/&gt;✓ Semgrep&lt;br/&gt;✓ pip-audit&lt;br/&gt;✓ pip-licenses"]
     end
 
     subgraph "Full Scan (Main/Tags Only)"
-        SAST["SAST Scanning&lt;br/&gt;✓ Bandit&lt;br/&gt;✓ Semgrep"]
-        DEP["Dependency Scanning&lt;br/&gt;✓ pip-audit&lt;br/&gt;✓ Dep Tree"]
         CONT["Container Scanning&lt;br/&gt;✓ Trivy&lt;br/&gt;✓ Grype"]
     end
 
     SEC --&gt; BASIC
-    SEC --&gt; SAST
-    SEC --&gt; DEP
     SEC --&gt; CONT
 
-    SAST --&gt;|SARIF Upload| GHSEC["GitHub Security Tab"]
-    CONT --&gt;|SARIF Upload| GHSEC
+    CONT --&gt;|SARIF Upload| GHSEC["GitHub Security Tab"]
     BASIC --&gt;|Reports| REPORTS["security-reports artifact"]
-    SAST --&gt;|Reports| REPORTS
-    DEP --&gt;|Reports| REPORTS
-    CONT --&gt;|Reports| REPORTS
+    CONT --&gt;|Reports| REPORTS2["container-security-reports artifact"]
 
     %% Muted palette consistent with site blues
     style SEC fill:#26A69A,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
     style BASIC fill:#64B5F6,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
-    style SAST fill:#90CAF9,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
-    style DEP fill:#BA68C8,stroke:#6A1B9A,stroke-width:1.5px,color:#0F172A
     style CONT fill:#4DD0E1,stroke:#00838F,stroke-width:1.5px,color:#0F172A
     style GHSEC fill:#CFD8DC,stroke:#90A4AE,stroke-width:1.5px,color:#0F172A
-    style REPORTS fill:#BBDEFB,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A</code></pre>
+    style REPORTS fill:#BBDEFB,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style REPORTS2 fill:#BBDEFB,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A</code></pre>
 <h3 id="reusable-workflow-build-buildyml">Reusable Workflow: Build (<code>build.yml</code>)<a class="headerlink" href="#reusable-workflow-build-buildyml" title="Permanent link">&para;</a></h3>
 <p><strong>Purpose:</strong> Builds Docker images, generates SBOM, and builds documentation.</p>
 <p><strong>Inputs:</strong>
@@ -2704,7 +2695,6 @@ graph LR
 1. <strong>Load Test</strong> - Locust-based load testing (20 concurrent users)
 2. <strong>Benchmark</strong> - Performance baseline measurements</p>
 <p><strong>Called by:</strong> <code>ci.yml</code> (main branch only)</p>
-<p><strong>Also triggers:</strong> Independently on push/PR to performance-related files</p>
 <h3 id="standalone-workflow-dependencies-dependenciesyml">Standalone Workflow: Dependencies (<code>dependencies.yml</code>)<a class="headerlink" href="#standalone-workflow-dependencies-dependenciesyml" title="Permanent link">&para;</a></h3>
 <p><strong>Purpose:</strong> Automated dependency updates on a weekly schedule.</p>
 <p><strong>Triggers:</strong>
@@ -2723,10 +2713,10 @@ graph LR
 <p><strong>Process:</strong>
 1. Analyzes merged PR title to determine version bump type:
    - <code>feat:</code>, <code>feature:</code> → <strong>minor</strong> version bump
-   - <code>fix:</code>, <code>bugfix:</code>, <code>chore:</code>, <code>perf:</code>, <code>refactor:</code>, <code>docs:</code> → <strong>patch</strong> version bump
-   - <code>breaking:</code>, <code>feat!:</code>, <code>BREAKING CHANGE:</code> → <strong>major</strong> version bump
+   - <code>fix:</code>, <code>bugfix:</code>, <code>chore:</code>, <code>perf:</code>, <code>refactor:</code>, <code>docs:</code> → <strong>patch</strong> version bump (also the default)
+   - <code>feat!:</code>, <code>feature!:</code>, <code>breaking!:</code> → <strong>major</strong> version bump
 2. Calculates new version
-3. Updates <code>pyproject.toml</code> and <code>backend/msn_weather_wrapper/__init__.py</code>
+3. Updates <code>pyproject.toml</code> and <code>backend/__init__.py</code>
 4. Creates version bump PR
 5. Auto-merges the PR (if branch protection allows)
 6. Creates git tag (format: <code>v*.*.*</code>)
@@ -2801,8 +2791,8 @@ graph LR
 </tr>
 <tr>
 <td>performance.yml</td>
-<td>✓</td>
-<td>✓</td>
+<td>-</td>
+<td>-</td>
 <td>-</td>
 <td>-</td>
 <td>-</td>
@@ -2846,7 +2836,7 @@ graph LR
 </ul>
 <h3 id="2-simplification">2. Simplification<a class="headerlink" href="#2-simplification" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>Main CI/CD:</strong> Reduced from 662 lines to ~120 lines</li>
+<li><strong>Main CI/CD:</strong> Reduced from one large workflow to a short orchestrator</li>
 <li><strong>Clear Flow:</strong> Easy to understand the overall CI/CD process</li>
 <li><strong>Less Duplication:</strong> Common logic is in reusable workflows</li>
 </ul>
@@ -2859,21 +2849,21 @@ graph LR
 <h3 id="4-efficiency">4. Efficiency<a class="headerlink" href="#4-efficiency" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>Parallel Execution:</strong> Independent workflows can run in parallel</li>
-<li><strong>Smart Scheduling:</strong> Performance tests only on main, full security scan only on PR</li>
+<li><strong>Smart Scheduling:</strong> Performance tests only on main, full security scan only on main and tags</li>
 <li><strong>Resource Optimization:</strong> Only necessary steps run based on context</li>
 </ul>
 <h3 id="5-testability">5. Testability<a class="headerlink" href="#5-testability" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>Isolated Testing:</strong> Individual workflows can be tested independently</li>
-<li><strong>Manual Triggers:</strong> All workflows support manual dispatch for testing</li>
+<li><strong>Manual Triggers:</strong> <code>ci.yml</code> and the standalone workflows support manual dispatch for testing</li>
 <li><strong>Clear Dependencies:</strong> Easy to see what depends on what</li>
 </ul>
 <h2 id="environment-variables">Environment Variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h2>
 <p>All workflows use consistent environment configuration:</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">env</span><span class="p">:</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">PYTHON_VERSION</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;3.12&#39;</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">NODE_VERSION</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;24&#39;</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">REPORTS_DIR</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;docs/reports&#39;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">PYTHON_VERSION</span><span class="p">:</span><span class="w"> </span><span class="s">'3.12'</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">NODE_VERSION</span><span class="p">:</span><span class="w"> </span><span class="s">'24'</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">REPORTS_DIR</span><span class="p">:</span><span class="w"> </span><span class="s">'docs/reports'</span>
 </span></code></pre></div>
 <h2 id="secrets-required">Secrets Required<a class="headerlink" href="#secrets-required" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3079,7 +3069,7 @@ graph LR
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../javascripts/extra.js"></script>
       

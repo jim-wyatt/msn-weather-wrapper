@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1836,10 +1836,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#backendmsn_weather_wrapper" class="md-nav__link">
+  <a href="#backend" class="md-nav__link">
     <span class="md-ellipsis">
       
-        backend/msn_weather_wrapper/
+        backend/
       
     </span>
   </a>
@@ -1966,16 +1966,16 @@
 <h2 id="start-here">Start Here<a class="headerlink" href="#start-here" title="Permanent link">&para;</a></h2>
 <p>If you're new, explore the project in this order:</p>
 <ol>
-<li><code>backend/msn_weather_wrapper/</code> — the Python backend and library code</li>
-<li><code>frontend/</code> — the React user interface</li>
+<li><code>backend/</code> — the Python backend and library code</li>
+<li><code>frontend/</code> — the Next.js user interface</li>
 <li><code>tests/</code> — examples of how behavior is verified</li>
 <li><code>scripts/</code> — helper scripts for local development and reporting</li>
 </ol>
 <h2 id="mental-model">Mental Model<a class="headerlink" href="#mental-model" title="Permanent link">&para;</a></h2>
-<h3 id="backendmsn_weather_wrapper"><code>backend/msn_weather_wrapper/</code><a class="headerlink" href="#backendmsn_weather_wrapper" title="Permanent link">&para;</a></h3>
+<h3 id="backend"><code>backend/</code><a class="headerlink" href="#backend" title="Permanent link">&para;</a></h3>
 <p>This is the <strong>main backend code</strong>.</p>
 <ul>
-<li><code>api/</code> — FastAPI app, routes, request handling, and service logic</li>
+<li><code>api/</code> — FastAPI app (<code>main.py</code>), routes (<code>routers/</code>), request handling, and service logic</li>
 <li><code>client.py</code> — talks to MSN Weather</li>
 <li><code>models.py</code> — shared typed data models</li>
 <li><code>exceptions.py</code> — app-specific errors</li>
@@ -1992,7 +1992,10 @@
 <ul>
 <li><code>test_api.py</code> — API behavior</li>
 <li><code>test_client.py</code> — weather client behavior</li>
+<li><code>test_models.py</code> — data model validation</li>
 <li><code>test_security.py</code> — input validation and security checks</li>
+<li><code>test_integration.py</code> — checks against the running container</li>
+<li><code>test_benchmarks.py</code> — performance benchmarks</li>
 </ul>
 <h3 id="scripts"><code>scripts/</code><a class="headerlink" href="#scripts" title="Permanent link">&para;</a></h3>
 <p>This is the <strong>developer toolbox</strong>.</p>
@@ -2013,15 +2016,14 @@
 <p>Use it when you want explanations, not implementation details.</p>
 <h2 id="top-level-map">Top-Level Map<a class="headerlink" href="#top-level-map" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>msn-weather-wrapper/
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── backend/msn_weather_wrapper/  # Backend/library code
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── backend/                  # Backend/library code
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├── frontend/                 # Next.js UI
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>├── tests/                    # Python tests
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>├── scripts/                  # Dev and automation scripts
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>├── infra/                    # Container and deployment config
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>├── docs/                     # Documentation
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>├── api.py                    # Local API entrypoint
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>├── dev.sh                    # Simple wrapper around scripts/dev.sh
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>└── pyproject.toml            # Python project config
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>├── dev.sh                    # Simple wrapper around scripts/dev.sh
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>└── pyproject.toml            # Python project config
 </span></code></pre></div>
 <h2 id="rule-of-thumb">Rule of Thumb<a class="headerlink" href="#rule-of-thumb" title="Permanent link">&para;</a></h2>
 <blockquote>
@@ -2166,7 +2168,7 @@ If you want to <strong>understand intent</strong>, read <code>tests/</code> and 
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../javascripts/extra.js"></script>
       
