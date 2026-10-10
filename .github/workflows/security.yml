@@ -84,7 +84,6 @@ jobs:
 
   container-scan:
     name: Container Security Scan
-    if: ${{ inputs.full-scan }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -111,6 +110,7 @@ jobs:
         run: mkdir -p security-reports
 
       - name: Run Trivy vulnerability scanner
+        if: ${{ inputs.full-scan }}
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: msn-weather-app:security-scan
@@ -120,12 +120,14 @@ jobs:
           ignore-unfixed: 'true'
 
       - name: Upload Trivy results to GitHub Security
+        if: ${{ inputs.full-scan }}
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: 'trivy-results.sarif'
           category: 'container-security'
 
       - name: Run Trivy for JSON report
+        if: ${{ inputs.full-scan }}
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: msn-weather-app:security-scan
@@ -133,6 +135,7 @@ jobs:
           output: 'security-reports/trivy-results.json'
 
       - name: Generate Grype SBOM scan
+        if: ${{ inputs.full-scan }}
         run: |
           mkdir -p /tmp/sbom-tools
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /tmp/sbom-tools
@@ -140,7 +143,20 @@ jobs:
           /tmp/sbom-tools/syft msn-weather-app:security-scan -o spdx-json > security-reports/container-sbom.json
           /tmp/sbom-tools/grype sbom:security-reports/container-sbom.json --fail-on critical -o json > security-reports/grype-results.json || true
 
+      # Gate: runs on every pipeline, pull requests included. Fails when the image ships a
+      # CRITICAL or HIGH vulnerability that has a fix available. Findings with no fix yet
+      # (most base-image OS packages) are reported by the steps above but do not block.
+      - name: Fail on fixable CRITICAL/HIGH vulnerabilities
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: msn-weather-app:security-scan
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: 'true'
+          exit-code: '1'
+
       - name: Upload container security reports
+        if: ${{ inputs.full-scan && always() }}
         uses: actions/upload-artifact@v7
         with:
           name: container-security-reports
