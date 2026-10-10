@@ -4,6 +4,7 @@ import json
 
 import pytest
 
+from backend.api.config import get_cors_origins
 from backend.api.main import app
 from backend.api.services import validate_input
 from backend.api.testing import _TestClient
@@ -49,6 +50,7 @@ class TestInputValidation:
         assert error is not None
         assert "empty" in error.lower() or "whitespace" in error.lower()
 
+
     def test_exceeds_max_length(self):
         """Test string exceeding max length is rejected."""
         value, error = validate_input("A" * 101, "city", 100)
@@ -91,6 +93,19 @@ class TestInputValidation:
             if error:
                 # Some special chars might not pass, that's ok for security
                 assert "invalid characters" in error.lower()
+
+
+class TestCorsConfiguration:
+    """Test CORS origin configuration."""
+
+    def test_explicit_origins_are_normalized(self, monkeypatch):
+        monkeypatch.setenv("CORS_ORIGINS", "https://app.example, https://admin.example ")
+        assert get_cors_origins() == ["https://app.example", "https://admin.example"]
+
+    def test_wildcard_origin_is_rejected(self, monkeypatch):
+        monkeypatch.setenv("CORS_ORIGINS", "*")
+        with pytest.raises(ValueError, match="explicit origins"):
+            get_cors_origins()
 
 
 class TestAPISecurityGET:

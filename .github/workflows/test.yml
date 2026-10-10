@@ -174,7 +174,8 @@ jobs:
           set -e
           docker run -d --name msn-weather-app -p 8080:80 \
             -e APP_DEBUG=false \
-            -e CORS_ORIGINS="*" \
+            -e APP_SECRET_KEY=ci-only-session-secret \
+            -e CORS_ORIGINS=http://localhost:3000 \
             -e RATE_LIMIT_ENABLED=true \
             -e CACHE_ENABLED=true \
             msn-weather-app:test || {

@@ -170,6 +170,7 @@ test.describe('Accessibility Tests', () => {
 
   test('should have proper focus management', async ({ page }) => {
     const initialFocus = await page.evaluate(() => document.activeElement?.tagName);
+    expect(initialFocus).toBeDefined();
 
     // Click button
     await page.click('button');

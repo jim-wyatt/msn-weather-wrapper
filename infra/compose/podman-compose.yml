@@ -9,11 +9,12 @@ services:
     ports:
       - "8080:80"
     environment:
-      - APP_ENV=production
-      - APP_DEBUG=0
-      - CORS_ORIGINS=http://localhost:8080,http://localhost:3000
-      - RATE_LIMIT_ENABLED=true
-      - CACHE_ENABLED=true
+      APP_ENV: production
+      APP_DEBUG: "0"
+      APP_SECRET_KEY: ${APP_SECRET_KEY:?APP_SECRET_KEY must be set for production}
+      CORS_ORIGINS: http://localhost:8080,http://localhost:3000
+      RATE_LIMIT_ENABLED: "true"
+      CACHE_ENABLED: "true"
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/api/v1/health"]
