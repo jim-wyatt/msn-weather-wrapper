@@ -34,11 +34,15 @@ CACHE_DURATION_MINUTES = int(os.getenv("CACHE_DURATION", "300")) // 60
 
 
 def get_cors_origins() -> list[str]:
-    """Return configured CORS origins as a normalized list."""
-    raw_value = os.getenv("CORS_ORIGINS", "http://localhost:3000")
-    if raw_value.strip() == "*":
-        return ["*"]
-    return [origin.strip() for origin in raw_value.split(",") if origin.strip()]
+    """Return configured CORS origins; an empty setting disables cross-origin access."""
+    raw_value = os.getenv("CORS_ORIGINS", "")
+    origins = [origin.strip() for origin in raw_value.split(",") if origin.strip()]
+    if "*" in origins:
+        raise ValueError(
+            "CORS_ORIGINS must list explicit origins; '*' is not allowed. "
+            "Set it to a comma-separated list, e.g. https://app.example.com"
+        )
+    return origins
 
 
 def get_secret_key() -> str:

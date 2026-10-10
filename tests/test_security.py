@@ -4,6 +4,7 @@ import json
 
 import pytest
 
+from backend.api.config import get_cors_origins
 from backend.api.main import app
 from backend.api.services import validate_input
 from backend.api.testing import _TestClient
@@ -91,6 +92,41 @@ class TestInputValidation:
             if error:
                 # Some special chars might not pass, that's ok for security
                 assert "invalid characters" in error.lower()
+
+
+class TestCorsConfiguration:
+    """Test CORS origin configuration."""
+
+    def test_explicit_origins_are_normalized(self, monkeypatch):
+        monkeypatch.setenv("CORS_ORIGINS", "https://app.example, https://admin.example ")
+        assert get_cors_origins() == ["https://app.example", "https://admin.example"]
+
+    def test_unset_origins_return_empty_list(self, monkeypatch):
+        monkeypatch.delenv("CORS_ORIGINS", raising=False)
+        assert get_cors_origins() == []
+
+    def test_wildcard_origin_is_rejected(self, monkeypatch):
+        monkeypatch.setenv("CORS_ORIGINS", "*")
+        with pytest.raises(ValueError, match="explicit origins"):
+            get_cors_origins()
+
+    def test_wildcard_mixed_with_explicit_origins_is_rejected(self, monkeypatch):
+        monkeypatch.setenv("CORS_ORIGINS", "https://app.example,*")
+        with pytest.raises(ValueError, match="explicit origins"):
+            get_cors_origins()
+
+    def test_cors_response_requires_an_allowed_origin(self, client):
+        allowed = client.get(
+            "/api/v1/health",
+            headers={"Origin": "http://localhost:5173"},
+        )
+        assert allowed.headers["access-control-allow-origin"] == "http://localhost:5173"
+
+        rejected = client.get(
+            "/api/v1/health",
+            headers={"Origin": "https://untrusted.example"},
+        )
+        assert "access-control-allow-origin" not in rejected.headers
 
 
 class TestAPISecurityGET:

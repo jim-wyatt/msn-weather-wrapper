@@ -1,0 +1,21 @@
+rules:
+  - id: python-subprocess-shell-true
+    languages:
+      - python
+    message: Avoid invoking subprocesses through a shell with untrusted input.
+    metadata:
+      category: security
+      cwe: "CWE-78"
+    pattern: subprocess.$FUNCTION(..., shell=True, ...)
+    severity: ERROR
+  - id: python-pickle-load
+    languages:
+      - python
+    message: Do not deserialize untrusted data with pickle.
+    metadata:
+      category: security
+      cwe: "CWE-502"
+    pattern-either:
+      - pattern: pickle.load(...)
+      - pattern: pickle.loads(...)
+    severity: ERROR

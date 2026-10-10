@@ -14,7 +14,7 @@ This directory contains the GitHub Actions workflows for automated testing, buil
 **Jobs:**
 
 1. **code-quality** - Runs Ruff formatting/linting and mypy type checking
-2. **security** - Runs Bandit security scanning and pip-audit dependency checks
+2. **security** - Runs Bandit, Semgrep, and pip-audit security scans, plus license reporting
 3. **unit-tests** - Runs unit and security tests on Python 3.10-3.12 (matrix)
 4. **coverage** - Generates test coverage reports and uploads to Codecov
 5. **container-build** - Builds and tests unified Podman container image
@@ -25,7 +25,7 @@ This directory contains the GitHub Actions workflows for automated testing, buil
 10. **release** - Creates GitHub releases with SBOM attachments (on version tags)
 
 **Artifacts:**
-- `bandit-report` - Security scan results
+- `security-reports` - Bandit, Semgrep, pip-audit, and license reports
 - `coverage-report` - HTML coverage report
 - `sbom-reports` - SBOM files in multiple formats
 - `documentation` - Built MkDocs site

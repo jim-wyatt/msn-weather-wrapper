@@ -169,14 +169,10 @@ test.describe('Accessibility Tests', () => {
   });
 
   test('should have proper focus management', async ({ page }) => {
-    const initialFocus = await page.evaluate(() => document.activeElement?.tagName);
-
-    // Click button
-    await page.click('button');
-
-    // Focus should be managed properly
-    const newFocus = await page.evaluate(() => document.activeElement?.tagName);
-    expect(newFocus).toBeDefined();
+    // Focus rather than click: clicking starts a geolocation lookup that disables the button
+    const locationButton = page.getByRole('button', { name: /current location/i });
+    await locationButton.focus();
+    await expect(locationButton).toBeFocused();
 
     // Check for focus-visible issues
     const accessibilityScanResults = await new AxeBuilder({ page })

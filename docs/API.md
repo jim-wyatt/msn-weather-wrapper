@@ -478,6 +478,7 @@ export APP_SECRET_KEY='your-secret-key-here'
 
 export APP_ENV=production
 export APP_DEBUG=0
+export CORS_ORIGINS=https://your-frontend.example.com
 
 ```
 
@@ -486,8 +487,8 @@ export APP_DEBUG=0
 1. **HTTPS Required**: Geolocation requires HTTPS in production
 2. **Session Storage**: Use Redis for multi-instance deployments
 3. **Rate Limiting**: Configure based on expected traffic
-4. **CORS Origins**: Restrict to specific domains in production
-5. **Secret Key**: Use strong random secret for sessions
+4. **CORS Origins**: Set an explicit comma-separated origin allowlist; wildcards are rejected
+5. **Secret Key**: Provide a unique random secret at runtime; it is not generated or stored in the image
 
 ### Docker/Podman
 
@@ -495,7 +496,10 @@ export APP_DEBUG=0
 # Build and run
 
 podman build -t msn-weather-wrapper .
-podman run -p 8080:80 -e APP_SECRET_KEY='secret' msn-weather-wrapper
+podman run -p 8080:80 \
+  -e APP_SECRET_KEY="${APP_SECRET_KEY:?Set APP_SECRET_KEY first}" \
+  -e CORS_ORIGINS="${CORS_ORIGINS:-}" \
+  msn-weather-wrapper
 
 # Using compose
 
@@ -717,25 +721,25 @@ Cross-Origin Resource Sharing (CORS) is enabled for web applications with full s
 ```python
 # CORS Headers (automatically added)
 
-Access-Control-Allow-Origin: <requesting-origin>
+Access-Control-Allow-Origin: <configured-origin>
 Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS
 Access-Control-Allow-Headers: Content-Type, Authorization
 Access-Control-Allow-Credentials: true
-Access-Control-Max-Age: 3600
+Access-Control-Max-Age: 600
 
 ```
 
 **Key Features:**
 
-- ✅ Dynamic origin handling (no wildcards in production)
+- ✅ Explicit origin allowlist; wildcard origins are rejected
 - ✅ Credentials support for session-based authentication
 - ✅ Preflight request (OPTIONS) handling
-- ✅ Both FastAPI (dev) and Nginx (production) CORS support
+- ✅ FastAPI handles CORS; Nginx does not reflect request origins
 
 **Environment Variables:**
 
 ```bash
-# Restrict to specific origin (recommended for production)
+# Restrict to specific origins (required when using cross-origin requests)
 
 CORS_ORIGINS=https://yourapp.com
 
@@ -743,13 +747,9 @@ CORS_ORIGINS=https://yourapp.com
 
 CORS_ORIGINS=https://app1.com,https://app2.com
 
-# Allow all origins (default for development, less secure)
-
-CORS_ORIGINS=*
-
 ```
 
-**Production Deployment:** When using the containerized deployment, Nginx automatically handles CORS headers at the proxy level while preserving the FastAPI app's CORS configuration for API-level control.
+Leave `CORS_ORIGINS` unset for same-origin deployments. Do not use `*`; the API rejects wildcard origins because it supports credentialed sessions.
 
 ## Logging
 

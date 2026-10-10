@@ -174,7 +174,7 @@ test.describe('Temperature Unit Conversion', () => {
     await expect(tempDisplay).toContainText('°C');
   });
 
-  test('should persist temperature unit preference', async ({ page, context }) => {
+  test('should persist temperature unit preference', async ({ page }) => {
     // Mock API
     await page.route('**/api/v1/weather*', async (route) => {
       await route.fulfill({
