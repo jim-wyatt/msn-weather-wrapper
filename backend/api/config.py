@@ -34,7 +34,7 @@ CACHE_DURATION_MINUTES = int(os.getenv("CACHE_DURATION", "300")) // 60
 
 
 def get_cors_origins() -> list[str]:
-    """Return configured CORS origins as a normalized list."""
+    """Return configured CORS origins; an empty setting disables cross-origin access."""
     raw_value = os.getenv("CORS_ORIGINS", "")
     origins = [origin.strip() for origin in raw_value.split(",") if origin.strip()]
     if "*" in origins:

@@ -39,27 +39,21 @@ jobs:
 
       - name: Run Bandit (fail on HIGH severity)
         run: |
-          if bandit -r backend/ -lll -f json -o security-reports/bandit-report.json; then
-            echo 0 > security-reports/bandit-exit-code
-          else
-            echo "$?" > security-reports/bandit-exit-code
-          fi
+          status=0
+          bandit -r backend/ -lll -f json -o security-reports/bandit-report.json || status=$?
+          echo "$status" > security-reports/bandit-exit-code
 
       - name: Run Semgrep SAST scan
         run: |
-          if semgrep --error --config=p/python --metrics=off backend/ --json --output=security-reports/semgrep-report.json; then
-            echo 0 > security-reports/semgrep-exit-code
-          else
-            echo "$?" > security-reports/semgrep-exit-code
-          fi
+          status=0
+          semgrep --error --config=p/python --metrics=off backend/ --json --output=security-reports/semgrep-report.json || status=$?
+          echo "$status" > security-reports/semgrep-exit-code
 
       - name: Run pip-audit (check for vulnerabilities)
         run: |
-          if pip-audit --format json --output security-reports/pip-audit-report.json; then
-            echo 0 > security-reports/pip-audit-exit-code
-          else
-            echo "$?" > security-reports/pip-audit-exit-code
-          fi
+          status=0
+          pip-audit --format json --output security-reports/pip-audit-report.json || status=$?
+          echo "$status" > security-reports/pip-audit-exit-code
 
       - name: Generate pip-licenses report
         run: |
@@ -67,66 +61,7 @@ jobs:
 
       - name: Evaluate security scan reports
         if: always()
-        run: |
-          python - <<'PY'
-          import json
-          import os
-          from pathlib import Path
-
-          reports = Path("security-reports")
-          failures = []
-          findings = {}
-          scan_errors = {}
-
-          def load_report(name):
-              try:
-                  return json.loads((reports / name).read_text())
-              except (OSError, json.JSONDecodeError) as error:
-                  failures.append(f"{name}: could not read scan report ({error})")
-                  return {}
-
-          bandit = load_report("bandit-report.json")
-          bandit_findings = [
-              item for item in bandit.get("results", [])
-              if item.get("issue_severity") == "HIGH"
-          ]
-          findings["bandit"] = bool(bandit_findings)
-          scan_errors["bandit"] = bool(bandit.get("errors"))
-          if bandit_findings or bandit.get("errors"):
-              failures.append("Bandit reported HIGH findings or scan errors")
-
-          semgrep = load_report("semgrep-report.json")
-          findings["semgrep"] = bool(semgrep.get("results"))
-          scan_errors["semgrep"] = bool(semgrep.get("errors"))
-          if semgrep.get("results") or semgrep.get("errors"):
-              failures.append("Semgrep reported findings or scan errors")
-
-          pip_audit = load_report("pip-audit-report.json")
-          vulnerabilities = [
-              vulnerability
-              for dependency in pip_audit.get("dependencies", [])
-              for vulnerability in dependency.get("vulns", [])
-          ]
-          findings["pip-audit"] = bool(vulnerabilities)
-          scan_errors["pip-audit"] = bool(pip_audit.get("errors"))
-          if vulnerabilities or pip_audit.get("errors"):
-              failures.append("pip-audit reported vulnerabilities or scan errors")
-
-          for scan in ("bandit", "semgrep", "pip-audit"):
-              try:
-                  exit_code = int((reports / f"{scan}-exit-code").read_text())
-              except (OSError, ValueError) as error:
-                  failures.append(f"{scan}: missing or invalid exit code ({error})")
-                  continue
-              if exit_code and not findings.get(scan) and not scan_errors.get(scan):
-                  failures.append(f"{scan} exited with status {exit_code}")
-
-          if failures:
-              for failure in failures:
-                  print(f"::error::{failure}")
-              with open(os.environ["GITHUB_ENV"], "a") as environment:
-                  environment.write("SECURITY_SCAN_FAILED=true\n")
-          PY
+        run: python scripts/evaluate_security_reports.py security-reports
 
       - name: Upload security reports as artifact
         uses: actions/upload-artifact@v7

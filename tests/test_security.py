@@ -101,7 +101,7 @@ class TestCorsConfiguration:
         monkeypatch.setenv("CORS_ORIGINS", "https://app.example, https://admin.example ")
         assert get_cors_origins() == ["https://app.example", "https://admin.example"]
 
-    def test_empty_origins_are_rejected(self, monkeypatch):
+    def test_unset_origins_return_empty_list(self, monkeypatch):
         monkeypatch.delenv("CORS_ORIGINS", raising=False)
         assert get_cors_origins() == []
 
