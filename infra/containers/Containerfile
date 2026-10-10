@@ -59,8 +59,11 @@ COPY --from=python-builder /opt/venv /opt/venv
 # Set PATH to use the virtual environment
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Upgrade system pip to remediate CVE-2025-8869 and CVE-2026-1703
-RUN /usr/local/bin/python -m pip install --no-cache-dir "pip==26.2.1"
+# Nothing is installed at runtime, so remove the installers from both interpreters.
+# pip bundles its own copies of urllib3, msgpack, and other libraries, which image
+# scanners report (correctly) as vulnerable packages shipped in the image.
+RUN /opt/venv/bin/python -m pip uninstall -y setuptools wheel pip && \
+    /usr/local/bin/python -m pip uninstall -y setuptools wheel pip
 
 # Copy application code
 # (backend package is installed via pyproject.toml; no separate copy needed)

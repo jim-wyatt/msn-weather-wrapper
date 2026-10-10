@@ -35,7 +35,6 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-          # Use default GITHUB_TOKEN - we'll work around branch protection
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
@@ -112,19 +111,22 @@ jobs:
             exit 0
           fi
 
-          # Check if version matches what's in main
+          echo "skip=false" >> $GITHUB_OUTPUT
+
+          # If main already carries the new version but the tag is missing, an earlier run
+          # (or a maintainer) merged the bump and stopped before tagging. Resume at the tag step.
           MAIN_VERSION=$(git show origin/main:pyproject.toml | grep '^version = ' | sed 's/version = "\(.*\)"/\1/')
           if [ "$NEW_VERSION" == "$MAIN_VERSION" ]; then
-            echo "skip=true" >> $GITHUB_OUTPUT
-            echo "⚠️  Version $NEW_VERSION already in main"
+            echo "bump=false" >> $GITHUB_OUTPUT
+            echo "↩️  Version $NEW_VERSION is already in main but untagged - resuming release"
             exit 0
           fi
 
-          echo "skip=false" >> $GITHUB_OUTPUT
+          echo "bump=true" >> $GITHUB_OUTPUT
           echo "✅ Version $NEW_VERSION is new"
 
       - name: Update version files
-        if: steps.check.outputs.skip == 'false'
+        if: steps.check.outputs.skip == 'false' && steps.check.outputs.bump == 'true'
         run: |
           NEW_VERSION="${{ steps.version.outputs.new }}"
 
@@ -139,14 +141,23 @@ jobs:
           echo "✏️  Updated version files to $NEW_VERSION"
 
       - name: Create version bump pull request
-        if: steps.check.outputs.skip == 'false'
+        if: steps.check.outputs.skip == 'false' && steps.check.outputs.bump == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # A pull request opened with GITHUB_TOKEN has its CI held for manual approval.
+          # If a RELEASE_TOKEN secret (GitHub App or fine-grained token with contents and
+          # pull-requests write) is configured, the PR is opened with it and CI starts on its own.
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.GITHUB_TOKEN }}
           INPUT_PR_TITLE: ${{ github.event.inputs.pr_title }}
           INPUT_PR_NUMBER: ${{ github.event.inputs.pr_number }}
         run: |
           NEW_VERSION="${{ steps.version.outputs.new }}"
           BRANCH_NAME="chore/version-bump-$NEW_VERSION"
+
+          # A previous run may already have opened the PR; reuse it instead of failing on push
+          if [ -n "$(gh pr list --head "$BRANCH_NAME" --state open --json number -q '.[0].number')" ]; then
+            echo "ℹ️  Version bump PR for $NEW_VERSION already exists - reusing it"
+            exit 0
+          fi
 
           # Configure git
           git config user.name "github-actions[bot]"
@@ -186,39 +197,36 @@ jobs:
           echo "✅ Created version bump PR #$PR_NUMBER"
           echo "📦 Version: ${{ steps.version.outputs.current }} → $NEW_VERSION"
 
-      - name: Run CI on the version bump branch
-        if: steps.check.outputs.skip == 'false'
+      - name: Wait for CI Gate on the version bump PR
+        if: steps.check.outputs.skip == 'false' && steps.check.outputs.bump == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           NEW_VERSION="${{ steps.version.outputs.new }}"
           BRANCH_NAME="chore/version-bump-$NEW_VERSION"
-          HEAD_SHA=$(git rev-parse HEAD)
+          PR_NUMBER=$(gh pr list --head "$BRANCH_NAME" --json number -q '.[0].number')
+          PR_URL="${{ github.server_url }}/${{ github.repository }}/pull/$PR_NUMBER"
 
-          # Pull requests opened with GITHUB_TOKEN do not trigger workflows, so the
-          # required "CI Gate" check would never report. Dispatch the pipeline on the
-          # branch instead; its check runs attach to the same commit.
-          gh workflow run ci.yml --ref "$BRANCH_NAME"
-
-          echo "⏳ Waiting for CI Gate on $HEAD_SHA..."
-          for attempt in $(seq 1 120); do
-            CONCLUSION=$(gh api "repos/${{ github.repository }}/commits/$HEAD_SHA/check-runs?check_name=CI%20Gate" \
-              --jq '[.check_runs[] | select(.status == "completed")][0].conclusion // empty')
-            if [ "$CONCLUSION" == "success" ]; then
+          # Branch protection requires the "CI Gate" check from the pull request's own run.
+          echo "::notice::Waiting for CI Gate on $PR_URL. If its checks say 'Approve and run workflows', a maintainer must approve them."
+          for attempt in $(seq 1 90); do
+            CONCLUSION=$(gh pr view "$PR_NUMBER" --json statusCheckRollup \
+              -q '[.statusCheckRollup[] | select(.name == "CI Gate" and .status == "COMPLETED")][0].conclusion // empty')
+            if [ "$CONCLUSION" == "SUCCESS" ]; then
               echo "✅ CI Gate passed"
               exit 0
             elif [ -n "$CONCLUSION" ]; then
-              echo "❌ CI Gate finished with: $CONCLUSION"
+              echo "::error::CI Gate finished with $CONCLUSION on $PR_URL"
               exit 1
             fi
-            sleep 20
+            sleep 30
           done
 
-          echo "❌ Timed out waiting for CI Gate"
+          echo "::error::Timed out waiting for CI Gate on $PR_URL. Approve its workflow run if it is waiting, then re-run this workflow; it resumes where it stopped."
           exit 1
 
       - name: Merge version bump PR
-        if: steps.check.outputs.skip == 'false'
+        if: steps.check.outputs.skip == 'false' && steps.check.outputs.bump == 'true'
         id: merge_pr
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -241,7 +249,7 @@ jobs:
           echo "✅ Merged version bump PR #$PR_NUMBER"
 
       - name: Clean up release branch
-        if: steps.check.outputs.skip == 'false'
+        if: steps.check.outputs.skip == 'false' && steps.check.outputs.bump == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -284,7 +292,7 @@ jobs:
 
           git tag -a "v$NEW_VERSION" "$COMMIT_SHA" \
                   -m "Release v$NEW_VERSION" \
-                  -m "Auto-generated from PR #${{ steps.merge_pr.outputs.pr_number }}: $INPUT_PR_TITLE" \
+                  -m "Auto-generated from: $INPUT_PR_TITLE" \
                   -m "Bump type: ${{ steps.bump_type.outputs.bump_type }}"
 
           git push origin "v$NEW_VERSION"
