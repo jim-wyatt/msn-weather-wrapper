@@ -10,11 +10,11 @@ graph TB
     subgraph Pyramid[" "]
         direction TB
 
-        U["<b>Unit Tests</b><br/>111 tests<br/>Fast, isolated, no network<br/><br/>• Client: 28<br/>• Security: 46<br/>• API: 33<br/>• Models: 4"]
+        U["<b>Unit Tests</b><br/>Fast, isolated, no network<br/><br/>• Client<br/>• Security<br/>• API<br/>• Models"]
 
-        I["<b>Integration Tests</b><br/>17 tests<br/>Full API with live endpoints<br/><br/>• Health checks<br/>• Complete workflows<br/>• Error handling"]
+        I["<b>Integration Tests</b><br/>Full API with live endpoints<br/><br/>• Health checks<br/>• Complete workflows<br/>• Error handling"]
 
-        E["<b>End-to-End Tests</b><br/>40 tests<br/>User workflows via Playwright<br/><br/>• Accessibility: 13<br/>• Visual: 15<br/>• Functional: 12"]
+        E["<b>End-to-End Tests</b><br/>User workflows via Playwright<br/><br/>• Accessibility<br/>• Visual<br/>• Functional"]
 
         U --> I --> E
     end
@@ -28,28 +28,30 @@ graph TB
 
 ## Test Suite Overview
 
-| Category | Count | Status |
+| Category | Location | Runs in CI |
 | ---------- | ------- | -------- |
-| **Backend Tests** | 111 | ✅ Passing |
-| **Integration Tests** | 17 | ✅ Passing |
-| **Frontend E2E Tests** | 40 | ✅ Passing (containerized) |
-| **Total Tests** | 168 | ✅ All passing |
-| **Code Coverage** | 97% | ✅ Exceeds target (85%) |
+| **Backend Unit Tests** | `tests/test_client.py`, `tests/test_models.py`, `tests/test_api.py` | ✅ `test.yml` |
+| **Security Tests** | `tests/test_security.py` | ✅ `test.yml` |
+| **Integration Tests** | `tests/test_integration.py` | ✅ `test.yml` (against the built container) |
+| **Benchmarks** | `tests/test_benchmarks.py` | ✅ `performance.yml` (main branch) |
+| **Frontend E2E Tests** | `frontend/tests/e2e/` | ❌ Run locally or in containers |
+
+Current test counts, results, and coverage figures are published in the CI-generated [Test Report](reports/test-report.md) and [Coverage Report](reports/coverage-report.md).
 
 ### Backend Coverage Breakdown
 
-- **Client Tests**: 28 (weather data, parsing, conversions, geolocation)
-- **API Tests**: 33 (endpoints, validation, caching, health checks, coordinates, recent searches)
-- **Models Tests**: 4 (Pydantic validation)
-- **Security Tests**: 46 (input validation, attack prevention, rate limiting)
-- **Coverage**: 97% overall (152 statements, 5 missed)
+- **Client Tests**: weather data, parsing, conversions, geolocation
+- **API Tests**: endpoints, validation, caching, health checks, coordinates, recent searches
+- **Models Tests**: Pydantic validation
+- **Security Tests**: input validation, attack prevention, rate limiting
+- **Coverage**: measured over the `backend` package (`--cov=backend`)
 
 ### Frontend Test Coverage
 
-- **End-to-End Tests**: 40 total (Playwright)
+- **End-to-End Tests**: Playwright
 - **Accessibility Tests**: WCAG 2.1 Level AA compliance
 - **Visual Regression Tests**: Multiple viewports and states
-- **Functional Tests**: Weather search, autocomplete, geolocation
+- **Functional Tests**: Weather search, autocomplete, unit toggle, recent searches
 - **Tool**: Playwright with @axe-core/playwright
 
 ## Quick Start
@@ -62,6 +64,8 @@ graph TB
 pytest
 ```
 
+The default options in `pyproject.toml` deselect tests marked `integration` and collect coverage for `backend`.
+
 #### Run Specific Test Categories
 
 ```bash
@@ -70,17 +74,19 @@ pytest
 
 pytest tests/test_client.py tests/test_models.py tests/test_api.py
 
-# Security tests (46 tests)
+# Security tests
 
 pytest tests/test_security.py -v
 
-# Cache edge case tests (12 tests)
+# Cache tests
 
-pytest tests/test_api.py::test_cache* -v
+pytest tests/test_api.py -k cache -v
 
-# Integration tests (requires running API)
+# Integration tests (requires the app container on http://localhost:8080)
 
-pytest tests/test_integration.py -v
+export APP_SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"  # required by the production compose file
+podman-compose -f infra/compose/podman-compose.yml up -d
+pytest tests/test_integration.py -v --override-ini="addopts="
 ```
 
 #### With Coverage
@@ -89,7 +95,7 @@ pytest tests/test_integration.py -v
 
 # Generate coverage report
 
-pytest --cov=backend --cov=api --cov-report=html
+pytest --cov=backend --cov-report=html
 
 # View report
 
@@ -111,6 +117,7 @@ podman build -f infra/containers/Containerfile.playwright -t msn-weather-playwri
 
 # Start frontend server
 
+podman network create test-net
 podman run -d --name frontend-srv --network test-net -p 3000:3000 \
   -v ./frontend:/app:Z node:24-trixie-slim sh -c "cd /app && npm install && npm run dev -- --hostname 0.0.0.0"
 
@@ -123,9 +130,9 @@ podman run --rm --network test-net \
 
 ### Test Breakdown
 
-### Backend Tests (111 tests)
+### Backend Tests
 
-#### Client Tests (28 tests)
+#### Client Tests
 
 - Weather data fetching
 - Error handling
@@ -134,7 +141,7 @@ podman run --rm --network test-net \
 - Cache functionality
 - Geolocation support
 
-#### Security Tests (46 tests)
+#### Security Tests
 
 - SQL injection prevention
 - XSS attack prevention
@@ -143,14 +150,14 @@ podman run --rm --network test-net \
 - Rate limiting validation
 - Input sanitization
 
-#### Model Tests (4 tests)
+#### Model Tests
 
 - Pydantic model validation
 - Data type enforcement
 - Required fields
 - Optional fields
 
-#### API Tests (33 tests)
+#### API Tests
 
 - Health check endpoints (`/api/v1/health`, `/api/v1/health/live`, `/api/v1/health/ready`)
 - GET request handling
@@ -158,178 +165,119 @@ podman run --rm --network test-net \
 - Error responses
 - CORS configuration
 
-### Security Test Matrix (46 tests)
+### Security Test Matrix
 
-#### Input Validation (9 tests)
+#### Input Validation (`TestInputValidation`)
 
-- ✅ Empty input rejection
+- ✅ Valid input accepted
+- ✅ Whitespace trimming
+- ✅ Empty string rejection
+- ✅ `None` rejection
 - ✅ Whitespace-only rejection
-- ✅ Special character filtering
 - ✅ Length limit enforcement
-- ✅ Type validation
-- ✅ Integer rejection
-- ✅ Boolean rejection
-- ✅ Array rejection
-- ✅ Null value handling
+- ✅ Non-string type rejection
+- ✅ Special character rejection
+- ✅ Unicode city names allowed
 
-#### SQL Injection Prevention (8 tests)
+#### GET Request Security (`TestAPISecurityGET`)
 
-- ✅ Classic injection (`'; DROP TABLE--`)
-- ✅ UNION-based injection
-- ✅ Blind injection
-- ✅ Time-based injection
-- ✅ Comment-based injection
-- ✅ Stacked queries
-- ✅ Boolean-based injection
-- ✅ Error-based injection
+- ✅ SQL injection attempts
+- ✅ XSS attempts
+- ✅ Path traversal attempts
+- ✅ Command injection attempts
+- ✅ Null bytes
+- ✅ Oversized input
+- ✅ Empty parameters
+- ✅ Whitespace-only parameters
 
-#### XSS Prevention (6 tests)
+#### POST Request Security (`TestAPISecurityPOST`)
 
-- ✅ Script tag injection
-- ✅ Event handler injection
-- ✅ JavaScript protocol
-- ✅ Encoded XSS
-- ✅ DOM-based XSS
-- ✅ Reflected XSS
+- ✅ Malformed JSON
+- ✅ Non-string types
+- ✅ SQL injection in JSON
+- ✅ XSS in JSON
+- ✅ Non-object JSON bodies
+- ✅ Oversized JSON values
 
-#### HTTP Error Handlers (21 tests)
+#### HTTP Error Handlers (`TestHTTPErrorHandlers`)
 
-- ✅ 400 Bad Request handling
-- ✅ 401 Unauthorized handling
-- ✅ 403 Forbidden handling
 - ✅ 404 Not Found handling
 - ✅ 405 Method Not Allowed handling
-- ✅ 408 Request Timeout handling
-- ✅ 429 Too Many Requests handling
-- ✅ 500 Internal Server Error handling
-- ✅ 502 Bad Gateway handling
-- ✅ 503 Service Unavailable handling
-- ✅ 504 Gateway Timeout handling
-- ✅ Error response format validation
-- ✅ Error logging verification
-- ✅ Client-side error detection
-- ✅ Server-side error detection
-- ✅ Network error handling
-- ✅ Timeout error handling
-- ✅ Error recovery mechanisms
-- ✅ Error propagation
-- ✅ Error context preservation
-- ✅ Error rate limiting
+- ✅ 413 Payload Too Large handling
+- ✅ 400 Bad Request for missing required fields
+- ✅ 415 Unsupported Media Type handling
+- ✅ Invalid JSON syntax
+- ✅ Content-Type without charset
+- ✅ Empty POST body
+- ✅ Null bytes in input
+- ✅ Very long query strings
+- ✅ Unicode normalization attacks
+- ✅ Header injection attempts
+- ✅ Multiple content types
+- ✅ Case-sensitive endpoints
+- ✅ Trailing slash handling
+- ✅ Double slashes in path
+- ✅ URL encoding in parameters
+- ✅ Repeated parameters
+- ✅ Parameters without values
+- ✅ CORS preflight requests
+- ✅ Response headers present
 
-#### Other Attacks (2 tests)
+#### Rate Limiting (`TestAPIRateLimiting`)
 
-- ✅ Path traversal prevention
-- ✅ Command injection prevention
+- ✅ Multiple valid requests
+- ✅ Multiple invalid requests
 
-### Cache Edge Case Tests (12 tests)
+### Cache Tests
 
-#### Time-To-Live (TTL) Tests (4 tests)
+Located in `tests/test_api.py`:
 
-- ✅ Cache expiration after TTL
-- ✅ Cache freshness before TTL
-- ✅ TTL boundary conditions
-- ✅ TTL with system clock changes
+- ✅ Cache hits within the same time bucket
+- ✅ Cache invalidation across time buckets
+- ✅ Separate cache entries for different locations
+- ✅ Cache size configuration
+- ✅ Cache duration configuration
+- ✅ Zero cache duration
 
-#### Concurrent Access Tests (4 tests)
+### Integration Tests
 
-- ✅ Simultaneous cache reads
-- ✅ Simultaneous cache writes
-- ✅ Read during write operations
-- ✅ Cache lock contention
+Run against the unified container on `http://localhost:8080` (`tests/test_integration.py`).
 
-#### Time Bucket Tests (4 tests)
-
-- ✅ Cache hits within same time bucket
-- ✅ Cache misses across time buckets
-- ✅ Bucket boundary transitions
-- ✅ Multiple time buckets with same location
-
-### Integration Tests (17 tests)
-
-#### API Functionality (4 tests)
+#### API Functionality
 
 - Health check endpoint
-- GET weather endpoint
+- GET weather endpoint (missing and valid parameters)
 - POST weather endpoint
-- Error handling
 
-#### Security Validation (9 tests)
+#### Security Validation
 
 - SQL injection attempts on live API
 - XSS attempts on live API
 - Path traversal attempts on live API
 - Command injection attempts on live API
-- Invalid input rejection
+- Oversized, empty, and whitespace-only input rejection
+- Type confusion and malformed JSON in POST bodies
 
-#### HTTP Features (4 tests)
+#### HTTP and Container Features
 
 - CORS headers
-- Rate limiting
-- Content-Type headers
-- Error response format
+- Multiple concurrent requests
+- Container health check
+- API logs free of errors
 
 ## Test Results
 
-### Latest Test Run
+Test results, per-module coverage, and performance numbers are regenerated by CI on every push to `main` and published under [Reports](reports/index.md):
 
-**Date**: December 2025
-**Environment**: Python 3.12, Podman container
-**Backend Duration**: ~6 seconds
-**Frontend Duration**: ~45 seconds (containerized)
+- [Test Report](reports/test-report.md)
+- [Coverage Report](reports/coverage-report.md)
+- [Performance Report](reports/performance-report.md)
 
-#### Backend Tests (128 passing)
+To produce the same information locally:
 
-```text
-========================= test session starts ==========================
-platform linux -- Python 3.12.3, pytest-9.0.0
-rootdir: /app
-plugins: cov-7.0.0, asyncio-1.0.0, benchmark-4.0.0
-collected 128 items
-
-tests/test_client.py ............................ (28 passed)
-tests/test_models.py .... (4 passed)
-tests/test_api.py ................................. (33 passed)
-tests/test_security.py .............................................. (46 passed)
-tests/test_integration.py ................. (17 passed)
-
-========================== 128 passed in 6.12s ==========================
+```bash
+pytest -v --durations=10
 ```
-
-#### Frontend Tests (40 E2E tests passing)
-
-```text
-Running 40 tests using 1 worker
-  40 passed (45.3s)
-
-✓ tests/e2e/accessibility.spec.ts (13 tests)
-✓ tests/e2e/visual.spec.ts (15 tests)
-✓ tests/e2e/weather.spec.ts (12 tests)
-```
-
-### Coverage Report
-
-| Module | Statements | Missing | Coverage |
-| -------- | ----------- | --------- | ---------- |
-| `backend/msn_weather_wrapper/__init__.py` | 8 | 0 | 100% |
-| `backend/msn_weather_wrapper/client.py` | 145 | 5 | 97% |
-| `backend/msn_weather_wrapper/models.py` | 32 | 0 | 100% |
-| `api.py` | 186 | 0 | 100% |
-| **TOTAL** | **371** | **5** | **97%** |
-
-### Test Performance
-
-| Test Category | Count | Duration | Speed |
-| -------------- | ------- | ---------- | ------- |
-| Client Tests | 28 | 1.2s | ⚡ Fast |
-| Security Tests | 46 | 2.0s | ⚡ Fast |
-| API Tests | 33 | 1.5s | ⚡ Fast |
-| Model Tests | 4 | 0.2s | ⚡ Fast |
-| Integration Tests | 17 | 3.0s | 🔄 Moderate |
-| **Backend Total** | **128** | **~8s** | ✅ Good |
-| Accessibility Tests | 13 | 12.1s | 🔄 Moderate |
-| Visual Regression | 15 | 22.4s | 🐌 Slow |
-| Functional E2E | 12 | 10.8s | 🔄 Moderate |
-| **Frontend Total** | **40** | **~45s** | 🔄 Acceptable |
 
 ## Testing Best Practices
 
@@ -341,8 +289,8 @@ Running 40 tests using 1 worker
 4. Run API tests: `pytest tests/test_api.py`
 5. Run frontend tests: `cd frontend && npm run test:e2e`
 6. Verify linting: `ruff check .`
-7. Run type checks: `mypy backend/`
-8. Quick mutation check: `mutmut run --paths-to-mutate=backend/msn_weather_wrapper/client.py` (optional)
+7. Run type checks: `mypy backend`
+8. Quick mutation check: `mutmut run --paths-to-mutate=backend/client.py` (optional, requires `pip install mutmut`)
 
 ### Writing New Tests
 
@@ -380,13 +328,15 @@ def test_feature_name():
 - `pytest` - Test framework
 - `pytest-cov` - Coverage reporting
 - `pytest-asyncio` - Async test support
-- `mutmut` - Mutation testing (added Phase 3)
+- `pytest-xdist` - Parallel test execution
+- `pytest-benchmark` - Performance benchmarks
+- `mutmut` - Mutation testing (not in the `dev` extras; install separately)
 - `ruff` - Linting and formatting
 - `mypy` - Type checking
 
 **Frontend**:
 
-- `playwright` - E2E testing framework (1.57.0+)
+- `playwright` - E2E testing framework
 - `@axe-core/playwright` - Accessibility testing (added Phase 3)
 - `next` - React framework and dev server (16.x, project standard Node 24+)
 - `typescript` - Type safety
@@ -408,10 +358,10 @@ pre-commit run --all-files
 
 Hooks include:
 
-- Ruff formatting
+- Basic file checks (trailing whitespace, end-of-file, YAML/TOML syntax, large files, merge conflicts)
 - Ruff linting
+- Ruff formatting
 - mypy type checking
-- pytest (fast tests only)
 
 ### GitHub Actions
 
@@ -423,74 +373,73 @@ Automated testing on:
 
 Tests run on:
 
-- Python 3.10, 3.11, 3.12
+- Python 3.10, 3.11, 3.12 (pull requests run 3.12 only)
 - Ubuntu latest
 - Container builds
+
+Frontend E2E tests are not part of the CI pipeline.
 
 ## Frontend Testing
 
 ### Requirements
 
-- **Node.js**: 22.0.0 or higher (project standard)
+- **Node.js**: 24.0.0 or higher (project standard)
 - **Playwright**: version specified in `frontend/package.json`
 - **Browsers**: Chromium (configured in `frontend/playwright.config.ts`; installed automatically by Playwright)
 
 ### E2E Tests (Playwright)
 
-#### Test Categories (40 tests total)
+#### Test Categories
 
-**Accessibility Tests (13 tests)** - WCAG 2.1 Level AA compliance:
+**Accessibility Tests** - WCAG 2.1 Level AA compliance:
 
-- ✅ Page title and language
-- ✅ Heading structure (h1-h6 hierarchy)
-- ✅ ARIA landmarks and labels
-- ✅ Color contrast ratios
+- ✅ Automated axe-core scan of the homepage
+- ✅ ARIA labels on interactive elements
+- ✅ Heading hierarchy
+- ✅ Color contrast
 - ✅ Keyboard navigation
-- ✅ Focus management
-- ✅ Screen reader compatibility
+- ✅ Form labels
 - ✅ Alt text for images
-- ✅ Form labels and error messages
-- ✅ Interactive element roles
-- ✅ Skip navigation links
-- ✅ Consistent page structure
-- ✅ Clear error identification
+- ✅ WCAG 2.1 Level AA rule set
+- ✅ Accessibility after weather data loads
+- ✅ Semantic HTML structure
+- ✅ Accessible error messages
+- ✅ Focus management
+- ✅ Screen reader announcements
 
-**Visual Regression Tests (15 tests)**:
+**Visual Regression Tests**:
 
-- ✅ Header layout and styling
+- ✅ Homepage (default, mobile 375px, tablet 768px, desktop 1920px)
+- ✅ Autocomplete dropdown
+- ✅ Weather results display
+- ✅ Loading state
+- ✅ Error state
+- ✅ Empty state
+- ✅ Focus states
+- ✅ Hover states
+- ✅ Dark mode (skipped when not supported)
+- ✅ Responsive breakpoint transitions (320px to 1920px)
+- ✅ Scrolled state with long content
+- ✅ Animation end states
+
+**Functional E2E Tests**:
+
+- ✅ App header and title
 - ✅ Empty state display
-- ✅ Search form components
-- ✅ Weather card layout (with data)
-- ✅ Temperature display formatting
-- ✅ Weather condition icons
-- ✅ Unit toggle button states
-- ✅ Recent searches list
-- ✅ Error message styling
-- ✅ Loading states
-- ✅ Mobile responsive layout (375px)
-- ✅ Tablet layout (768px)
-- ✅ Desktop layout (1920px)
-- ✅ Dark mode rendering (future)
-- ✅ High contrast mode (future)
-
-**Functional E2E Tests (12 tests)**:
-
-- ✅ Weather search flow (success)
-- ✅ Temperature unit conversion
-- ✅ Recent searches interaction
-- ✅ Error handling (invalid city)
-- ✅ Form validation
-- ✅ City autocomplete selection
-- ✅ Geolocation weather fetch
-- ✅ Loading state display
-- ✅ API error handling
-- ✅ Unit toggle persistence
-- ✅ Empty state display
-- ✅ Keyboard navigation
+- ✅ Search autocomplete input
+- ✅ "Use My Location" button
+- ✅ City search and weather display
+- ✅ Error message on failed request
+- ✅ Celsius/Fahrenheit toggle
+- ✅ Unit preference persistence
+- ✅ Recent searches display
+- ✅ Recent search click-through
+- ✅ Clear recent searches
+- ✅ Mobile viewport layout
 
 #### Running E2E Tests
 
-**Local Development** (requires Node 22+):
+**Local Development** (requires Node 24+):
 
 ```bash
 cd frontend
@@ -521,39 +470,21 @@ npm run test:e2e -- --update-snapshots
 
 ```bash
 
-# Build Playwright test image
+# Start the frontend dev server and run the Playwright suite against it
 
-podman build -f infra/containers/Containerfile.playwright -t playwright-tests:latest .
+podman-compose -f infra/compose/podman-compose.test.yml up --build
 
-# Start frontend dev server
+# Clean up
 
-podman-compose up -d frontend-srv
-
-# Run tests in container (Option 1: Direct)
-
-podman run --rm \
-  --network test-net \
-  -e PLAYWRIGHT_BASE_URL=http://frontend-srv:3000 \
-  -v ./frontend/test-results:/app/test-results:Z \
-  playwright-tests:latest
-
-# Run tests in container (Option 2: Shell)
-
-podman run --rm -it \
-  --network test-net \
-  -e PLAYWRIGHT_BASE_URL=http://frontend-srv:3000 \
-  -v ./frontend/test-results:/app/test-results:Z \
-  playwright-tests:latest /bin/bash
-
-# Inside container:
-
-npm run test:e2e
+podman-compose -f infra/compose/podman-compose.test.yml down
 ```
+
+The compose file defines a `frontend` service (Next.js dev server) and a `playwright` service built from `infra/containers/Containerfile.playwright`. Reports are written to `frontend/playwright-report/` and `frontend/test-results/`.
 
 **Troubleshooting**:
 
-- If `ECONNREFUSED`: Ensure frontend-srv is running (`podman ps`)
-- If tests hang: Check frontend-srv logs (`podman logs frontend-srv`)
+- If `ECONNREFUSED`: Ensure the frontend container is running (`podman ps`)
+- If tests hang: Check frontend logs (`podman logs frontend-test-server`)
 - If visual diffs fail: Update baselines with `--update-snapshots`
 - If accessibility failures: Check browser console for axe-core violations
 
@@ -569,11 +500,8 @@ npm run test:e2e
 
 #### Multi-Browser Testing
 
-- ✅ Chromium (Desktop Chrome, version 143+)
-- ✅ Firefox (Desktop Firefox)
-- ✅ WebKit (Desktop Safari)
-- ✅ Mobile Chrome (Pixel 5 emulation)
-- ✅ Mobile Safari (iPhone 12 emulation)
+- ✅ Chromium (Desktop Chrome) - the only project configured in `frontend/playwright.config.ts`
+- Firefox, WebKit, and mobile emulation projects are not configured
 
 ## Mutation Testing
 
@@ -583,11 +511,9 @@ Mutation testing validates test quality by introducing small code changes (mutat
 
 ### Current Statistics
 
-- **Tool**: mutmut 3.4.0
-- **Mutants Generated**: 30
-- **Mutants Killed**: 23
-- **Kill Rate**: 77% (target: 80%+)
-- **Survived Mutants**: 7 (require additional tests)
+- **Tool**: mutmut (install separately with `pip install mutmut`; it is not part of the `dev` extras)
+- **Target Kill Rate**: 80%+
+- Mutation testing is not run in CI, so no current statistics are published
 
 ### Running Mutation Tests
 
@@ -614,7 +540,7 @@ mutmut show survived
 
 # Test subset of mutations
 
-mutmut run --paths-to-mutate=backend/msn_weather_wrapper/client.py
+mutmut run --paths-to-mutate=backend/client.py
 
 # View specific mutation details
 
@@ -637,8 +563,9 @@ Located in `pyproject.toml`:
 
 ```toml
 [tool.mutmut]
-paths_to_mutate = "backend/msn_weather_wrapper/"
-runner = "pytest"
+paths_to_mutate = "backend/"
+backup = false
+runner = "pytest -x --tb=no -q"
 tests_dir = "tests/"
 ```
 
@@ -661,22 +588,33 @@ tests_dir = "tests/"
 
 ### Load Testing
 
+Load tests run in CI on pushes to `main` (`.github/workflows/performance.yml`). The workflow starts the API with Gunicorn, generates a Locust file inline, and runs it headless. To do something similar locally:
+
 ```bash
 
 # Install locust
 
 pip install locust
 
-# Run load test
+# Start the API
 
-locust -f tests/load_test.py
+uvicorn backend.api.main:app --port 5000
+
+# Run a load test with your own locustfile
+
+locust -f locustfile.py --host=http://localhost:5000
+```
+
+### Benchmarks
+
+```bash
+pytest tests/test_benchmarks.py --benchmark-only
 ```
 
 ### Benchmark Results
 
-- **Cached requests**: < 10ms response time
-- **Uncached requests**: 500-1500ms (depends on MSN Weather)
-- **Concurrent users**: 50+ without degradation
+Current load-test and benchmark numbers are published in the [Performance Report](reports/performance-report.md).
+
 - **Rate limit**: 30 req/min per IP, 200/hr global
 
 ## Troubleshooting Tests
@@ -696,10 +634,11 @@ pip install -e ".[dev]"
 
 ```bash
 
-# Solution: Ensure API is running
+# Solution: Ensure the app container is running on port 8080
 
-python api.py  # Terminal 1
-pytest tests/test_integration.py  # Terminal 2
+export APP_SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"  # required by the production compose file
+podman-compose -f infra/compose/podman-compose.yml up -d
+pytest tests/test_integration.py --override-ini="addopts="
 ```
 
 **Issue**: E2E tests fail
@@ -748,37 +687,37 @@ pytest --durations=10
 
 ## Test Coverage Goals
 
-### Current Coverage: 97%
+### Current Coverage
 
-- ✅ All critical paths covered
-- ✅ Security validation covered (46 tests)
+See the CI-generated [Coverage Report](reports/coverage-report.md) for current figures.
+
+- ✅ Security validation covered
 - ✅ Error handling covered
 - ✅ API endpoints covered
-- ✅ Accessibility compliance (WCAG 2.1 AA)
-- ✅ Visual regression baselines (15 scenarios)
+- ✅ Accessibility checks (WCAG 2.1 AA)
+- ✅ Visual regression scenarios
 
-### Missing Coverage (3%)
+### Typically Uncovered
 
 - Some edge cases in error recovery
 - Optional geolocation features
 - Logging statements
 - Rare network timeout scenarios
 
-### Target: Maintain 97%+
+### Target
 
 Coverage goals by module:
 
-- `client.py`: ≥ 95% (achieved: 97%)
-- `models.py`: 100% (achieved: 100%)
-- `api.py`: ≥ 95% (achieved: 100%)
-- Overall: ≥ 95% (achieved: 97%)
+- `backend/client.py`: ≥ 95%
+- `backend/models.py`: 100%
+- `backend/api/`: ≥ 95%
+- Overall: ≥ 95%
 
 ### Quality Metrics
 
-- **Test Count**: 168 (128 backend, 40 frontend)
-- **Accessibility**: WCAG 2.1 Level AA compliant
-- **Security Tests**: 46 (covers common attack vectors)
-- **Integration Tests**: 17 (containerized API testing)
+- **Accessibility**: WCAG 2.1 Level AA checks
+- **Security Tests**: cover common attack vectors
+- **Integration Tests**: containerized API testing
 
 ## Test Data
 
@@ -794,9 +733,9 @@ TEST_CITIES = [
 ]
 ```
 
-### Mock Responses
+### Fixtures
 
-Located in `tests/fixtures/` for consistent testing.
+Shared pytest fixtures and test environment variables live in `tests/conftest.py`; mock responses are defined inline in the test modules.
 
 ## Reporting Issues
 
@@ -822,27 +761,27 @@ When tests fail:
 
 ### Frontend Testing Limitations
 
-- **Node.js Version**: Project standard is Node 22+ as specified in `frontend/.nvmrc` and `package.json`
+- **Node.js Version**: Project standard is Node 24+ as specified by `engines` in `frontend/package.json`
   - **Solution**: Use containerized testing with `infra/containers/Containerfile.playwright`
 
 - **Visual Baselines**: Not yet established (requires manual review and approval)
   - **Impact**: Visual regression tests will fail until baselines are updated
   - **Action**: Run `npm run test:e2e -- --update-snapshots` after manual verification
 
-- **Backend Dependency**: 28 of 40 E2E tests require running backend API
-  - **Workaround**: 11 tests cover UI rendering and accessibility without backend
+- **Backend Dependency**: Many E2E tests require running backend API
+  - **Workaround**: The remaining tests cover UI rendering and accessibility without backend
   - **Full Test**: Start backend API before running complete E2E suite
 
 ### Mutation Testing Limitations
 
-- **Kill Rate**: 77% (below 80% target)
-  - **Survived Mutants**: 7 mutations not caught by current tests
+- **Kill Rate**: Not tracked in CI (target: 80%+)
+  - **Survived Mutants**: Not caught by current tests
   - **Impact**: Some code paths may have weak test coverage
   - **Action**: Add tests for survived mutations (visible with `mutmut show survived`)
 
 ### Coverage Gaps
 
-- **8% Uncovered**: Primarily edge cases and error recovery paths
+- **Uncovered Code**: Primarily edge cases and error recovery paths
   - **Risk**: Low (uncovered code is non-critical)
   - **Priority**: Medium (address in future phases)
 
@@ -850,7 +789,7 @@ When tests fail:
 
 ### Phase 4 Candidates
 
-1. **Improve Mutation Kill Rate**: Add tests for 7 survived mutations (target: 80%+)
+1. **Improve Mutation Kill Rate**: Add tests for survived mutations (target: 80%+)
 2. **Establish Visual Baselines**: Review and approve Playwright snapshots
 3. **Add Performance Tests**: Load testing, stress testing, benchmark comparisons
 4. **Expand Browser Coverage**: Add Edge, older browser versions
@@ -867,8 +806,6 @@ When tests fail:
 - Internationalization (i18n) testing
 
 ---
-
-Last updated: December 2025
 
 ## 🤖 End-to-End Workflow Automation Test
 

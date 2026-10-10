@@ -47,7 +47,7 @@ After the first manual upload:
    - **Owner**: Your GitHub username
    - **Repository name**: `msn-weather-wrapper`
    - **Workflow name**: `publish-release.yml`
-   - **Environment name**: Leave blank (or use `pypi`)
+   - **Environment name**: `pypi` (the environment used by `publish-release.yml`)
 5. Click **Add**
 
 **IMPORTANT:** The pending publisher must be confirmed from PyPI before the first automated release!
@@ -88,7 +88,7 @@ Use conventional commit prefixes in PR titles for automatic version bumping:
 | `feat:` | New Feature | Minor (0.X.0) | `feat: add weather alerts` |
 | `fix:` | Bug Fix | Patch (0.0.X) | `fix: correct temp parsing` |
 | `feat!:` | Breaking Feature | Major (X.0.0) | `feat!: redesign API` |
-| `fix!:` | Breaking Fix | Major (X.0.0) | `fix!: change response format` |
+| `breaking!:` | Breaking Change | Major (X.0.0) | `breaking!: change response format` |
 | `docs:` | Documentation | Patch (0.0.X) | `docs: update README` |
 | `chore:` | Maintenance | Patch (0.0.X) | `chore: update deps` |
 
@@ -255,7 +255,7 @@ gh run list --workflow publish-release.yml
 - [PyPI Documentation](https://pypi.org/help/)
 - [Trusted Publishing Guide](https://docs.pypi.org/trusted-publishers/)
 - [Python Packaging Guide](https://packaging.python.org/)
-- [setuptools Documentation](https://setuptools.pypa.io/)
+- [Hatch Documentation](https://hatch.pypa.io/)
 - [twine Documentation](https://twine.readthedocs.io/)
 
 ---

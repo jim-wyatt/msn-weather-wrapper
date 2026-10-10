@@ -8,18 +8,22 @@ version = "2.0.12"
 description = "A production-ready Python wrapper for MSN Weather with a FastAPI backend and CI/CD"
 readme = "README.md"
 requires-python = ">=3.10"
-license = {text = "MIT"}
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["weather", "msn", "fastapi", "api-wrapper", "scraper"]
 authors = [
     {name = "Jim Wyatt", email = "the.jim.wyatt@outlook.com"}
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
+    "Framework :: FastAPI",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Atmospheric Science",
+    "Typing :: Typed",
 ]
 dependencies = [
     "requests>=2.32.0",
@@ -61,7 +65,9 @@ dev = [
 
 [project.urls]
 Homepage = "https://github.com/jim-wyatt/msn-weather-wrapper"
+Documentation = "https://jim-wyatt.github.io/msn-weather-wrapper/"
 Repository = "https://github.com/jim-wyatt/msn-weather-wrapper"
+Changelog = "https://github.com/jim-wyatt/msn-weather-wrapper/blob/main/CHANGELOG.md"
 Issues = "https://github.com/jim-wyatt/msn-weather-wrapper/issues"
 
 [tool.hatch.build.targets.wheel]

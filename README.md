@@ -19,15 +19,15 @@ MSN Weather Wrapper is a comprehensive weather data solution featuring:
 
 - **Python Library** - Type-safe weather client with Pydantic models
 - **REST API** - Production-ready FastAPI service with built-in OpenAPI docs
-- **Web Frontend** - Modern Next.js 16 + React 19 + TypeScript 6
+- **Web Frontend** - Modern Next.js 16 + React 19 + TypeScript
 - **Containerized** - Podman/Docker deployment with Gunicorn, Uvicorn workers, and Nginx
 
 **Technology Stack:**
 
 - **Backend**: Python 3.10+, FastAPI 0.115+, Pydantic 2.12+, Uvicorn, Gunicorn 23.0+
-- **Frontend**: Next.js 16, React 19.2, TypeScript 6+
-- **Testing**: pytest 9.0+, Playwright, 168 tests (128 backend, 40 frontend E2E) with 97% coverage
-- **Quality**: ruff 0.14+, mypy 1.19+, pre-commit hooks
+- **Frontend**: Next.js 16, React 19, TypeScript
+- **Testing**: pytest and Playwright (unit, security, integration, accessibility, and end-to-end suites)
+- **Quality**: ruff, mypy (strict), pre-commit hooks
 - **Security**: Bandit, Semgrep, pip-audit, Trivy, Grype, weekly automated scans
 - **Deployment**: Podman/Docker, Nginx, multi-stage builds
 
@@ -40,9 +40,13 @@ MSN Weather Wrapper is a comprehensive weather data solution featuring:
 ```bash
 git clone https://github.com/jim-wyatt/msn-weather-wrapper.git
 cd msn-weather-wrapper
-podman-compose up -d
+export APP_SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
+podman-compose -f infra/compose/podman-compose.yml up -d
 # Access at http://localhost:8080
 ```
+
+A prebuilt image is also published to
+[GitHub Container Registry](https://github.com/jim-wyatt/msn-weather-wrapper/pkgs/container/msn-weather-wrapper).
 
 ### 📦 Python Package
 
@@ -51,13 +55,16 @@ pip install msn-weather-wrapper
 ```
 
 ```python
-from msn_weather_wrapper import WeatherClient, Location
+from backend import WeatherClient, Location
 
 with WeatherClient() as client:
     location = Location(city="London", country="UK")
     weather = client.get_weather(location)
     print(f"Temperature: {weather.temperature}°C")
 ```
+
+> **Note:** the distribution is named `msn-weather-wrapper`, but the importable
+> package is currently `backend`.
 
 ### 🧪 Development Environment
 
@@ -74,7 +81,7 @@ with WeatherClient() as client:
 
 If you're learning the codebase, explore it in this order:
 
-1. `backend/msn_weather_wrapper/` — backend logic and the FastAPI app
+1. `backend/` — the weather client, models, and the FastAPI app (`backend/api/`)
 2. `frontend/` — the Next.js UI
 3. `tests/` — examples of expected behavior
 4. `scripts/` — helper commands for setup, reports, and deployment tasks
@@ -88,8 +95,8 @@ If you're learning the codebase, explore it in this order:
 - 🌤️ Weather data extraction from MSN Weather
 - 🌍 463+ cities worldwide with autocomplete
 - 🔌 RESTful API with comprehensive validation
-- 📚 **Interactive API docs** (Swagger UI at `/apidocs/`)
-- ⚛️ Modern web interface with React + TypeScript
+- 📚 **Interactive API docs** (Swagger UI at `/apidocs`)
+- ⚛️ Modern web interface with Next.js, React, and TypeScript
 - 🚀 5-minute caching (90%+ faster repeated requests)
 - 🔒 Rate limiting (30 req/min per IP, 200/hr global)
 - 🛡️ Input validation & attack prevention (SQL injection, XSS, etc.)
@@ -99,7 +106,7 @@ If you're learning the codebase, explore it in this order:
 - ♿ WCAG 2.1 Level AA accessible frontend
 - 🔄 **Modular CI/CD workflows** - Reusable, maintainable architecture
 - 🔄 **Optimized CI/CD** with Docker caching & conditional matrices
-- 🏷️ **Automated semantic versioning** - Every PR auto-publishes to PyPI
+- 🏷️ **Automated semantic versioning** - Merged PRs are versioned and published to PyPI automatically
 
 ---
 
@@ -129,7 +136,7 @@ pre-commit install
 ### Python Library
 
 ```python
-from msn_weather_wrapper import WeatherClient, Location
+from backend import WeatherClient, Location
 
 with WeatherClient() as client:
     location = Location(city="Seattle", country="USA")
@@ -144,16 +151,16 @@ with WeatherClient() as client:
 
 ```bash
 # Development
-python api.py
+APP_ENV=development uvicorn backend.api.main:app --reload --port 5000
 
-# Production
-gunicorn -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:5000 --workers 4 --timeout 120 api:app
+# Production (APP_SECRET_KEY is required)
+gunicorn -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:5000 --workers 4 --timeout 120 backend.api.main:app
 
 # GET request
-curl "http://localhost:5000/api/weather?city=London&country=UK"
+curl "http://localhost:5000/api/v1/weather?city=London&country=UK"
 
 # POST request
-curl -X POST http://localhost:5000/api/weather \
+curl -X POST http://localhost:5000/api/v1/weather \
   -H "Content-Type: application/json" \
   -d '{"city": "London", "country": "UK"}'
 ```
@@ -182,7 +189,7 @@ npm run dev  # http://localhost:3000
 # Code Quality
 ruff format .                    # Format
 ruff check .                     # Lint
-mypy backend/msn_weather_wrapper     # Type check
+mypy backend                     # Type check
 pre-commit run --all-files       # Run all checks
 
 # Testing
@@ -196,15 +203,21 @@ pytest tests/test_client.py -v   # Specific file
 ## Deployment
 
 ```bash
+export APP_SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
+
 # Podman/Docker Compose
-podman-compose up -d
-podman-compose logs -f
-podman-compose down
+podman-compose -f infra/compose/podman-compose.yml up -d
+podman-compose -f infra/compose/podman-compose.yml logs -f
+podman-compose -f infra/compose/podman-compose.yml down
 
 # Standalone Container
-podman build -t msn-weather-wrapper .
-podman run -p 8080:80 msn-weather-wrapper
+podman build -t msn-weather-wrapper -f infra/containers/Containerfile .
+podman run -p 8080:80 -e APP_SECRET_KEY msn-weather-wrapper
 ```
+
+`APP_SECRET_KEY` must be supplied at runtime in production. Set `CORS_ORIGINS` to a
+comma-separated list of explicit origins if the API is called cross-origin; see
+[.env.example](.env.example) for all settings.
 
 **Architecture:** Unified container (Python + Node.js), Nginx reverse proxy, Gunicorn with Uvicorn workers, and Kubernetes-ready health checks
 
@@ -228,17 +241,16 @@ podman run -p 8080:80 msn-weather-wrapper
 
 ```text
 msn-weather-wrapper/
-├── backend/msn_weather_wrapper/
+├── backend/
 │   ├── api/                    # FastAPI app (main, routers, services, schemas)
 │   ├── client.py               # Core MSN weather client
 │   ├── models.py               # Shared Pydantic models
 │   └── exceptions.py           # Domain exceptions
-├── frontend/                   # React application
+├── frontend/                   # Next.js application
 ├── tests/                      # Backend and integration tests
 ├── scripts/                    # Dev, reporting, and deployment helpers
 ├── infra/                      # Containers, compose files, and runtime config
 ├── docs/                       # Docs and beginner walkthroughs
-├── api.py                      # Local API entrypoint
 ├── dev.sh                      # Thin wrapper around `scripts/dev.sh`
 └── pyproject.toml              # Python project configuration
 ```
@@ -255,7 +267,9 @@ Contributions are welcome! Please ensure:
 4. 🪝 Pre-commit hooks pass
 5. 📝 Documentation is updated
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines and the
+[Code of Conduct](CODE_OF_CONDUCT.md). To report a vulnerability, follow the
+[security policy](.github/SECURITY.md) rather than opening a public issue.
 
 ---
 
@@ -270,12 +284,12 @@ MIT License - see [LICENSE](LICENSE) for details.
 - 📖 [Documentation](https://jim-wyatt.github.io/msn-weather-wrapper/)
 - 📦 [PyPI Package](https://pypi.org/project/msn-weather-wrapper/)
 - 🐛 [Issue Tracker](https://github.com/jim-wyatt/msn-weather-wrapper/issues)
-- 💬 [Discussions](https://github.com/jim-wyatt/msn-weather-wrapper/discussions)
+- 🔒 [Security Policy](.github/SECURITY.md)
 
 ---
 
 ## Disclaimer
 
-This project is an unofficial wrapper for MSN Weather data and is provided for educational and personal use only. This software is not affiliated with, endorsed by, or officially connected to Microsoft Corporation or MSN Weather in any way.
+This project is an unofficial wrapper for MSN Weather data and is provided for educational and personal use only. It works by parsing public MSN Weather pages, so it can break without notice when the upstream site changes, and you are responsible for complying with the upstream terms of use. This software is not affiliated with, endorsed by, or officially connected to Microsoft Corporation or MSN Weather in any way.
 
 ---

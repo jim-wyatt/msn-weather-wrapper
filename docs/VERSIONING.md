@@ -7,10 +7,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/).
 **The project uses automated PR-based versioning** where every merged pull request automatically increments the version and publishes to PyPI. See [AUTOMATED_VERSIONING.md](AUTOMATED_VERSIONING.md) for the complete guide.
 
 **Quick summary:**
-- PR labels, title, or branch prefix determine version bump type
-- Major (breaking changes): `major`, `breaking` labels or `feat!:` title
-- Minor (new features): `minor`, `feature` labels or `feat:` title
-- Patch (bug fixes): `patch`, `fix` labels or `fix:` title (default)
+- The merged PR's title determines version bump type
+- Major (breaking changes): `feat!:` title
+- Minor (new features): `feat:` title
+- Patch (bug fixes): `fix:` title (default)
 
 ## Manual Release Process (Alternative)
 
@@ -35,22 +35,20 @@ MAJOR.MINOR.PATCH[-PRERELEASE][+BUILD]
 The project uses automated PR-based versioning. When a PR is merged to main:
 
 1. **Auto-Version Workflow Triggers**
-   - `auto-version-release.yml` automatically runs
-   - Determines version bump from PR labels, title, or branch prefix
+   - `ci.yml` dispatches `auto-version-release.yml` after a successful run on main
+   - Determines version bump from the PR title
 
 2. **Version Bump PR Created**
    - The workflow creates a PR with version updates
-   - Updates `pyproject.toml` and `CHANGELOG.md`
+   - Updates `pyproject.toml` and `backend/__init__.py`
    - Auto-merge is enabled
 
 3. **Automatic Tag Creation**
    - When the version bump PR merges, a git tag is created (e.g., `v1.2.3`)
 
-4. **CI/CD Pipeline Runs Automatically**
+4. **Publish Workflow Runs Automatically** (`publish-release.yml`)
    - Build Python package
    - Publish to PyPI
-   - Build container images
-   - Generate SBOM
    - Create GitHub Release with artifacts
 
 See [AUTOMATED_VERSIONING.md](AUTOMATED_VERSIONING.md) for complete details.
@@ -67,6 +65,8 @@ Edit `pyproject.toml`:
 [project]
 version = "1.2.3"  # Update this line
 ```
+
+Also update `__version__` in `backend/__init__.py` to the same value.
 
 ### 2. Update Changelog
 
@@ -91,7 +91,7 @@ Edit `CHANGELOG.md` following [Keep a Changelog](https://keepachangelog.com/):
 ### 3. Commit Changes
 
 ```bash
-git add pyproject.toml CHANGELOG.md
+git add pyproject.toml backend/__init__.py CHANGELOG.md
 git commit -m "chore: bump version to 1.2.3"
 git push origin main
 ```
@@ -110,18 +110,20 @@ git push origin v1.2.3
 
 ### 5. Automated CI/CD Pipeline
 
-The CI/CD pipeline will automatically:
+Pushing the tag triggers two workflows:
 
-1. **Validate version** - Verifies tag matches `pyproject.toml`
-2. **Run tests** - Ensures all tests pass
-3. **Build package** - Creates wheel and source distribution
-4. **Publish to PyPI** - Uploads package automatically
-5. **Build containers** - Creates multi-platform images with semantic version tags:
-   - `ghcr.io/owner/repo:1.2.3` (exact version)
-   - `ghcr.io/owner/repo:1.2` (minor version)
-   - `ghcr.io/owner/repo:1` (major version)
-   - `ghcr.io/owner/repo:latest` (if not a prerelease)
-6. **Create GitHub Release** - Publishes release with artifacts
+1. **`publish-release.yml`**
+   - **Set version** - Writes the tag version into `pyproject.toml` for the build
+   - **Build package** - Creates wheel and source distribution
+   - **Check package** - Runs `twine check`
+   - **Publish to PyPI** - Uploads package automatically (trusted publishing)
+   - **Create GitHub Release** - Publishes release with artifacts
+2. **`ci.yml`**
+   - **Run tests** - Tests and security scans
+   - **Build containers** - Pushes the image with semantic version tags:
+     - `ghcr.io/owner/repo:1.2.3` (exact version)
+     - `ghcr.io/owner/repo:1.2` (minor version)
+     - `ghcr.io/owner/repo:1` (major version)
 
 ## Version Increment Guidelines
 
@@ -140,14 +142,14 @@ Increment when making **breaking changes**:
 
 ```python
 # Before (v1.x.x)
-@app.route("/weather/<city>")
-def get_weather(city):
+@router.get("/weather/{city}")
+def get_weather(city: str):
     return {"city": city, "temp": 20}
 
 
 # After (v2.0.0) - Breaking change: response format changed
-@app.route("/weather/<city>")
-def get_weather(city):
+@router.get("/weather/{city}")
+def get_weather(city: str):
     return {"location": {"name": city}, "current": {"temperature": 20}}
 ```
 
@@ -166,8 +168,8 @@ Increment when adding **new features** (backward compatible):
 
 ```python
 # v1.1.0 - Added new optional parameter
-@app.route("/weather/<city>")
-def get_weather(city, units="metric"):  # New optional parameter
+@router.get("/weather/{city}")
+def get_weather(city: str, units: str = "metric"):  # New optional parameter
     return {"city": city, "temp": 20, "units": units}
 ```
 
@@ -185,8 +187,8 @@ Increment when fixing **bugs** (backward compatible):
 
 ```python
 # v1.0.1 - Bug fix
-@app.route("/weather/<city>")
-def get_weather(city):
+@router.get("/weather/{city}")
+def get_weather(city: str):
     city = city.strip()  # Fix: handle whitespace in city names
     return {"city": city, "temp": 20}
 ```
@@ -230,14 +232,14 @@ git tag -a v1.2.0-rc.1 -m "Release candidate 1 for v1.2.0"
 
 ## Container Image Tags
 
-The Docker workflow automatically creates multiple tags:
+The build workflow (`build.yml`) creates multiple tags:
 
 | Tag Pattern | Example | Purpose |
 |-------------|---------|---------|
 | `X.Y.Z` | `1.2.3` | Exact version (immutable) |
 | `X.Y` | `1.2` | Latest patch in minor version |
 | `X` | `1` | Latest minor in major version |
-| `latest` | `latest` | Latest stable release |
+| `latest` | `latest` | Latest build from `main` |
 | `X.Y.Z-alpha.N` | `1.2.0-alpha.1` | Alpha prerelease |
 | `X.Y.Z-beta.N` | `1.2.0-beta.1` | Beta prerelease |
 | `X.Y.Z-rc.N` | `1.2.0-rc.1` | Release candidate |
@@ -254,7 +256,7 @@ docker pull ghcr.io/owner/msn-weather-wrapper:1.2
 # Use latest minor version (auto-updates with new features)
 docker pull ghcr.io/owner/msn-weather-wrapper:1
 
-# Use latest stable (not recommended for production)
+# Use latest build from main (not recommended for production)
 docker pull ghcr.io/owner/msn-weather-wrapper:latest
 
 # Test prerelease
@@ -265,25 +267,9 @@ docker pull ghcr.io/owner/msn-weather-wrapper:1.2.0-rc.1
 
 Packages are automatically published to PyPI on tagged releases.
 
-### Required Secret
+### Trusted Publishing
 
-Configure the `PYPI_TOKEN` secret in your repository:
-
-1. Go to **Settings** → **Secrets and variables** → **Actions**
-2. Click **New repository secret**
-3. Name: `PYPI_TOKEN`
-4. Value: Your PyPI API token
-5. Click **Add secret**
-
-### Getting a PyPI Token
-
-1. Go to [PyPI Account Settings](https://pypi.org/manage/account/)
-2. Scroll to **API tokens**
-3. Click **Add API token**
-4. Name: `msn-weather-wrapper-github-actions`
-5. Scope: **Project: msn-weather-wrapper** (after first manual upload) or **Entire account**
-6. Click **Add token**
-7. Copy the token (starts with `pypi-`)
+Publishing uses PyPI trusted publishing (OIDC) through the `pypi` environment in `publish-release.yml`. No `PYPI_TOKEN` secret is used. See [PYPI_SETUP.md](PYPI_SETUP.md) for how to configure the trusted publisher.
 
 ### First Release Setup
 
@@ -301,49 +287,24 @@ After the first manual upload, all subsequent releases will be automated.
 
 ## Version Validation
 
-The CI/CD pipeline validates:
+The release workflows rely on:
 
-1. **Tag format** - Must match `vX.Y.Z` or `vX.Y.Z-prerelease.N`
-2. **Version consistency** - Tag must match `pyproject.toml` version
-3. **Semantic versioning** - Follows semver rules
-4. **Unique version** - Version doesn't exist on PyPI
-
-If validation fails, the release is aborted with a clear error message.
+1. **Tag format** - `publish-release.yml` and `ci.yml` trigger on tags matching `v*.*.*`
+2. **Version from tag** - The package version is taken from the tag, not validated against `pyproject.toml`
+3. **Package check** - `twine check` must pass
+4. **Unique version** - PyPI rejects a version that already exists
 
 ## Troubleshooting
 
-### Version Mismatch Error
+### Version Mismatch
 
-```
-Error: Version mismatch!
-Git tag: v1.2.3
-pyproject.toml: 1.2.2
-Please update pyproject.toml version to match the tag
-```
-
-**Solution:** Update `pyproject.toml` to match the tag:
-
-```bash
-# Fix the version
-vim pyproject.toml  # Change version to 1.2.3
-
-# Amend the commit
-git add pyproject.toml
-git commit --amend --no-edit
-git push origin main --force
-
-# Delete and recreate the tag
-git tag -d v1.2.3
-git push origin :refs/tags/v1.2.3
-git tag -a v1.2.3 -m "Release version 1.2.3"
-git push origin v1.2.3
-```
+The publish workflow overwrites the version in `pyproject.toml` with the tag version at build time, so a mismatch does not abort the release. `__version__` in `backend/__init__.py` is not rewritten, so keep it in sync with the tag when releasing manually.
 
 ### PyPI Upload Fails
 
 **Check:**
 
-1. Is `PYPI_TOKEN` configured correctly?
+1. Is the PyPI trusted publisher configured correctly?
 2. Does the version already exist on PyPI?
 3. Is the package name available?
 
@@ -366,7 +327,7 @@ python -m twine upload --repository testpypi dist/*
 
 1. Does the infra/containers/Containerfile exist?
 2. Are there syntax errors in the infra/containers/Containerfile?
-3. Check the Docker workflow logs for details
+3. Check the `build.yml` job logs for details
 
 ## Best Practices
 
@@ -384,7 +345,7 @@ python -m twine upload --repository testpypi dist/*
 
 ```bash
 # 1. Fix the bug
-vim backend/msn_weather_wrapper/client.py
+vim backend/client.py
 
 # 2. Update version
 vim pyproject.toml  # 1.0.0 → 1.0.1
@@ -408,7 +369,7 @@ git push origin v1.0.1
 
 ```bash
 # 1. Implement feature
-vim backend/msn_weather_wrapper/client.py
+vim backend/client.py
 
 # 2. Update version
 vim pyproject.toml  # 1.0.1 → 1.1.0
@@ -432,7 +393,7 @@ git push origin v1.1.0
 
 ```bash
 # 1. Implement breaking changes
-vim backend/msn_weather_wrapper/client.py
+vim backend/client.py
 
 # 2. Update version
 vim pyproject.toml  # 1.1.0 → 2.0.0

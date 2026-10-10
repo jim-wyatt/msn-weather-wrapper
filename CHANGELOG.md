@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `CORS_ORIGINS=*` is rejected at startup. List explicit origins (comma-separated), or leave it unset for same-origin deployments. The image no longer defaults to `*`
   - Nginx no longer reflects the request `Origin` or answers preflights itself; CORS is handled only by FastAPI, so cross-origin callers must be listed in `CORS_ORIGINS`
 
+### Documentation
+- Corrected the README, contributor guide, and docs site to match the current layout: the importable package is `backend`, the ASGI app is `backend.api.main:app`, routes live under `/api/v1/`, and compose files and Containerfiles live under `infra/`
+- Removed stale test counts, coverage figures, and references to files and workflows that no longer exist
+- Refreshed the security policy, CODEOWNERS, package metadata, pre-commit hook versions, and Dependabot grouping
+
 ### Security
 - Updated Next.js to 16.4 and refreshed transitive frontend dependencies (`sharp`, `postcss`, `nanoid`, `baseline-browser-mapping`) to clear outstanding advisories
 - Updated the pinned `pip` in the container image to 26.2.1

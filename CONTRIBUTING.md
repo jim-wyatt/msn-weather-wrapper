@@ -143,7 +143,7 @@ ruff format .
 ruff check .
 
 # Type check
-mypy backend/msn_weather_wrapper
+mypy backend
 
 # Security scan
 bandit -r backend/
@@ -166,7 +166,7 @@ pre-commit run --all-files
 cd frontend
 
 # Type check
-npm run lint
+npm run type-check
 
 # Build check
 npm run build
@@ -186,9 +186,11 @@ pytest tests/test_client.py tests/test_models.py
 # Security tests
 pytest tests/test_security.py -v
 
-# Integration tests (requires running containers)
-podman-compose up -d
-pytest tests/test_integration.py -v
+# Integration tests (requires the app container on http://localhost:8080;
+# the default pytest options deselect them, hence the override)
+export APP_SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"  # required by the production compose file
+podman-compose -f infra/compose/podman-compose.yml up -d
+pytest tests/test_integration.py -v --override-ini="addopts="
 
 # With coverage
 pytest --cov=backend --cov-report=html
@@ -197,7 +199,7 @@ pytest --cov=backend --cov-report=html
 ### Writing Tests
 
 - **Write tests for all new features**
-- **Maintain or improve test coverage** (currently 97%)
+- **Maintain or improve test coverage**
 - **Include edge cases** and error conditions
 - **Use descriptive test names** that explain what is being tested
 - **Follow the AAA pattern**: Arrange, Act, Assert
@@ -220,7 +222,7 @@ def test_temperature_conversion():
 ### Test Categories
 
 - **Unit tests**: Fast tests with no external dependencies
-- **Integration tests**: Tests that interact with the API
+- **Integration tests**: Tests that interact with the containerized API
 - **Security tests**: Validation of input sanitization and security features
 
 ## Pull Request Process
@@ -376,7 +378,7 @@ pre-commit run --all-files  # Fix all issues at once
 
 **Type errors with mypy**:
 ```bash
-mypy backend/msn_weather_wrapper --show-error-codes
+mypy backend --show-error-codes
 ```
 
 ## Questions?

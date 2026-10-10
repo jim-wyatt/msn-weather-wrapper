@@ -4,7 +4,7 @@ A modern Next.js frontend for the MSN Weather Wrapper API.
 
 ## Features
 
-- 🔍 **Smart City Autocomplete** - Instant search through 463+ cities worldwide
+- 🔍 **Smart City Autocomplete** - Instant search through hundreds of cities worldwide
 - 🎨 **Beautiful UI** - Modern gradient design with smooth animations
 - 📱 **Fully Responsive** - Perfect on desktop, tablet, and mobile
 - ⚡ **Lightning Fast** - Powered by Next.js App Router with server-side rendering
@@ -78,7 +78,7 @@ frontend/
 │   │   ├── CityAutocomplete.tsx
 │   │   └── CityAutocomplete.css
 │   └── data/
-│       └── cities.ts    # Static city list (463 cities)
+│       └── cities.ts    # Static city list
 ├── public/              # Static assets (SVG, manifest)
 ├── tests/e2e/           # Playwright browser tests
 ├── next.config.ts       # Next.js configuration (rewrites, standalone output)

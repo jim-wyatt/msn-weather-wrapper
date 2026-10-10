@@ -2,13 +2,12 @@
 
 ## Supported Versions
 
-We release patches for security vulnerabilities for the following versions:
+Security fixes are released for the latest 2.x release only:
 
 | Version | Supported          |
 | ------- | ------------------ |
 | 2.x.x   | :white_check_mark: |
-| 1.x.x   | :white_check_mark: |
-| < 1.0   | :x:                |
+| < 2.0   | :x:                |
 
 ## Reporting a Vulnerability
 
@@ -73,7 +72,9 @@ This project implements several security measures:
 ### Automated Security Scanning
 
 - **SAST**: Bandit (Python security linting), Semgrep (pattern detection)
-- **Dependency Scanning**: pip-audit for known vulnerabilities
+- **Dependency Scanning**: pip-audit and Dependabot alerts for known vulnerabilities
+- **Code Scanning**: GitHub CodeQL for Python, JavaScript/TypeScript, and GitHub Actions
+- **Secret Scanning**: GitHub secret scanning with push protection
 - **Container Scanning**: Trivy, Grype for image vulnerabilities
 - **License Compliance**: Automated checking of dependency licenses
 - **Schedule**: Weekly scans every Monday at 2 AM UTC + on all pushes to main
@@ -84,13 +85,13 @@ This project implements several security measures:
 - Type checking with mypy (strict mode)
 - Input validation and sanitization
 - Rate limiting on API endpoints
-- Comprehensive test suite (89% coverage)
+- Unit, security, and integration test suites run on every pull request
 
 ### Deployment Security
 
-- Multi-stage container builds (reduced attack surface)
-- Non-root container user
-- Read-only file systems where possible
+- Multi-stage container builds (no compilers or build tools in the runtime image)
+- Base images pinned by digest
+- No secrets baked into the image; `APP_SECRET_KEY` must be supplied at runtime
 - Health check endpoints for monitoring
 - Gunicorn with secure worker configuration
 
@@ -114,8 +115,8 @@ API endpoints are rate-limited:
 ### CORS Configuration
 
 CORS is configured for secure cross-origin requests:
-- Dual-layer protection (FastAPI + Nginx)
-- Configurable allowed origins
+- Explicit origin allowlist via `CORS_ORIGINS`; wildcard origins are rejected
+- Cross-origin access is disabled when `CORS_ORIGINS` is unset
 - Credentials support for authenticated requests
 
 ### Dependencies
@@ -124,7 +125,7 @@ All dependencies are:
 - Scanned for known vulnerabilities
 - Updated regularly via Dependabot
 - License-checked for compatibility
-- Pinned to specific versions in production
+- Locked for the frontend via `package-lock.json`
 
 ## Security Best Practices for Users
 
@@ -138,7 +139,7 @@ All dependencies are:
 ### Container Deployment
 
 - Always use specific version tags (not `latest`)
-- Run containers as non-root user
+- The published image currently runs its processes as root inside the container; prefer rootless Podman or a user-namespace-remapped runtime
 - Use read-only file systems when possible
 - Regularly update base images
 - Scan images before deployment
@@ -184,10 +185,9 @@ We appreciate security researchers who help keep our project safe:
 
 For non-security issues, please use:
 - GitHub Issues: https://github.com/jim-wyatt/msn-weather-wrapper/issues
-- Discussions: https://github.com/jim-wyatt/msn-weather-wrapper/discussions
 
 For security issues, please use the reporting methods described above.
 
 ---
 
-Last updated: December 2, 2025
+Last updated: October 10, 2026

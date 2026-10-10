@@ -27,29 +27,26 @@ python -m twine upload dist/*
 
 Enter your PyPI username and password when prompted.
 
-### 3. Create API Token
+### 3. Configure Trusted Publishing (OIDC)
+
+The release workflow publishes with PyPI trusted publishing; no API token is stored in GitHub.
 
 After the first upload:
 
 1. Go to [PyPI Account Settings](https://pypi.org/manage/account/)
-2. Scroll to **API tokens** section
-3. Click **Add API token**
+2. Scroll to **Publishing** section
+3. Add a new publisher
 4. Configure:
-   - **Token name**: `msn-weather-wrapper-github-actions`
-   - **Scope**: **Project: msn-weather-wrapper** (select the project)
-5. Click **Add token**
-6. **Copy the token** (starts with `pypi-`)
-   - ⚠️ Save it now - you won't see it again!
+   - **PyPI Project Name**: `msn-weather-wrapper`
+   - **Owner**: Your GitHub username
+   - **Repository name**: `msn-weather-wrapper`
+   - **Workflow name**: `publish-release.yml`
+   - **Environment name**: `pypi`
+5. Click **Add**
 
-### 4. Add Token to GitHub
+### 4. Verify in GitHub
 
-1. Go to your GitHub repository
-2. Navigate to **Settings** → **Secrets and variables** → **Actions**
-3. Click **New repository secret**
-4. Configure:
-   - **Name**: `PYPI_TOKEN`
-   - **Secret**: Paste the PyPI token
-5. Click **Add secret**
+No repository secret is needed. The `publish-pypi` job requests an OIDC token (`id-token: write`) at release time.
 
 ### 5. Configure PyPI Environment (Optional but Recommended)
 
@@ -63,7 +60,7 @@ For additional security:
    - ✅ Wait timer (optional)
 5. Click **Save protection rules**
 
-This environment is already configured in `.github/workflows/ci.yml`.
+This environment is already referenced in `.github/workflows/publish-release.yml`.
 
 ## Testing the Setup
 
@@ -102,17 +99,17 @@ Check the GitHub Actions workflow to see if it completes successfully.
 
 ## Troubleshooting
 
-### Token Not Working
+### Trusted Publishing Not Working
 
 **Symptoms:**
 - `403 Forbidden` errors
-- `Invalid or expired token`
+- `invalid-publisher` errors
 
 **Solutions:**
-1. Verify token is copied correctly (starts with `pypi-`)
-2. Check token scope is set to the project (not entire account)
-3. Ensure token hasn't expired
-4. Regenerate token if needed
+1. Verify the publisher on PyPI names the workflow `publish-release.yml`
+2. Check the environment name is `pypi`
+3. Ensure the owner and repository name match exactly
+4. See the docs site guide: [PyPI Setup](../docs/PYPI_SETUP.md)
 
 ### Version Already Exists
 
@@ -166,23 +163,23 @@ python -m build
 ## Security Best Practices
 
 1. **Never commit tokens** to git
-2. **Use project-scoped tokens** (not account-wide)
-3. **Rotate tokens periodically** (every 6-12 months)
+2. **Use trusted publishing** instead of stored API tokens
+3. **Scope the trusted publisher** to the `publish-release.yml` workflow and `pypi` environment
 4. **Use environment protection** rules in GitHub
 5. **Monitor PyPI download statistics** for suspicious activity
 6. **Enable 2FA** on your PyPI account
 
 ## What Happens on Release
 
-When you push a version tag (e.g., `v1.0.0`), the CI/CD pipeline automatically:
+When you push a version tag (e.g., `v1.0.0`), `publish-release.yml` automatically:
 
-1. **Validates version** - Ensures tag matches `pyproject.toml`
-2. **Runs all tests** - Quality gates must pass
-3. **Builds package** - Creates wheel and source distribution
-4. **Verifies package** - Runs `twine check`
-5. **Publishes to PyPI** - Uploads using your token
-6. **Builds containers** - Multi-platform images
-7. **Creates release** - GitHub release with artifacts
+1. **Sets version** - Writes the tag version into `pyproject.toml`
+2. **Builds package** - Creates wheel and source distribution
+3. **Verifies package** - Runs `twine check`
+4. **Publishes to PyPI** - Uploads using trusted publishing
+5. **Creates release** - GitHub release with artifacts
+
+`ci.yml` also runs for the tag (tests, security scans, container image build and push).
 
 All automatically, no manual steps needed!
 
@@ -191,7 +188,7 @@ All automatically, no manual steps needed!
 Before pushing v1.0.0:
 
 - [ ] Manual upload completed (package name claimed)
-- [ ] PyPI token created and added to GitHub Secrets
+- [ ] Trusted publisher configured on PyPI
 - [ ] `pyproject.toml` version set to `1.0.0`
 - [ ] `CHANGELOG.md` updated with release notes
 - [ ] All tests passing locally
@@ -211,6 +208,6 @@ Watch the magic happen! 🚀
 ## Additional Resources
 
 - [PyPI Publishing Guide](https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/)
-- [Trusted Publisher Setup](https://docs.pypi.org/trusted-publishers/) (Advanced)
+- [Trusted Publisher Setup](https://docs.pypi.org/trusted-publishers/)
 - [TestPyPI](https://test.pypi.org/) - Test your releases safely
 - [Versioning Guide](../docs/VERSIONING.md) - Complete semantic versioning guide
