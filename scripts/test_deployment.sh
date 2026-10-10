@@ -91,6 +91,8 @@ echo ""
 
 # Start containers
 echo -e "${BLUE}[6/8] Starting containers...${NC}"
+# The production compose file requires a runtime secret; generate a throwaway one for this test run
+export APP_SECRET_KEY="${APP_SECRET_KEY:-$(python3 -c 'import secrets; print(secrets.token_hex(32))')}"
 podman-compose -f "$COMPOSE_FILE" up -d
 echo -e "${GREEN}✓ Containers started${NC}"
 echo ""

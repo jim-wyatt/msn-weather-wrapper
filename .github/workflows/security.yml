@@ -39,14 +39,15 @@ jobs:
 
       - name: Run Bandit (fail on HIGH severity)
         run: |
+          # Report every severity; evaluate_security_reports.py gates on HIGH
           status=0
-          bandit -r backend/ -lll -f json -o security-reports/bandit-report.json || status=$?
+          bandit -r backend/ --exit-zero -f json -o security-reports/bandit-report.json || status=$?
           echo "$status" > security-reports/bandit-exit-code
 
       - name: Run Semgrep SAST scan
         run: |
           status=0
-          semgrep --error --config=.semgrep.yml --metrics=off backend/ --json --output=security-reports/semgrep-report.json || status=$?
+          semgrep --error --config=p/python --config=p/security-audit --config=.semgrep.yml --metrics=off backend/ --json --output=security-reports/semgrep-report.json || status=$?
           echo "$status" > security-reports/semgrep-exit-code
 
       - name: Run pip-audit (check for vulnerabilities)
@@ -79,7 +80,6 @@ jobs:
             exit 1
           fi
           echo "Security scans completed without findings or scan errors."
-          echo "✓ License report generated"
 
   container-scan:
     name: Container Security Scan

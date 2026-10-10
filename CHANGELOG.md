@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### ⚠️ Breaking
+- **Container and API configuration hardening**
+  - `APP_SECRET_KEY` is no longer generated at image build time (every pull of the published image shared the same key). It must now be supplied at runtime when `APP_ENV=production`, e.g. `podman run -e APP_SECRET_KEY=...`; the container exits at startup without it
+  - `CORS_ORIGINS=*` is rejected at startup. List explicit origins (comma-separated), or leave it unset for same-origin deployments. The image no longer defaults to `*`
+  - Nginx no longer reflects the request `Origin` or answers preflights itself; CORS is handled only by FastAPI, so cross-origin callers must be listed in `CORS_ORIGINS`
+
+### Security
+- Updated Next.js to 16.4 and refreshed transitive frontend dependencies (`sharp`, `postcss`, `nanoid`, `baseline-browser-mapping`) to clear outstanding advisories
+- Updated the pinned `pip` in the container image to 26.2.1
+- Bandit, Semgrep, and pip-audit results now fail the security workflow instead of being ignored
+
 ### Added
 - **Modular FastAPI backend structure**
   - New `backend/msn_weather_wrapper/api/` package with `main.py`, `routers/`, `services.py`, `schemas.py`, and `config.py`

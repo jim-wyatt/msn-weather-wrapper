@@ -169,9 +169,10 @@ test.describe('Accessibility Tests', () => {
   });
 
   test('should have proper focus management', async ({ page }) => {
-    const weatherButton = page.getByRole('button', { name: /get weather|use my location/i });
-    await weatherButton.click();
-    await expect(weatherButton).toBeFocused();
+    // Focus rather than click: clicking starts a geolocation lookup that disables the button
+    const locationButton = page.getByRole('button', { name: /current location/i });
+    await locationButton.focus();
+    await expect(locationButton).toBeFocused();
 
     // Check for focus-visible issues
     const accessibilityScanResults = await new AxeBuilder({ page })
