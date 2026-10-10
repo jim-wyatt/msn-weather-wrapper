@@ -20,6 +20,8 @@ env:
 permissions:
   contents: read
   packages: write
+  id-token: write
+  attestations: write
 
 jobs:
   docker-build:
@@ -29,6 +31,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write       # sign the image attestation with the workflow's OIDC identity
+      attestations: write   # store the attestation on GitHub
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -58,6 +62,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push container image
+        id: push
         if: inputs.push-image && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
         uses: docker/build-push-action@v7
         with:
@@ -70,6 +75,17 @@ jobs:
           cache-to: type=gha,mode=max
           provenance: true
           sbom: true
+
+      # Signed build provenance for the pushed image, verifiable with
+      # `gh attestation verify oci://ghcr.io/<owner>/<repo>:<tag> --repo <owner>/<repo>`
+      - name: Attest container image provenance
+        if: inputs.push-image && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+        uses: actions/attest@v4.2.2
+        with:
+          subject-name: ghcr.io/${{ github.repository }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+          create-storage-record: false
 
       - name: Build all container images
         if: ${{ !inputs.push-image }}

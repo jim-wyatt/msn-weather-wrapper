@@ -233,6 +233,21 @@ If you need to merge without creating a release (not recommended):
 
 ## Troubleshooting
 
+### Release Waiting on the Version Bump PR
+
+`main` requires the `CI Gate` status check. GitHub holds workflow runs on pull requests
+opened with the default `GITHUB_TOKEN` until a maintainer approves them, so the version
+bump PR shows **Approve and run workflows** and the release workflow waits.
+
+- **To finish a release by hand:** approve the run on the version bump PR. The release
+  workflow merges it once `CI Gate` passes, then tags and publishes. If the workflow has
+  already timed out, re-run it; it reuses the open PR, or resumes at the tag step if the
+  bump is already merged.
+- **To make releases hands-off:** add a repository secret named `RELEASE_TOKEN` holding a
+  GitHub App installation token or fine-grained personal access token with read and write
+  access to *Contents* and *Pull requests* on this repository. The version bump PR is then
+  opened with that token and its CI starts without approval.
+
 ### Version Already Exists
 
 If the workflow reports "Version Already Exists":

@@ -219,6 +219,20 @@ podman run -p 8080:80 -e APP_SECRET_KEY msn-weather-wrapper
 comma-separated list of explicit origins if the API is called cross-origin; see
 [.env.example](.env.example) for all settings.
 
+### Verifying release artifacts
+
+From 2.0.14 onward, published container images and Python packages carry signed build provenance, which ties
+each artifact to the workflow run and commit that produced it. Verify with the GitHub CLI:
+
+```bash
+# Container image
+gh attestation verify oci://ghcr.io/jim-wyatt/msn-weather-wrapper:latest --repo jim-wyatt/msn-weather-wrapper
+
+# Python package downloaded from PyPI
+pip download msn-weather-wrapper --no-deps
+gh attestation verify msn_weather_wrapper-*.whl --repo jim-wyatt/msn-weather-wrapper
+```
+
 **Architecture:** Unified container (Python + Node.js), Nginx reverse proxy, Gunicorn with Uvicorn workers, and Kubernetes-ready health checks
 
 ---
