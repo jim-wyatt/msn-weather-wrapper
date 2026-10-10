@@ -1438,6 +1438,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#release-waiting-on-the-version-bump-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Release Waiting on the Version Bump PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#version-already-exists" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2499,6 +2510,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#release-waiting-on-the-version-bump-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Release Waiting on the Version Bump PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#version-already-exists" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2786,6 +2808,20 @@
 <li>Consider using draft PRs for work that shouldn't be released</li>
 </ol>
 <h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<h3 id="release-waiting-on-the-version-bump-pr">Release Waiting on the Version Bump PR<a class="headerlink" href="#release-waiting-on-the-version-bump-pr" title="Permanent link">&para;</a></h3>
+<p><code>main</code> requires the <code>CI Gate</code> status check. GitHub holds workflow runs on pull requests
+opened with the default <code>GITHUB_TOKEN</code> until a maintainer approves them, so the version
+bump PR shows <strong>Approve and run workflows</strong> and the release workflow waits.</p>
+<ul>
+<li><strong>To finish a release by hand:</strong> approve the run on the version bump PR. The release
+  workflow merges it once <code>CI Gate</code> passes, then tags and publishes. If the workflow has
+  already timed out, re-run it; it reuses the open PR, or resumes at the tag step if the
+  bump is already merged.</li>
+<li><strong>To make releases hands-off:</strong> add a repository secret named <code>RELEASE_TOKEN</code> holding a
+  GitHub App installation token or fine-grained personal access token with read and write
+  access to <em>Contents</em> and <em>Pull requests</em> on this repository. The version bump PR is then
+  opened with that token and its CI starts without approval.</li>
+</ul>
 <h3 id="version-already-exists">Version Already Exists<a class="headerlink" href="#version-already-exists" title="Permanent link">&para;</a></h3>
 <p>If the workflow reports "Version Already Exists":
 - The calculated version was already tagged
