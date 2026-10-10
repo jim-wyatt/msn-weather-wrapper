@@ -37,24 +37,96 @@ jobs:
       - name: Create security reports directory
         run: mkdir -p security-reports
 
-      - name: Run Bandit (fail on HIGH/CRITICAL)
+      - name: Run Bandit (fail on HIGH severity)
         run: |
-          bandit -r backend/ -ll -f txt -o security-reports/bandit-report.txt || echo "SECURITY_SCAN_FAILED=true" >> "$GITHUB_ENV"
-          bandit -r backend/ -f json -o security-reports/bandit-report.json || true
+          if bandit -r backend/ -lll --exit-zero -f json -o security-reports/bandit-report.json; then
+            echo 0 > security-reports/bandit-exit-code
+          else
+            echo "$?" > security-reports/bandit-exit-code
+          fi
 
       - name: Run Semgrep SAST scan
         run: |
-          semgrep --error --config=auto backend/ --json --output=security-reports/semgrep-report.json || echo "SECURITY_SCAN_FAILED=true" >> "$GITHUB_ENV"
-          semgrep --config=auto backend/ --output=security-reports/semgrep-report.txt || true
+          if semgrep --error --config=auto backend/ --json --output=security-reports/semgrep-report.json; then
+            echo 0 > security-reports/semgrep-exit-code
+          else
+            echo "$?" > security-reports/semgrep-exit-code
+          fi
 
       - name: Run pip-audit (check for vulnerabilities)
         run: |
-          pip-audit --format json --output security-reports/pip-audit-report.json || echo "SECURITY_SCAN_FAILED=true" >> "$GITHUB_ENV"
-          pip-audit --output security-reports/pip-audit-report.txt || true
+          if pip-audit --format json --output security-reports/pip-audit-report.json; then
+            echo 0 > security-reports/pip-audit-exit-code
+          else
+            echo "$?" > security-reports/pip-audit-exit-code
+          fi
 
       - name: Generate pip-licenses report
         run: |
           pip-licenses --format=json --output-file=security-reports/licenses.json
+
+      - name: Evaluate security scan reports
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          reports = Path("security-reports")
+          failures = []
+          findings = {}
+          scan_errors = {}
+
+          def load_report(name):
+              try:
+                  return json.loads((reports / name).read_text())
+              except (OSError, json.JSONDecodeError) as error:
+                  failures.append(f"{name}: could not read scan report ({error})")
+                  return {}
+
+          bandit = load_report("bandit-report.json")
+          bandit_findings = [
+              item for item in bandit.get("results", [])
+              if item.get("issue_severity") == "HIGH"
+          ]
+          findings["bandit"] = bool(bandit_findings)
+          scan_errors["bandit"] = bool(bandit.get("errors"))
+          if bandit_findings or bandit.get("errors"):
+              failures.append("Bandit reported HIGH findings or scan errors")
+
+          semgrep = load_report("semgrep-report.json")
+          findings["semgrep"] = bool(semgrep.get("results"))
+          scan_errors["semgrep"] = bool(semgrep.get("errors"))
+          if semgrep.get("results") or semgrep.get("errors"):
+              failures.append("Semgrep reported findings or scan errors")
+
+          pip_audit = load_report("pip-audit-report.json")
+          vulnerabilities = [
+              vulnerability
+              for dependency in pip_audit.get("dependencies", [])
+              for vulnerability in dependency.get("vulns", [])
+          ]
+          findings["pip-audit"] = bool(vulnerabilities)
+          scan_errors["pip-audit"] = bool(pip_audit.get("errors"))
+          if vulnerabilities or pip_audit.get("errors"):
+              failures.append("pip-audit reported vulnerabilities or scan errors")
+
+          for scan in ("bandit", "semgrep", "pip-audit"):
+              try:
+                  exit_code = int((reports / f"{scan}-exit-code").read_text())
+              except (OSError, ValueError) as error:
+                  failures.append(f"{scan}: missing or invalid exit code ({error})")
+                  continue
+              if exit_code and not findings.get(scan) and not scan_errors.get(scan):
+                  failures.append(f"{scan} exited with status {exit_code}")
+
+          if failures:
+              for failure in failures:
+                  print(f"::error::{failure}")
+              with open(os.environ["GITHUB_ENV"], "a") as environment:
+                  environment.write("SECURITY_SCAN_FAILED=true\n")
+          PY
 
       - name: Upload security reports as artifact
         uses: actions/upload-artifact@v7
@@ -67,14 +139,12 @@ jobs:
       - name: Security scan summary
         if: always()
         run: |
-          echo "✓ Bandit scan completed"
-          echo "✓ Semgrep SAST scan completed"
-          echo "✓ pip-audit scan completed"
-          echo "✓ License report generated"
           if [[ "${SECURITY_SCAN_FAILED:-false}" == "true" ]]; then
-            echo "::error::Security findings detected; review the scan reports."
+            echo "::error::Security findings or scan errors detected; review the scan reports."
             exit 1
           fi
+          echo "Security scans completed without findings or scan errors."
+          echo "✓ License report generated"
 
   container-scan:
     name: Container Security Scan

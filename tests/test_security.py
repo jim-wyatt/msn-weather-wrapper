@@ -101,8 +101,17 @@ class TestCorsConfiguration:
         monkeypatch.setenv("CORS_ORIGINS", "https://app.example, https://admin.example ")
         assert get_cors_origins() == ["https://app.example", "https://admin.example"]
 
+    def test_empty_origins_are_rejected(self, monkeypatch):
+        monkeypatch.delenv("CORS_ORIGINS", raising=False)
+        assert get_cors_origins() == []
+
     def test_wildcard_origin_is_rejected(self, monkeypatch):
         monkeypatch.setenv("CORS_ORIGINS", "*")
+        with pytest.raises(ValueError, match="explicit origins"):
+            get_cors_origins()
+
+    def test_wildcard_mixed_with_explicit_origins_is_rejected(self, monkeypatch):
+        monkeypatch.setenv("CORS_ORIGINS", "https://app.example,*")
         with pytest.raises(ValueError, match="explicit origins"):
             get_cors_origins()
 
