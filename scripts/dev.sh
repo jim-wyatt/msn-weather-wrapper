@@ -308,7 +308,7 @@ generate_and_serve_docs() {
     # Run backend tests with coverage and generate reports
     log_info "Running backend tests with coverage..."
     podman-compose -f "$COMPOSE_FILE" exec -T api pytest \
-        --cov=msn_weather_wrapper \
+        --cov=backend \
         --cov-report=html:htmlcov \
         --cov-report=json:coverage.json \
         --cov-report=term \
