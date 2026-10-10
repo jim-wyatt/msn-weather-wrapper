@@ -721,7 +721,7 @@ Cross-Origin Resource Sharing (CORS) is enabled for web applications with full s
 ```python
 # CORS Headers (automatically added)
 
-Access-Control-Allow-Origin: <requesting-origin>
+Access-Control-Allow-Origin: <configured-origin>
 Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS
 Access-Control-Allow-Headers: Content-Type, Authorization
 Access-Control-Allow-Credentials: true

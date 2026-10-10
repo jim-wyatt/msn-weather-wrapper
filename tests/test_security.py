@@ -50,7 +50,6 @@ class TestInputValidation:
         assert error is not None
         assert "empty" in error.lower() or "whitespace" in error.lower()
 
-
     def test_exceeds_max_length(self):
         """Test string exceeding max length is rejected."""
         value, error = validate_input("A" * 101, "city", 100)
@@ -106,6 +105,19 @@ class TestCorsConfiguration:
         monkeypatch.setenv("CORS_ORIGINS", "*")
         with pytest.raises(ValueError, match="explicit origins"):
             get_cors_origins()
+
+    def test_cors_response_requires_an_allowed_origin(self, client):
+        allowed = client.get(
+            "/api/v1/health",
+            headers={"Origin": "http://localhost:5173"},
+        )
+        assert allowed.headers["access-control-allow-origin"] == "http://localhost:5173"
+
+        rejected = client.get(
+            "/api/v1/health",
+            headers={"Origin": "https://untrusted.example"},
+        )
+        assert "access-control-allow-origin" not in rejected.headers
 
 
 class TestAPISecurityGET:
