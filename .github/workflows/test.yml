@@ -23,9 +23,13 @@ env:
   PYTHON_VERSION: ${{ inputs.python-version }}
 
 jobs:
+  # The orchestrator calls this workflow twice. The second call (run-integration) only
+  # needs the integration job, so the unit-level jobs are skipped instead of repeated.
   smoke-tests:
+    if: ${{ !inputs.run-integration }}
     name: Smoke Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
     steps:
@@ -47,6 +51,7 @@ jobs:
     needs: [smoke-tests]
     name: Code Quality
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
     steps:
@@ -70,6 +75,7 @@ jobs:
     needs: [smoke-tests]
     name: Unit Tests (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
     strategy:
@@ -102,6 +108,7 @@ jobs:
     needs: [smoke-tests]
     name: Test Coverage
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
     steps:
@@ -145,6 +152,7 @@ jobs:
     if: inputs.run-integration
     name: Integration Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
     steps:

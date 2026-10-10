@@ -27,6 +27,7 @@ jobs:
   auto-version:
     name: Auto Version Bump and Tag
     runs-on: ubuntu-latest
+    timeout-minutes: 60
 
     steps:
       - name: Checkout code
@@ -185,7 +186,38 @@ jobs:
           echo "✅ Created version bump PR #$PR_NUMBER"
           echo "📦 Version: ${{ steps.version.outputs.current }} → $NEW_VERSION"
 
-      - name: Auto-merge version bump PR
+      - name: Run CI on the version bump branch
+        if: steps.check.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          NEW_VERSION="${{ steps.version.outputs.new }}"
+          BRANCH_NAME="chore/version-bump-$NEW_VERSION"
+          HEAD_SHA=$(git rev-parse HEAD)
+
+          # Pull requests opened with GITHUB_TOKEN do not trigger workflows, so the
+          # required "CI Gate" check would never report. Dispatch the pipeline on the
+          # branch instead; its check runs attach to the same commit.
+          gh workflow run ci.yml --ref "$BRANCH_NAME"
+
+          echo "⏳ Waiting for CI Gate on $HEAD_SHA..."
+          for attempt in $(seq 1 120); do
+            CONCLUSION=$(gh api "repos/${{ github.repository }}/commits/$HEAD_SHA/check-runs?check_name=CI%20Gate" \
+              --jq '[.check_runs[] | select(.status == "completed")][0].conclusion // empty')
+            if [ "$CONCLUSION" == "success" ]; then
+              echo "✅ CI Gate passed"
+              exit 0
+            elif [ -n "$CONCLUSION" ]; then
+              echo "❌ CI Gate finished with: $CONCLUSION"
+              exit 1
+            fi
+            sleep 20
+          done
+
+          echo "❌ Timed out waiting for CI Gate"
+          exit 1
+
+      - name: Merge version bump PR
         if: steps.check.outputs.skip == 'false'
         id: merge_pr
         env:
@@ -202,11 +234,8 @@ jobs:
             exit 1
           fi
 
-          # Enable auto-merge (requires repo settings to allow this)
-          gh pr merge "$PR_NUMBER" --auto --squash || {
-            echo "⚠️  Auto-merge not configured, attempting regular merge..."
-            gh pr merge "$PR_NUMBER" --squash
-          }
+          # Merge synchronously: the tag step below must run after the merge has landed
+          gh pr merge "$PR_NUMBER" --squash
 
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
           echo "✅ Merged version bump PR #$PR_NUMBER"

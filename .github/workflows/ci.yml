@@ -5,31 +5,63 @@ on:
     branches: [ main ]
     tags:
       - 'v*.*.*'
+  # No path filter: "CI Gate" is a required status check, so it has to report on every PR
   pull_request:
     branches: [ main ]
-    paths:
-      - 'backend/**'
-      - 'tests/**'
-      - 'scripts/**'
-      - 'pyproject.toml'
-      - 'infra/**'
-      - 'frontend/**'
-      - '.github/workflows/**'
-      - '.github/actions/**'
   workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
-  cancel-in-progress: ${{ github.event_name != 'pull_request' }}
+  # A newer run for the same ref and event supersedes the one in flight
+  cancel-in-progress: true
 
 env:
   PYTHON_VERSION: '3.12'
   NODE_VERSION: '24'
 
 jobs:
+  # Decide whether this change needs the full pipeline. Pull requests that touch only
+  # documentation or repository metadata skip the heavy jobs; everything else runs them.
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+      - name: Checkout code
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Classify changed files
+        id: filter
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [[ "${{ github.event_name }}" != "pull_request" ]]; then
+            echo "code=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          CHANGED=$(git diff --name-only "$BASE_SHA...$HEAD_SHA")
+          echo "$CHANGED"
+          # Anything outside these documentation/metadata paths counts as code
+          if echo "$CHANGED" | grep -qvE '^(docs/|artifacts/|[^/]+\.md$|LICENSE$|\.github/[^/]+\.md$|\.github/ISSUE_TEMPLATE/|\.github/CODEOWNERS$|\.github/workflows/[^/]+\.md$|(backend|frontend|infra|scripts)/.*\.md$)'; then
+            echo "code=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "code=false" >> "$GITHUB_OUTPUT"
+          fi
+
   # Test Phase: Run all tests including smoke, unit, integration, and coverage
   test:
     name: Run Tests
+    needs: [changes]
+    if: needs.changes.outputs.code == 'true'
     permissions:
       contents: read
     uses: ./.github/workflows/test.yml
@@ -40,6 +72,8 @@ jobs:
   # Security Phase: Run security scans (full on main branch and tags, basic on PR)
   security:
     name: Run Security Scans
+    needs: [changes]
+    if: needs.changes.outputs.code == 'true'
     permissions:
       contents: read
       security-events: write
@@ -73,6 +107,39 @@ jobs:
       run-integration: true
       artifact-suffix: '-integration'
 
+  # Gate: the single status check required by branch protection on main.
+  # Fails unless every blocking job above succeeded. Skipped jobs only pass for documentation-only changes.
+  ci-gate:
+    name: CI Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: always()
+    needs: [changes, test, security, build, integration-tests]
+    permissions: {}
+    steps:
+      - name: Verify required jobs succeeded
+        env:
+          CODE_CHANGED: ${{ needs.changes.outputs.code }}
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          RESULTS: ${{ needs.test.result }} ${{ needs.security.result }} ${{ needs.build.result }} ${{ needs.integration-tests.result }}
+        run: |
+          echo "Change detection: $CHANGES_RESULT (code=$CODE_CHANGED)"
+          echo "Job results: $RESULTS"
+          if [[ "$CHANGES_RESULT" != "success" ]]; then
+            echo "::error::Change detection did not succeed"
+            exit 1
+          fi
+          if [[ "$CODE_CHANGED" == "false" ]]; then
+            echo "Documentation-only change: test, security, and build jobs were skipped by design."
+            exit 0
+          fi
+          for result in $RESULTS; do
+            if [[ "$result" != "success" ]]; then
+              echo "::error::A required CI job did not succeed ($RESULTS)"
+              exit 1
+            fi
+          done
+
   # Performance Tests: Run performance benchmarks and load tests
   performance:
     name: Performance Tests
@@ -100,6 +167,7 @@ jobs:
   trigger-auto-version:
     name: Trigger Auto-Version-Release
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')
     needs: [test, security, build, integration-tests, deploy]
     permissions:
