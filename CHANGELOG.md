@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Next.js to 16.4 and refreshed transitive frontend dependencies (`sharp`, `postcss`, `nanoid`, `baseline-browser-mapping`) to clear outstanding advisories
 - Updated the pinned `pip` in the container image to 26.2.1
 - Bandit, Semgrep, and pip-audit results now fail the security workflow instead of being ignored
+- Semgrep is installed in an isolated pipx environment in CI so that its own pinned transitive dependencies (`mcp`, `opentelemetry-*`) are no longer counted by pip-audit against the project
 
 ### Added
 - **Modular FastAPI backend structure**

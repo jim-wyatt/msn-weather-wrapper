@@ -33,7 +33,12 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install security tools
-        run: pip install bandit semgrep pip-audit pip-licenses
+        run: |
+          # Semgrep goes in its own pipx environment. Its pinned transitive dependencies
+          # (mcp, opentelemetry-*) are not project dependencies and do not ship in the
+          # image, so they must not end up in the environment that pip-audit scans.
+          pipx install semgrep
+          pip install bandit pip-audit pip-licenses
 
       - name: Create security reports directory
         run: mkdir -p security-reports
