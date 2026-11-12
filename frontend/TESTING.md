@@ -11,16 +11,16 @@ The frontend includes comprehensive E2E tests using Playwright, covering:
 - `tests/e2e/weather.spec.ts`: Functional E2E tests for weather functionality
 
 ## Requirements
-- **Node.js**: ≥ 24.0.0 (matches `engines` in `frontend/package.json`)
-- **Playwright**: ^1.59.1 (matches `@playwright/test` in `frontend/package.json`)
+- **Node.js**: ≥ 26.0.0 (matches `engines` in `frontend/package.json`)
+- **Playwright**: ^1.65.0 (matches `@playwright/test` in `frontend/package.json`)
 - **@axe-core/playwright**: For automated accessibility scanning
 
 ## Running Tests
 
 ### Prerequisites
-Ensure Node.js 24+ is installed:
+Ensure Node.js 26+ is installed:
 ```bash
-node --version  # Should be >= 24.0.0
+node --version  # Should be >= 26.0.0
 ```
 
 ### Install Dependencies

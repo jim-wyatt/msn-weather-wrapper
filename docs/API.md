@@ -59,7 +59,7 @@ The Swagger UI provides:
 - 🧪 Interactive endpoint testing directly from your browser
 - 🔍 Request/response schema validation
 - 🏷️ Organized endpoints by category (health, weather)
-- 🔐 Session-based authentication support for recent searches
+- 🍪 Session-scoped recent searches (a signed session cookie keeps each visitor's history separate; no authentication is required)
 
 **OpenAPI Specification**: Available at `/apispec.json` for API clients and tools
 
@@ -316,7 +316,7 @@ curl -X DELETE http://localhost:5000/api/v1/recent-searches
 ### Development Mode
 
 ```bash
-uvicorn backend.api.main:app --host 0.0.0.0 --port 5000 --reload
+APP_ENV=development uvicorn backend.api.main:app --host 0.0.0.0 --port 5000 --reload
 
 ```
 
@@ -324,7 +324,7 @@ The API will be available at `http://localhost:5000`
 
 ### Production Mode (Recommended)
 
-The project includes Gunicorn 23.0+ as a production ASGI server. Use it for production deployments:
+The project includes Gunicorn 27+ as a production ASGI server. Use it for production deployments:
 
 ```bash
 # Gunicorn is already included in dependencies

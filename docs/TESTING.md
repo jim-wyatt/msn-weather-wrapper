@@ -32,6 +32,7 @@ graph TB
 | ---------- | ------- | -------- |
 | **Backend Unit Tests** | `tests/test_client.py`, `tests/test_models.py`, `tests/test_api.py` | ✅ `test.yml` |
 | **Security Tests** | `tests/test_security.py` | ✅ `test.yml` |
+| **Security report gate tests** | `tests/test_security_reports.py` (covers `scripts/evaluate_security_reports.py`) | ✅ `test.yml` |
 | **Integration Tests** | `tests/test_integration.py` | ✅ `test.yml` (against the built container) |
 | **Benchmarks** | `tests/test_benchmarks.py` | ✅ `performance.yml` (main branch) |
 | **Frontend E2E Tests** | `frontend/tests/e2e/` | ❌ Run locally or in containers |
@@ -105,7 +106,7 @@ xdg-open htmlcov/index.html  # Linux
 
 ### Frontend Tests
 
-Frontend E2E tests require Node.js 24+ (project standard) and run in a containerized environment.
+Frontend E2E tests require Node.js 26 LTS (project standard) and run in a containerized environment.
 
 #### Containerized Testing
 
@@ -119,7 +120,7 @@ podman build -f infra/containers/Containerfile.playwright -t msn-weather-playwri
 
 podman network create test-net
 podman run -d --name frontend-srv --network test-net -p 3000:3000 \
-  -v ./frontend:/app:Z node:24-trixie-slim sh -c "cd /app && npm install && npm run dev -- --hostname 0.0.0.0"
+  -v ./frontend:/app:Z node:26-trixie-slim sh -c "cd /app && npm install && npm run dev -- --hostname 0.0.0.0"
 
 # Run tests
 
@@ -338,7 +339,7 @@ def test_feature_name():
 
 - `playwright` - E2E testing framework
 - `@axe-core/playwright` - Accessibility testing (added Phase 3)
-- `next` - React framework and dev server (16.x, project standard Node 24+)
+- `next` - React framework and dev server (16.x, project standard Node 26 LTS)
 - `typescript` - Type safety
 
 ### Pre-commit Hooks
@@ -373,7 +374,7 @@ Automated testing on:
 
 Tests run on:
 
-- Python 3.10, 3.11, 3.12 (pull requests run 3.12 only)
+- Python 3.10, 3.11, 3.12, 3.13, 3.14, 3.15 (pull requests run 3.15 only)
 - Ubuntu latest
 - Container builds
 
@@ -383,7 +384,7 @@ Frontend E2E tests are not part of the CI pipeline.
 
 ### Requirements
 
-- **Node.js**: 24.0.0 or higher (project standard)
+- **Node.js**: 26.0.0 or higher (project standard, matches `engines` in `frontend/package.json`)
 - **Playwright**: version specified in `frontend/package.json`
 - **Browsers**: Chromium (configured in `frontend/playwright.config.ts`; installed automatically by Playwright)
 
@@ -439,7 +440,7 @@ Frontend E2E tests are not part of the CI pipeline.
 
 #### Running E2E Tests
 
-**Local Development** (requires Node 24+):
+**Local Development** (requires Node 26+):
 
 ```bash
 cd frontend
@@ -761,7 +762,7 @@ When tests fail:
 
 ### Frontend Testing Limitations
 
-- **Node.js Version**: Project standard is Node 24+ as specified by `engines` in `frontend/package.json`
+- **Node.js Version**: Project standard is Node 26+ as specified by `engines` in `frontend/package.json`
   - **Solution**: Use containerized testing with `infra/containers/Containerfile.playwright`
 
 - **Visual Baselines**: Not yet established (requires manual review and approval)

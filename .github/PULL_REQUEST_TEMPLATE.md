@@ -36,7 +36,7 @@ Fixes #(issue number)
 
 - [ ] All existing tests pass (`pytest`)
 - [ ] Added new tests for new functionality
-- [ ] Frontend tests pass (`npm test` in frontend/)
+- [ ] Frontend type-check and E2E tests pass (`npm run type-check` and `npm run test:e2e` in frontend/)
 - [ ] Integration tests pass
 - [ ] Manual testing performed
 

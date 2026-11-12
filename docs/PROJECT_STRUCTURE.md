@@ -1,6 +1,6 @@
 # Project Structure Guide
 
-This repository is organized so a beginner can reason about it in **four main zones**.
+This repository is organized so a beginner can reason about it in **six main zones**.
 
 ## Start Here
 
@@ -38,6 +38,7 @@ This is the **backend test suite**.
 - `test_client.py` — weather client behavior
 - `test_models.py` — data model validation
 - `test_security.py` — input validation and security checks
+- `test_security_reports.py` — gate logic for the CI security reports (`scripts/evaluate_security_reports.py`)
 - `test_integration.py` — checks against the running container
 - `test_benchmarks.py` — performance benchmarks
 
@@ -47,7 +48,10 @@ This is the **developer toolbox**.
 
 - `dev.sh` — start, stop, test, and inspect the local dev stack
 - `generate_reports.py` — build markdown reports from CI/test artifacts
-- `generate_sbom.sh` — software bill of materials generation
+- `generate_sbom.sh` — software bill of materials generation (`generate_sbom_ci.sh` is the fast CI variant)
+- `evaluate_security_reports.py` — applies the CI security gates to Bandit, Semgrep, and pip-audit output
+- `test_deployment.sh` — builds the production image and runs the integration suite against it
+- `setup-local-dev.sh`, `setup-self-hosted-runner.sh` — host bootstrap scripts (Ubuntu)
 
 ### `infra/`
 
