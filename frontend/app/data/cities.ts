@@ -1,6 +1,6 @@
 import type { City } from '../types';
 
-// Cities with population over 1 million (463 cities worldwide)
+// Cities with population over 1 million (406 cities worldwide)
 // Sorted alphabetically by country, then by city name
 export const cities: City[] = [
   // Afghanistan

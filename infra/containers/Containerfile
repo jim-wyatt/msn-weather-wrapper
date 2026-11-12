@@ -47,12 +47,14 @@ FROM python:3.15-slim-trixie@sha256:65a65fc7b30b06cb6df4930fd4650697cb23f4c2698a
 
 WORKDIR /app
 
-# Install runtime dependencies: nginx for reverse proxy, Node.js to run Next.js.
+# Install runtime dependencies: nginx for the reverse proxy and libatomic1, which the
+# Node.js 26 binary copied in below links against (python:slim does not ship it).
 # curl is deliberately not installed: the health check uses the Python interpreter
 # that is already in the image, and curl/libcurl carried the largest share of
 # (unfixed) OS vulnerability findings in container scans.
 RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
     nginx \
+    libatomic1 \
     && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
 # Copy virtual environment with all Python packages from builder stage
