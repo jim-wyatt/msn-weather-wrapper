@@ -28,7 +28,7 @@ MSN Weather Wrapper is a comprehensive weather data solution featuring:
 - **Frontend**: Next.js 16, React 19, TypeScript
 - **Testing**: pytest and Playwright (unit, security, integration, accessibility, and end-to-end suites)
 - **Quality**: ruff, mypy (strict), pre-commit hooks
-- **Security**: Bandit, Semgrep, pip-audit, Trivy, Grype, weekly automated scans
+- **Security**: Bandit, Semgrep, pip-audit, CodeQL, Trivy, Grype; fixable critical findings block merges, plus weekly scheduled audits
 - **Deployment**: Podman/Docker, Nginx, multi-stage builds
 
 ---
@@ -93,20 +93,20 @@ If you're learning the codebase, explore it in this order:
 ## Features
 
 - 🌤️ Weather data extraction from MSN Weather
-- 🌍 463+ cities worldwide with autocomplete
+- 🌍 400+ cities worldwide with autocomplete
 - 🔌 RESTful API with comprehensive validation
 - 📚 **Interactive API docs** (Swagger UI at `/apidocs`)
 - ⚛️ Modern web interface with Next.js, React, and TypeScript
 - 🚀 5-minute caching (90%+ faster repeated requests)
 - 🔒 Rate limiting (30 req/min per IP, 200/hr global)
 - 🛡️ Input validation & attack prevention (SQL injection, XSS, etc.)
-- 🔐 **Automated security scanning** (Bandit, Semgrep, Trivy, Grype)
+- 🔐 **Automated security scanning** (Bandit, Semgrep, pip-audit, CodeQL, Trivy, Grype) with gates that block fixable critical findings
 - 🔍 Type safety with mypy strict mode
 - 📋 SBOM generation for supply chain security
 - ♿ WCAG 2.1 Level AA accessible frontend
-- 🔄 **Modular CI/CD workflows** - Reusable, maintainable architecture
-- 🔄 **Optimized CI/CD** with Docker caching & conditional matrices
+- 🔄 **Modular CI/CD** - Reusable workflows with a single required gate, Docker layer caching, and signed build provenance for images and packages
 - 🏷️ **Automated semantic versioning** - Merged PRs are versioned and published to PyPI automatically
+- 📌 **Pinned, maintained base images** - Container base images are pinned by digest and bumped weekly by Dependabot
 
 ---
 
@@ -165,6 +165,21 @@ curl -X POST http://localhost:5000/api/v1/weather \
   -d '{"city": "London", "country": "UK"}'
 ```
 
+### API Endpoints
+
+All routes are served under `/api`. Interactive docs are at `/apidocs` and the OpenAPI spec at `/apispec.json`.
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/api/v1/weather?city=London&country=UK` | Current weather for a city |
+| POST | `/api/v1/weather` | Same, with a JSON body `{"city": ..., "country": ...}` |
+| GET | `/api/v1/weather/coordinates?lat=51.5&lon=-0.1` | Current weather for coordinates |
+| GET | `/api/v1/recent-searches` | Recent searches for the current session |
+| DELETE | `/api/v1/recent-searches` | Clear recent searches |
+| GET | `/api/v1/health` | Overall health |
+| GET | `/api/v1/health/live` | Liveness probe |
+| GET | `/api/v1/health/ready` | Readiness probe (used by the container health check) |
+
 ### Web Frontend
 
 ```bash
@@ -173,7 +188,7 @@ npm install
 npm run dev  # http://localhost:3000
 ```
 
-**Features:** City autocomplete (463+ cities), temperature unit toggle (°C/°F), geolocation support, responsive design, WCAG 2.1 Level AA accessibility
+**Features:** City autocomplete (400+ cities), temperature unit toggle (°C/°F), geolocation support, responsive design, WCAG 2.1 Level AA accessibility
 
 ---
 
@@ -219,6 +234,22 @@ podman run -p 8080:80 -e APP_SECRET_KEY msn-weather-wrapper
 comma-separated list of explicit origins if the API is called cross-origin; see
 [.env.example](.env.example) for all settings.
 
+### Health checks
+
+The image declares a `HEALTHCHECK` that probes `/api/v1/health/ready` using the bundled Python
+interpreter, so it works without `curl` (which is intentionally not installed in the runtime image).
+Point external liveness and readiness probes at `/api/v1/health/live` and `/api/v1/health/ready`.
+
+### Supply chain
+
+- Base images (`python:3.12-slim-trixie`, `node:24-trixie-slim`) are pinned by digest in the
+  Containerfiles and bumped weekly by Dependabot.
+- Every pipeline, pull requests included, builds the image and fails on fixable CRITICAL/HIGH
+  findings from Trivy and fixable CRITICAL findings from Grype. Pushes to `main` additionally
+  upload full Trivy, Grype, and SBOM reports.
+- CodeQL analyses Python, TypeScript, and workflow files on every pull request, and merging to
+  `main` requires a passing CI gate and code scanning results.
+
 ### Verifying release artifacts
 
 From 2.0.14 onward, published container images and Python packages carry signed build provenance, which ties
@@ -247,7 +278,10 @@ gh attestation verify msn_weather_wrapper-*.whl --repo jim-wyatt/msn-weather-wra
 - [Testing Guide](docs/TESTING.md) - Test suite & coverage
 - [Security Guide](docs/SECURITY.md) - Security features & automated scanning
 - [SBOM Guide](docs/SYFT_GUIDE.md) - Software bill of materials
-- [Changelog](docs/CHANGELOG.md) - Version history
+- [Project Structure](docs/PROJECT_STRUCTURE.md) - Walkthrough of the codebase for newcomers
+- [Infrastructure](infra/README.md) - Containers, compose files, and runtime configuration
+- [CI/CD Workflows](.github/workflows/README.md) - What each workflow does and when it runs
+- [Changelog](CHANGELOG.md) - Version history
 
 ---
 
