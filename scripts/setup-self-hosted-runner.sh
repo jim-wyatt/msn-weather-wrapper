@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Installs required tooling for the self-hosted runner on Ubuntu 24.04.
-# Includes: git, Python 3.12 + pip/venv, Node.js 20, Docker (with Buildx/Compose),
+# Includes: git, Python 3.12 + pip/venv, Node.js 26, Docker (with Buildx/Compose),
 # GitHub CLI (gh), Trivy, Syft, Grype, and common helpers.
 
 if [[ $(id -u) -ne 0 ]]; then
@@ -18,9 +18,9 @@ apt-get install -y \
   git build-essential unzip jq \
   python3.12 python3.12-venv python3.12-dev python3-pip
 
-# Node.js 20 (via Nodesource)
+# Node.js 26 (via Nodesource)
 if ! command -v node >/dev/null 2>&1; then
-  curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+  curl -fsSL https://deb.nodesource.com/setup_26.x | bash -
   apt-get install -y nodejs
 fi
 
@@ -77,7 +77,7 @@ cat <<"SUMMARY"
 Installed/checked:
 - git
 - Python 3.12 + venv + pip
-- Node.js 20
+- Node.js 26
 - Docker Engine + Buildx + Compose plugin
 - GitHub CLI (gh)
 - Trivy

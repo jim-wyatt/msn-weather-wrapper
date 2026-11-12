@@ -84,8 +84,8 @@ body:
       description: |
         Provide environment details:
         - OS (e.g., Ubuntu 24.04, macOS 15, Windows 11)
-        - Python version (e.g., 3.12.16)
-        - Node.js version, for frontend bugs (e.g., 24.22.1)
+        - Python version (e.g., 3.15.2)
+        - Node.js version, for frontend bugs (e.g., 26.13.1)
         - Package or image version (e.g., 2.0.14, or the image tag/digest)
         - Deployment method (local, Docker, Podman, compose)
       value: |

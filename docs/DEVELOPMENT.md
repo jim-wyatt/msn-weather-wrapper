@@ -270,8 +270,8 @@ cd frontend && npm update
 
 ### Architecture
 
-- **API Container**: Python 3.12 slim (Trixie), port 5000, FastAPI with reload
-- **Frontend Container**: Node 24 Trixie slim, port 3000, Next.js dev server with HMR
+- **API Container**: Python 3.15 slim (Trixie), port 5000, FastAPI with reload
+- **Frontend Container**: Node 26 Trixie slim, port 3000, Next.js dev server with HMR
 - **Volumes**: Source code mounted for hot reload
 
 ### Environment Variables

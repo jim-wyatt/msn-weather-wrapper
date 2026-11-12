@@ -36,7 +36,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
 ### Prerequisites
 
 - Python 3.10 or higher
-- Node.js 24+ (for frontend development)
+- Node.js 26 LTS (for frontend development)
 - Podman (for containerized development)
 
 ### Local Development Setup

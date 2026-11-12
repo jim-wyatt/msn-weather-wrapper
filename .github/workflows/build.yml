@@ -7,7 +7,7 @@ on:
         description: 'Python version for build'
         required: false
         type: string
-        default: '3.12'
+        default: '3.15'
       push-image:
         description: 'Whether to push the container image to registry'
         required: false
@@ -100,13 +100,16 @@ jobs:
           docker rm -f test-app || true
           test_secret="$(openssl rand -hex 32)"
           echo "::add-mask::$test_secret"
-          docker run --rm -d --name test-app -p 8080:80 \
+          # No --rm: if the container exits early its logs must still be readable below
+          docker run -d --name test-app -p 8080:80 \
             -e "APP_SECRET_KEY=$test_secret" \
             msn-weather-app:test
           sleep 15
-          curl -f http://localhost:8080/api/v1/health || exit 1
-          curl -f http://localhost:8080/ || exit 1
-          docker stop test-app || true
+          # Print the container's output if a probe fails so the cause is visible in the log
+          probe() { curl -fsS "$1" > /dev/null || { echo "::error::$1 did not respond"; docker ps -a --filter name=test-app; docker logs test-app || true; exit 1; }; }
+          probe http://localhost:8080/api/v1/health
+          probe http://localhost:8080/
+          docker rm -f test-app || true
 
       - name: Save Docker images as artifacts
         if: ${{ !inputs.push-image && github.event_name != 'pull_request' }}
