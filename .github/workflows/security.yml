@@ -160,6 +160,18 @@ jobs:
           ignore-unfixed: 'true'
           exit-code: '1'
 
+      # Gate: runs on every pipeline, pull requests included. Grype also version-scans the
+      # interpreter binaries in the image (python, node), which Trivy does not, so a stale
+      # base image fails here. Only findings with a published fix count; unfixed OS
+      # findings are reported by the full scan above but do not block.
+      - name: Fail on fixable CRITICAL vulnerabilities (Grype)
+        run: |
+          mkdir -p /tmp/sbom-tools
+          if [ ! -x /tmp/sbom-tools/grype ]; then
+            curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /tmp/sbom-tools
+          fi
+          /tmp/sbom-tools/grype msn-weather-app:security-scan --only-fixed --fail-on critical -o table
+
       - name: Upload container security reports
         if: ${{ inputs.full-scan && always() }}
         uses: actions/upload-artifact@v7

@@ -102,6 +102,29 @@ updates:
         patterns:
           - "*"
 
-  # Note: Docker updater is disabled because this project uses Containerfiles (Podman)
-  # instead of Dockerfiles. Dependabot's docker package-ecosystem only supports Dockerfile
-  # naming convention. Container image updates can be managed manually when needed.
+  # Container base images. The FROM lines pin image digests, so without this the base
+  # images never move and interpreter CVEs accumulate in the published image.
+  # Dependabot's docker updater matches both Dockerfile and Containerfile names.
+  - package-ecosystem: "docker"
+    directories:
+      - "/infra/containers"
+      - "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "docker"
+    assignees:
+      - "jim-wyatt"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    groups:
+      # One PR for all base image digest bumps
+      base-images:
+        patterns:
+          - "*"
