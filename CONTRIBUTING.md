@@ -36,7 +36,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
 ### Prerequisites
 
 - Python 3.10 or higher
-- Node.js 24+ (for frontend development)
+- Node.js 26 LTS (for frontend development)
 - Podman (for containerized development)
 
 ### Local Development Setup
@@ -245,7 +245,7 @@ def test_temperature_conversion():
 - **Clear description**: Explain what changes you made and why
 - **Reference issues**: Link to related issues (e.g., "Fixes #123")
 - **All tests passing**: CI/CD checks must pass
-- **Code review**: At least one maintainer approval required
+- **Code review**: a maintainer reviews every PR; the branch ruleset enforces a green `CI Gate`, CodeQL results on the head commit, an up-to-date branch, and squash merges
 - **No merge conflicts**: Rebase if needed
 - **Documentation updated**: If applicable
 

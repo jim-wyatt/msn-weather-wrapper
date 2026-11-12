@@ -14,15 +14,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Nginx no longer reflects the request `Origin` or answers preflights itself; CORS is handled only by FastAPI, so cross-origin callers must be listed in `CORS_ORIGINS`
 
 ### Documentation
+- Refreshed the README (security gates, endpoint table, health checks, supply chain) and corrected the city count to the 406 entries in the autocomplete data
+- Documentation accuracy pass: dev-server commands now set `APP_ENV=development`, Node.js 26 / Python 3.15 and current dependency versions everywhere, the CI test matrix, the security-report gate tests, the full scripts list, and the session-cookie wording for recent searches
 - Corrected the README, contributor guide, and docs site to match the current layout: the importable package is `backend`, the ASGI app is `backend.api.main:app`, routes live under `/api/v1/`, and compose files and Containerfiles live under `infra/`
 - Removed stale test counts, coverage figures, and references to files and workflows that no longer exist
 - Refreshed the security policy, CODEOWNERS, package metadata, pre-commit hook versions, and Dependabot grouping
+
+### Changed
+- Runtimes and tooling moved to current stable/LTS lines: Python 3.15 in CI and the container images (the library still supports 3.10+ and is now tested on 3.10 through 3.15), Node.js 26 LTS, npm 12, pip 26.3, and the latest ruff, mypy, and pre-commit hooks. Runtime dependency floors in `pyproject.toml` were raised to the current minor lines; dev-tool floors stay where they were so the dev extra still installs on 3.10.
 
 ### Security
 - Updated Next.js to 16.4 and refreshed transitive frontend dependencies (`sharp`, `postcss`, `nanoid`, `baseline-browser-mapping`) to clear outstanding advisories
 - Updated the pinned `pip` in the container image to 26.2.1
 - Bandit, Semgrep, and pip-audit results now fail the security workflow instead of being ignored
 - Semgrep is installed in an isolated pipx environment in CI so that its own pinned transitive dependencies (`mcp`, `opentelemetry-*`) are no longer counted by pip-audit against the project
+- Refreshed the pinned `python:3.12-slim-trixie` and `node:24-trixie-slim` base image digests, which carried fixed interpreter CVEs, and enabled Dependabot's docker updater for the Containerfiles so the pins keep moving
+- The container security job now also fails on fixable CRITICAL findings from Grype on every pipeline; Grype version-scans the interpreter binaries that Trivy does not
+- Removed `curl` from the runtime image; the container and compose health checks now use the bundled Python interpreter
+- Bumped `pypa/gh-action-pypi-publish` to 1.14.3 (GHSA-5xjx-3w67-w9x9) and `docker/login-action` to 4.7.0
+- Dependabot's docker updater is limited to digest and patch updates on the pinned Python and Node tag lines, so major/minor image jumps stay deliberate
 
 ### Added
 - **Modular FastAPI backend structure**

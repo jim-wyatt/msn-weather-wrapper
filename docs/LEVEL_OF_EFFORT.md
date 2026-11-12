@@ -1,6 +1,6 @@
 # Level of Effort (LOE)
 
-This page documents the observed development timeline and a rough level-of-effort estimate for the MSN Weather Wrapper whitepaper work, based solely on git commit timestamps.
+This page documents the observed development timeline and a rough level-of-effort estimate for the MSN Weather Wrapper whitepaper work, based solely on git commit timestamps. Covers the original December 2025 whitepaper work only; the April 2026 v2 revision is not included.
 
 ## Summary
 

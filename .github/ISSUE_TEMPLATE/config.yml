@@ -5,4 +5,7 @@ contact_links:
     about: Read the full documentation and guides
   - name: 🔒 Security Issue
     url: https://github.com/jim-wyatt/msn-weather-wrapper/security/advisories/new
-    about: Report a security vulnerability privately
+    about: Report a security vulnerability privately (please do not open a public issue)
+  - name: 💬 Question or Support
+    url: https://github.com/jim-wyatt/msn-weather-wrapper/issues/new?template=feature_request.yml&title=%5BQuestion%5D%3A+
+    about: Ask a usage question; the feature request form works for questions too

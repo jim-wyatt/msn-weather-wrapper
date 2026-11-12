@@ -75,7 +75,7 @@ Modern Python wrapper for MSN Weather with a FastAPI backend, Next.js frontend, 
 | 🐍 **Python Library** | Type-safe weather client | [Usage](API.md) |
 | 🌐 **REST API** | FastAPI with typed validation and OpenAPI docs | [API Docs](API.md) |
 | 📖 **Swagger UI** | Interactive API documentation | [Interactive Docs](API.md#interactive-api-documentation) |
-| ⚛️ **Next.js Frontend** | Next.js 16, React 19 + TypeScript 6 | [Frontend](API.md) |
+| ⚛️ **Next.js Frontend** | Next.js 16, React 19 + TypeScript 7 (Node.js 26 LTS) | [Frontend](API.md) |
 | 🐳 **Containerized** | Podman deployment | [Container Dev](CONTAINER_DEV_SETUP.md) |
 | ✅ **Tested** | Backend (pytest) and frontend (Playwright) test suites | [Testing](TESTING.md) |
 | 🔒 **Secure** | Enhanced security scanning | [Security](SECURITY.md) |
@@ -85,8 +85,8 @@ Modern Python wrapper for MSN Weather with a FastAPI backend, Next.js frontend, 
 
 ## Technology Stack
 
-- **Backend**: Python 3.10+, FastAPI, Pydantic 2.12+, Uvicorn, Gunicorn 23.0+
-- **Frontend**: Next.js 16, React 19.2, TypeScript 6+
+- **Backend**: Python 3.10+ (3.15 in CI and containers), FastAPI 0.162+, Pydantic 2.14+, Uvicorn, Gunicorn 27+
+- **Frontend**: Next.js 16, React 19.3, TypeScript 7+, Node.js 26 LTS
 - **Testing**: pytest 9.0+, Playwright
 - **Quality**: ruff 0.14+, mypy 1.8+, pre-commit hooks
 - **Deployment**: Podman/Docker, Nginx, multi-stage builds

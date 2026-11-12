@@ -7,14 +7,14 @@ on:
         description: 'Python version for performance tests'
         required: false
         type: string
-        default: '3.12'
+        default: '3.15'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
-  PYTHON_VERSION: ${{ inputs.python-version || '3.12' }}
+  PYTHON_VERSION: ${{ inputs.python-version || '3.15' }}
 
 jobs:
   load-test:
