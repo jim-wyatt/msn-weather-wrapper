@@ -124,9 +124,9 @@ updates:
       prefix: "chore"
       include: "scope"
     ignore:
-      # Stay on the Python 3.12 and Node 24 (LTS) lines that the project targets.
-      # Tag jumps such as python 3.12 -> 3.15 or node 24 -> 25 are deliberate upgrades,
-      # not maintenance; only digest and patch updates to the pinned tags flow through.
+      # Stay on the Python and Node release lines pinned in the Containerfiles. Jumping
+      # to a new major/minor tag (e.g. node 24 -> 25) is a deliberate upgrade, not
+      # maintenance; only digest and patch updates to the pinned tags flow through.
       - dependency-name: "python"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "node"
