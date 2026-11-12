@@ -23,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated the pinned `pip` in the container image to 26.2.1
 - Bandit, Semgrep, and pip-audit results now fail the security workflow instead of being ignored
 - Semgrep is installed in an isolated pipx environment in CI so that its own pinned transitive dependencies (`mcp`, `opentelemetry-*`) are no longer counted by pip-audit against the project
+- Refreshed the pinned `python:3.12-slim-trixie` and `node:24-trixie-slim` base image digests, which carried fixed interpreter CVEs, and enabled Dependabot's docker updater for the Containerfiles so the pins keep moving
+- The container security job now also fails on fixable CRITICAL findings from Grype on every pipeline; Grype version-scans the interpreter binaries that Trivy does not
+- Removed `curl` from the runtime image; the container and compose health checks now use the bundled Python interpreter
 
 ### Added
 - **Modular FastAPI backend structure**
