@@ -7,7 +7,7 @@ on:
         description: 'Python version for security scans'
         required: false
         type: string
-        default: '3.12'
+        default: '3.15'
       full-scan:
         description: 'Whether to run full security scan (SAST, dependencies, container)'
         required: false

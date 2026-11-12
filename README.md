@@ -24,7 +24,7 @@ MSN Weather Wrapper is a comprehensive weather data solution featuring:
 
 **Technology Stack:**
 
-- **Backend**: Python 3.10+, FastAPI 0.115+, Pydantic 2.12+, Uvicorn, Gunicorn 23.0+
+- **Backend**: Python 3.10+ (3.15 in CI and containers), FastAPI 0.162+, Pydantic 2.14+, Uvicorn, Gunicorn 27+
 - **Frontend**: Next.js 16, React 19, TypeScript
 - **Testing**: pytest and Playwright (unit, security, integration, accessibility, and end-to-end suites)
 - **Quality**: ruff, mypy (strict), pre-commit hooks
@@ -115,7 +115,7 @@ If you're learning the codebase, explore it in this order:
 ### Prerequisites
 
 - Python 3.10+
-- Node.js 24+ (for frontend development)
+- Node.js 26 LTS (for frontend development)
 - Podman or Docker (for containerized deployment)
 
 ### From Source

@@ -7,7 +7,7 @@ on:
         description: 'Python version for deployment'
         required: false
         type: string
-        default: '3.12'
+        default: '3.15'
 
 env:
   PYTHON_VERSION: ${{ inputs.python-version }}

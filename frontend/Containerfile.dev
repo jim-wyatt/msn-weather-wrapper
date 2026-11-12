@@ -1,9 +1,9 @@
 # Development Containerfile for Frontend
-FROM node:24-trixie-slim
+FROM node:26-trixie-slim
 
 WORKDIR /app
 
-RUN npm install -g npm@11.12.1
+RUN npm install -g npm@12.2.2
 
 # Install development tools and Playwright dependencies
 RUN apt-get update && apt-get install -y \
