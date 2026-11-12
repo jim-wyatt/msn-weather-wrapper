@@ -2799,14 +2799,7 @@
 <li>Coordinate with users for major versions</li>
 </ul>
 <h2 id="skipping-auto-release">Skipping Auto-Release<a class="headerlink" href="#skipping-auto-release" title="Permanent link">&para;</a></h2>
-<p>If you need to merge without creating a release (not recommended):</p>
-<ol>
-<li>The workflow cannot be easily skipped (by design)</li>
-<li>If needed, manually delete the created tag before CI/CD completes:
-   <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>:refs/tags/vX.Y.Z
-</span></code></pre></div></li>
-<li>Consider using draft PRs for work that shouldn't be released</li>
-</ol>
+<p>There is no opt-out; every merge to <code>main</code> releases. If a release must not happen, do not merge, or merge and accept the patch release. Deleting the tag after the fact does not cancel <code>publish-release.yml</code>, which is dispatched explicitly by the workflow right after the tag push.</p>
 <h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
 <h3 id="release-waiting-on-the-version-bump-pr">Release Waiting on the Version Bump PR<a class="headerlink" href="#release-waiting-on-the-version-bump-pr" title="Permanent link">&para;</a></h3>
 <p><code>main</code> requires the <code>CI Gate</code> status check. GitHub holds workflow runs on pull requests
@@ -2838,10 +2831,10 @@ bump PR shows <strong>Approve and run workflows</strong> and the release workflo
 2. Remember labels and branch names are ignored
 3. Default is patch if nothing matches</p>
 <p>To fix:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Delete the tag</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>:refs/tags/vX.Y.Z
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># Create a new PR with correct versioning indicators</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Delete the tag</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>:refs/tags/vX.Y.Z
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Create a new PR with correct versioning indicators</span>
 </span></code></pre></div></p>
 <h2 id="related-documentation">Related Documentation<a class="headerlink" href="#related-documentation" title="Permanent link">&para;</a></h2>
 <ul>

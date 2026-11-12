@@ -1082,10 +1082,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#authentication" class="md-nav__link">
+  <a href="#sessions-and-recent-searches" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Authentication
+        Sessions and recent searches
       
     </span>
   </a>
@@ -2481,10 +2481,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#authentication" class="md-nav__link">
+  <a href="#sessions-and-recent-searches" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Authentication
+        Sessions and recent searches
       
     </span>
   </a>
@@ -2684,7 +2684,7 @@
 <li><strong>Try it out</strong>: Execute API calls directly from the browser</li>
 <li><strong>Real-time responses</strong>: See actual API responses</li>
 <li><strong>Parameter validation</strong>: Test with different inputs</li>
-<li><strong>Authentication support</strong>: Session-based auth for recent searches</li>
+<li><strong>Session cookie support</strong>: recent searches are scoped to the API's signed session cookie</li>
 </ul>
 <h3 id="organized-by-category">🏷️ Organized by Category<a class="headerlink" href="#organized-by-category" title="Permanent link">&para;</a></h3>
 <ul>
@@ -2807,11 +2807,12 @@
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>5. Click "Execute"
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>6. See the live weather response!
 </span></code></pre></div>
-<h2 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">&para;</a></h2>
-<p>For endpoints requiring session authentication (recent searches):
-1. Make a weather request first to establish a session
-2. The session cookie will be automatically included
-3. Recent searches endpoints will now work</p>
+<h2 id="sessions-and-recent-searches">Sessions and recent searches<a class="headerlink" href="#sessions-and-recent-searches" title="Permanent link">&para;</a></h2>
+<p>No endpoint requires authentication. Recent searches are scoped to a signed session cookie
+that the API sets on the first response, so:
+1. <code>GET /api/v1/recent-searches</code> works immediately (it returns an empty list for a new session)
+2. Make a successful weather request first if you want the list to contain entries
+3. Swagger UI sends the cookie automatically on later requests</p>
 <h2 id="rate-limiting">Rate Limiting<a class="headerlink" href="#rate-limiting" title="Permanent link">&para;</a></h2>
 <p>Rate limits are enforced:
 - <strong>Per IP</strong>: 30 requests/minute (all endpoints)
@@ -2880,7 +2881,7 @@
 <hr />
 <p><strong>Quick Start:</strong>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Start the API</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>uvicorn<span class="w"> </span>backend.api.main:app<span class="w"> </span>--reload<span class="w"> </span>--port<span class="w"> </span><span class="m">5000</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nv">APP_ENV</span><span class="o">=</span>development<span class="w"> </span>uvicorn<span class="w"> </span>backend.api.main:app<span class="w"> </span>--reload<span class="w"> </span>--port<span class="w"> </span><span class="m">5000</span>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Open your browser to:</span>
 </span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>http://localhost:5000/apidocs

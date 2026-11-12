@@ -2520,6 +2520,7 @@ sequenceDiagram
 <h2 id="workflow-flow-diagram-main-branch-release">Workflow Flow Diagram - Main Branch Release<a class="headerlink" href="#workflow-flow-diagram-main-branch-release" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E3F2FD', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#1E88E5', 'lineColor': '#1E88E5', 'secondaryColor': '#BBDEFB', 'tertiaryColor': '#90CAF9', 'edgeLabelBackground': '#E3F2FD'}}}%%
 sequenceDiagram
+    actor Dev as Developer
     participant Main as Main Branch
     participant CI as CI/CD Pipeline
     participant Build as Build
@@ -2593,13 +2594,15 @@ graph TB
 - Tag pushes (<code>v*.*.*</code>)
 - Manual dispatch</p>
 <p><strong>Flow:</strong>
-1. <strong>Test Phase</strong> - Calls <code>test.yml</code> for smoke tests, code quality, unit tests, and coverage
-2. <strong>Security Phase</strong> - Calls <code>security.yml</code> (full scan on main/tags, basic on PR)
-3. <strong>Build Phase</strong> - Calls <code>build.yml</code> (builds Docker images, SBOM, docs)
-4. <strong>Integration Phase</strong> - Calls <code>test.yml</code> again with integration tests enabled
-5. <strong>Performance Phase</strong> - Calls <code>performance.yml</code> (main branch only)
-6. <strong>Deploy Phase</strong> - Calls <code>deploy.yml</code> (main branch only)
-7. <strong>Trigger Auto-Version</strong> - Triggers <code>auto-version-release.yml</code> (main branch only)</p>
+1. <strong>Change Detection</strong> - docs-only PRs skip the heavy jobs
+2. <strong>Test Phase</strong> - Calls <code>test.yml</code> for smoke tests, code quality, unit tests, and coverage
+3. <strong>Security Phase</strong> - Calls <code>security.yml</code> (full scan on main/tags, basic on PR)
+4. <strong>Build Phase</strong> - Calls <code>build.yml</code> (builds Docker images, SBOM, docs)
+5. <strong>Integration Phase</strong> - Calls <code>test.yml</code> again with integration tests enabled
+6. <strong>CI Gate</strong> - aggregates test/security/build/integration results; the only required status check
+7. <strong>Performance Phase</strong> - Calls <code>performance.yml</code> (main branch only)
+8. <strong>Deploy Phase</strong> - Calls <code>deploy.yml</code> (main branch only)
+9. <strong>Trigger Auto-Version</strong> - Triggers <code>auto-version-release.yml</code> (main branch only)</p>
 <p><strong>Benefits:</strong>
 - Modular architecture with a short orchestrator workflow
 - Clear separation of concerns
@@ -2608,13 +2611,13 @@ graph TB
 <h3 id="reusable-workflow-test-testyml">Reusable Workflow: Test (<code>test.yml</code>)<a class="headerlink" href="#reusable-workflow-test-testyml" title="Permanent link">&para;</a></h3>
 <p><strong>Purpose:</strong> Handles all testing phases including smoke tests, unit tests, coverage, and integration tests.</p>
 <p><strong>Inputs:</strong>
-- <code>python-version</code> - Python version to use (default: '3.12')
+- <code>python-version</code> - Python version to use (default: '3.15')
 - <code>run-integration</code> - Whether to run integration tests (default: false)
 - <code>artifact-suffix</code> - Suffix for artifact names to avoid conflicts (default: '')</p>
 <p><strong>Jobs:</strong>
 1. <strong>Smoke Tests</strong> - Quick validation (imports, syntax)
 2. <strong>Code Quality</strong> - Ruff format check, linting, mypy type checking
-3. <strong>Unit Tests</strong> - Multi-version Python testing (3.10, 3.11, 3.12; 3.12 only on pull requests)
+3. <strong>Unit Tests</strong> - Multi-version Python testing (3.10 through 3.15 on pushes; 3.15 only on pull requests)
 4. <strong>Coverage</strong> - Test coverage with reports
 5. <strong>Integration Tests</strong> - Tests against containerized API (when enabled)</p>
 <p><strong>Called by:</strong> <code>ci.yml</code> (twice - once for unit tests, once for integration)</p>
@@ -2622,7 +2625,7 @@ graph TB
 <p><strong>Purpose:</strong> Performs security scanning at different levels based on context (comprehensive on main/tags, basic on PRs).</p>
 <p><strong>Inputs:</strong></p>
 <ul>
-<li><code>python-version</code> - Python version to use (default: '3.12')</li>
+<li><code>python-version</code> - Python version to use (default: '3.15')</li>
 <li><code>full-scan</code> - Whether to run comprehensive security scan (default: false)</li>
 </ul>
 <p><strong>Jobs:</strong></p>
@@ -2632,14 +2635,14 @@ graph TB
 <li>Semgrep (pattern-based security analysis)</li>
 <li>pip-audit (package auditing)</li>
 <li>pip-licenses (license report)</li>
-<li><strong>Container Security Scan</strong> - Image &amp; SBOM analysis (full scan only)</li>
+<li><strong>Container Security Scan</strong> - always builds the image and fails on fixable CRITICAL/HIGH (Trivy) and fixable CRITICAL (Grype); SARIF upload, JSON reports and Syft SBOM only when <code>full-scan</code> is true</li>
 <li>Trivy (container image vulnerabilities)</li>
 <li>Grype (SBOM vulnerability analysis)</li>
 </ol>
 <p><strong>Execution Strategy:</strong></p>
 <ul>
-<li><strong>Pull Requests:</strong> Basic security checks only (Bandit, Semgrep, pip-audit, pip-licenses) - fast feedback</li>
-<li><strong>Main Branch &amp; Tags:</strong> Basic checks plus container scan (Trivy, Grype) - complete validation</li>
+<li><strong>Pull Requests:</strong> basic checks plus container gates (Bandit, Semgrep, pip-audit, pip-licenses, Trivy/Grype fixable-vulnerability gates)</li>
+<li><strong>Main &amp; Tags:</strong> the same plus full container reports (SARIF, Trivy JSON, Syft SBOM, Grype report)</li>
 </ul>
 <p><strong>Called by:</strong> <code>ci.yml</code> (full scan on main/tags, basic on PR)</p>
 <h4 id="security-tools-architecture">Security Tools Architecture<a class="headerlink" href="#security-tools-architecture" title="Permanent link">&para;</a></h4>
@@ -2649,13 +2652,15 @@ graph LR
 
     subgraph "Always On (All Branches)"
         BASIC["Basic Security&lt;br/&gt;✓ Bandit&lt;br/&gt;✓ Semgrep&lt;br/&gt;✓ pip-audit&lt;br/&gt;✓ pip-licenses"]
+        GATE["Container Gates&lt;br/&gt;✓ Trivy fixable CRIT/HIGH&lt;br/&gt;✓ Grype fixable CRIT"]
     end
 
     subgraph "Full Scan (Main/Tags Only)"
-        CONT["Container Scanning&lt;br/&gt;✓ Trivy&lt;br/&gt;✓ Grype"]
+        CONT["Container Reports&lt;br/&gt;✓ SARIF&lt;br/&gt;✓ Trivy JSON&lt;br/&gt;✓ Syft SBOM&lt;br/&gt;✓ Grype report"]
     end
 
     SEC --&gt; BASIC
+    SEC --&gt; GATE
     SEC --&gt; CONT
 
     CONT --&gt;|SARIF Upload| GHSEC["GitHub Security Tab"]
@@ -2665,6 +2670,7 @@ graph LR
     %% Muted palette consistent with site blues
     style SEC fill:#26A69A,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
     style BASIC fill:#64B5F6,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style GATE fill:#64B5F6,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
     style CONT fill:#4DD0E1,stroke:#00838F,stroke-width:1.5px,color:#0F172A
     style GHSEC fill:#CFD8DC,stroke:#90A4AE,stroke-width:1.5px,color:#0F172A
     style REPORTS fill:#BBDEFB,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
@@ -2672,7 +2678,7 @@ graph LR
 <h3 id="reusable-workflow-build-buildyml">Reusable Workflow: Build (<code>build.yml</code>)<a class="headerlink" href="#reusable-workflow-build-buildyml" title="Permanent link">&para;</a></h3>
 <p><strong>Purpose:</strong> Builds Docker images, generates SBOM, and builds documentation.</p>
 <p><strong>Inputs:</strong>
-- <code>python-version</code> - Python version to use (default: '3.12')
+- <code>python-version</code> - Python version to use (default: '3.15')
 - <code>push-image</code> - Whether to push Docker image to registry (default: false)</p>
 <p><strong>Jobs:</strong>
 1. <strong>Docker Build</strong> - Builds and optionally pushes container images
@@ -2682,15 +2688,15 @@ graph LR
 <h3 id="reusable-workflow-deploy-deployyml">Reusable Workflow: Deploy (<code>deploy.yml</code>)<a class="headerlink" href="#reusable-workflow-deploy-deployyml" title="Permanent link">&para;</a></h3>
 <p><strong>Purpose:</strong> Generates consolidated reports and deploys documentation to GitHub Pages.</p>
 <p><strong>Inputs:</strong>
-- <code>python-version</code> - Python version to use (default: '3.12')</p>
+- <code>python-version</code> - Python version to use (default: '3.15')</p>
 <p><strong>Jobs:</strong>
-1. <strong>Generate Reports</strong> - Creates test, coverage, security, and performance reports
+1. <strong>Generate Reports</strong> - Creates test, coverage, security, license, CI/CD and performance reports
 2. <strong>Deploy Documentation</strong> - Deploys to GitHub Pages (main branch only)</p>
 <p><strong>Called by:</strong> <code>ci.yml</code> (main branch only)</p>
 <h3 id="reusable-workflow-performance-performanceyml">Reusable Workflow: Performance (<code>performance.yml</code>)<a class="headerlink" href="#reusable-workflow-performance-performanceyml" title="Permanent link">&para;</a></h3>
 <p><strong>Purpose:</strong> Runs performance benchmarks and load testing.</p>
 <p><strong>Inputs:</strong>
-- <code>python-version</code> - Python version to use (default: '3.12')</p>
+- <code>python-version</code> - Python version to use (default: '3.15')</p>
 <p><strong>Jobs:</strong>
 1. <strong>Load Test</strong> - Locust-based load testing (20 concurrent users)
 2. <strong>Benchmark</strong> - Performance baseline measurements</p>
@@ -2718,7 +2724,7 @@ graph LR
 2. Calculates new version
 3. Updates <code>pyproject.toml</code> and <code>backend/__init__.py</code>
 4. Creates version bump PR
-5. Auto-merges the PR (if branch protection allows)
+5. Waits for <code>CI Gate</code> on the PR (maintainer approval of the run needed unless <code>RELEASE_TOKEN</code> is set), then squash-merges it
 6. Creates git tag (format: <code>v*.*.*</code>)
 7. Triggers <code>publish-release.yml</code></p>
 <h3 id="standalone-workflow-publish-release-publish-releaseyml">Standalone Workflow: Publish Release (<code>publish-release.yml</code>)<a class="headerlink" href="#standalone-workflow-publish-release-publish-releaseyml" title="Permanent link">&para;</a></h3>
@@ -2861,14 +2867,15 @@ graph LR
 <h2 id="environment-variables">Environment Variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h2>
 <p>All workflows use consistent environment configuration:</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">env</span><span class="p">:</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">PYTHON_VERSION</span><span class="p">:</span><span class="w"> </span><span class="s">'3.12'</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">NODE_VERSION</span><span class="p">:</span><span class="w"> </span><span class="s">'24'</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">PYTHON_VERSION</span><span class="p">:</span><span class="w"> </span><span class="s">'3.15'</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">NODE_VERSION</span><span class="p">:</span><span class="w"> </span><span class="s">'26'</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">REPORTS_DIR</span><span class="p">:</span><span class="w"> </span><span class="s">'docs/reports'</span>
 </span></code></pre></div>
 <h2 id="secrets-required">Secrets Required<a class="headerlink" href="#secrets-required" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>GITHUB_TOKEN</code> - Automatically provided by GitHub Actions</li>
 <li>No additional secrets required (PyPI uses OIDC trusted publishing)</li>
+<li><code>RELEASE_TOKEN</code> (optional) - lets the version-bump PR's CI start without manual approval</li>
 </ul>
 <h2 id="cache-strategy">Cache Strategy<a class="headerlink" href="#cache-strategy" title="Permanent link">&para;</a></h2>
 <p>Workflows leverage GitHub Actions caching for:
@@ -2877,23 +2884,7 @@ graph LR
 - Docker layer caching (buildx cache)
 - Build artifacts between jobs</p>
 <h2 id="migration-from-old-architecture">Migration from Old Architecture<a class="headerlink" href="#migration-from-old-architecture" title="Permanent link">&para;</a></h2>
-<p>The refactoring maintains 100% backward compatibility:</p>
-<ul>
-<li>✅ All existing functionality preserved</li>
-<li>✅ Same quality gates and checks</li>
-<li>✅ Same deployment targets</li>
-<li>✅ Same version management process</li>
-<li>✅ Same security scanning coverage</li>
-</ul>
-<p><strong>What changed:</strong>
-- Workflow organization (monolithic → modular)
-- File structure (1 large file → 6 focused files)
-- Maintainability (improved significantly)</p>
-<p><strong>What stayed the same:</strong>
-- All test coverage requirements
-- All security checks
-- All build and deployment steps
-- All triggers and automation</p>
+<p>The original monolithic workflow was split into the nine files described above (an orchestrator, five reusable workflows and three standalone workflows). Since then the gate semantics have also changed: <code>CI Gate</code> is the single required status check, and the container vulnerability gates run on every pipeline rather than only on <code>main</code> and tags.</p>
 
 
 

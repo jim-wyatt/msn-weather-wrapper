@@ -2793,7 +2793,7 @@
 <li>The workflow creates a PR with version updates</li>
 <li>Updates <code>pyproject.toml</code> and <code>backend/__init__.py</code></li>
 <li>
-<p>Auto-merge is enabled</p>
+<p>The workflow waits for <code>CI Gate</code> and squash-merges the PR (see <a href="../AUTOMATED_VERSIONING/">AUTOMATED_VERSIONING.md</a> for the <code>RELEASE_TOKEN</code> caveat)</p>
 </li>
 <li>
 <p><strong>Automatic Tag Creation</strong></p>
@@ -2978,6 +2978,16 @@
 <td><code>latest</code></td>
 <td><code>latest</code></td>
 <td>Latest build from <code>main</code></td>
+</tr>
+<tr>
+<td><code>sha-&lt;short sha&gt;</code></td>
+<td><code>sha-1a2b3c4</code></td>
+<td>Every pushed build (<code>type=sha</code>)</td>
+</tr>
+<tr>
+<td><code>&lt;branch&gt;</code></td>
+<td><code>main</code></td>
+<td>Pushes to a branch (<code>type=ref,event=branch</code>; in practice <code>main</code>)</td>
 </tr>
 <tr>
 <td><code>X.Y.Z-alpha.N</code></td>

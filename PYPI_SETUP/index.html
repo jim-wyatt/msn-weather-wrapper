@@ -1766,10 +1766,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-4-verify-in-github" class="md-nav__link">
+  <a href="#step-4-create-the-pypi-github-environment" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 4: Verify in GitHub
+        Step 4: Create the pypi GitHub environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-verify-a-published-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Verify a published release
       
     </span>
   </a>
@@ -2210,10 +2221,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-4-verify-in-github" class="md-nav__link">
+  <a href="#step-4-create-the-pypi-github-environment" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 4: Verify in GitHub
+        Step 4: Create the pypi GitHub environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-verify-a-published-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Verify a published release
       
     </span>
   </a>
@@ -2497,33 +2519,43 @@
 <h3 id="step-3-configure-trusted-publishing-oidc">Step 3: Configure Trusted Publishing (OIDC)<a class="headerlink" href="#step-3-configure-trusted-publishing-oidc" title="Permanent link">&para;</a></h3>
 <p>After the first manual upload:</p>
 <ol>
-<li>Go to <a href="https://pypi.org/manage/account/">PyPI Account Settings</a></li>
-<li>Scroll to <strong>Publishing</strong> section</li>
-<li>Click <strong>Add a new pending publisher</strong></li>
-<li>Configure:</li>
-<li><strong>PyPI Project Name</strong>: <code>msn-weather-wrapper</code></li>
-<li><strong>Owner</strong>: Your GitHub username</li>
+<li>Open the project's <strong>Publishing</strong> settings (Manage → Settings → Publishing, <a href="https://pypi.org/manage/project/msn-weather-wrapper/settings/publishing/">https://pypi.org/manage/project/msn-weather-wrapper/settings/publishing/</a>)</li>
+<li>Add a trusted publisher:</li>
+<li><strong>Owner</strong>: <code>jim-wyatt</code></li>
 <li><strong>Repository name</strong>: <code>msn-weather-wrapper</code></li>
 <li><strong>Workflow name</strong>: <code>publish-release.yml</code></li>
 <li><strong>Environment name</strong>: <code>pypi</code> (the environment used by <code>publish-release.yml</code>)</li>
 <li>Click <strong>Add</strong></li>
 </ol>
-<p><strong>IMPORTANT:</strong> The pending publisher must be confirmed from PyPI before the first automated release!</p>
-<h3 id="step-4-verify-in-github">Step 4: Verify in GitHub<a class="headerlink" href="#step-4-verify-in-github" title="Permanent link">&para;</a></h3>
-<p>Your repository is now configured for trusted publishing. No token storage needed!</p>
+<p>The publisher is active immediately. (Alternatively, skip the manual first upload: add a <em>pending</em> publisher with the same values under your account's Publishing settings, <a href="https://pypi.org/manage/account/publishing/">https://pypi.org/manage/account/publishing/</a>, and the first automated release creates the project.)</p>
+<h3 id="step-4-create-the-pypi-github-environment">Step 4: Create the <code>pypi</code> GitHub environment<a class="headerlink" href="#step-4-create-the-pypi-github-environment" title="Permanent link">&para;</a></h3>
+<p>The <code>publish-pypi</code> job in <code>publish-release.yml</code> runs in the <code>pypi</code> environment, which is required and must exist in the repository:</p>
+<ol>
+<li>Go to <strong>Settings</strong> → <strong>Environments</strong> → <strong>New environment</strong></li>
+<li>Name: <code>pypi</code></li>
+<li>Under <strong>Deployment branches and tags</strong>, select <em>Selected branches and tags</em> and allow branch <code>main</code> and tag pattern <code>v*</code></li>
+<li>Optionally add required reviewers or a wait timer</li>
+</ol>
+<p>No repository secret is needed: the job requests an OIDC token (<code>id-token: write</code>) at release time and <code>pypa/gh-action-pypi-publish</code> exchanges it for a short-lived PyPI token. There is no <code>PYPI_TOKEN</code>.</p>
+<h3 id="step-5-verify-a-published-release">Step 5: Verify a published release<a class="headerlink" href="#step-5-verify-a-published-release" title="Permanent link">&para;</a></h3>
+<p>Each release's wheel and sdist carry a signed build-provenance attestation (<code>actions/attest</code> in <code>publish-release.yml</code>). Consumers can verify what they install:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip<span class="w"> </span>download<span class="w"> </span>msn-weather-wrapper<span class="w"> </span>--no-deps
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>gh<span class="w"> </span>attestation<span class="w"> </span>verify<span class="w"> </span>msn_weather_wrapper-*.whl<span class="w"> </span>--repo<span class="w"> </span>jim-wyatt/msn-weather-wrapper
+</span></code></pre></div>
 <hr />
 <h2 id="automated-publishing-workflow">Automated Publishing Workflow<a class="headerlink" href="#automated-publishing-workflow" title="Permanent link">&para;</a></h2>
 <p>Once OIDC is configured, releases are fully automatic:</p>
 <ol>
 <li>Developer creates PR with changes</li>
 <li>PR merged to main</li>
-<li>auto-version-release.yml triggers:</li>
+<li>ci.yml runs on <code>main</code> and, after a successful run, dispatches auto-version-release.yml, which:</li>
 <li>Determines version bump</li>
 <li>Creates and merges version bump PR</li>
 <li>Pushes version tag</li>
 <li>publish-release.yml triggers on tag:</li>
-<li>Uses OIDC to authenticate to PyPI</li>
-<li>Builds Python package</li>
+<li>Sets the package version from the tag</li>
+<li>Builds Python package and attests its provenance</li>
+<li>Uses OIDC to authenticate to PyPI (in the <code>pypi</code> environment)</li>
 <li>Publishes to PyPI</li>
 <li>Creates GitHub Release</li>
 <li>Package available on PyPI ✅</li>
@@ -2584,39 +2616,34 @@
 <hr />
 <h2 id="testing-before-release">Testing Before Release<a class="headerlink" href="#testing-before-release" title="Permanent link">&para;</a></h2>
 <h3 id="test-locally">Test Locally<a class="headerlink" href="#test-locally" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Build the package</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>python<span class="w"> </span>-m<span class="w"> </span>build
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Verify package integrity</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>check<span class="w"> </span>dist/*
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># Optional: Test on TestPyPI first</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>upload<span class="w"> </span>--repository<span class="w"> </span>testpypi<span class="w"> </span>dist/*
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Build the package</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>python<span class="w"> </span>-m<span class="w"> </span>build
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Verify package integrity</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>check<span class="w"> </span>dist/*
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Optional: Test on TestPyPI first</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>upload<span class="w"> </span>--repository<span class="w"> </span>testpypi<span class="w"> </span>dist/*
 </span></code></pre></div>
 <h3 id="verify-package-metadata">Verify Package Metadata<a class="headerlink" href="#verify-package-metadata" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Check what will be published</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>tar<span class="w"> </span>-tzf<span class="w"> </span>dist/*.tar.gz<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Verify wheel contents</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>unzip<span class="w"> </span>-l<span class="w"> </span>dist/*.whl<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Check what will be published</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>tar<span class="w"> </span>-tzf<span class="w"> </span>dist/*.tar.gz<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Verify wheel contents</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>unzip<span class="w"> </span>-l<span class="w"> </span>dist/*.whl<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
 </span></code></pre></div>
 <hr />
 <h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
 <h3 id="oidc-configuration-issues">OIDC Configuration Issues<a class="headerlink" href="#oidc-configuration-issues" title="Permanent link">&para;</a></h3>
-<p><strong>Problem:</strong> Pending publisher not confirmed</p>
-<p><strong>Solution:</strong></p>
-<ol>
-<li>Go to <a href="https://pypi.org/manage/account/">PyPI Account Settings</a></li>
-<li>Look for pending publishers</li>
-<li>Click the pending publisher</li>
-<li>Click <strong>Confirm</strong> to activate it</li>
-</ol>
-<p><strong>Problem:</strong> First automated release fails with auth error</p>
-<p><strong>Solution:</strong></p>
+<p><strong>Problem:</strong> <code>publish-pypi</code> fails with <code>invalid-publisher</code> or <code>403 Forbidden</code></p>
+<p><strong>Solution:</strong> The OIDC token's claims must match the trusted publisher exactly. Check, in order:</p>
 <ul>
-<li>Ensure OIDC pending publisher is confirmed (not just added)</li>
-<li>Wait a few minutes after confirming for caching to update</li>
-<li>Check <code>publish-release.yml</code> logs for specific error</li>
+<li>The workflow filename on PyPI is <code>publish-release.yml</code> (not a display name)</li>
+<li>The environment name on PyPI is <code>pypi</code> and the job runs in that environment</li>
+<li>Owner is <code>jim-wyatt</code> and repository is <code>msn-weather-wrapper</code> (case-sensitive)</li>
+<li>The <code>publish-pypi</code> job still has <code>permissions: id-token: write</code></li>
+<li>The <code>pypi</code> environment's deployment branch/tag rule allows the ref being published (<code>main</code> and tags <code>v*</code>); a tag that does not match the rule fails before the job starts</li>
+<li>Check the <code>publish-release.yml</code> logs for the exact claim PyPI rejected</li>
 </ul>
 <h3 id="package-upload-issues">Package Upload Issues<a class="headerlink" href="#package-upload-issues" title="Permanent link">&para;</a></h3>
 <p><strong>Problem:</strong> Version already exists on PyPI</p>
@@ -2641,24 +2668,24 @@
 <li>Verify version bump PR was merged</li>
 <li>Manually create tag if needed:</li>
 </ol>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.2.3<span class="w"> </span>-m<span class="w"> </span><span class="s2">"Release v1.2.3"</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>v1.2.3
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.2.3<span class="w"> </span>-m<span class="w"> </span><span class="s2">"Release v1.2.3"</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>v1.2.3
 </span></code></pre></div>
 <hr />
 <h2 id="manual-release-process">Manual Release Process<a class="headerlink" href="#manual-release-process" title="Permanent link">&para;</a></h2>
 <p>If automated release fails, you can manually publish:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Build package</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>python<span class="w"> </span>-m<span class="w"> </span>build
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Get OIDC token (if using trusted publishing)</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># This is handled automatically by the workflow</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># For manual releases, use password/token auth</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># Upload to PyPI</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>upload<span class="w"> </span>dist/*
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="c1"># Create GitHub release manually</span>
-</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>gh<span class="w"> </span>release<span class="w"> </span>create<span class="w"> </span>v1.2.3<span class="w"> </span>--title<span class="w"> </span><span class="s2">"Release v1.2.3"</span><span class="w"> </span>dist/*
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Build package</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>python<span class="w"> </span>-m<span class="w"> </span>build
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Get OIDC token (if using trusted publishing)</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># This is handled automatically by the workflow</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="c1"># For manual releases, use password/token auth</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="c1"># Upload to PyPI</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>upload<span class="w"> </span>dist/*
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="c1"># Create GitHub release manually</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>gh<span class="w"> </span>release<span class="w"> </span>create<span class="w"> </span>v1.2.3<span class="w"> </span>--title<span class="w"> </span><span class="s2">"Release v1.2.3"</span><span class="w"> </span>dist/*
 </span></code></pre></div>
 <hr />
 <h2 id="security-best-practices">Security Best Practices<a class="headerlink" href="#security-best-practices" title="Permanent link">&para;</a></h2>
@@ -2679,30 +2706,30 @@
 </ul>
 <hr />
 <h2 id="useful-commands">Useful Commands<a class="headerlink" href="#useful-commands" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Check current package version</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>grep<span class="w"> </span><span class="s1">'^version'</span><span class="w"> </span>pyproject.toml
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Build package locally</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>python<span class="w"> </span>-m<span class="w"> </span>build
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># Check package contents</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>tar<span class="w"> </span>-tzf<span class="w"> </span>dist/*.tar.gz
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>unzip<span class="w"> </span>-l<span class="w"> </span>dist/*.whl
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="c1"># Verify metadata</span>
-</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>check<span class="w"> </span>dist/*
-</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>
-</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="c1"># Upload to TestPyPI</span>
-</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>upload<span class="w"> </span>--repository<span class="w"> </span>testpypi<span class="w"> </span>dist/*
-</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>
-</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="c1"># Upload to PyPI</span>
-</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>upload<span class="w"> </span>dist/*
-</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>
-</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="c1"># List releases</span>
-</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>gh<span class="w"> </span>release<span class="w"> </span>list
-</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a>
-</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="c1"># Check publish workflow runs</span>
-</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a>gh<span class="w"> </span>run<span class="w"> </span>list<span class="w"> </span>--workflow<span class="w"> </span>publish-release.yml
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Check current package version</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>grep<span class="w"> </span><span class="s1">'^version'</span><span class="w"> </span>pyproject.toml
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Build package locally</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>python<span class="w"> </span>-m<span class="w"> </span>build
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># Check package contents</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>tar<span class="w"> </span>-tzf<span class="w"> </span>dist/*.tar.gz
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>unzip<span class="w"> </span>-l<span class="w"> </span>dist/*.whl
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="c1"># Verify metadata</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>check<span class="w"> </span>dist/*
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="c1"># Upload to TestPyPI</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>upload<span class="w"> </span>--repository<span class="w"> </span>testpypi<span class="w"> </span>dist/*
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="c1"># Upload to PyPI</span>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>python<span class="w"> </span>-m<span class="w"> </span>twine<span class="w"> </span>upload<span class="w"> </span>dist/*
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>
+</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="c1"># List releases</span>
+</span><span id="__span-6-21"><a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>gh<span class="w"> </span>release<span class="w"> </span>list
+</span><span id="__span-6-22"><a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>
+</span><span id="__span-6-23"><a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a><span class="c1"># Check publish workflow runs</span>
+</span><span id="__span-6-24"><a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a>gh<span class="w"> </span>run<span class="w"> </span>list<span class="w"> </span>--workflow<span class="w"> </span>publish-release.yml
 </span></code></pre></div>
 <hr />
 <h2 id="additional-resources">Additional Resources<a class="headerlink" href="#additional-resources" title="Permanent link">&para;</a></h2>

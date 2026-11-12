@@ -2050,10 +2050,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#github-actions" class="md-nav__link">
+  <a href="#github-actions-this-repository" class="md-nav__link">
     <span class="md-ellipsis">
       
-        GitHub Actions
+        GitHub Actions (this repository)
       
     </span>
   </a>
@@ -2061,21 +2061,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#gitlab-ci" class="md-nav__link">
+  <a href="#other-ci-systems-generic-examples" class="md-nav__link">
     <span class="md-ellipsis">
       
-        GitLab CI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#jenkins" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Jenkins
+        Other CI systems (generic examples)
       
     </span>
   </a>
@@ -2749,10 +2738,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#github-actions" class="md-nav__link">
+  <a href="#github-actions-this-repository" class="md-nav__link">
     <span class="md-ellipsis">
       
-        GitHub Actions
+        GitHub Actions (this repository)
       
     </span>
   </a>
@@ -2760,21 +2749,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#gitlab-ci" class="md-nav__link">
+  <a href="#other-ci-systems-generic-examples" class="md-nav__link">
     <span class="md-ellipsis">
       
-        GitLab CI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#jenkins" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Jenkins
+        Other CI systems (generic examples)
       
     </span>
   </a>
@@ -3050,10 +3028,13 @@
 </span></code></pre></div>
 <p>This will:
 1. Check/install Syft automatically
-2. Generate SBOMs for unified container (API + Frontend + Nginx)
+2. Generate SBOMs for the container images (see the note below)
 3. Generate SBOMs for source code
 4. Generate SBOMs for Python packages
 5. Create a summary report</p>
+<blockquote>
+<p><strong>Note:</strong> The script currently targets the legacy <code>msn-weather-wrapper_api</code>/<code>_frontend</code> images; the project now ships a single unified image (compose service <code>app</code>, built from <code>infra/containers/Containerfile</code>). For the unified image, build it with <code>podman-compose -f infra/compose/podman-compose.yml build</code>, find the resulting tag with <code>podman images</code>, and run <code>syft &lt;image built by compose&gt; -o spdx-json</code>, or scan the published image directly with <code>syft ghcr.io/jim-wyatt/msn-weather-wrapper:latest -o spdx-json</code>.</p>
+</blockquote>
 <h3 id="view-results">View Results<a class="headerlink" href="#view-results" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># View summary</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>cat<span class="w"> </span>sbom_output/SBOM_SUMMARY_*.md
@@ -3086,21 +3067,22 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>./scripts/generate_sbom.sh
 </span></code></pre></div>
 <p><strong>Generates:</strong>
-- Unified container SBOMs (SPDX, CycloneDX, Table)
+- API and frontend container SBOMs (SPDX, CycloneDX, Table) from the legacy <code>localhost/msn-weather-wrapper_api:latest</code> and <code>localhost/msn-weather-wrapper_frontend:latest</code> images
 - Source code SBOMs (SPDX, CycloneDX, Table)
 - Python packages SBOMs (SPDX, Table)
 - Summary report in Markdown</p>
 <p><strong>Output Directory:</strong> <code>sbom_output/</code></p>
 <h3 id="2-generate_sbom_cish-cicd-optimized">2. <code>generate_sbom_ci.sh</code> - CI/CD Optimized<a class="headerlink" href="#2-generate_sbom_cish-cicd-optimized" title="Permanent link">&para;</a></h3>
 <p>Lightweight script for CI/CD pipelines.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>./generate_sbom_ci.sh
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>./scripts/generate_sbom_ci.sh
 </span></code></pre></div>
+<p>The script scans the legacy <code>msn-weather-wrapper_api</code>/<code>_frontend</code> images if they exist and always generates a source SBOM (<code>source_sbom_*.json</code>). The GitHub Actions workflows do not call it; see <a href="#cicd-integration">CI/CD Integration</a>.</p>
 <p><strong>Environment Variables:</strong>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Customize output directory</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nv">SBOM_DIR</span><span class="o">=</span>artifacts/sboms<span class="w"> </span>./generate_sbom_ci.sh
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nv">SBOM_DIR</span><span class="o">=</span>artifacts/sboms<span class="w"> </span>./scripts/generate_sbom_ci.sh
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># Change output format</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="nv">FORMAT</span><span class="o">=</span>cyclonedx-json<span class="w"> </span>./generate_sbom_ci.sh
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="nv">FORMAT</span><span class="o">=</span>cyclonedx-json<span class="w"> </span>./scripts/generate_sbom_ci.sh
 </span></code></pre></div></p>
 <h2 id="output-formats">Output Formats<a class="headerlink" href="#output-formats" title="Permanent link">&para;</a></h2>
 <h3 id="spdx-json-_spdx_json">SPDX JSON (<code>*_spdx_*.json</code>)<a class="headerlink" href="#spdx-json-_spdx_json" title="Permanent link">&para;</a></h3>
@@ -3145,17 +3127,18 @@
 </span></code></pre></div>
 <h2 id="manual-sbom-generation">Manual SBOM Generation<a class="headerlink" href="#manual-sbom-generation" title="Permanent link">&para;</a></h2>
 <h3 id="scan-container-images">Scan Container Images<a class="headerlink" href="#scan-container-images" title="Permanent link">&para;</a></h3>
+<p>Scan the published unified image (or <code>msn-weather-app:test</code> for an image built locally the way CI builds it):</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># SPDX format</span>
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>syft<span class="w"> </span>localhost/msn-weather-wrapper:latest<span class="w"> </span>-o<span class="w"> </span>spdx-json<span class="w"> </span>&gt;<span class="w"> </span>container_sbom.json
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>syft<span class="w"> </span>ghcr.io/jim-wyatt/msn-weather-wrapper:latest<span class="w"> </span>-o<span class="w"> </span>spdx-json<span class="w"> </span>&gt;<span class="w"> </span>container_sbom.json
 </span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
 </span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="c1"># CycloneDX format</span>
-</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>syft<span class="w"> </span>localhost/msn-weather-wrapper:latest<span class="w"> </span>-o<span class="w"> </span>cyclonedx-json<span class="w"> </span>&gt;<span class="w"> </span>container_sbom.json
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>syft<span class="w"> </span>ghcr.io/jim-wyatt/msn-weather-wrapper:latest<span class="w"> </span>-o<span class="w"> </span>cyclonedx-json<span class="w"> </span>&gt;<span class="w"> </span>container_sbom.json
 </span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>
 </span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="c1"># Table format (human-readable)</span>
-</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>syft<span class="w"> </span>localhost/msn-weather-wrapper:latest<span class="w"> </span>-o<span class="w"> </span>table
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>syft<span class="w"> </span>ghcr.io/jim-wyatt/msn-weather-wrapper:latest<span class="w"> </span>-o<span class="w"> </span>table
 </span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>
 </span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="c1"># Syft JSON (most detailed)</span>
-</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>syft<span class="w"> </span>localhost/msn-weather-wrapper:latest<span class="w"> </span>-o<span class="w"> </span>syft-json<span class="w"> </span>&gt;<span class="w"> </span>container_sbom.json
+</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>syft<span class="w"> </span>ghcr.io/jim-wyatt/msn-weather-wrapper:latest<span class="w"> </span>-o<span class="w"> </span>syft-json<span class="w"> </span>&gt;<span class="w"> </span>container_sbom.json
 </span></code></pre></div>
 <h3 id="scan-directories">Scan Directories<a class="headerlink" href="#scan-directories" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Scan entire project</span>
@@ -3175,93 +3158,66 @@
 </span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>syft<span class="w"> </span>file:package.zip<span class="w"> </span>-o<span class="w"> </span>table
 </span></code></pre></div>
 <h2 id="cicd-integration">CI/CD Integration<a class="headerlink" href="#cicd-integration" title="Permanent link">&para;</a></h2>
-<h3 id="github-actions">GitHub Actions<a class="headerlink" href="#github-actions" title="Permanent link">&para;</a></h3>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Generate SBOM</span>
-</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>
-</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="nt">on</span><span class="p">:</span>
-</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">  </span><span class="nt">push</span><span class="p">:</span>
-</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">main</span><span class="p p-Indicator">]</span>
-</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="w">  </span><span class="nt">release</span><span class="p">:</span>
-</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="w">    </span><span class="nt">types</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">created</span><span class="p p-Indicator">]</span>
-</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>
-</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="nt">jobs</span><span class="p">:</span>
-</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="w">  </span><span class="nt">sbom</span><span class="p">:</span>
-</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a><span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
-</span><span id="__span-19-12"><a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a><span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
-</span><span id="__span-19-13"><a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v4</span>
-</span><span id="__span-19-14"><a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>
-</span><span id="__span-19-15"><a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install Syft</span>
-</span><span id="__span-19-16"><a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
-</span><span id="__span-19-17"><a id="__codelineno-19-17" name="__codelineno-19-17" href="#__codelineno-19-17"></a><span class="w">          </span><span class="no">curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin</span>
-</span><span id="__span-19-18"><a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a>
-</span><span id="__span-19-19"><a id="__codelineno-19-19" name="__codelineno-19-19" href="#__codelineno-19-19"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Build containers</span>
-</span><span id="__span-19-20"><a id="__codelineno-19-20" name="__codelineno-19-20" href="#__codelineno-19-20"></a><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">podman-compose -f infra/compose/podman-compose.yml build</span>
-</span><span id="__span-19-21"><a id="__codelineno-19-21" name="__codelineno-19-21" href="#__codelineno-19-21"></a>
-</span><span id="__span-19-22"><a id="__codelineno-19-22" name="__codelineno-19-22" href="#__codelineno-19-22"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Generate SBOMs</span>
-</span><span id="__span-19-23"><a id="__codelineno-19-23" name="__codelineno-19-23" href="#__codelineno-19-23"></a><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./scripts/generate_sbom_ci.sh</span>
-</span><span id="__span-19-24"><a id="__codelineno-19-24" name="__codelineno-19-24" href="#__codelineno-19-24"></a>
-</span><span id="__span-19-25"><a id="__codelineno-19-25" name="__codelineno-19-25" href="#__codelineno-19-25"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upload SBOMs</span>
-</span><span id="__span-19-26"><a id="__codelineno-19-26" name="__codelineno-19-26" href="#__codelineno-19-26"></a><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/upload-artifact@v4</span>
-</span><span id="__span-19-27"><a id="__codelineno-19-27" name="__codelineno-19-27" href="#__codelineno-19-27"></a><span class="w">        </span><span class="nt">with</span><span class="p">:</span>
-</span><span id="__span-19-28"><a id="__codelineno-19-28" name="__codelineno-19-28" href="#__codelineno-19-28"></a><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sboms</span>
-</span><span id="__span-19-29"><a id="__codelineno-19-29" name="__codelineno-19-29" href="#__codelineno-19-29"></a><span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sbom_output/</span>
-</span><span id="__span-19-30"><a id="__codelineno-19-30" name="__codelineno-19-30" href="#__codelineno-19-30"></a>
-</span><span id="__span-19-31"><a id="__codelineno-19-31" name="__codelineno-19-31" href="#__codelineno-19-31"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Scan for vulnerabilities</span>
-</span><span id="__span-19-32"><a id="__codelineno-19-32" name="__codelineno-19-32" href="#__codelineno-19-32"></a><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
-</span><span id="__span-19-33"><a id="__codelineno-19-33" name="__codelineno-19-33" href="#__codelineno-19-33"></a><span class="w">          </span><span class="no">curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin</span>
-</span><span id="__span-19-34"><a id="__codelineno-19-34" name="__codelineno-19-34" href="#__codelineno-19-34"></a><span class="w">          </span><span class="no">grype sbom:sbom_output/api_sbom_*.json</span>
+<h3 id="github-actions-this-repository">GitHub Actions (this repository)<a class="headerlink" href="#github-actions-this-repository" title="Permanent link">&para;</a></h3>
+<p>SBOM generation is already wired into the reusable workflows called by <code>ci.yml</code>; neither <code>generate_sbom.sh</code> nor <code>generate_sbom_ci.sh</code> is used in CI.</p>
+<ul>
+<li><strong><code>build.yml</code>, <code>sbom</code> job</strong> — installs Syft and runs <code>syft dir:.</code> to produce <code>sbom_output/source_sbom.json</code> (SPDX) and <code>sbom_output/source_cyclonedx.json</code> (CycloneDX). On pushes to <code>main</code> the directory is uploaded as the <code>sbom-reports</code> artifact (7-day retention).</li>
+<li><strong><code>security.yml</code>, <code>container-scan</code> job</strong> — builds the unified image as <code>msn-weather-app:security-scan</code>, runs Syft on it to produce <code>container-sbom.json</code>, and feeds that SBOM to Grype (<code>grype sbom:security-reports/container-sbom.json</code>). On <code>main</code> and tag runs the SBOM and scan results are uploaded inside the <code>container-security-reports</code> artifact (30-day retention). Trivy and Grype also fail the job on fixable CRITICAL (and, for Trivy, HIGH) findings.</li>
+<li><strong><code>build.yml</code>, image push</strong> — the image pushed to <code>ghcr.io/jim-wyatt/msn-weather-wrapper</code> on <code>main</code> and <code>v*</code> tags is built with <code>sbom: true</code> and <code>provenance: true</code>, so an SBOM and provenance attestation are attached to the image in the registry, and <code>actions/attest</code> records a signed build-provenance attestation verifiable with <code>gh attestation verify oci://ghcr.io/jim-wyatt/msn-weather-wrapper:&lt;tag&gt; --repo jim-wyatt/msn-weather-wrapper</code>.</li>
+</ul>
+<p>Download the artifacts from a workflow run with <code>gh run download &lt;run-id&gt; -n sbom-reports</code> or <code>-n container-security-reports</code>.</p>
+<h3 id="other-ci-systems-generic-examples">Other CI systems (generic examples)<a class="headerlink" href="#other-ci-systems-generic-examples" title="Permanent link">&para;</a></h3>
+<p>The snippets below are generic examples for teams reusing these scripts elsewhere; they are not used by this project.</p>
+<p><strong>GitLab CI:</strong></p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="nt">generate-sbom</span><span class="p">:</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu:latest</span>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apt-get update &amp;&amp; apt-get install -y curl</span>
+</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin</span>
+</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./scripts/generate_sbom_ci.sh</span>
+</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="w">  </span><span class="nt">artifacts</span><span class="p">:</span>
+</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="w">    </span><span class="nt">paths</span><span class="p">:</span>
+</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sbom_output/</span>
+</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a><span class="w">    </span><span class="nt">expire_in</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30 days</span>
 </span></code></pre></div>
-<h3 id="gitlab-ci">GitLab CI<a class="headerlink" href="#gitlab-ci" title="Permanent link">&para;</a></h3>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="nt">generate-sbom</span><span class="p">:</span>
-</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build</span>
-</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu:latest</span>
-</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
-</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apt-get update &amp;&amp; apt-get install -y curl podman</span>
-</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin</span>
-</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">podman-compose -f infra/compose/podman-compose.yml build</span>
-</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./scripts/generate_sbom_ci.sh</span>
-</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="w">  </span><span class="nt">artifacts</span><span class="p">:</span>
-</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="w">    </span><span class="nt">paths</span><span class="p">:</span>
-</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sbom_output/</span>
-</span><span id="__span-20-12"><a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a><span class="w">    </span><span class="nt">expire_in</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30 days</span>
-</span></code></pre></div>
-<h3 id="jenkins">Jenkins<a class="headerlink" href="#jenkins" title="Permanent link">&para;</a></h3>
-<div class="language-groovy highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span>
-</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span>
-</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span>
-</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">'Generate SBOM'</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
-</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span>
-</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="w">                </span><span class="n">sh</span><span class="w"> </span><span class="s1">'''</span>
-</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="s1">                    curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin</span>
-</span><span id="__span-21-8"><a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="s1">                    ./scripts/generate_sbom_ci.sh</span>
-</span><span id="__span-21-9"><a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a><span class="s1">                '''</span>
-</span><span id="__span-21-10"><a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a><span class="w">                </span><span class="n">archiveArtifacts</span><span class="w"> </span><span class="nl">artifacts:</span><span class="w"> </span><span class="s1">'sbom_output/**'</span><span class="o">,</span><span class="w"> </span><span class="nl">fingerprint:</span><span class="w"> </span><span class="kc">true</span>
-</span><span id="__span-21-11"><a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a><span class="w">            </span><span class="o">}</span>
-</span><span id="__span-21-12"><a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a><span class="w">        </span><span class="o">}</span>
-</span><span id="__span-21-13"><a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a><span class="w">    </span><span class="o">}</span>
-</span><span id="__span-21-14"><a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a><span class="o">}</span>
+<p><strong>Jenkins:</strong></p>
+<div class="language-groovy highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">pipeline</span><span class="w"> </span><span class="o">{</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">    </span><span class="n">agent</span><span class="w"> </span><span class="n">any</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="w">    </span><span class="n">stages</span><span class="w"> </span><span class="o">{</span>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">'Generate SBOM'</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="w">            </span><span class="n">steps</span><span class="w"> </span><span class="o">{</span>
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="w">                </span><span class="n">sh</span><span class="w"> </span><span class="s1">'''</span>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="s1">                    curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin</span>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="s1">                    ./scripts/generate_sbom_ci.sh</span>
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="s1">                '''</span>
+</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="w">                </span><span class="n">archiveArtifacts</span><span class="w"> </span><span class="nl">artifacts:</span><span class="w"> </span><span class="s1">'sbom_output/**'</span><span class="o">,</span><span class="w"> </span><span class="nl">fingerprint:</span><span class="w"> </span><span class="kc">true</span>
+</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="w">            </span><span class="o">}</span>
+</span><span id="__span-20-12"><a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a><span class="w">        </span><span class="o">}</span>
+</span><span id="__span-20-13"><a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a><span class="w">    </span><span class="o">}</span>
+</span><span id="__span-20-14"><a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a><span class="o">}</span>
 </span></code></pre></div>
 <h2 id="advanced-usage">Advanced Usage<a class="headerlink" href="#advanced-usage" title="Permanent link">&para;</a></h2>
 <h3 id="custom-catalogers">Custom Catalogers<a class="headerlink" href="#custom-catalogers" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1"># Only catalog Python packages</span>
-</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>syft<span class="w"> </span>dir:.<span class="w"> </span>--catalogers<span class="w"> </span>python<span class="w"> </span>-o<span class="w"> </span>table
-</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>
-</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="c1"># Only catalog OS packages</span>
-</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>syft<span class="w"> </span>localhost/msn-weather-wrapper_api:latest<span class="w"> </span>--catalogers<span class="w"> </span>dpkg,apk<span class="w"> </span>-o<span class="w"> </span>table
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="c1"># Only catalog Python packages</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>syft<span class="w"> </span>dir:.<span class="w"> </span>--catalogers<span class="w"> </span>python<span class="w"> </span>-o<span class="w"> </span>table
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="c1"># Only catalog OS packages</span>
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>syft<span class="w"> </span>ghcr.io/jim-wyatt/msn-weather-wrapper:latest<span class="w"> </span>--catalogers<span class="w"> </span>dpkg,apk<span class="w"> </span>-o<span class="w"> </span>table
 </span></code></pre></div>
 <h3 id="filtering-output">Filtering Output<a class="headerlink" href="#filtering-output" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1"># Exclude specific paths</span>
-</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>syft<span class="w"> </span>dir:.<span class="w"> </span>--exclude<span class="w"> </span><span class="s1">'./node_modules/**'</span><span class="w"> </span>--exclude<span class="w"> </span><span class="s1">'./.git/**'</span><span class="w"> </span>-o<span class="w"> </span>spdx-json
-</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>
-</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="c1"># Include only specific file types</span>
-</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>syft<span class="w"> </span>dir:.<span class="w"> </span>--select-catalogers<span class="w"> </span>python,javascript<span class="w"> </span>-o<span class="w"> </span>table
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1"># Exclude specific paths</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>syft<span class="w"> </span>dir:.<span class="w"> </span>--exclude<span class="w"> </span><span class="s1">'./node_modules/**'</span><span class="w"> </span>--exclude<span class="w"> </span><span class="s1">'./.git/**'</span><span class="w"> </span>-o<span class="w"> </span>spdx-json
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="c1"># Include only specific file types</span>
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>syft<span class="w"> </span>dir:.<span class="w"> </span>--select-catalogers<span class="w"> </span>python,javascript<span class="w"> </span>-o<span class="w"> </span>table
 </span></code></pre></div>
 <h3 id="output-to-multiple-formats">Output to Multiple Formats<a class="headerlink" href="#output-to-multiple-formats" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1"># Generate multiple formats at once</span>
-</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>syft<span class="w"> </span>localhost/msn-weather-wrapper:latest<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="w">  </span>-o<span class="w"> </span>spdx-json<span class="o">=</span>container_spdx.json<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="w">  </span>-o<span class="w"> </span>cyclonedx-json<span class="o">=</span>container_cyclonedx.json<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-24-5"><a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="w">  </span>-o<span class="w"> </span><span class="nv">table</span><span class="o">=</span>container_table.txt
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1"># Generate multiple formats at once</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>syft<span class="w"> </span>ghcr.io/jim-wyatt/msn-weather-wrapper:latest<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="w">  </span>-o<span class="w"> </span>spdx-json<span class="o">=</span>container_spdx.json<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="w">  </span>-o<span class="w"> </span>cyclonedx-json<span class="o">=</span>container_cyclonedx.json<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="w">  </span>-o<span class="w"> </span><span class="nv">table</span><span class="o">=</span>container_table.txt
 </span></code></pre></div>
 <h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
 <h3 id="1-generate-sboms-on-every-build">1. Generate SBOMs on Every Build<a class="headerlink" href="#1-generate-sboms-on-every-build" title="Permanent link">&para;</a></h3>
@@ -3272,53 +3228,58 @@
 <p>Track changes to dependencies by committing representative SBOMs.</p>
 <h3 id="4-regular-vulnerability-scanning">4. Regular Vulnerability Scanning<a class="headerlink" href="#4-regular-vulnerability-scanning" title="Permanent link">&para;</a></h3>
 <p>Combine Syft with Grype for continuous vulnerability monitoring:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="c1"># Generate and scan</span>
-</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>./scripts/generate_sbom.sh
-</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>grype<span class="w"> </span>sbom:sbom_output/container_sbom_spdx_*.json<span class="w"> </span>--fail-on<span class="w"> </span>high
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1"># Generate and scan</span>
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>./scripts/generate_sbom.sh
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>grype<span class="w"> </span>sbom:sbom_output/api_sbom_spdx_*.json<span class="w"> </span>--fail-on<span class="w"> </span>high
 </span></code></pre></div>
 <h3 id="5-license-auditing">5. License Auditing<a class="headerlink" href="#5-license-auditing" title="Permanent link">&para;</a></h3>
 <p>Review licenses regularly:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>jq<span class="w"> </span><span class="s1">'.packages[] | select(.licenseDeclared != null) | {name: .name, license: .licenseDeclared}'</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="w">  </span>sbom_output/api_sbom_spdx_*.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-u
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>jq<span class="w"> </span><span class="s1">'.packages[] | select(.licenseDeclared != null) | {name: .name, license: .licenseDeclared}'</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="w">  </span>sbom_output/api_sbom_spdx_*.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-u
 </span></code></pre></div>
 <h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
 <h3 id="syft-not-found">Syft Not Found<a class="headerlink" href="#syft-not-found" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="c1"># Install manually</span>
-</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>curl<span class="w"> </span>-sSfL<span class="w"> </span>https://raw.githubusercontent.com/anchore/syft/main/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh<span class="w"> </span>-s<span class="w"> </span>--<span class="w"> </span>-b<span class="w"> </span>/usr/local/bin
-</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>
-</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="c1"># Add to PATH</span>
-</span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:/usr/local/bin
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="c1"># Install manually</span>
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>curl<span class="w"> </span>-sSfL<span class="w"> </span>https://raw.githubusercontent.com/anchore/syft/main/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh<span class="w"> </span>-s<span class="w"> </span>--<span class="w"> </span>-b<span class="w"> </span>/usr/local/bin
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>
+</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a><span class="c1"># Add to PATH</span>
+</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:/usr/local/bin
 </span></code></pre></div>
 <h3 id="container-not-found">Container Not Found<a class="headerlink" href="#container-not-found" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="c1"># Build containers first</span>
-</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>podman-compose<span class="w"> </span>-f<span class="w"> </span>infra/compose/podman-compose.yml<span class="w"> </span>build
-</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>
-</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a><span class="c1"># Verify images exist</span>
-</span><span id="__span-28-5"><a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a>podman<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>msn-weather
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="c1"># Build the unified image</span>
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>podman-compose<span class="w"> </span>-f<span class="w"> </span>infra/compose/podman-compose.yml<span class="w"> </span>build
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>
+</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="c1"># Verify images exist</span>
+</span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a>podman<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'msn-weather|app'</span>
 </span></code></pre></div>
+<p><code>generate_sbom.sh</code> looks for the legacy <code>localhost/msn-weather-wrapper_api:latest</code> and <code>_frontend</code> images and runs a bare <code>podman-compose build</code> when they are missing; with the unified compose file that produces a single <code>app</code> image, so scan it directly with <code>syft &lt;image built by compose&gt;</code> instead.</p>
 <h3 id="permission-denied">Permission Denied<a class="headerlink" href="#permission-denied" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="c1"># Make scripts executable</span>
-</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>chmod<span class="w"> </span>+x<span class="w"> </span>scripts/generate_sbom.sh<span class="w"> </span>scripts/generate_sbom_ci.sh
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="c1"># Make scripts executable</span>
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>chmod<span class="w"> </span>+x<span class="w"> </span>scripts/generate_sbom.sh<span class="w"> </span>scripts/generate_sbom_ci.sh
 </span></code></pre></div>
 <h3 id="large-sbom-files">Large SBOM Files<a class="headerlink" href="#large-sbom-files" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="c1"># Compress SBOMs</span>
-</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>gzip<span class="w"> </span>sbom_output/*.json
-</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>
-</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="c1"># View compressed SBOM</span>
-</span><span id="__span-30-5"><a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a>zcat<span class="w"> </span>sbom_output/api_sbom_spdx_*.json.gz<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">'.packages[].name'</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="c1"># Compress SBOMs</span>
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>gzip<span class="w"> </span>sbom_output/*.json
+</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>
+</span><span id="__span-29-4"><a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="c1"># View compressed SBOM</span>
+</span><span id="__span-29-5"><a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a>zcat<span class="w"> </span>sbom_output/api_sbom_spdx_*.json.gz<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">'.packages[].name'</span>
 </span></code></pre></div>
 <h2 id="output-structure">Output Structure<a class="headerlink" href="#output-structure" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>sbom_output/
-</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>├── container_sbom_spdx_YYYYMMDD_HHMMSS.json       # Container SPDX SBOM
-</span><span id="__span-31-3"><a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>├── container_sbom_cyclonedx_YYYYMMDD_HHMMSS.json  # Container CycloneDX SBOM
-</span><span id="__span-31-4"><a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a>├── container_sbom_table_YYYYMMDD_HHMMSS.txt       # Container Table SBOM
-</span><span id="__span-31-5"><a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a>├── source_sbom_spdx_YYYYMMDD_HHMMSS.json          # Source SPDX SBOM
-</span><span id="__span-31-6"><a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a>├── source_sbom_cyclonedx_YYYYMMDD_HHMMSS.json     # Source CycloneDX SBOM
-</span><span id="__span-31-7"><a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a>├── source_sbom_table_YYYYMMDD_HHMMSS.txt          # Source Table SBOM
-</span><span id="__span-31-8"><a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a>├── python_packages_sbom_spdx_YYYYMMDD_HHMMSS.json # Python SPDX SBOM
-</span><span id="__span-31-9"><a id="__codelineno-31-9" name="__codelineno-31-9" href="#__codelineno-31-9"></a>├── python_packages_sbom_table_YYYYMMDD_HHMMSS.txt # Python Table SBOM
-</span><span id="__span-31-10"><a id="__codelineno-31-10" name="__codelineno-31-10" href="#__codelineno-31-10"></a>└── SBOM_SUMMARY_YYYYMMDD_HHMMSS.md                # Summary Report
+<div class="language-text highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>sbom_output/
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>├── api_sbom_spdx_YYYYMMDD_HHMMSS.json             # API container SPDX SBOM
+</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>├── api_sbom_cyclonedx_YYYYMMDD_HHMMSS.json        # API container CycloneDX SBOM
+</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>├── api_sbom_table_YYYYMMDD_HHMMSS.txt             # API container Table SBOM
+</span><span id="__span-30-5"><a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a>├── frontend_sbom_spdx_YYYYMMDD_HHMMSS.json        # Frontend container SPDX SBOM
+</span><span id="__span-30-6"><a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a>├── frontend_sbom_cyclonedx_YYYYMMDD_HHMMSS.json   # Frontend container CycloneDX SBOM
+</span><span id="__span-30-7"><a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a>├── frontend_sbom_table_YYYYMMDD_HHMMSS.txt        # Frontend container Table SBOM
+</span><span id="__span-30-8"><a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a>├── source_sbom_spdx_YYYYMMDD_HHMMSS.json          # Source SPDX SBOM
+</span><span id="__span-30-9"><a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a>├── source_sbom_cyclonedx_YYYYMMDD_HHMMSS.json     # Source CycloneDX SBOM
+</span><span id="__span-30-10"><a id="__codelineno-30-10" name="__codelineno-30-10" href="#__codelineno-30-10"></a>├── source_sbom_table_YYYYMMDD_HHMMSS.txt          # Source Table SBOM
+</span><span id="__span-30-11"><a id="__codelineno-30-11" name="__codelineno-30-11" href="#__codelineno-30-11"></a>├── python_packages_sbom_spdx_YYYYMMDD_HHMMSS.json # Python SPDX SBOM
+</span><span id="__span-30-12"><a id="__codelineno-30-12" name="__codelineno-30-12" href="#__codelineno-30-12"></a>├── python_packages_sbom_table_YYYYMMDD_HHMMSS.txt # Python Table SBOM
+</span><span id="__span-30-13"><a id="__codelineno-30-13" name="__codelineno-30-13" href="#__codelineno-30-13"></a>└── SBOM_SUMMARY_YYYYMMDD_HHMMSS.md                # Summary Report
 </span></code></pre></div>
+<p><code>generate_sbom_ci.sh</code> writes <code>api_sbom_*.json</code>, <code>frontend_sbom_*.json</code> (when the legacy images exist) and <code>source_sbom_*.json</code> in the format given by <code>FORMAT</code>.</p>
 <h2 id="resources">Resources<a class="headerlink" href="#resources" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="https://github.com/anchore/syft">Syft GitHub Repository</a></li>

@@ -3483,7 +3483,7 @@ sequenceDiagram
 <li>🧪 Interactive endpoint testing directly from your browser</li>
 <li>🔍 Request/response schema validation</li>
 <li>🏷️ Organized endpoints by category (health, weather)</li>
-<li>🔐 Session-based authentication support for recent searches</li>
+<li>🍪 Session-scoped recent searches (a signed session cookie keeps each visitor's history separate; no authentication is required)</li>
 </ul>
 <p><strong>OpenAPI Specification</strong>: Available at <code>/apispec.json</code> for API clients and tools</p>
 <hr />
@@ -3649,11 +3649,11 @@ sequenceDiagram
 </span></code></pre></div>
 <h2 id="running-the-api">Running the API<a class="headerlink" href="#running-the-api" title="Permanent link">&para;</a></h2>
 <h3 id="development-mode">Development Mode<a class="headerlink" href="#development-mode" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>uvicorn<span class="w"> </span>backend.api.main:app<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--port<span class="w"> </span><span class="m">5000</span><span class="w"> </span>--reload
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="nv">APP_ENV</span><span class="o">=</span>development<span class="w"> </span>uvicorn<span class="w"> </span>backend.api.main:app<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--port<span class="w"> </span><span class="m">5000</span><span class="w"> </span>--reload
 </span></code></pre></div>
 <p>The API will be available at <code>http://localhost:5000</code></p>
 <h3 id="production-mode-recommended">Production Mode (Recommended)<a class="headerlink" href="#production-mode-recommended" title="Permanent link">&para;</a></h3>
-<p>The project includes Gunicorn 23.0+ as a production ASGI server. Use it for production deployments:</p>
+<p>The project includes Gunicorn 27+ as a production ASGI server. Use it for production deployments:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># Gunicorn is already included in dependencies</span>
 </span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>
 </span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>gunicorn<span class="w"> </span>-k<span class="w"> </span>uvicorn.workers.UvicornWorker<span class="w"> </span>--bind<span class="w"> </span><span class="m">0</span>.0.0.0:5000<span class="w"> </span>--workers<span class="w"> </span><span class="m">4</span><span class="w"> </span>--timeout<span class="w"> </span><span class="m">120</span><span class="w"> </span>backend.api.main:app

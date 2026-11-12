@@ -1962,7 +1962,7 @@
 
 
 <h1 id="project-structure-guide">Project Structure Guide<a class="headerlink" href="#project-structure-guide" title="Permanent link">&para;</a></h1>
-<p>This repository is organized so a beginner can reason about it in <strong>four main zones</strong>.</p>
+<p>This repository is organized so a beginner can reason about it in <strong>six main zones</strong>.</p>
 <h2 id="start-here">Start Here<a class="headerlink" href="#start-here" title="Permanent link">&para;</a></h2>
 <p>If you're new, explore the project in this order:</p>
 <ol>
@@ -1994,6 +1994,7 @@
 <li><code>test_client.py</code> — weather client behavior</li>
 <li><code>test_models.py</code> — data model validation</li>
 <li><code>test_security.py</code> — input validation and security checks</li>
+<li><code>test_security_reports.py</code> — gate logic for the CI security reports (<code>scripts/evaluate_security_reports.py</code>)</li>
 <li><code>test_integration.py</code> — checks against the running container</li>
 <li><code>test_benchmarks.py</code> — performance benchmarks</li>
 </ul>
@@ -2002,7 +2003,10 @@
 <ul>
 <li><code>dev.sh</code> — start, stop, test, and inspect the local dev stack</li>
 <li><code>generate_reports.py</code> — build markdown reports from CI/test artifacts</li>
-<li><code>generate_sbom.sh</code> — software bill of materials generation</li>
+<li><code>generate_sbom.sh</code> — software bill of materials generation (<code>generate_sbom_ci.sh</code> is the fast CI variant)</li>
+<li><code>evaluate_security_reports.py</code> — applies the CI security gates to Bandit, Semgrep, and pip-audit output</li>
+<li><code>test_deployment.sh</code> — builds the production image and runs the integration suite against it</li>
+<li><code>setup-local-dev.sh</code>, <code>setup-self-hosted-runner.sh</code> — host bootstrap scripts (Ubuntu)</li>
 </ul>
 <h3 id="infra"><code>infra/</code><a class="headerlink" href="#infra" title="Permanent link">&para;</a></h3>
 <p>This is the <strong>deployment and container area</strong>.</p>

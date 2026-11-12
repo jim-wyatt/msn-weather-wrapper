@@ -3378,6 +3378,11 @@ graph TB
 <td>✅ <code>test.yml</code></td>
 </tr>
 <tr>
+<td><strong>Security report gate tests</strong></td>
+<td><code>tests/test_security_reports.py</code> (covers <code>scripts/evaluate_security_reports.py</code>)</td>
+<td>✅ <code>test.yml</code></td>
+</tr>
+<tr>
 <td><strong>Integration Tests</strong></td>
 <td><code>tests/test_integration.py</code></td>
 <td>✅ <code>test.yml</code> (against the built container)</td>
@@ -3447,7 +3452,7 @@ graph TB
 </span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>xdg-open<span class="w"> </span>htmlcov/index.html<span class="w">  </span><span class="c1"># Linux</span>
 </span></code></pre></div>
 <h3 id="frontend-tests">Frontend Tests<a class="headerlink" href="#frontend-tests" title="Permanent link">&para;</a></h3>
-<p>Frontend E2E tests require Node.js 24+ (project standard) and run in a containerized environment.</p>
+<p>Frontend E2E tests require Node.js 26 LTS (project standard) and run in a containerized environment.</p>
 <h4 id="containerized-testing">Containerized Testing<a class="headerlink" href="#containerized-testing" title="Permanent link">&para;</a></h4>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Build Playwright container</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
@@ -3457,7 +3462,7 @@ graph TB
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>podman<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>test-net
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>podman<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>frontend-srv<span class="w"> </span>--network<span class="w"> </span>test-net<span class="w"> </span>-p<span class="w"> </span><span class="m">3000</span>:3000<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">  </span>-v<span class="w"> </span>./frontend:/app:Z<span class="w"> </span>node:24-trixie-slim<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">"cd /app &amp;&amp; npm install &amp;&amp; npm run dev -- --hostname 0.0.0.0"</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">  </span>-v<span class="w"> </span>./frontend:/app:Z<span class="w"> </span>node:26-trixie-slim<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">"cd /app &amp;&amp; npm install &amp;&amp; npm run dev -- --hostname 0.0.0.0"</span>
 </span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
 </span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="c1"># Run tests</span>
 </span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>
@@ -3659,7 +3664,7 @@ graph TB
 <ul>
 <li><code>playwright</code> - E2E testing framework</li>
 <li><code>@axe-core/playwright</code> - Accessibility testing (added Phase 3)</li>
-<li><code>next</code> - React framework and dev server (16.x, project standard Node 24+)</li>
+<li><code>next</code> - React framework and dev server (16.x, project standard Node 26 LTS)</li>
 <li><code>typescript</code> - Type safety</li>
 </ul>
 <h3 id="pre-commit-hooks">Pre-commit Hooks<a class="headerlink" href="#pre-commit-hooks" title="Permanent link">&para;</a></h3>
@@ -3688,7 +3693,7 @@ graph TB
 </ul>
 <p>Tests run on:</p>
 <ul>
-<li>Python 3.10, 3.11, 3.12 (pull requests run 3.12 only)</li>
+<li>Python 3.10, 3.11, 3.12, 3.13, 3.14, 3.15 (pull requests run 3.15 only)</li>
 <li>Ubuntu latest</li>
 <li>Container builds</li>
 </ul>
@@ -3696,7 +3701,7 @@ graph TB
 <h2 id="frontend-testing">Frontend Testing<a class="headerlink" href="#frontend-testing" title="Permanent link">&para;</a></h2>
 <h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>Node.js</strong>: 24.0.0 or higher (project standard)</li>
+<li><strong>Node.js</strong>: 26.0.0 or higher (project standard, matches <code>engines</code> in <code>frontend/package.json</code>)</li>
 <li><strong>Playwright</strong>: version specified in <code>frontend/package.json</code></li>
 <li><strong>Browsers</strong>: Chromium (configured in <code>frontend/playwright.config.ts</code>; installed automatically by Playwright)</li>
 </ul>
@@ -3749,7 +3754,7 @@ graph TB
 <li>✅ Mobile viewport layout</li>
 </ul>
 <h4 id="running-e2e-tests">Running E2E Tests<a class="headerlink" href="#running-e2e-tests" title="Permanent link">&para;</a></h4>
-<p><strong>Local Development</strong> (requires Node 24+):</p>
+<p><strong>Local Development</strong> (requires Node 26+):</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">cd</span><span class="w"> </span>frontend
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="c1"># Install dependencies (first time)</span>
@@ -3999,7 +4004,7 @@ graph TB
 <h2 id="known-limitations">Known Limitations<a class="headerlink" href="#known-limitations" title="Permanent link">&para;</a></h2>
 <h3 id="frontend-testing-limitations">Frontend Testing Limitations<a class="headerlink" href="#frontend-testing-limitations" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>Node.js Version</strong>: Project standard is Node 24+ as specified by <code>engines</code> in <code>frontend/package.json</code></li>
+<li><strong>Node.js Version</strong>: Project standard is Node 26+ as specified by <code>engines</code> in <code>frontend/package.json</code></li>
 <li>
 <p><strong>Solution</strong>: Use containerized testing with <code>infra/containers/Containerfile.playwright</code></p>
 </li>

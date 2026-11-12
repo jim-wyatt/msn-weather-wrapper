@@ -2572,9 +2572,7 @@
 <h1 id="security">Security<a class="headerlink" href="#security" title="Permanent link">&para;</a></h1>
 <p>MSN Weather Wrapper implements comprehensive security measures to protect against common web vulnerabilities and attacks.</p>
 <h2 id="reporting-security-issues">Reporting Security Issues<a class="headerlink" href="#reporting-security-issues" title="Permanent link">&para;</a></h2>
-<p>If you discover a security vulnerability, please report it privately to:
-- <strong>Email</strong>: the.jim.wyatt@outlook.com
-- <strong>Subject</strong>: [SECURITY] MSN Weather Wrapper - Brief Description</p>
+<p>Report privately via the GitHub Security Advisories form (https://github.com/jim-wyatt/msn-weather-wrapper/security/advisories/new) or by email to the.jim.wyatt@outlook.com; see the <a href="https://github.com/jim-wyatt/msn-weather-wrapper/blob/main/.github/SECURITY.md">security policy</a> for response times.</p>
 <p>Please do not open public issues for security vulnerabilities.</p>
 <h2 id="security-features">Security Features<a class="headerlink" href="#security-features" title="Permanent link">&para;</a></h2>
 <h3 id="input-validation">Input Validation<a class="headerlink" href="#input-validation" title="Permanent link">&para;</a></h3>
@@ -2687,22 +2685,27 @@ graph TD
 <p><strong>Dependency Vulnerability Scanning:</strong>
 - <strong>pip-audit</strong>: Vulnerability checking of installed dependencies</p>
 <p><strong>Container Security:</strong>
-- <strong>Trivy</strong>: Multi-layer container image vulnerability scanning with SARIF upload to GitHub Security (main branch and tags only)
-- <strong>Grype</strong>: SBOM-based vulnerability detection and analysis (main branch and tags only)</p>
+- <strong>Trivy</strong>: scans the freshly built image on every pipeline and fails on fixable CRITICAL/HIGH findings; on <code>main</code> and tags it also uploads SARIF to the GitHub Security tab and a JSON report
+- <strong>Grype</strong>: scans the image on every pipeline and fails on fixable CRITICAL findings (it also version-scans the python/node binaries, which Trivy does not); on <code>main</code> and tags it additionally produces a Syft SBOM and an SBOM-based Grype report</p>
 <p><strong>License Compliance:</strong>
 - <strong>pip-licenses</strong>: Dependency license report on all branches</p>
+<p>Results are evaluated by <code>scripts/evaluate_security_reports.py</code>: Bandit HIGH findings, any Semgrep finding (rulesets <code>p/python</code>, <code>p/security-audit</code>, <code>.semgrep.yml</code>), and any pip-audit vulnerability fail the job. Semgrep is installed with pipx in its own environment so its transitive dependencies are not counted by pip-audit.</p>
+<p><strong>Platform scanning (GitHub):</strong>
+- <strong>CodeQL</strong> default setup for Python, JavaScript/TypeScript and GitHub Actions; results are required by the <code>main</code> ruleset
+- <strong>Secret scanning</strong> with push protection
+- <strong>Dependabot</strong> alerts and security updates
+- <strong>Private vulnerability reporting</strong> enabled</p>
 <p><strong>Execution Strategy:</strong>
-- <strong>Pull Requests</strong>: Basic security checks (Bandit, Semgrep, pip-audit, pip-licenses) - fast feedback
-- <strong>Main Branch &amp; Tags</strong>: Basic checks plus container scanning (Trivy, Grype) - complete validation
+- <strong>Pull Requests</strong>: Bandit, Semgrep, pip-audit, pip-licenses, plus the container build with the Trivy and Grype fixable-vulnerability gates
+- <strong>Main Branch &amp; Tags</strong>: the same, plus full Trivy SARIF/JSON, Syft SBOM and Grype reports
 - <strong>Manual Trigger</strong>: On-demand runs via workflow dispatch of <code>ci.yml</code></p>
 <p><strong>Artifact Management:</strong>
-- 3-day retention for the <code>security-reports</code> artifact (not uploaded on PRs)
-- 30-day retention for the <code>container-security-reports</code> artifact
+- 3-day retention for the <code>security-reports</code> artifact (uploaded on every run, including pull requests)
+- 30-day retention for the <code>container-security-reports</code> artifact (<code>main</code> and tags only)
 - Trivy results uploaded to GitHub Security tab
 - Automated markdown reports generated for documentation site</p>
 <p><strong>CI/CD Integration:</strong>
-- Basic security checks run on every PR (fast)
-- Container scans on main branch and tags (thorough)
+- Every PR runs SAST, dependency, license and container-gate scans; <code>main</code> and tags add the full container reports
 - Trivy results uploaded to GitHub Security tab with SARIF format
 - Automated reports generated in docs/reports/security-report.md</p>
 <h3 id="test-coverage">Test Coverage<a class="headerlink" href="#test-coverage" title="Permanent link">&para;</a></h3>
@@ -2764,7 +2767,7 @@ graph TD
 <li><strong>Use parameterized queries</strong> - Although we don't use SQL directly, maintain safe practices</li>
 <li><strong>Keep dependencies updated</strong> - Regularly update all dependencies</li>
 <li><strong>Run security tests</strong> - Execute <code>pytest tests/test_security.py</code> before each release</li>
-<li><strong>Review security scans</strong> - Run Bandit and pip-audit tools regularly</li>
+<li><strong>Review security scans</strong> - Run Bandit, Semgrep and pip-audit regularly</li>
 </ol>
 <h3 id="for-deployment">For Deployment<a class="headerlink" href="#for-deployment" title="Permanent link">&para;</a></h3>
 <ol>
@@ -2785,13 +2788,13 @@ graph TD
 <p>If you discover a security vulnerability:</p>
 <ol>
 <li><strong>Do NOT</strong> open a public issue</li>
-<li>Email security concerns to: the.jim.wyatt@outlook.com</li>
+<li>Report privately via the GitHub Security Advisories form (https://github.com/jim-wyatt/msn-weather-wrapper/security/advisories/new) or by email to the.jim.wyatt@outlook.com</li>
 <li>Include:</li>
 <li>Description of the vulnerability</li>
 <li>Steps to reproduce</li>
 <li>Potential impact</li>
 <li>Suggested fix (if any)</li>
-<li>Allow 90 days for responsible disclosure</li>
+<li>See the <a href="https://github.com/jim-wyatt/msn-weather-wrapper/blob/main/.github/SECURITY.md">security policy</a> for acknowledgement, fix and disclosure timelines</li>
 </ol>
 <h2 id="security-audit-history">Security Audit History<a class="headerlink" href="#security-audit-history" title="Permanent link">&para;</a></h2>
 <h3 id="december-2025">December 2025<a class="headerlink" href="#december-2025" title="Permanent link">&para;</a></h3>
