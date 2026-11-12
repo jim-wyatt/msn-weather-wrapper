@@ -1,6 +1,6 @@
 # Multi-stage Dockerfile - Unified FastAPI + Next.js Frontend
 # Stage 1: Build Next.js frontend (produces .next/standalone/)
-FROM node:24-trixie-slim@sha256:af02d57b57719b9657a45199a79264a9437940cd55b3c7b3fc99615654f124a0 AS frontend-builder
+FROM node:25-trixie-slim@sha256:aabbe39553d15ede8a97cc60c9e1a97034ff772afcf696ea42b94e7f5f2ec71b AS frontend-builder
 
 WORKDIR /frontend
 
@@ -21,7 +21,7 @@ COPY frontend/ .
 RUN npm run build
 
 # Stage 2: Build Python dependencies (requires gcc for compiled extensions)
-FROM python:3.12-slim-trixie@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b AS python-builder
+FROM python:3.15-slim-trixie@sha256:65a65fc7b30b06cb6df4930fd4650697cb23f4c2698ab81fc87e4b031bc36928 AS python-builder
 
 WORKDIR /app
 
@@ -43,7 +43,7 @@ COPY backend/ backend/
 RUN python -m pip install --no-cache-dir .
 
 # Stage 3: Final runtime image - no build tools, no supervisor
-FROM python:3.12-slim-trixie@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+FROM python:3.15-slim-trixie@sha256:65a65fc7b30b06cb6df4930fd4650697cb23f4c2698ab81fc87e4b031bc36928
 
 WORKDIR /app
 
