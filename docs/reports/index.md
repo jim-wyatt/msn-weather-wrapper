@@ -5,63 +5,52 @@ Welcome to the automated reports section. This area contains comprehensive repor
 ## 📊 Available Reports
 
 | Report Type | Description | Latest Status |
-|------------|-------------|---------------|
-| [CI/CD Status](ci-cd.md) | Pipeline execution details and metrics | ![Pipeline](https://img.shields.io/badge/pipeline-active-blue) |
-| [Test Results](test-report.md) | Unit, integration, and security test execution results | ![Tests](https://img.shields.io/badge/tests-passing-brightgreen) |
-| [Coverage Report](coverage-report.md) | Code coverage metrics and analysis | ![Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen) |
-| [Security Scan](security-report.md) | Security vulnerability scanning results | ![Security](https://img.shields.io/badge/security-passing-brightgreen) |
-| [Performance Testing](performance-report.md) | Load testing and benchmark results | ![Performance](https://img.shields.io/badge/performance-passing-brightgreen) |
-| [License Report](license-report.md) | Dependency licensing information | ![License](https://img.shields.io/badge/license-compliant-brightgreen) |
+|------------|-------------|
+| [CI/CD Status](ci-cd.md) | Pipeline execution details and metrics |
+| [Test Results](test-report.md) | Unit, integration, and security test execution results |
+| [Coverage Report](coverage-report.md) | Code coverage metrics and analysis |
+| [Security Scan](security-report.md) | Security vulnerability scanning results |
+| [Performance Testing](performance-report.md) | Load testing and benchmark results |
+| [License Report](license-report.md) | Dependency licensing information |
 
 ## 🔄 Report Generation
 
-Reports are automatically generated during every CI/CD pipeline run:
+Reports are generated and deployed on every push to `main`:
 
-- **Trigger Events**: Push to main/develop, pull requests, manual workflow dispatch
+- **Trigger Events**: Generated and deployed on every push to `main` (the `deploy.yml` workflow called by `ci.yml`)
 - **Generation Process**:
   1. CI pipeline runs tests, coverage analysis, and security scans
   2. Artifacts are collected from all pipeline jobs
-  3. `scripts/generate_reports.py` processes artifacts into markdown
-  4. Reports are deployed to GitHub Pages with updated timestamps
+  3. `scripts/generate_reports.py --type {test,coverage,security,license,cicd,performance}` processes artifacts into markdown under `docs/reports/`
+  4. Reports are deployed to GitHub Pages (`mkdocs gh-deploy`) with updated timestamps
 - **Update Frequency**: Real-time (on every commit to main branch)
 - **Timestamp Format**: Each report includes generation timestamp at bottom
 - **Retention**: Latest reports in documentation site, historical data in CI artifacts
 
 ## 📈 Key Metrics
 
-### Test Suite Performance
-- **Total Tests**: 105 tests (65 backend, 40 frontend E2E)
-- **Backend Tests**: 28 client, 33 API, 4 models
-- **Pass Rate**: 100%
-- **Execution Time**: ~5 seconds (backend)
-- **Python Versions**: 3.10, 3.11, 3.12
+Current figures live in the generated pages rather than here, so they never go stale:
 
-### Code Quality
-- **Coverage**: 92% overall
+- **Tests and pass rate**: [Test Results](test-report.md)
+- **Coverage**: [Coverage Report](coverage-report.md)
+- **Vulnerability findings**: [Security Scan](security-report.md)
+- **Load test throughput and latency**: [Performance Testing](performance-report.md)
+- **Dependency licenses**: [License Report](license-report.md)
+
+What runs on every pipeline:
+
+- **Python Versions**: 3.10–3.15 (CI test matrix)
 - **Linting**: Ruff (PEP 8 compliant)
 - **Type Checking**: mypy strict mode
-- **Security Scans**: Bandit, pip-audit
-
-### Security Posture
-- **Vulnerabilities Fixed**: 23 critical/high issues resolved
-- **Dependency Audits**: No known vulnerabilities
-- **Static Analysis**: Clean (Bandit)
-- **Container Scanning**: Grype + Trivy
-
-### Performance Metrics
-- **Load Test Success Rate**: 100%
-- **Total Requests Tested**: 334
-- **Average Response Time**: 22ms
-- **Concurrent Users**: 20
-- **Throughput**: 5.61 requests/second
+- **Security Scans**: Bandit, Semgrep, pip-audit, Trivy, Grype (plus CodeQL)
 
 ## 🎯 Quality Standards
 
 Our CI/CD pipeline enforces these quality gates:
 
 - ✅ All tests must pass
-- ✅ Minimum 85% code coverage
-- ✅ No critical/high security vulnerabilities
+- ✅ Code coverage is reported (not gated; no threshold is enforced)
+- ✅ No fixable critical/high container findings and no SAST/pip-audit findings
 - ✅ Type checking passes in strict mode
 - ✅ Code formatting compliant (Ruff)
 - ✅ All licenses compatible with MIT
@@ -75,7 +64,7 @@ Latest reports are available in this documentation site and updated automaticall
 ### Historical Reports
 Historical reports are available as CI/CD artifacts:
 
-1. Navigate to [GitHub Actions](https://github.com/yourusername/msn-weather-wrapper/actions)
+1. Navigate to [GitHub Actions](https://github.com/jim-wyatt/msn-weather-wrapper/actions)
 2. Select a workflow run
 3. Download artifacts from the "Artifacts" section
 
@@ -84,10 +73,11 @@ To generate reports locally:
 
 ```bash
 # Run tests with coverage
-pytest --cov=backend/msn_weather_wrapper --cov-report=html
+pytest --cov=backend --cov-report=html
 
 # Run security scans
 bandit -r backend/ -f txt
+semgrep --config auto backend/
 pip-audit
 
 # Generate license report
@@ -112,9 +102,9 @@ Comprehensive code coverage analysis:
 
 ### Security Report
 Security scanning results:
-- Bandit static analysis
+- Bandit and Semgrep static analysis
 - pip-audit CVE scanning
-- Container vulnerability scanning
+- Container vulnerability scanning (Trivy and Grype)
 - Remediation recommendations
 
 ### License Report
@@ -143,8 +133,7 @@ Load testing and benchmark results:
 
 The CI/CD pipeline will fail if:
 - Tests fail (any Python version)
-- Coverage drops below 85%
-- Critical/high security vulnerabilities detected
+- Fixable critical/high container findings, or any SAST/pip-audit findings, are detected (coverage is reported but not gated)
 - Type checking errors
 - Code formatting issues
 - Load test request failure rate exceeds 1%

@@ -222,14 +222,7 @@ Changes
 
 ## Skipping Auto-Release
 
-If you need to merge without creating a release (not recommended):
-
-1. The workflow cannot be easily skipped (by design)
-2. If needed, manually delete the created tag before CI/CD completes:
-   ```bash
-   git push origin :refs/tags/vX.Y.Z
-   ```
-3. Consider using draft PRs for work that shouldn't be released
+There is no opt-out; every merge to `main` releases. If a release must not happen, do not merge, or merge and accept the patch release. Deleting the tag after the fact does not cancel `publish-release.yml`, which is dispatched explicitly by the workflow right after the tag push.
 
 ## Troubleshooting
 

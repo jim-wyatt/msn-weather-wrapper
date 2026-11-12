@@ -84,7 +84,7 @@ The dashboard auto-refreshes every 60 seconds and shows at-a-glance status using
 **Status**: Active/Inactive/Not Configured
 
 **Checks**:
-- Virtual environment directory exists (`venv/`)
+- Virtual environment directory exists (the check looks for `venv/`; the project uses `.venv/`, so this row is grey until `dev.sh` is updated)
 - Environment is currently activated
 
 **RAG Thresholds**:
@@ -170,57 +170,70 @@ The dashboard auto-refreshes every 60 seconds and shows at-a-glance status using
 - License report (`artifacts/security-reports/licenses.json`)
 - Number of dependencies tracked
 
+#### SBOM
+
+**Status**: Count/Not Available
+
+**Checks**:
+- Number of `*.json` SBOM files under `sbom_output/` (written by `scripts/generate_sbom.sh` or `scripts/generate_sbom_ci.sh`)
+
+**RAG Thresholds**:
+- 🟢 Green: One or more SBOM files present
+- ⚪ Grey: No SBOM files
+
 **RAG Thresholds**:
 - 🟢 Green: Dependencies tracked
 - ⚪ Grey: No license report
 
 ### 4. GitHub CI/CD Workflows
 
-The dashboard fetches the latest workflow run status from GitHub's public API (no authentication required).
+The dashboard fetches the latest completed runs from GitHub's public API (no authentication required), then reads the jobs of the most recent **`CI/CD Pipeline`** run (`.github/workflows/ci.yml`). The reusable workflows `security.yml`, `build.yml`, `performance.yml` and `deploy.yml` are `workflow_call`-only and never appear as runs of their own; they show up as jobs inside the `CI/CD Pipeline` run.
 
-#### CI Pipeline
+The `CI/CD` row shows four columns:
 
-**Workflow**: `.github/workflows/ci.yml`
+#### CI
 
-**Status**: Success/Failure/Cancelled/No Recent Runs
+**Source**: Conclusion of the latest completed `CI/CD Pipeline` workflow run
 
-**RAG Thresholds**:
-- 🟢 Green: Latest run succeeded
-- 🔴 Red: Latest run failed
-- ⚪ Grey: Cancelled or no recent runs
-
-#### Security Scans
-
-**Workflow**: `.github/workflows/security.yml`
-
-**Status**: Success/Failure/Cancelled/No Recent Runs
+**Status**: `ok` / `fail` / `can` (cancelled) / `n/a`
 
 **RAG Thresholds**:
 - 🟢 Green: Latest run succeeded
 - 🔴 Red: Latest run failed
 - ⚪ Grey: Cancelled or no recent runs
 
-#### Build & Push
+#### Sec
 
-**Workflow**: `.github/workflows/build.yml`
+**Source**: Job `Run Security Scans / Basic Security Checks` of that run (the `security.yml` SAST/dependency scans called by `ci.yml`)
 
-**Status**: Success/Failure/Cancelled/No Recent Runs
-
-**RAG Thresholds**:
-- 🟢 Green: Latest run succeeded
-- 🔴 Red: Latest run failed
-- ⚪ Grey: Cancelled or no recent runs
-
-#### Deploy to Production
-
-**Workflow**: `.github/workflows/deploy.yml`
-
-**Status**: Success/Failure/Cancelled/No Recent Runs
+**Status**: `ok` / `fail` / `can` / `skip` / `n/a`
 
 **RAG Thresholds**:
-- 🟢 Green: Latest run succeeded
-- 🔴 Red: Latest run failed
-- ⚪ Grey: Cancelled or no recent runs
+- 🟢 Green: Job succeeded
+- 🔴 Red: Job failed
+- ⚪ Grey: Cancelled, skipped (for example a docs-only change) or not found
+
+#### AutoVer
+
+**Source**: Job `Trigger Auto-Version-Release` of that run (dispatches `auto-version-release.yml`; only present for pushes to `main`)
+
+**Status**: `ok` / `fail` / `can` / `skip` / `n/a`
+
+**RAG Thresholds**:
+- 🟢 Green: Job succeeded
+- 🔴 Red: Job failed
+- ⚪ Grey: Cancelled, skipped or not present (pull request runs)
+
+#### Perf
+
+**Source**: Job `Performance Tests` of that run (`performance.yml`; only present for pushes to `main`)
+
+**Status**: `ok` / `fail` / `can` / `skip` / `n/a`
+
+**RAG Thresholds**:
+- 🟢 Green: Job succeeded
+- 🔴 Red: Job failed
+- ⚪ Grey: Cancelled, skipped or not present (pull request runs)
 
 ---
 
@@ -262,10 +275,10 @@ The monitor uses GitHub's public REST API to fetch workflow status:
 
 ### API Response Handling
 
-- Fetches only completed runs (`status=completed`)
-- Matches workflows by name
-- Extracts conclusion (success/failure/cancelled)
-- Falls back to "unknown" if workflow not found
+- Fetches only completed runs (`status=completed`, latest 5)
+- Matches the `CI/CD Pipeline` workflow by name and extracts its conclusion (success/failure/cancelled)
+- Fetches `/actions/runs/{run_id}/jobs` for that run (cached for 60 seconds under `~/.cache/msn-weather-wrapper/`) and matches the `Sec`, `AutoVer` and `Perf` jobs by name
+- Falls back to "unknown" if the workflow or job is not found
 
 ---
 
@@ -302,43 +315,39 @@ To generate local reports for monitoring:
 ./dev.sh docs
 ```
 
+Security and license rows read `artifacts/security-reports/bandit-report.json` and `licenses.json`; `dev.sh docs` currently writes them to `security-results/` and `license-results/`, so copy them (or download the CI `security-reports` artifact with `gh run download <run-id> -n security-reports`) into `artifacts/security-reports/`:
+
+```bash
+mkdir -p artifacts/security-reports
+cp security-results/bandit-report.json license-results/licenses.json artifacts/security-reports/
+```
+
+The `SBOM` column counts JSON files under `sbom_output/`; run `./scripts/generate_sbom.sh` or `./scripts/generate_sbom_ci.sh` to populate it.
+
 ---
 
 ## Example Output
 
+The dashboard is a single 80x24 screen. The output below is illustrative (values vary):
+
 ```
-╔═══════════════════════════════════════════════════════════════════════════╗
-║ DevSecOps Dashboard                                                       ║
-║ jim-wyatt/msn-weather-wrapper @ main                                      ║
-║ 2025-12-04 14:30:45                                                       ║
-╚═══════════════════════════════════════════════════════════════════════════╝
-
-┌─ Local Development Environment ────────────────────────────────────────────┐
-│ Container Services:      ✅  Both services healthy                          │
-│ Python Virtual Env:      ✅  Active (venv/)                                 │
-│ Git Working Directory:   ✅  No uncommitted changes                         │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-┌─ Code Quality & Testing ────────────────────────────────────────────────────┐
-│ Test Execution:          ✅  168 tests passed                               │
-│ Code Coverage:           ✅  97% (Excellent)                                │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-┌─ Security & Compliance ─────────────────────────────────────────────────────┐
-│ SAST Security Scan:      ✅  No critical vulnerabilities                    │
-│ Dependency Scan:         ✅  No known vulnerabilities                       │
-│ License Compliance:      ✅  142 dependencies tracked                       │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-┌─ GitHub CI/CD Workflows (Latest Runs) ──────────────────────────────────────┐
-│ CI Pipeline:             ✅  Passed                                         │
-│ Security Scans:          ✅  Passed                                         │
-│ Build & Push:            ✅  Passed                                         │
-│ Deploy to Production:    ✅  Passed                                         │
-└─────────────────────────────────────────────────────────────────────────────┘
-
- ● Press Ctrl+C to exit  •  Updates every 60s  •  GitHub API via public endpoint
+================================================================================
+ ⚡ DevSecOps • jim-wyatt/msn-weather-wrapper • 2026-04-20 14:30:45
+ Branch main @ 634f1f7 • Refresh 60s • Ctrl+C to exit
+--------------------------------------------------------------------------------
+ Local  Ctnr ✅ ok | PyEnv ○ none | Git ✅ clean | PC ✅ on
+ Quality Test ✅ pass | Cov ✅ 97% | mypy ✅ yes | ruff ✅ yes
+ Security SAST ✅ ok | Deps ✅ clean | Lic ✅ 142 | SBOM ✅ 2
+ CI/CD  CI ✅ ok | Sec ✅ ok | AutoVer ✅ ok | Perf ✅ ok
+================================================================================
 ```
+
+Row by row:
+
+- **Local**: container status (`Ctnr`), virtual environment (`PyEnv`), git working tree (`Git`, dirty trees show `staged/unstaged/untracked` counts) and pre-commit hook installation (`PC`).
+- **Quality**: test result from `junit.xml`, coverage from `htmlcov/index.html`, and whether `mypy` and `ruff` are available.
+- **Security**: Bandit result (`SAST`), pip-audit (`Deps`), license report package count (`Lic`) and SBOM file count (`SBOM`).
+- **CI/CD**: `CI | Sec | AutoVer | Perf` from the latest `CI/CD Pipeline` run, as described above.
 
 ---
 

@@ -11,7 +11,7 @@ The project uses **automatic semantic versioning** that triggers on every merged
 1. **PR Merged to Main** → `ci.yml` runs on the push; once it succeeds it dispatches `auto-version-release.yml`
 2. **Version Bump Determined** → Based on the merged PR's title
 3. **Version Bump PR Created** → Automated PR updates version files (`pyproject.toml`, `backend/__init__.py`)
-4. **Auto-Merge Enabled** → PR auto-merges when checks pass
+4. **CI Gate Awaited and PR Merged** → the workflow waits for `CI Gate` on the bump PR (a maintainer must approve the run unless a `RELEASE_TOKEN` secret exists), then squash-merges it
 5. **Tag Created** → Git tag `vX.Y.Z` is automatically created
 6. **Release Published** → `publish-release.yml` builds and publishes to PyPI and GitHub Releases (container images are pushed by `ci.yml` on pushes to main)
 
@@ -65,17 +65,19 @@ The main CI/CD pipeline runs on:
 
 ### Pipeline Stages
 
-1. **Smoke Tests** - Fast syntax and import validation
-2. **Code Quality** - Ruff formatting and linting, mypy type checking
-3. **Security** - Bandit, pip-audit, license scanning
-4. **Unit Tests** - Pytest across Python 3.10-3.12 (matrix on main, 3.12 only on PRs)
-5. **Coverage** - Test coverage reporting with Codecov
-6. **Docker Build** - Build and test container images
-7. **SBOM Generation** - Software bill of materials (Syft, SPDX and CycloneDX)
-8. **Build Documentation** - Build the MkDocs site
-9. **Integration Tests** - API testing against the built container
-10. **Performance Tests** - Load test and benchmarks (on main only)
-11. **Deploy Documentation** - Generate reports and publish docs to GitHub Pages (on main only)
+1. **Detect Changes** - Classifies the diff; documentation-only PRs skip the heavy stages
+2. **Smoke Tests** - Fast syntax and import validation
+3. **Code Quality** - Ruff formatting and linting, mypy type checking
+4. **Security** - Bandit, Semgrep, pip-audit, pip-licenses, plus the container image build with Trivy/Grype fixable-vulnerability gates
+5. **Unit Tests** - Pytest across Python 3.10-3.15 (matrix on main, 3.15 only on PRs)
+6. **Coverage** - Test coverage reporting with Codecov
+7. **Docker Build** - Build and test container images
+8. **SBOM Generation** - Software bill of materials (Syft, SPDX and CycloneDX)
+9. **Build Documentation** - Build the MkDocs site
+10. **Integration Tests** - API testing against the built container
+11. **CI Gate** - Aggregates the results above; the only status check required by the `main` ruleset
+12. **Performance Tests** - Load test and benchmarks (on main only)
+13. **Deploy Documentation** - Generate reports and publish docs to GitHub Pages (on main only)
 
 **Note**: Release jobs (build package, publish to PyPI, create GitHub Release) have been moved to `publish-release.yml` which triggers on tag push. This keeps the CI pipeline focused on testing and building documentation.
 
@@ -98,8 +100,8 @@ Called by `ci.yml` on push to main, tags, and pull requests:
 - **Bandit**: Python security linting
 - **Semgrep**: Static application security testing (SAST)
 - **pip-audit**: Dependency vulnerability scanning
-- **Trivy**: Container vulnerability scanning (main and tags only)
-- **Grype**: SBOM-based vulnerability detection (main and tags only)
+- **Trivy**: image scan on every run, fails on fixable CRITICAL/HIGH; SARIF upload on main/tags only
+- **Grype**: image scan on every run, fails on fixable CRITICAL; SBOM-based report on main/tags only
 - **License Report**: pip-licenses dependency license report
 
 ## 📊 Performance Testing (`performance.yml`)
@@ -118,7 +120,7 @@ Weekly automated updates:
 - Python dependencies (pip)
 - Security audits (pip-audit, npm audit)
 
-GitHub Actions versions are updated by Dependabot (`.github/dependabot.yml`).
+GitHub Actions versions are updated by Dependabot (`.github/dependabot.yml`), and container base-image digests (docker ecosystem for `/infra/containers` and `/frontend`, weekly on Mondays, digest/patch only).
 
 ## 🎯 Best Practices
 
@@ -131,11 +133,11 @@ GitHub Actions versions are updated by Dependabot (`.github/dependabot.yml`).
 
 ### For Maintainers
 
-1. **Branch Protection**: Keep `main` protected (require PR reviews, status checks)
+1. **Branch Protection**: `main` ruleset: required `CI Gate` check, CodeQL results, squash merges only
 2. **Secrets Management**:
-   - No secrets needed! GitHub token is auto-provided
+   - No required secrets; optional `RELEASE_TOKEN` makes releases hands-off (see docs/AUTOMATED_VERSIONING.md)
    - PyPI uses trusted publishing (OIDC), no token storage required
-3. **Auto-Merge**: Version bump PRs use auto-merge for convenience
+3. **Bump PR Merge**: Version bump PRs are merged by the release workflow once `CI Gate` passes; set `RELEASE_TOKEN` to avoid the manual 'Approve and run workflows' step.
 4. **Monitoring**: Watch workflow runs for any failures or issues
 
 ## ✨ Fully Automated Release Flow
@@ -150,9 +152,9 @@ The complete release process is now **fully automated** end-to-end:
 3. ci.yml passes on main and dispatches auto-version-release.yml:
    - Determines version bump (major/minor/patch)
    - Creates version bump PR
-   - Enables auto-merge
+   - Waits for CI Gate on the bump PR
    ↓
-4. Version bump PR auto-merges
+4. Workflow squash-merges the bump PR
    ↓
 5. Git tag (v1.2.3) created automatically
    ↓
@@ -164,12 +166,13 @@ The complete release process is now **fully automated** end-to-end:
 7. Release complete ✅
    - Package available on PyPI
    - Release notes on GitHub
-   - No manual steps needed!
+   - No manual steps once RELEASE_TOKEN is configured; without it a
+     maintainer approves the bump PR's workflow run
 ```
 
 **Key Advantages:**
 
-- ✅ No manual `gh workflow run` commands needed
+- ✅ No manual `gh workflow run` commands needed (a maintainer only approves the bump PR's workflow run when `RELEASE_TOKEN` is not configured)
 - ✅ Separation of concerns: CI tests/builds, separate workflow handles releases
 - ✅ Reduced complexity and fewer moving parts
 - ✅ Consistent versioning across all releases
@@ -185,6 +188,8 @@ The complete release process is now **fully automated** end-to-end:
 3. Check `publish-release.yml` workflow run: `gh run list --workflow publish-release.yml`
 
 **If missing**: Tag may not have been created. Check `auto-version-release.yml` logs for version bump PR.
+
+Is the bump PR showing **Approve and run workflows**? Approve it; the workflow resumes (re-run it if it timed out).
 
 ### Version bump PR not created
 

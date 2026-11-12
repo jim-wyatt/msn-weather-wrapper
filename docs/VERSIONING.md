@@ -41,7 +41,7 @@ The project uses automated PR-based versioning. When a PR is merged to main:
 2. **Version Bump PR Created**
    - The workflow creates a PR with version updates
    - Updates `pyproject.toml` and `backend/__init__.py`
-   - Auto-merge is enabled
+   - The workflow waits for `CI Gate` and squash-merges the PR (see [AUTOMATED_VERSIONING.md](AUTOMATED_VERSIONING.md) for the `RELEASE_TOKEN` caveat)
 
 3. **Automatic Tag Creation**
    - When the version bump PR merges, a git tag is created (e.g., `v1.2.3`)
@@ -240,6 +240,8 @@ The build workflow (`build.yml`) creates multiple tags:
 | `X.Y` | `1.2` | Latest patch in minor version |
 | `X` | `1` | Latest minor in major version |
 | `latest` | `latest` | Latest build from `main` |
+| `sha-<short sha>` | `sha-1a2b3c4` | Every pushed build (`type=sha`) |
+| `<branch>` | `main` | Pushes to a branch (`type=ref,event=branch`; in practice `main`) |
 | `X.Y.Z-alpha.N` | `1.2.0-alpha.1` | Alpha prerelease |
 | `X.Y.Z-beta.N` | `1.2.0-beta.1` | Beta prerelease |
 | `X.Y.Z-rc.N` | `1.2.0-rc.1` | Release candidate |

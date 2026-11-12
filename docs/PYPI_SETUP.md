@@ -39,22 +39,35 @@ You'll be prompted for your PyPI username and password.
 
 After the first manual upload:
 
-1. Go to [PyPI Account Settings](https://pypi.org/manage/account/)
-2. Scroll to **Publishing** section
-3. Click **Add a new pending publisher**
-4. Configure:
-   - **PyPI Project Name**: `msn-weather-wrapper`
-   - **Owner**: Your GitHub username
+1. Open the project's **Publishing** settings (Manage → Settings → Publishing, <https://pypi.org/manage/project/msn-weather-wrapper/settings/publishing/>)
+2. Add a trusted publisher:
+   - **Owner**: `jim-wyatt`
    - **Repository name**: `msn-weather-wrapper`
    - **Workflow name**: `publish-release.yml`
    - **Environment name**: `pypi` (the environment used by `publish-release.yml`)
-5. Click **Add**
+3. Click **Add**
 
-**IMPORTANT:** The pending publisher must be confirmed from PyPI before the first automated release!
+The publisher is active immediately. (Alternatively, skip the manual first upload: add a *pending* publisher with the same values under your account's Publishing settings, <https://pypi.org/manage/account/publishing/>, and the first automated release creates the project.)
 
-### Step 4: Verify in GitHub
+### Step 4: Create the `pypi` GitHub environment
 
-Your repository is now configured for trusted publishing. No token storage needed!
+The `publish-pypi` job in `publish-release.yml` runs in the `pypi` environment, which is required and must exist in the repository:
+
+1. Go to **Settings** → **Environments** → **New environment**
+2. Name: `pypi`
+3. Under **Deployment branches and tags**, select *Selected branches and tags* and allow branch `main` and tag pattern `v*`
+4. Optionally add required reviewers or a wait timer
+
+No repository secret is needed: the job requests an OIDC token (`id-token: write`) at release time and `pypa/gh-action-pypi-publish` exchanges it for a short-lived PyPI token. There is no `PYPI_TOKEN`.
+
+### Step 5: Verify a published release
+
+Each release's wheel and sdist carry a signed build-provenance attestation (`actions/attest` in `publish-release.yml`). Consumers can verify what they install:
+
+```bash
+pip download msn-weather-wrapper --no-deps
+gh attestation verify msn_weather_wrapper-*.whl --repo jim-wyatt/msn-weather-wrapper
+```
 
 ---
 
@@ -64,13 +77,14 @@ Once OIDC is configured, releases are fully automatic:
 
 1. Developer creates PR with changes
 2. PR merged to main
-3. auto-version-release.yml triggers:
+3. ci.yml runs on `main` and, after a successful run, dispatches auto-version-release.yml, which:
    - Determines version bump
    - Creates and merges version bump PR
    - Pushes version tag
 4. publish-release.yml triggers on tag:
-   - Uses OIDC to authenticate to PyPI
-   - Builds Python package
+   - Sets the package version from the tag
+   - Builds Python package and attests its provenance
+   - Uses OIDC to authenticate to PyPI (in the `pypi` environment)
    - Publishes to PyPI
    - Creates GitHub Release
 5. Package available on PyPI ✅
@@ -127,22 +141,16 @@ unzip -l dist/*.whl | head -20
 
 ### OIDC Configuration Issues
 
-**Problem:** Pending publisher not confirmed
+**Problem:** `publish-pypi` fails with `invalid-publisher` or `403 Forbidden`
 
-**Solution:**
+**Solution:** The OIDC token's claims must match the trusted publisher exactly. Check, in order:
 
-1. Go to [PyPI Account Settings](https://pypi.org/manage/account/)
-2. Look for pending publishers
-3. Click the pending publisher
-4. Click **Confirm** to activate it
-
-**Problem:** First automated release fails with auth error
-
-**Solution:**
-
-- Ensure OIDC pending publisher is confirmed (not just added)
-- Wait a few minutes after confirming for caching to update
-- Check `publish-release.yml` logs for specific error
+- The workflow filename on PyPI is `publish-release.yml` (not a display name)
+- The environment name on PyPI is `pypi` and the job runs in that environment
+- Owner is `jim-wyatt` and repository is `msn-weather-wrapper` (case-sensitive)
+- The `publish-pypi` job still has `permissions: id-token: write`
+- The `pypi` environment's deployment branch/tag rule allows the ref being published (`main` and tags `v*`); a tag that does not match the rule fails before the job starts
+- Check the `publish-release.yml` logs for the exact claim PyPI rejected
 
 ### Package Upload Issues
 

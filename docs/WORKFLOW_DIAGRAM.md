@@ -50,6 +50,7 @@ sequenceDiagram
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E3F2FD', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#1E88E5', 'lineColor': '#1E88E5', 'secondaryColor': '#BBDEFB', 'tertiaryColor': '#90CAF9', 'edgeLabelBackground': '#E3F2FD'}}}%%
 sequenceDiagram
+    actor Dev as Developer
     participant Main as Main Branch
     participant CI as CI/CD Pipeline
     participant Build as Build
@@ -133,13 +134,15 @@ graph TB
 - Manual dispatch
 
 **Flow:**
-1. **Test Phase** - Calls `test.yml` for smoke tests, code quality, unit tests, and coverage
-2. **Security Phase** - Calls `security.yml` (full scan on main/tags, basic on PR)
-3. **Build Phase** - Calls `build.yml` (builds Docker images, SBOM, docs)
-4. **Integration Phase** - Calls `test.yml` again with integration tests enabled
-5. **Performance Phase** - Calls `performance.yml` (main branch only)
-6. **Deploy Phase** - Calls `deploy.yml` (main branch only)
-7. **Trigger Auto-Version** - Triggers `auto-version-release.yml` (main branch only)
+1. **Change Detection** - docs-only PRs skip the heavy jobs
+2. **Test Phase** - Calls `test.yml` for smoke tests, code quality, unit tests, and coverage
+3. **Security Phase** - Calls `security.yml` (full scan on main/tags, basic on PR)
+4. **Build Phase** - Calls `build.yml` (builds Docker images, SBOM, docs)
+5. **Integration Phase** - Calls `test.yml` again with integration tests enabled
+6. **CI Gate** - aggregates test/security/build/integration results; the only required status check
+7. **Performance Phase** - Calls `performance.yml` (main branch only)
+8. **Deploy Phase** - Calls `deploy.yml` (main branch only)
+9. **Trigger Auto-Version** - Triggers `auto-version-release.yml` (main branch only)
 
 **Benefits:**
 - Modular architecture with a short orchestrator workflow
@@ -152,14 +155,14 @@ graph TB
 **Purpose:** Handles all testing phases including smoke tests, unit tests, coverage, and integration tests.
 
 **Inputs:**
-- `python-version` - Python version to use (default: '3.12')
+- `python-version` - Python version to use (default: '3.15')
 - `run-integration` - Whether to run integration tests (default: false)
 - `artifact-suffix` - Suffix for artifact names to avoid conflicts (default: '')
 
 **Jobs:**
 1. **Smoke Tests** - Quick validation (imports, syntax)
 2. **Code Quality** - Ruff format check, linting, mypy type checking
-3. **Unit Tests** - Multi-version Python testing (3.10, 3.11, 3.12; 3.12 only on pull requests)
+3. **Unit Tests** - Multi-version Python testing (3.10 through 3.15 on pushes; 3.15 only on pull requests)
 4. **Coverage** - Test coverage with reports
 5. **Integration Tests** - Tests against containerized API (when enabled)
 
@@ -171,7 +174,7 @@ graph TB
 
 **Inputs:**
 
-- `python-version` - Python version to use (default: '3.12')
+- `python-version` - Python version to use (default: '3.15')
 - `full-scan` - Whether to run comprehensive security scan (default: false)
 
 **Jobs:**
@@ -181,14 +184,14 @@ graph TB
    - Semgrep (pattern-based security analysis)
    - pip-audit (package auditing)
    - pip-licenses (license report)
-2. **Container Security Scan** - Image & SBOM analysis (full scan only)
+2. **Container Security Scan** - always builds the image and fails on fixable CRITICAL/HIGH (Trivy) and fixable CRITICAL (Grype); SARIF upload, JSON reports and Syft SBOM only when `full-scan` is true
    - Trivy (container image vulnerabilities)
    - Grype (SBOM vulnerability analysis)
 
 **Execution Strategy:**
 
-- **Pull Requests:** Basic security checks only (Bandit, Semgrep, pip-audit, pip-licenses) - fast feedback
-- **Main Branch & Tags:** Basic checks plus container scan (Trivy, Grype) - complete validation
+- **Pull Requests:** basic checks plus container gates (Bandit, Semgrep, pip-audit, pip-licenses, Trivy/Grype fixable-vulnerability gates)
+- **Main & Tags:** the same plus full container reports (SARIF, Trivy JSON, Syft SBOM, Grype report)
 
 **Called by:** `ci.yml` (full scan on main/tags, basic on PR)
 
@@ -201,13 +204,15 @@ graph LR
 
     subgraph "Always On (All Branches)"
         BASIC["Basic Security<br/>✓ Bandit<br/>✓ Semgrep<br/>✓ pip-audit<br/>✓ pip-licenses"]
+        GATE["Container Gates<br/>✓ Trivy fixable CRIT/HIGH<br/>✓ Grype fixable CRIT"]
     end
 
     subgraph "Full Scan (Main/Tags Only)"
-        CONT["Container Scanning<br/>✓ Trivy<br/>✓ Grype"]
+        CONT["Container Reports<br/>✓ SARIF<br/>✓ Trivy JSON<br/>✓ Syft SBOM<br/>✓ Grype report"]
     end
 
     SEC --> BASIC
+    SEC --> GATE
     SEC --> CONT
 
     CONT -->|SARIF Upload| GHSEC["GitHub Security Tab"]
@@ -217,6 +222,7 @@ graph LR
     %% Muted palette consistent with site blues
     style SEC fill:#26A69A,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
     style BASIC fill:#64B5F6,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
+    style GATE fill:#64B5F6,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
     style CONT fill:#4DD0E1,stroke:#00838F,stroke-width:1.5px,color:#0F172A
     style GHSEC fill:#CFD8DC,stroke:#90A4AE,stroke-width:1.5px,color:#0F172A
     style REPORTS fill:#BBDEFB,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
@@ -228,7 +234,7 @@ graph LR
 **Purpose:** Builds Docker images, generates SBOM, and builds documentation.
 
 **Inputs:**
-- `python-version` - Python version to use (default: '3.12')
+- `python-version` - Python version to use (default: '3.15')
 - `push-image` - Whether to push Docker image to registry (default: false)
 
 **Jobs:**
@@ -243,10 +249,10 @@ graph LR
 **Purpose:** Generates consolidated reports and deploys documentation to GitHub Pages.
 
 **Inputs:**
-- `python-version` - Python version to use (default: '3.12')
+- `python-version` - Python version to use (default: '3.15')
 
 **Jobs:**
-1. **Generate Reports** - Creates test, coverage, security, and performance reports
+1. **Generate Reports** - Creates test, coverage, security, license, CI/CD and performance reports
 2. **Deploy Documentation** - Deploys to GitHub Pages (main branch only)
 
 **Called by:** `ci.yml` (main branch only)
@@ -256,7 +262,7 @@ graph LR
 **Purpose:** Runs performance benchmarks and load testing.
 
 **Inputs:**
-- `python-version` - Python version to use (default: '3.12')
+- `python-version` - Python version to use (default: '3.15')
 
 **Jobs:**
 1. **Load Test** - Locust-based load testing (20 concurrent users)
@@ -295,7 +301,7 @@ graph LR
 2. Calculates new version
 3. Updates `pyproject.toml` and `backend/__init__.py`
 4. Creates version bump PR
-5. Auto-merges the PR (if branch protection allows)
+5. Waits for `CI Gate` on the PR (maintainer approval of the run needed unless `RELEASE_TOKEN` is set), then squash-merges it
 6. Creates git tag (format: `v*.*.*`)
 7. Triggers `publish-release.yml`
 
@@ -359,8 +365,8 @@ All workflows use consistent environment configuration:
 
 ```yaml
 env:
-  PYTHON_VERSION: '3.12'
-  NODE_VERSION: '24'
+  PYTHON_VERSION: '3.15'
+  NODE_VERSION: '26'
   REPORTS_DIR: 'docs/reports'
 ```
 
@@ -368,6 +374,7 @@ env:
 
 - `GITHUB_TOKEN` - Automatically provided by GitHub Actions
 - No additional secrets required (PyPI uses OIDC trusted publishing)
+- `RELEASE_TOKEN` (optional) - lets the version-bump PR's CI start without manual approval
 
 ## Cache Strategy
 
@@ -379,21 +386,4 @@ Workflows leverage GitHub Actions caching for:
 
 ## Migration from Old Architecture
 
-The refactoring maintains 100% backward compatibility:
-
-- ✅ All existing functionality preserved
-- ✅ Same quality gates and checks
-- ✅ Same deployment targets
-- ✅ Same version management process
-- ✅ Same security scanning coverage
-
-**What changed:**
-- Workflow organization (monolithic → modular)
-- File structure (1 large file → 6 focused files)
-- Maintainability (improved significantly)
-
-**What stayed the same:**
-- All test coverage requirements
-- All security checks
-- All build and deployment steps
-- All triggers and automation
+The original monolithic workflow was split into the nine files described above (an orchestrator, five reusable workflows and three standalone workflows). Since then the gate semantics have also changed: `CI Gate` is the single required status check, and the container vulnerability gates run on every pipeline rather than only on `main` and tags.
