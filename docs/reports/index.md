@@ -4,7 +4,7 @@ Welcome to the automated reports section. This area contains comprehensive repor
 
 ## 📊 Available Reports
 
-| Report Type | Description | Latest Status |
+| Report Type | Description |
 |------------|-------------|
 | [CI/CD Status](ci-cd.md) | Pipeline execution details and metrics |
 | [Test Results](test-report.md) | Unit, integration, and security test execution results |
