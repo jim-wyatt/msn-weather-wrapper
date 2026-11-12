@@ -242,8 +242,9 @@ Point external liveness and readiness probes at `/api/v1/health/live` and `/api/
 
 ### Supply chain
 
-- Base images (`python:3.12-slim-trixie`, `node:24-trixie-slim`) are pinned by digest in the
-  Containerfiles and bumped weekly by Dependabot.
+- Base images (`python:3.15-slim-trixie`, `node:26-trixie-slim`) are pinned by digest in the
+  Containerfiles and bumped weekly by Dependabot (digest and patch updates only; moving to a new
+  major or minor line is a deliberate change).
 - Every pipeline, pull requests included, builds the image and fails on fixable CRITICAL/HIGH
   findings from Trivy and fixable CRITICAL findings from Grype. Pushes to `main` additionally
   upload full Trivy, Grype, and SBOM reports.
