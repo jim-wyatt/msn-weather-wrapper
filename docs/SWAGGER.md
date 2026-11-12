@@ -33,7 +33,7 @@ https://your-domain.com/apidocs
 - **Try it out**: Execute API calls directly from the browser
 - **Real-time responses**: See actual API responses
 - **Parameter validation**: Test with different inputs
-- **Authentication support**: Session-based auth for recent searches
+- **Session cookie support**: recent searches are scoped to the API's signed session cookie
 
 ### 🏷️ Organized by Category
 - **Health**: Health checks, liveness, readiness probes
@@ -106,12 +106,13 @@ Click on any endpoint to view:
 6. See the live weather response!
 ```
 
-## Authentication
+## Sessions and recent searches
 
-For endpoints requiring session authentication (recent searches):
-1. Make a weather request first to establish a session
-2. The session cookie will be automatically included
-3. Recent searches endpoints will now work
+No endpoint requires authentication. Recent searches are scoped to a signed session cookie
+that the API sets on the first response, so:
+1. `GET /api/v1/recent-searches` works immediately (it returns an empty list for a new session)
+2. Make a successful weather request first if you want the list to contain entries
+3. Swagger UI sends the cookie automatically on later requests
 
 ## Rate Limiting
 
@@ -189,7 +190,7 @@ curl http://localhost:5000/apispec.json
 **Quick Start:**
 ```bash
 # Start the API
-uvicorn backend.api.main:app --reload --port 5000
+APP_ENV=development uvicorn backend.api.main:app --reload --port 5000
 
 # Open your browser to:
 http://localhost:5000/apidocs

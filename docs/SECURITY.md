@@ -4,9 +4,7 @@ MSN Weather Wrapper implements comprehensive security measures to protect agains
 
 ## Reporting Security Issues
 
-If you discover a security vulnerability, please report it privately to:
-- **Email**: the.jim.wyatt@outlook.com
-- **Subject**: [SECURITY] MSN Weather Wrapper - Brief Description
+Report privately via the GitHub Security Advisories form (https://github.com/jim-wyatt/msn-weather-wrapper/security/advisories/new) or by email to the.jim.wyatt@outlook.com; see the [security policy](https://github.com/jim-wyatt/msn-weather-wrapper/blob/main/.github/SECURITY.md) for response times.
 
 Please do not open public issues for security vulnerabilities.
 
@@ -94,26 +92,33 @@ The project uses a **comprehensive security scanning workflow** integrated into 
 - **pip-audit**: Vulnerability checking of installed dependencies
 
 **Container Security:**
-- **Trivy**: Multi-layer container image vulnerability scanning with SARIF upload to GitHub Security (main branch and tags only)
-- **Grype**: SBOM-based vulnerability detection and analysis (main branch and tags only)
+- **Trivy**: scans the freshly built image on every pipeline and fails on fixable CRITICAL/HIGH findings; on `main` and tags it also uploads SARIF to the GitHub Security tab and a JSON report
+- **Grype**: scans the image on every pipeline and fails on fixable CRITICAL findings (it also version-scans the python/node binaries, which Trivy does not); on `main` and tags it additionally produces a Syft SBOM and an SBOM-based Grype report
 
 **License Compliance:**
 - **pip-licenses**: Dependency license report on all branches
 
+Results are evaluated by `scripts/evaluate_security_reports.py`: Bandit HIGH findings, any Semgrep finding (rulesets `p/python`, `p/security-audit`, `.semgrep.yml`), and any pip-audit vulnerability fail the job. Semgrep is installed with pipx in its own environment so its transitive dependencies are not counted by pip-audit.
+
+**Platform scanning (GitHub):**
+- **CodeQL** default setup for Python, JavaScript/TypeScript and GitHub Actions; results are required by the `main` ruleset
+- **Secret scanning** with push protection
+- **Dependabot** alerts and security updates
+- **Private vulnerability reporting** enabled
+
 **Execution Strategy:**
-- **Pull Requests**: Basic security checks (Bandit, Semgrep, pip-audit, pip-licenses) - fast feedback
-- **Main Branch & Tags**: Basic checks plus container scanning (Trivy, Grype) - complete validation
+- **Pull Requests**: Bandit, Semgrep, pip-audit, pip-licenses, plus the container build with the Trivy and Grype fixable-vulnerability gates
+- **Main Branch & Tags**: the same, plus full Trivy SARIF/JSON, Syft SBOM and Grype reports
 - **Manual Trigger**: On-demand runs via workflow dispatch of `ci.yml`
 
 **Artifact Management:**
-- 3-day retention for the `security-reports` artifact (not uploaded on PRs)
-- 30-day retention for the `container-security-reports` artifact
+- 3-day retention for the `security-reports` artifact (uploaded on every run, including pull requests)
+- 30-day retention for the `container-security-reports` artifact (`main` and tags only)
 - Trivy results uploaded to GitHub Security tab
 - Automated markdown reports generated for documentation site
 
 **CI/CD Integration:**
-- Basic security checks run on every PR (fast)
-- Container scans on main branch and tags (thorough)
+- Every PR runs SAST, dependency, license and container-gate scans; `main` and tags add the full container reports
 - Trivy results uploaded to GitHub Security tab with SARIF format
 - Automated reports generated in docs/reports/security-report.md
 
@@ -183,7 +188,7 @@ curl "http://localhost:5000/api/v1/weather?city=Seattle | whoami&country=USA"
 2. **Use parameterized queries** - Although we don't use SQL directly, maintain safe practices
 3. **Keep dependencies updated** - Regularly update all dependencies
 4. **Run security tests** - Execute `pytest tests/test_security.py` before each release
-5. **Review security scans** - Run Bandit and pip-audit tools regularly
+5. **Review security scans** - Run Bandit, Semgrep and pip-audit regularly
 
 ### For Deployment
 1. **Use HTTPS** - Always deploy with TLS/SSL in production
@@ -203,13 +208,13 @@ curl "http://localhost:5000/api/v1/weather?city=Seattle | whoami&country=USA"
 If you discover a security vulnerability:
 
 1. **Do NOT** open a public issue
-2. Email security concerns to: the.jim.wyatt@outlook.com
+2. Report privately via the GitHub Security Advisories form (https://github.com/jim-wyatt/msn-weather-wrapper/security/advisories/new) or by email to the.jim.wyatt@outlook.com
 3. Include:
    - Description of the vulnerability
    - Steps to reproduce
    - Potential impact
    - Suggested fix (if any)
-4. Allow 90 days for responsible disclosure
+4. See the [security policy](https://github.com/jim-wyatt/msn-weather-wrapper/blob/main/.github/SECURITY.md) for acknowledgement, fix and disclosure timelines
 
 ## Security Audit History
 

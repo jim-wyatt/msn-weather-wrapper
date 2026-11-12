@@ -75,9 +75,9 @@ This project implements several security measures:
 - **Dependency Scanning**: pip-audit and Dependabot alerts for known vulnerabilities
 - **Code Scanning**: GitHub CodeQL for Python, JavaScript/TypeScript, and GitHub Actions
 - **Secret Scanning**: GitHub secret scanning with push protection
-- **Container Scanning**: Trivy, Grype for image vulnerabilities
+- **Container Scanning**: Trivy and Grype on every pipeline; fixable CRITICAL/HIGH (Trivy) and fixable CRITICAL (Grype) findings block merges
 - **License Compliance**: Automated checking of dependency licenses
-- **Schedule**: Weekly scans every Monday at 2 AM UTC + on all pushes to main
+- **Schedule**: on every pull request, push to `main`, and release tag (CI); weekly pip-audit/npm-audit on Mondays at 09:00 UTC (`dependencies.yml`); CodeQL default setup additionally scans on GitHub's weekly schedule
 
 ### Code Quality
 
@@ -94,6 +94,9 @@ This project implements several security measures:
 - No secrets baked into the image; `APP_SECRET_KEY` must be supplied at runtime
 - Health check endpoints for monitoring
 - Gunicorn with secure worker configuration
+- `main` is protected by a ruleset: required `CI Gate` status check (up to date with `main`), CodeQL results required, squash merges only, deletions and force-pushes blocked
+- Workflow `GITHUB_TOKEN` defaults to read-only; jobs request the scopes they need
+- PyPI releases use OIDC trusted publishing through the `pypi` environment (no stored token); container images and wheels carry GitHub build-provenance attestations (`gh attestation verify ...`)
 
 ## Known Security Considerations
 

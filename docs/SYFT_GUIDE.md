@@ -22,10 +22,12 @@ Syft is a CLI tool and Go library for generating SBOMs from container images and
 
 This will:
 1. Check/install Syft automatically
-2. Generate SBOMs for unified container (API + Frontend + Nginx)
+2. Generate SBOMs for the container images (see the note below)
 3. Generate SBOMs for source code
 4. Generate SBOMs for Python packages
 5. Create a summary report
+
+> **Note:** The script currently targets the legacy `msn-weather-wrapper_api`/`_frontend` images; the project now ships a single unified image (compose service `app`, built from `infra/containers/Containerfile`). For the unified image, build it with `podman-compose -f infra/compose/podman-compose.yml build`, find the resulting tag with `podman images`, and run `syft <image built by compose> -o spdx-json`, or scan the published image directly with `syft ghcr.io/jim-wyatt/msn-weather-wrapper:latest -o spdx-json`.
 
 ### View Results
 
@@ -79,7 +81,7 @@ Complete SBOM generation with multiple formats and comprehensive analysis.
 ```
 
 **Generates:**
-- Unified container SBOMs (SPDX, CycloneDX, Table)
+- API and frontend container SBOMs (SPDX, CycloneDX, Table) from the legacy `localhost/msn-weather-wrapper_api:latest` and `localhost/msn-weather-wrapper_frontend:latest` images
 - Source code SBOMs (SPDX, CycloneDX, Table)
 - Python packages SBOMs (SPDX, Table)
 - Summary report in Markdown
@@ -91,16 +93,18 @@ Complete SBOM generation with multiple formats and comprehensive analysis.
 Lightweight script for CI/CD pipelines.
 
 ```bash
-./generate_sbom_ci.sh
+./scripts/generate_sbom_ci.sh
 ```
+
+The script scans the legacy `msn-weather-wrapper_api`/`_frontend` images if they exist and always generates a source SBOM (`source_sbom_*.json`). The GitHub Actions workflows do not call it; see [CI/CD Integration](#cicd-integration).
 
 **Environment Variables:**
 ```bash
 # Customize output directory
-SBOM_DIR=artifacts/sboms ./generate_sbom_ci.sh
+SBOM_DIR=artifacts/sboms ./scripts/generate_sbom_ci.sh
 
 # Change output format
-FORMAT=cyclonedx-json ./generate_sbom_ci.sh
+FORMAT=cyclonedx-json ./scripts/generate_sbom_ci.sh
 ```
 
 ## Output Formats
@@ -175,18 +179,20 @@ jq '.packages[] | select(.name | startswith("python")) | .name' sbom_output/api_
 
 ### Scan Container Images
 
+Scan the published unified image (or `msn-weather-app:test` for an image built locally the way CI builds it):
+
 ```bash
 # SPDX format
-syft localhost/msn-weather-wrapper:latest -o spdx-json > container_sbom.json
+syft ghcr.io/jim-wyatt/msn-weather-wrapper:latest -o spdx-json > container_sbom.json
 
 # CycloneDX format
-syft localhost/msn-weather-wrapper:latest -o cyclonedx-json > container_sbom.json
+syft ghcr.io/jim-wyatt/msn-weather-wrapper:latest -o cyclonedx-json > container_sbom.json
 
 # Table format (human-readable)
-syft localhost/msn-weather-wrapper:latest -o table
+syft ghcr.io/jim-wyatt/msn-weather-wrapper:latest -o table
 
 # Syft JSON (most detailed)
-syft localhost/msn-weather-wrapper:latest -o syft-json > container_sbom.json
+syft ghcr.io/jim-wyatt/msn-weather-wrapper:latest -o syft-json > container_sbom.json
 ```
 
 ### Scan Directories
@@ -214,55 +220,29 @@ syft file:package.zip -o table
 
 ## CI/CD Integration
 
-### GitHub Actions
+### GitHub Actions (this repository)
 
-```yaml
-name: Generate SBOM
+SBOM generation is already wired into the reusable workflows called by `ci.yml`; neither `generate_sbom.sh` nor `generate_sbom_ci.sh` is used in CI.
 
-on:
-  push:
-    branches: [main]
-  release:
-    types: [created]
+- **`build.yml`, `sbom` job** — installs Syft and runs `syft dir:.` to produce `sbom_output/source_sbom.json` (SPDX) and `sbom_output/source_cyclonedx.json` (CycloneDX). On pushes to `main` the directory is uploaded as the `sbom-reports` artifact (7-day retention).
+- **`security.yml`, `container-scan` job** — builds the unified image as `msn-weather-app:security-scan`, runs Syft on it to produce `container-sbom.json`, and feeds that SBOM to Grype (`grype sbom:security-reports/container-sbom.json`). On `main` and tag runs the SBOM and scan results are uploaded inside the `container-security-reports` artifact (30-day retention). Trivy and Grype also fail the job on fixable CRITICAL (and, for Trivy, HIGH) findings.
+- **`build.yml`, image push** — the image pushed to `ghcr.io/jim-wyatt/msn-weather-wrapper` on `main` and `v*` tags is built with `sbom: true` and `provenance: true`, so an SBOM and provenance attestation are attached to the image in the registry, and `actions/attest` records a signed build-provenance attestation verifiable with `gh attestation verify oci://ghcr.io/jim-wyatt/msn-weather-wrapper:<tag> --repo jim-wyatt/msn-weather-wrapper`.
 
-jobs:
-  sbom:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+Download the artifacts from a workflow run with `gh run download <run-id> -n sbom-reports` or `-n container-security-reports`.
 
-      - name: Install Syft
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+### Other CI systems (generic examples)
 
-      - name: Build containers
-        run: podman-compose -f infra/compose/podman-compose.yml build
+The snippets below are generic examples for teams reusing these scripts elsewhere; they are not used by this project.
 
-      - name: Generate SBOMs
-        run: ./scripts/generate_sbom_ci.sh
-
-      - name: Upload SBOMs
-        uses: actions/upload-artifact@v4
-        with:
-          name: sboms
-          path: sbom_output/
-
-      - name: Scan for vulnerabilities
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
-          grype sbom:sbom_output/api_sbom_*.json
-```
-
-### GitLab CI
+**GitLab CI:**
 
 ```yaml
 generate-sbom:
   stage: build
   image: ubuntu:latest
   script:
-    - apt-get update && apt-get install -y curl podman
+    - apt-get update && apt-get install -y curl
     - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-    - podman-compose -f infra/compose/podman-compose.yml build
     - ./scripts/generate_sbom_ci.sh
   artifacts:
     paths:
@@ -270,7 +250,7 @@ generate-sbom:
     expire_in: 30 days
 ```
 
-### Jenkins
+**Jenkins:**
 
 ```groovy
 pipeline {
@@ -298,7 +278,7 @@ pipeline {
 syft dir:. --catalogers python -o table
 
 # Only catalog OS packages
-syft localhost/msn-weather-wrapper_api:latest --catalogers dpkg,apk -o table
+syft ghcr.io/jim-wyatt/msn-weather-wrapper:latest --catalogers dpkg,apk -o table
 ```
 
 ### Filtering Output
@@ -315,7 +295,7 @@ syft dir:. --select-catalogers python,javascript -o table
 
 ```bash
 # Generate multiple formats at once
-syft localhost/msn-weather-wrapper:latest \
+syft ghcr.io/jim-wyatt/msn-weather-wrapper:latest \
   -o spdx-json=container_spdx.json \
   -o cyclonedx-json=container_cyclonedx.json \
   -o table=container_table.txt
@@ -342,7 +322,7 @@ Combine Syft with Grype for continuous vulnerability monitoring:
 ```bash
 # Generate and scan
 ./scripts/generate_sbom.sh
-grype sbom:sbom_output/container_sbom_spdx_*.json --fail-on high
+grype sbom:sbom_output/api_sbom_spdx_*.json --fail-on high
 ```
 
 ### 5. License Auditing
@@ -369,12 +349,14 @@ export PATH=$PATH:/usr/local/bin
 ### Container Not Found
 
 ```bash
-# Build containers first
+# Build the unified image
 podman-compose -f infra/compose/podman-compose.yml build
 
 # Verify images exist
-podman images | grep msn-weather
+podman images | grep -E 'msn-weather|app'
 ```
+
+`generate_sbom.sh` looks for the legacy `localhost/msn-weather-wrapper_api:latest` and `_frontend` images and runs a bare `podman-compose build` when they are missing; with the unified compose file that produces a single `app` image, so scan it directly with `syft <image built by compose>` instead.
 
 ### Permission Denied
 
@@ -397,9 +379,12 @@ zcat sbom_output/api_sbom_spdx_*.json.gz | jq '.packages[].name'
 
 ```
 sbom_output/
-├── container_sbom_spdx_YYYYMMDD_HHMMSS.json       # Container SPDX SBOM
-├── container_sbom_cyclonedx_YYYYMMDD_HHMMSS.json  # Container CycloneDX SBOM
-├── container_sbom_table_YYYYMMDD_HHMMSS.txt       # Container Table SBOM
+├── api_sbom_spdx_YYYYMMDD_HHMMSS.json             # API container SPDX SBOM
+├── api_sbom_cyclonedx_YYYYMMDD_HHMMSS.json        # API container CycloneDX SBOM
+├── api_sbom_table_YYYYMMDD_HHMMSS.txt             # API container Table SBOM
+├── frontend_sbom_spdx_YYYYMMDD_HHMMSS.json        # Frontend container SPDX SBOM
+├── frontend_sbom_cyclonedx_YYYYMMDD_HHMMSS.json   # Frontend container CycloneDX SBOM
+├── frontend_sbom_table_YYYYMMDD_HHMMSS.txt        # Frontend container Table SBOM
 ├── source_sbom_spdx_YYYYMMDD_HHMMSS.json          # Source SPDX SBOM
 ├── source_sbom_cyclonedx_YYYYMMDD_HHMMSS.json     # Source CycloneDX SBOM
 ├── source_sbom_table_YYYYMMDD_HHMMSS.txt          # Source Table SBOM
@@ -407,6 +392,8 @@ sbom_output/
 ├── python_packages_sbom_table_YYYYMMDD_HHMMSS.txt # Python Table SBOM
 └── SBOM_SUMMARY_YYYYMMDD_HHMMSS.md                # Summary Report
 ```
+
+`generate_sbom_ci.sh` writes `api_sbom_*.json`, `frontend_sbom_*.json` (when the legacy images exist) and `source_sbom_*.json` in the format given by `FORMAT`.
 
 ## Resources
 

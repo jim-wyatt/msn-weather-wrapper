@@ -2,7 +2,8 @@
 set -euo pipefail
 
 # Bootstrap local dev environment for Ubuntu 24.04.
-# Installs system deps (via apt), Python 3.12 toolchain, Node.js 20, and project deps
+# Installs system deps (via apt), the Python 3.12 toolchain packaged by Ubuntu 24.04
+# (the project supports 3.10+; CI and the containers use 3.15), Node.js 26, and project deps
 # (backend + frontend). Optional flag: --with-playwright-deps to install browser libs.
 
 WITH_PLAYWRIGHT_DEPS=false
@@ -34,7 +35,7 @@ apt-get install -y \
 
 # Node.js 20 (Nodesource)
 if ! command -v node >/dev/null 2>&1; then
-  curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+  curl -fsSL https://deb.nodesource.com/setup_26.x | bash -
   apt-get install -y nodejs
 fi
 

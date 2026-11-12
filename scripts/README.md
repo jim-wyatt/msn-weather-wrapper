@@ -62,6 +62,9 @@ Builds the app with containers and runs the deployment-oriented integration chec
 | `generate_sbom.sh` | Full SBOM generation |
 | `generate_sbom_ci.sh` | Fast CI/security SBOM check |
 | `test_deployment.sh` | Verify the containerized deployment |
+| `evaluate_security_reports.py` | Apply the HIGH/CRITICAL gates to CI security scan output (used by `security.yml`) |
+| `setup-local-dev.sh` | Bootstrap an Ubuntu host for local development (run with sudo) |
+| `setup-self-hosted-runner.sh` | Provision a GitHub Actions self-hosted runner |
 
 ---
 

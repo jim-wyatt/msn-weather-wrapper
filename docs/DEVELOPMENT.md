@@ -38,7 +38,7 @@ pip install -e ".[dev]"
 pre-commit install
 
 # Start backend
-uvicorn backend.api.main:app --reload --port 5000
+APP_ENV=development uvicorn backend.api.main:app --reload --port 5000
 
 # Frontend setup (separate terminal)
 cd frontend

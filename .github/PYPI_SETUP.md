@@ -33,32 +33,33 @@ The release workflow publishes with PyPI trusted publishing; no API token is sto
 
 After the first upload:
 
-1. Go to [PyPI Account Settings](https://pypi.org/manage/account/)
-2. Scroll to **Publishing** section
-3. Add a new publisher
-4. Configure:
-   - **PyPI Project Name**: `msn-weather-wrapper`
-   - **Owner**: Your GitHub username
+1. Open the project's **Publishing** settings (Manage → Settings → Publishing, <https://pypi.org/manage/project/msn-weather-wrapper/settings/publishing/>)
+2. Add a new publisher
+3. Configure:
+   - **Owner**: `jim-wyatt`
    - **Repository name**: `msn-weather-wrapper`
    - **Workflow name**: `publish-release.yml`
    - **Environment name**: `pypi`
-5. Click **Add**
+4. Click **Add**
+
+The publisher is active immediately. (To skip the manual first upload instead, add a *pending* publisher with the same values under your account's Publishing settings; the first automated release then creates the project.)
 
 ### 4. Verify in GitHub
 
 No repository secret is needed. The `publish-pypi` job requests an OIDC token (`id-token: write`) at release time.
 
-### 5. Configure PyPI Environment (Optional but Recommended)
+### 5. Create the `pypi` environment (required)
 
-For additional security:
+The `publish-pypi` job runs in the `pypi` environment, so it must exist:
 
 1. Go to **Settings** → **Environments**
 2. Click **New environment**
 3. Name: `pypi`
-4. Configure protection rules:
-   - ✅ Required reviewers (optional)
-   - ✅ Wait timer (optional)
-5. Click **Save protection rules**
+4. **Deployment branches and tags**: `main` and `v*`
+5. Optional protection rules:
+   - Required reviewers
+   - Wait timer
+6. Click **Save protection rules**
 
 This environment is already referenced in `.github/workflows/publish-release.yml`.
 
@@ -79,18 +80,9 @@ python -m twine upload --repository testpypi dist/*
 
 ### Test Automated Release
 
-Create a test release:
+Create a test release. Direct pushes to `main` are blocked by the repository ruleset, so open a PR for any file changes; to publish a test version just push the tag (`publish-release.yml` sets the package version from the tag, so `pyproject.toml` does not need editing):
 
 ```bash
-# Update version in pyproject.toml to 1.0.0-beta.1
-vim pyproject.toml
-
-# Commit
-git add pyproject.toml
-git commit -m "chore: prepare beta release"
-git push origin main
-
-# Create tag
 git tag -a v1.0.0-beta.1 -m "Beta release for testing"
 git push origin v1.0.0-beta.1
 ```
@@ -117,16 +109,9 @@ Check the GitHub Actions workflow to see if it completes successfully.
 - `File already exists` error from PyPI
 
 **Solution:**
-PyPI versions are immutable. Increment the version:
+PyPI versions are immutable. Normally `auto-version-release.yml` picks the next version after a merge to `main`; to publish a specific version manually, push a new tag (the workflow sets the package version from it):
 
 ```bash
-# Update version
-vim pyproject.toml  # Change 1.0.0 to 1.0.1
-
-# Commit and tag
-git add pyproject.toml
-git commit -m "chore: bump version to 1.0.1"
-git push origin main
 git tag -a v1.0.1 -m "Release version 1.0.1"
 git push origin v1.0.1
 ```
@@ -183,24 +168,21 @@ When you push a version tag (e.g., `v1.0.0`), `publish-release.yml` automaticall
 
 All automatically, no manual steps needed!
 
-## First Release Checklist
+## Manual Tag Checklist
 
-Before pushing v1.0.0:
+Versions are normally bumped and tagged by `auto-version-release.yml` after each merge to `main`. Before pushing a tag by hand (for example `v2.0.3`):
 
-- [ ] Manual upload completed (package name claimed)
-- [ ] Trusted publisher configured on PyPI
-- [ ] `pyproject.toml` version set to `1.0.0`
-- [ ] `CHANGELOG.md` updated with release notes
-- [ ] All tests passing locally
-- [ ] Repository URLs updated in all files
-- [ ] Author information correct
-- [ ] License file complete
+- [ ] Package exists on PyPI (first manual upload done, or a pending publisher configured)
+- [ ] Trusted publisher configured on PyPI and the `pypi` environment exists in GitHub
+- [ ] The tag is the next version after the latest tag (`git describe --tags --abbrev=0`) and does not already exist on PyPI
+- [ ] `CHANGELOG.md` updated with release notes (via a merged PR)
+- [ ] All tests passing locally and the latest `CI/CD Pipeline` run on `main` is green
 
 Then:
 
 ```bash
-git tag -a v1.0.0 -m "Release version 1.0.0"
-git push origin v1.0.0
+git tag -a v2.0.3 -m "Release version 2.0.3"
+git push origin v2.0.3
 ```
 
 Watch the magic happen! 🚀

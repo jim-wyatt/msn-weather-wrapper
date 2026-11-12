@@ -117,8 +117,8 @@ npm install package-name
 
 ### Containers
 
-- **API:** Python 3.12 slim + FastAPI + dev tools on port `5000`
-- **Frontend:** Node 24 slim + Next.js + Playwright on port `3000`
+- **API:** Python 3.15 slim (Trixie) + FastAPI + dev tools on port `5000`
+- **Frontend:** Node 26 slim (Trixie) + Next.js + Playwright on port `3000`
 - **Test runner:** on-demand backend test run (`test` compose profile)
 
 ### Volume mounts
@@ -130,6 +130,7 @@ npm install package-name
 ./frontend/app    -> /app/app             (Frontend)
 ./frontend/tests  -> /app/tests           (Frontend)
 ./frontend/public -> /app/public          (Frontend)
+./frontend/playwright.config.ts -> /app/playwright.config.ts (Frontend)
 ```
 
 ### Networking
