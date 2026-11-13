@@ -57,6 +57,10 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
     libatomic1 \
     && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
+# Unprivileged runtime user. Everything below (nginx, Next.js, gunicorn) runs as this
+# user, so the image works with --cap-drop ALL and no-new-privileges.
+RUN groupadd --gid 10001 app && useradd --uid 10001 --gid app --create-home --shell /usr/sbin/nologin app
+
 # Copy virtual environment with all Python packages from builder stage
 COPY --from=python-builder /opt/venv /opt/venv
 
@@ -87,11 +91,18 @@ COPY infra/config/nginx.conf /etc/nginx/sites-available/default
 COPY infra/config/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Create log directories for nginx
-RUN mkdir -p /var/log/nginx
+# nginx as a non-root process: it listens on an unprivileged port (see nginx.conf),
+# keeps its pid file in /tmp, and needs its log and temp directories writable. The
+# site config stays writable so the entrypoint can substitute the Next.js address.
+RUN sed -i 's|^pid /run/nginx.pid;|pid /tmp/nginx.pid;|; s|^user www-data;|# runs as the unprivileged app user (USER below); no user directive|' /etc/nginx/nginx.conf \
+    && grep -q '^pid /tmp/nginx.pid;' /etc/nginx/nginx.conf \
+    && mkdir -p /var/log/nginx /app/frontend/.next/cache \
+    && chown -R app:app /var/log/nginx /var/lib/nginx /etc/nginx/sites-available /app/frontend/.next/cache
 
 # Set production environment variables
-ENV APP_ENV=production \
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    APP_ENV=production \
     APP_DEBUG=0 \
     RATE_LIMIT_PER_IP=30 \
     RATE_LIMIT_GLOBAL=200 \
@@ -100,12 +111,15 @@ ENV APP_ENV=production \
     NEXTJS_PORT=3000 \
     NEXTJS_HOSTNAME=127.0.0.1
 
-# Expose port 80 (nginx will handle both frontend and API proxying)
-EXPOSE 80
+# nginx listens on the unprivileged port 8080 and proxies both the frontend and the API.
+# Map it with -p <host>:8080.
+EXPOSE 8080
+
+USER app
 
 # Health check (urlopen raises on any non-2xx response, so a failing probe exits non-zero)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:80/api/v1/health/ready', timeout=5)" || exit 1
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/api/v1/health/ready', timeout=5)" || exit 1
 
 # Use the entrypoint script to start nginx + gunicorn (replaces supervisor)
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

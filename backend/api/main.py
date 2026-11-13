@@ -10,7 +10,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from threading import Lock
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.middleware.sessions import SessionMiddleware
@@ -129,6 +129,13 @@ def create_app() -> FastAPI:
         https_only=not DEBUG,
     )
 
+    def _apply_security_headers(response: Response) -> None:
+        # Defence in depth for direct access to the API process; the nginx front end
+        # sets its own copies of these for the published container.
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "DENY")
+        response.headers.setdefault("Referrer-Policy", "no-referrer")
+
     @app.middleware("http")
     async def add_request_context(request: Request, call_next):  # type: ignore[no-untyped-def]
         request_id = str(uuid.uuid4())
@@ -155,10 +162,12 @@ def create_app() -> FastAPI:
                 )
                 response.headers["Retry-After"] = str(retry_after)
                 response.headers["X-Request-ID"] = request_id
+                _apply_security_headers(response)
                 return response
 
         response = await call_next(request)
         response.headers["X-Request-ID"] = request_id
+        _apply_security_headers(response)
 
         logger.info(
             "request_completed",

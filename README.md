@@ -227,7 +227,7 @@ podman-compose -f infra/compose/podman-compose.yml down
 
 # Standalone Container
 podman build -t msn-weather-wrapper -f infra/containers/Containerfile .
-podman run -p 8080:80 -e APP_SECRET_KEY msn-weather-wrapper
+podman run -p 8080:8080 --cap-drop ALL --security-opt no-new-privileges -e APP_SECRET_KEY msn-weather-wrapper
 ```
 
 `APP_SECRET_KEY` must be supplied at runtime in production. Set `CORS_ORIGINS` to a
@@ -239,6 +239,15 @@ comma-separated list of explicit origins if the API is called cross-origin; see
 The image declares a `HEALTHCHECK` that probes `/api/v1/health/ready` using the bundled Python
 interpreter, so it works without `curl` (which is intentionally not installed in the runtime image).
 Point external liveness and readiness probes at `/api/v1/health/live` and `/api/v1/health/ready`.
+
+### Runtime hardening
+
+- The container runs every process (nginx, Next.js, gunicorn) as the unprivileged user `app`
+  (uid 10001) and listens on port **8080**; it needs no Linux capabilities, so run it with
+  `--cap-drop ALL --security-opt no-new-privileges` (the compose file already does).
+- nginx sets `Content-Security-Policy`, `X-Frame-Options: DENY`, `X-Content-Type-Options`,
+  `Referrer-Policy` and `Permissions-Policy` on every response and hides upstream fingerprints;
+  terminate TLS in front of the container and add `Strict-Transport-Security` there.
 
 ### Supply chain
 

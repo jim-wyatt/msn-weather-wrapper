@@ -31,14 +31,14 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: '3.15'
 
@@ -314,6 +314,21 @@ jobs:
             -f tag="v$NEW_VERSION"
 
           echo "🚀 Triggered publish-release workflow for v$NEW_VERSION"
+
+      - name: Trigger CI pipeline on the release tag
+        if: steps.check.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          NEW_VERSION="${{ steps.version.outputs.new }}"
+
+          # A tag pushed with GITHUB_TOKEN does not trigger workflows, so the tag run of
+          # ci.yml that publishes the versioned container image (X.Y.Z, X.Y, X, latest)
+          # never started on its own (2.0.14 shipped without an image tag). Dispatch it
+          # explicitly, as publish-release is dispatched above.
+          gh workflow run ci.yml --ref "v$NEW_VERSION"
+
+          echo "🐳 Triggered CI/CD Pipeline for v$NEW_VERSION (versioned container image)"
 
       - name: Generate summary
         if: always()
