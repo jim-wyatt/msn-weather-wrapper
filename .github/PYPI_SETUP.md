@@ -80,7 +80,7 @@ python -m twine upload --repository testpypi dist/*
 
 ### Test Automated Release
 
-Create a test release. Direct pushes to `main` are blocked by the repository ruleset, so open a PR for any file changes; to publish a test version just push the tag (`publish-release.yml` sets the package version from the tag, so `pyproject.toml` does not need editing):
+Create a test release. Direct pushes to `main` are blocked by the repository ruleset, so open a PR for any file changes; to publish a test version just push the tag (hatch-vcs derives the package version from the tag, so `pyproject.toml` does not need editing):
 
 ```bash
 git tag -a v1.0.0-beta.1 -m "Beta release for testing"
@@ -109,7 +109,7 @@ Check the GitHub Actions workflow to see if it completes successfully.
 - `File already exists` error from PyPI
 
 **Solution:**
-PyPI versions are immutable. Normally `auto-version-release.yml` picks the next version after a merge to `main`; to publish a specific version manually, push a new tag (the workflow sets the package version from it):
+PyPI versions are immutable. Normally the `Release` job of `ci.yml` tags the next version after a releasable merge to `main`; to publish a specific version manually, push a new tag (hatch-vcs derives the package version from it):
 
 ```bash
 git tag -a v1.0.1 -m "Release version 1.0.1"
@@ -170,7 +170,7 @@ All automatically, no manual steps needed!
 
 ## Manual Tag Checklist
 
-Versions are normally bumped and tagged by `auto-version-release.yml` after each merge to `main`. Before pushing a tag by hand (for example `v2.0.3`):
+Versions are normally tagged by the `Release` job of `ci.yml` after each releasable merge to `main`. Before pushing a tag by hand (for example `v2.0.3`):
 
 - [ ] Package exists on PyPI (first manual upload done, or a pending publisher configured)
 - [ ] Trusted publisher configured on PyPI and the `pypi` environment exists in GitHub

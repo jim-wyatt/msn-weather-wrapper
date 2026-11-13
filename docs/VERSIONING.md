@@ -1,6 +1,10 @@
-# Semantic Versioning Guide
+# Versioning
 
-This project follows [Semantic Versioning 2.0.0](https://semver.org/).
+This project uses [Semantic Versioning](https://semver.org/). **The version is the git tag**:
+`pyproject.toml` declares it as dynamic and hatch-vcs derives it from `vX.Y.Z` tags, `backend.__version__`
+reads it from the installed distribution, and the container image receives it as a build argument.
+Nothing in the repository has to be edited to cut a release; see
+[AUTOMATED_VERSIONING.md](AUTOMATED_VERSIONING.md) for the flow.
 
 ## Automated Versioning (Primary Method)
 
@@ -35,7 +39,7 @@ MAJOR.MINOR.PATCH[-PRERELEASE][+BUILD]
 The project uses automated PR-based versioning. When a PR is merged to main:
 
 1. **Auto-Version Workflow Triggers**
-   - `ci.yml` dispatches `auto-version-release.yml` after a successful run on main
+   - the `Release` job of `ci.yml` tags the release after a green, releasable run on main
    - Determines version bump from the PR title
 
 2. **Version Bump PR Created**
@@ -232,7 +236,7 @@ git tag -a v1.2.0-rc.1 -m "Release candidate 1 for v1.2.0"
 
 ## Container Image Tags
 
-The build workflow (`build.yml`) creates multiple tags:
+The `Container` job of `ci.yml` pushes multiple tags:
 
 | Tag Pattern | Example | Purpose |
 |-------------|---------|---------|
@@ -329,7 +333,7 @@ python -m twine upload --repository testpypi dist/*
 
 1. Does the infra/containers/Containerfile exist?
 2. Are there syntax errors in the infra/containers/Containerfile?
-3. Check the `build.yml` job logs for details
+3. Check the `Container` job logs of the `main` run for details
 
 ## Best Practices
 

@@ -1,27 +1,25 @@
 name: CI/CD Pipeline
 
+# One pipeline for pull requests and pushes to main. The container image is built once per
+# run and that single build is scanned, smoke-tested, integration-tested and (on main)
+# pushed. A successful main run tags the release; the tag then runs publish-release.yml.
 on:
   push:
-    branches: [ main ]
-    tags:
-      - 'v*.*.*'
-  # No path filter: "CI Gate" is a required status check, so it has to report on every PR
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
-  # A newer run for the same ref and event supersedes the one in flight
   cancel-in-progress: true
 
 env:
   PYTHON_VERSION: '3.15'
-  NODE_VERSION: '26'
+  IMAGE: ghcr.io/${{ github.repository }}
 
 jobs:
-  # Decide whether this change needs the full pipeline. Pull requests that touch only
-  # documentation or repository metadata skip the heavy jobs; everything else runs them.
+  # Documentation-only changes skip the heavy jobs; CI Gate still reports success.
   changes:
     name: Detect Changes
     runs-on: ubuntu-latest
@@ -30,9 +28,9 @@ jobs:
       contents: read
     outputs:
       code: ${{ steps.filter.outputs.code }}
+      releasable: ${{ steps.filter.outputs.releasable }}
     steps:
       - name: Checkout code
-        if: github.event_name == 'pull_request'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -41,192 +39,474 @@ jobs:
       - name: Classify changed files
         id: filter
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PUSH_AFTER: ${{ github.sha }}
         run: |
-          if [[ "${{ github.event_name }}" != "pull_request" ]]; then
-            echo "code=true" >> "$GITHUB_OUTPUT"
-            exit 0
+          if [[ "$EVENT" == "pull_request" ]]; then
+            CHANGED=$(git diff --name-only "$PR_BASE...$PR_HEAD")
+          elif [[ "$EVENT" == "push" && -n "$PUSH_BEFORE" && "$PUSH_BEFORE" != "0000000000000000000000000000000000000000" ]] && git cat-file -e "$PUSH_BEFORE" 2>/dev/null; then
+            CHANGED=$(git diff --name-only "$PUSH_BEFORE" "$PUSH_AFTER")
+          else
+            CHANGED="(unknown: treating as code)"
           fi
-
-          CHANGED=$(git diff --name-only "$BASE_SHA...$HEAD_SHA")
           echo "$CHANGED"
-          # Anything outside these documentation/metadata paths counts as code
+          # code: anything outside documentation/metadata runs the full pipeline
           if echo "$CHANGED" | grep -qvE '^(docs/|artifacts/|[^/]+\.md$|LICENSE$|\.github/[^/]+\.md$|\.github/ISSUE_TEMPLATE/|\.github/CODEOWNERS$|\.github/workflows/[^/]+\.md$|(backend|frontend|infra|scripts)/.*\.md$)'; then
             echo "code=true" >> "$GITHUB_OUTPUT"
           else
             echo "code=false" >> "$GITHUB_OUTPUT"
           fi
+          # releasable: only changes to what ships (package, frontend, image, dependencies)
+          # produce a release; CI, docs and tooling changes are verified but not released
+          if echo "$CHANGED" | grep -qE '^(backend/|frontend/|infra/|pyproject\.toml$|requirements\.txt$|\(unknown)'; then
+            echo "releasable=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "releasable=false" >> "$GITHUB_OUTPUT"
+          fi
 
-  # Test Phase: Run all tests including smoke, unit, integration, and coverage
-  test:
-    name: Run Tests
+  # The version is derived from git tags (hatch-vcs). On a push to main this computes the
+  # release that the run will produce, so the image is built with its final version and the
+  # `release` job only has to create the tag. Pull requests build a dev version.
+  version:
+    name: Version
     needs: [changes]
-    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       contents: read
-    uses: ./.github/workflows/test.yml
-    with:
-      python-version: '3.15'
-      run-integration: false
+      pull-requests: read
+    outputs:
+      version: ${{ steps.calc.outputs.version }}
+      release: ${{ steps.calc.outputs.release }}
+      bump: ${{ steps.calc.outputs.bump }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
 
-  # Security Phase: Run security scans (full on main branch and tags, basic on PR)
+      - name: Compute version
+        id: calc
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [[ "${{ github.event_name }}" != "push" || "${{ github.ref }}" != "refs/heads/main" ]]; then
+            echo "version=0.0.0.dev0" >> "$GITHUB_OUTPUT"
+            echo "release=false" >> "$GITHUB_OUTPUT"
+            echo "bump=none" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          LATEST=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
+          CURRENT=${LATEST#v}; CURRENT=${CURRENT:-0.0.0}
+          # Bump type from the title of the pull request that produced this commit
+          TITLE=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls" -q '[.[] | select(.merged_at != null)] | .[0].title // empty')
+          [ -z "$TITLE" ] && TITLE=$(git log -1 --format=%s)
+          BUMP=patch
+          if echo "$TITLE" | grep -qiE '^(breaking|feat|feature)(\(.*\))?!:'; then BUMP=major
+          elif echo "$TITLE" | grep -qiE '^(feat|feature)(\(.*\))?:'; then BUMP=minor; fi
+          IFS=. read -r MA MI PA <<< "$CURRENT"
+          case $BUMP in major) MA=$((MA+1)); MI=0; PA=0;; minor) MI=$((MI+1)); PA=0;; *) PA=$((PA+1));; esac
+          NEXT="$MA.$MI.$PA"
+          if [[ "${{ needs.changes.outputs.releasable }}" == "true" ]]; then
+            echo "Latest tag: ${LATEST:-none}; PR title: $TITLE; bump: $BUMP; releasing: $NEXT"
+            echo "version=$NEXT" >> "$GITHUB_OUTPUT"
+            echo "release=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Latest tag: ${LATEST:-none}; nothing shippable changed, no release (building $NEXT.dev0)"
+            echo "version=$NEXT.dev0" >> "$GITHUB_OUTPUT"
+            echo "release=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "bump=$BUMP" >> "$GITHUB_OUTPUT"
+
+  quality:
+    name: Code Quality
+    needs: [changes]
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-python-env
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Ruff format
+        run: ruff format --check . --preview --output-format=github
+      - name: Ruff lint
+        run: ruff check . --output-format=github
+      - name: mypy
+        run: mypy backend --strict --no-incremental
+
+  unit:
+    name: Unit Tests (Python ${{ matrix.python-version }})
+    needs: [changes]
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        # Pull requests test the version the image runs; pushes to main cover every supported line
+        python-version: ${{ github.event_name == 'pull_request' && fromJSON('["3.15"]') || fromJSON('["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-python-env
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Unit, API and security tests
+        run: |
+          pytest tests/test_client.py tests/test_models.py tests/test_api.py tests/test_security.py \
+            tests/test_security_reports.py tests/test_config_secret_key.py \
+            -n auto -m "not integration" --tb=short \
+            --cov=backend --cov-report=xml --cov-report=term-missing \
+            --junitxml=junit-${{ matrix.python-version }}.xml
+      - name: Coverage summary (markdown)
+        if: matrix.python-version == env.PYTHON_VERSION
+        run: |
+          pip install pycobertura
+          pycobertura show --format markdown coverage.xml > coverage-report.md || echo "Coverage: see coverage.xml" > coverage-report.md
+      - name: Upload coverage to Codecov
+        if: matrix.python-version == env.PYTHON_VERSION
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        with:
+          files: ./coverage.xml
+          flags: unittests
+          fail_ci_if_error: false
+      - name: Upload coverage reports
+        if: matrix.python-version == env.PYTHON_VERSION && github.event_name != 'pull_request'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage-reports
+          path: |
+            coverage.xml
+            coverage-report.md
+          retention-days: 7
+      - name: Upload test results
+        if: github.event_name != 'pull_request' || failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: test-results-${{ matrix.python-version }}
+          path: junit-*.xml
+          retention-days: 3
+
   security:
-    name: Run Security Scans
+    name: Security Scans
     needs: [changes]
     if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
-      security-events: write
-    uses: ./.github/workflows/security.yml
-    with:
-      python-version: '3.15'
-      full-scan: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-python-env
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install scanners
+        run: |
+          # Semgrep in its own pipx environment: its pinned transitive dependencies are not
+          # project dependencies and must not be counted by pip-audit
+          pipx install semgrep
+          pip install bandit pip-audit pip-licenses
+      - name: Bandit, Semgrep, pip-audit, pip-licenses
+        run: |
+          mkdir -p security-reports
+          status=0; bandit -r backend/ --exit-zero -f json -o security-reports/bandit-report.json || status=$?; echo "$status" > security-reports/bandit-exit-code
+          status=0; semgrep --error --config=p/python --config=p/security-audit --config=.semgrep.yml --metrics=off backend/ --json --output=security-reports/semgrep-report.json || status=$?; echo "$status" > security-reports/semgrep-exit-code
+          status=0; pip-audit --format json --output security-reports/pip-audit-report.json || status=$?; echo "$status" > security-reports/pip-audit-exit-code
+          pip-licenses --format=json --output-file=security-reports/licenses.json
+      - name: Evaluate scan reports (gate)
+        if: always()
+        run: python scripts/evaluate_security_reports.py security-reports
+      - name: Upload security reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: security-reports
+          path: security-reports/
+          retention-days: 3
 
-  # Build Phase: Build Docker images and documentation
-  build:
-    name: Build Artifacts
-    needs: [test, security]
+  # Build the image ONCE, then scan, smoke-test and integration-test that build. On main the
+  # same build (cache hit) is pushed with its final tags and attested.
+  container:
+    name: Container
+    needs: [changes, version]
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
       packages: write
+      security-events: write
       id-token: write
       attestations: write
-    uses: ./.github/workflows/build.yml
-    with:
-      python-version: '3.15'
-      push-image: ${{ github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
-    secrets: inherit
+    env:
+      APP_VERSION: ${{ needs.version.outputs.version }}
+      IS_RELEASE: ${{ needs.version.outputs.release }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-python-env
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
 
-  # Integration Tests: Run after build with the Docker image
-  integration-tests:
-    name: Integration Tests
-    needs: [build]
+      - name: Build image
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          file: ./infra/containers/Containerfile
+          build-args: APP_VERSION=${{ env.APP_VERSION }}
+          push: false
+          load: true
+          tags: msn-weather-app:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Gates on every run: fixable CRITICAL/HIGH (Trivy) and fixable CRITICAL (Grype, which
+      # also version-scans the python and node binaries). Unfixed OS findings only report.
+      - name: Trivy gate (fixable CRITICAL/HIGH)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: msn-weather-app:ci
+          format: table
+          severity: CRITICAL,HIGH
+          ignore-unfixed: 'true'
+          exit-code: '1'
+      - name: Install Syft and Grype
+        run: |
+          mkdir -p /tmp/sbom-tools
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /tmp/sbom-tools
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /tmp/sbom-tools
+      - name: Grype gate (fixable CRITICAL)
+        run: /tmp/sbom-tools/grype msn-weather-app:ci --only-fixed --fail-on critical -o table
+
+      - name: Smoke test
+        run: |
+          docker rm -f test-app 2>/dev/null || true
+          test_secret="$(openssl rand -hex 32)"; echo "::add-mask::$test_secret"
+          docker run -d --name test-app -p 8080:8080 --cap-drop ALL --security-opt no-new-privileges \
+            -e "APP_SECRET_KEY=$test_secret" -e CORS_ORIGINS=http://localhost:3000 msn-weather-app:ci
+          for i in $(seq 1 30); do curl -fsS http://localhost:8080/api/v1/health/ready >/dev/null 2>&1 && break; sleep 2; done
+          probe() { curl -fsS "$1" > /dev/null || { echo "::error::$1 did not respond"; docker logs test-app || true; exit 1; }; }
+          probe http://localhost:8080/api/v1/health/ready
+          probe http://localhost:8080/
+          echo "reported version: $(curl -fsS http://localhost:8080/api/v1/health | python -c 'import json,sys; print(json.load(sys.stdin).get("version"))')"
+      - name: Integration tests (against the running container)
+        run: pytest tests/test_integration.py -v -m integration --tb=short --override-ini="addopts=" --junitxml=junit-integration.xml
+      - name: Stop container
+        if: always()
+        run: docker rm -f test-app 2>/dev/null || true
+
+      # Full reports only where they are consumed: pushes to main
+      - name: Trivy SARIF to the Security tab
+        if: github.event_name == 'push'
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: msn-weather-app:ci
+          format: sarif
+          output: trivy-results.sarif
+          severity: CRITICAL,HIGH,MEDIUM
+          ignore-unfixed: 'true'
+      - name: Upload SARIF
+        if: github.event_name == 'push'
+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          sarif_file: trivy-results.sarif
+          category: container-security
+      - name: SBOM and full scan reports
+        if: github.event_name == 'push'
+        run: |
+          mkdir -p security-reports
+          /tmp/sbom-tools/syft msn-weather-app:ci -o spdx-json > security-reports/container-sbom.json
+          /tmp/sbom-tools/syft dir:. -o spdx-json > security-reports/source-sbom.json
+          /tmp/sbom-tools/grype sbom:security-reports/container-sbom.json -o json > security-reports/grype-results.json || true
+          docker run --rm -v "$PWD:/work" -w /work aquasec/trivy:latest image --input /dev/null >/dev/null 2>&1 || true
+      - name: Trivy JSON report
+        if: github.event_name == 'push'
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: msn-weather-app:ci
+          format: json
+          output: security-reports/trivy-results.json
+      - name: Upload container reports
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: container-security-reports
+          path: |
+            security-reports/
+            junit-integration.xml
+          retention-days: 30
+
+      # Push the validated build (cache hit, no rebuild) with its final tags and attest it
+      - name: Log in to GHCR
+        if: github.event_name == 'push'
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Image tags
+        if: github.event_name == 'push'
+        id: meta
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=raw,value=main
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable=${{ env.IS_RELEASE }}
+            type=raw,value=${{ env.APP_VERSION }},enable=${{ env.IS_RELEASE }}
+            type=raw,value=${{ env.APP_VERSION }},pattern={{major}}.{{minor}},enable=${{ env.IS_RELEASE }}
+            type=raw,value=${{ env.APP_VERSION }},pattern={{major}},enable=${{ env.IS_RELEASE }}
+      - name: Push image
+        if: github.event_name == 'push'
+        id: push
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          file: ./infra/containers/Containerfile
+          build-args: APP_VERSION=${{ env.APP_VERSION }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          provenance: true
+          sbom: true
+      - name: Attest image provenance
+        if: github.event_name == 'push'
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-name: ${{ env.IMAGE }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+          create-storage-record: false
+
+  docs:
+    name: Documentation
+    needs: [changes, unit, security, container]
+    # Always build the site (strict); on main also render the reports and deploy
+    if: always() && needs.changes.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
-      contents: read
-    uses: ./.github/workflows/test.yml
-    with:
-      python-version: '3.15'
-      run-integration: true
-      artifact-suffix: '-integration'
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-python-env
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          install-dependencies: 'false'
+      - name: Install MkDocs and report tooling
+        run: python -m pip install mkdocs-material pymdown-extensions jinja2 junit2html pyyaml
+      - name: Build site (strict)
+        run: mkdocs build --strict
+      - name: Download run artifacts for the reports
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: artifacts/
+      - name: Render reports
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          mkdir -p artifacts/tests artifacts/coverage artifacts/security
+          find artifacts -name 'junit-*.xml' -exec cp {} artifacts/tests/ \; 2>/dev/null || true
+          cp artifacts/coverage-reports/* artifacts/coverage/ 2>/dev/null || true
+          cp artifacts/security-reports/* artifacts/security/ 2>/dev/null || true
+          cp artifacts/container-security-reports/security-reports/* artifacts/security/ 2>/dev/null || true
+          mkdir -p docs/reports
+          python scripts/generate_reports.py --type test --input artifacts/tests/ --output docs/reports/test-report.md || true
+          python scripts/generate_reports.py --type coverage --input artifacts/coverage/ --output docs/reports/coverage-report.md || true
+          python scripts/generate_reports.py --type security --input artifacts/security/ --output docs/reports/security-report.md || true
+          python scripts/generate_reports.py --type license --input artifacts/security/ --output docs/reports/license-report.md || true
+          python scripts/generate_reports.py --type cicd --output docs/reports/ci-cd.md || true
+      - name: Deploy to GitHub Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          mkdocs gh-deploy --force
 
-  # Gate: the single status check required by branch protection on main.
-  # Fails unless every blocking job above succeeded. Skipped jobs only pass for documentation-only changes.
+  # The single status check required by the main ruleset.
   ci-gate:
     name: CI Gate
+    needs: [changes, quality, unit, security, container, docs]
+    if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    if: always()
-    needs: [changes, test, security, build, integration-tests]
     permissions: {}
     steps:
       - name: Verify required jobs succeeded
         env:
           CODE_CHANGED: ${{ needs.changes.outputs.code }}
           CHANGES_RESULT: ${{ needs.changes.result }}
-          RESULTS: ${{ needs.test.result }} ${{ needs.security.result }} ${{ needs.build.result }} ${{ needs.integration-tests.result }}
+          RESULTS: ${{ needs.quality.result }} ${{ needs.unit.result }} ${{ needs.security.result }} ${{ needs.container.result }} ${{ needs.docs.result }}
         run: |
-          echo "Change detection: $CHANGES_RESULT (code=$CODE_CHANGED)"
-          echo "Job results: $RESULTS"
-          if [[ "$CHANGES_RESULT" != "success" ]]; then
-            echo "::error::Change detection did not succeed"
-            exit 1
-          fi
-          if [[ "$CODE_CHANGED" == "false" ]]; then
-            echo "Documentation-only change: test, security, and build jobs were skipped by design."
-            exit 0
-          fi
+          echo "Change detection: $CHANGES_RESULT (code=$CODE_CHANGED)"; echo "Job results: $RESULTS"
+          [[ "$CHANGES_RESULT" == "success" ]] || { echo "::error::Change detection did not succeed"; exit 1; }
           for result in $RESULTS; do
-            if [[ "$result" != "success" ]]; then
-              echo "::error::A required CI job did not succeed ($RESULTS)"
-              exit 1
-            fi
+            if [[ "$result" == "failure" || "$result" == "cancelled" ]]; then echo "::error::A required job did not succeed ($RESULTS)"; exit 1; fi
           done
+          if [[ "$CODE_CHANGED" == "true" ]]; then
+            for result in $RESULTS; do [[ "$result" == "success" ]] || { echo "::error::A required job was skipped ($RESULTS)"; exit 1; }; done
+          fi
+          echo "All required jobs succeeded"
 
-  # Performance Tests: Run performance benchmarks and load tests
-  performance:
-    name: Performance Tests
-    needs: [build]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    permissions:
-      contents: read
-    uses: ./.github/workflows/performance.yml
-    with:
-      python-version: '3.15'
-
-  # Deploy Phase: Generate reports and deploy documentation (main branch only)
-  deploy:
-    name: Deploy Documentation
-    needs: [integration-tests, performance]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  # Hands-free release: a green main run tags the version computed above. The tag is pushed
+  # with RELEASE_TOKEN so that publish-release.yml triggers on it (pushes made with
+  # GITHUB_TOKEN never trigger workflows). Documentation-only merges are not released.
+  release:
+    name: Release
+    needs: [changes, version, ci-gate]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.ci-gate.result == 'success' && needs.changes.outputs.code == 'true' && needs.version.outputs.release == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       contents: write
-    uses: ./.github/workflows/deploy.yml
-    with:
-      python-version: '3.15'
-    secrets: inherit
-
-  # Trigger Auto-Version-Release: After successful CI on main branch
-  trigger-auto-version:
-    name: Trigger Auto-Version-Release
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')
-    needs: [test, security, build, integration-tests, deploy]
-    permissions:
-      contents: read
-      actions: write
     steps:
+      - name: Require RELEASE_TOKEN
+        run: |
+          if [ -z "${{ secrets.RELEASE_TOKEN }}" ]; then
+            echo "::error::RELEASE_TOKEN is not configured. Add a fine-grained token with Contents write (see docs/AUTOMATED_VERSIONING.md), or tag by hand: git tag -a v${{ needs.version.outputs.version }} ${{ github.sha }} -m 'Release v${{ needs.version.outputs.version }}' && git push origin v${{ needs.version.outputs.version }}"
+            exit 1
+          fi
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          persist-credentials: false
-
-      - name: Get latest merged PR info
-        id: pr_info
+          token: ${{ secrets.RELEASE_TOKEN }}
+          fetch-depth: 0
+      - name: Tag the release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ needs.version.outputs.version }}
+          BUMP: ${{ needs.version.outputs.bump }}
         run: |
-          # Look up the pull request that produced THIS commit. (`gh pr list --state merged
-          # --limit 1` returns the most recently *created* merged PR, which after a release
-          # is the version-bump PR even when a newer PR was merged later, so every second
-          # release was silently skipped.)
-          PR_NUMBER=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls" \
-            -q '[.[] | select(.merged_at != null)] | .[0].number // empty')
-
-          if [[ -z "$PR_NUMBER" ]]; then
-            echo "No merged PR is associated with ${GITHUB_SHA} - skipping auto-version"
-            echo "skip=true" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          PR_TITLE=$(gh pr view "$PR_NUMBER" --json title --jq '.title')
-
-          # Skip if the last merged PR was itself a version-bump PR to avoid infinite loops
-          if echo "$PR_TITLE" | grep -qiE "^chore: bump version to"; then
-            echo "Last merged PR was a version bump - skipping auto-version to prevent infinite loop"
-            echo "skip=true" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
-          {
-            echo "pr_title<<EOF"
-            echo "$PR_TITLE"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-          echo "Found merged PR #$PR_NUMBER: $PR_TITLE"
-
-      - name: Trigger Auto-Version-Release workflow
-        if: steps.pr_info.outputs.skip != 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ steps.pr_info.outputs.pr_number }}
-          PR_TITLE: ${{ steps.pr_info.outputs.pr_title }}
-        run: |
-          gh workflow run auto-version-release.yml \
-            -f pr_number="$PR_NUMBER" \
-            -f pr_title="$PR_TITLE" \
-            -f pr_merged="true"
-
-          echo "✓ Triggered auto-version-release workflow for PR #$PR_NUMBER"
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then echo "v$VERSION already exists"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v$VERSION" "$GITHUB_SHA" -m "Release v$VERSION" -m "Bump type: $BUMP" -m "Commit: $(git log -1 --format=%s "$GITHUB_SHA")"
+          git push origin "v$VERSION"
+          echo "🏷️  v$VERSION tagged at $GITHUB_SHA; publish-release.yml takes it from here"
+          echo "### Released v$VERSION" >> "$GITHUB_STEP_SUMMARY"

@@ -729,9 +729,9 @@ monitor_workflows() {
         printf "\n"
 
         local ci_status=$(get_workflow_status "CI/CD Pipeline" "$workflows_json")
-        local sec_wf_status=$(get_job_status "Run Security Scans / Basic Security Checks" "$workflows_json")
-        local version_status=$(get_job_status "Trigger Auto-Version-Release" "$workflows_json")
-        local perf_status=$(get_job_status "Performance Tests" "$workflows_json")
+        local sec_wf_status=$(get_job_status "Security Scans" "$workflows_json")
+        local version_status=$(get_job_status "Release" "$workflows_json")
+        local perf_status=$(get_job_status "Container" "$workflows_json")
         printf " ${YELLOW}CI/CD${NC}  "
         printf "CI "; format_rag "$(get_rag_status "$ci_status")"
         case "$ci_status" in success) printf " ${GREEN}ok${NC}";; failure) printf " ${RED}fail${NC}";; cancelled) printf " ${BLUE}can${NC}";; *) printf " ${BLUE}n/a${NC}";; esac

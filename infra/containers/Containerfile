@@ -41,6 +41,10 @@ RUN python -m pip install --no-cache-dir --require-hashes --no-deps -r requireme
 
 # Then install the application itself without re-resolving its dependencies, and prove
 # that the lock file satisfies pyproject.toml (pip check fails on anything missing).
+# The version comes from the git tag via hatch-vcs; there is no .git in the build
+# context, so CI passes it in (APP_VERSION) and local builds get a dev version.
+ARG APP_VERSION=0.0.0.dev0
+ENV SETUPTOOLS_SCM_PRETEND_VERSION=$APP_VERSION
 COPY pyproject.toml README.md ./
 COPY backend/ backend/
 RUN python -m pip install --no-cache-dir --no-deps . && python -m pip check

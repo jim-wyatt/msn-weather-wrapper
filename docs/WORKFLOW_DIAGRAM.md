@@ -1,389 +1,63 @@
-# Workflow Architecture Diagram
-
-This document provides a comprehensive UML diagram showing all GitHub Actions workflows and their interactions in the refactored modular architecture.
-
-## Overview
-
-The CI/CD system has been refactored to use a **modular architecture** where the main `ci.yml` workflow orchestrates reusable workflow components:
-
-- **ci.yml** - Main orchestrator that calls other workflows
-- **test.yml** - Reusable test workflow (smoke, unit, integration, coverage)
-- **security.yml** - Reusable security scanning workflow
-- **build.yml** - Reusable build workflow (Docker, SBOM, documentation)
-- **deploy.yml** - Reusable deployment workflow (reports, GitHub Pages)
-- **performance.yml** - Reusable performance testing workflow
-- **dependencies.yml** - Standalone scheduled dependency updates
-- **auto-version-release.yml** - Standalone version management
-- **publish-release.yml** - Standalone release publishing
-
-## Workflow Flow Diagram - Pull Request
+# Workflow Architecture
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E3F2FD', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#1E88E5', 'lineColor': '#1E88E5', 'secondaryColor': '#BBDEFB', 'tertiaryColor': '#90CAF9', 'edgeLabelBackground': '#E3F2FD'}}}%%
-sequenceDiagram
-    actor Dev as Developer
-    participant PR as Pull Request
-    participant CI as CI/CD Pipeline
-    participant Test as Test
-    participant Sec as Security
-    participant Build as Build
-
-    Dev->>PR: Create PR to main
-    PR->>CI: Trigger CI/CD
-
-    CI->>Test: Run tests
-    Test-->>CI: ✓ Pass
-
-    CI->>Sec: Run security scan
-    Sec-->>CI: ✓ Pass
-
-    CI->>Build: Build Docker
-    Build-->>CI: ✓ Complete
-
-    CI-->>PR: ✓ All checks pass
-    Dev->>PR: Review & Merge
-    PR-->>Dev: ✓ Merged
+flowchart LR
+    PR[Pull request] --> CI
+    PUSH[Push to main] --> CI
+    subgraph CI [ci.yml - CI/CD Pipeline]
+        direction TB
+        CH[Detect Changes] --> V[Version]
+        CH --> Q[Code Quality]
+        CH --> U[Unit Tests<br/>3.15 on PRs, 3.10-3.15 on main]
+        CH --> S[Security Scans<br/>Bandit, Semgrep, pip-audit]
+        V --> C[Container<br/>build once, Trivy+Grype gates,<br/>smoke + integration tests,<br/>push + attest on main]
+        U --> D[Documentation<br/>strict build, reports + deploy on main]
+        S --> D
+        C --> D
+        Q --> G[CI Gate]
+        U --> G
+        S --> G
+        C --> G
+        D --> G
+        G --> R[Release<br/>main, releasable only:<br/>tag vX.Y.Z with RELEASE_TOKEN]
+    end
+    R -->|tag push| PUB
+    subgraph PUB [publish-release.yml]
+        direction TB
+        B[Build sdist + wheel from tag, attest] --> P[Publish to PyPI<br/>trusted publishing]
+        P --> GR[GitHub release<br/>notes from commits, image tag check]
+    end
+    SCHED[Weekly schedule / manual] --> PERF[performance.yml<br/>Locust load test, benchmarks]
+    DEPS[Weekly schedule] --> DEP[dependencies.yml<br/>upgrade + lock regeneration PRs]
 ```
 
-## Workflow Flow Diagram - Main Branch Release
-
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E3F2FD', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#1E88E5', 'lineColor': '#1E88E5', 'secondaryColor': '#BBDEFB', 'tertiaryColor': '#90CAF9', 'edgeLabelBackground': '#E3F2FD'}}}%%
-sequenceDiagram
-    actor Dev as Developer
-    participant Main as Main Branch
-    participant CI as CI/CD Pipeline
-    participant Build as Build
-    participant Deploy as Deploy
-    participant Auto as Auto-Version
-    participant Pub as Publish
-    participant PyPI as PyPI
-
-    Main->>CI: Trigger on push
-
-    CI->>Build: Full build & push
-    Build-->>CI: ✓ Complete
-
-    CI->>Deploy: Generate reports
-    Deploy-->>CI: ✓ Deployed
-
-    CI->>Auto: Trigger version bump
-    Auto->>Main: Create version PR
-    Auto->>Main: Create git tag
-    Auto-->>Pub: Trigger release
-
-    Pub->>PyPI: Publish package
-    PyPI-->>Pub: ✓ Published
-    Pub-->>Dev: ✓ Release complete
-```
-
-## Modular Workflow Architecture
-
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E3F2FD', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#1E88E5', 'lineColor': '#1E88E5', 'secondaryColor': '#BBDEFB', 'tertiaryColor': '#90CAF9', 'edgeLabelBackground': '#E3F2FD'}}}%%
-graph TB
-    subgraph "Main CI/CD Pipeline (ci.yml)"
-        CI[CI/CD Orchestrator]
-    end
-
-    subgraph "Reusable Workflows"
-        TEST[test.yml<br/>Smoke, Unit, Coverage,<br/>Integration Tests]
-        SEC[security.yml<br/>5 Security Tools<br/>Bandit, Semgrep,<br/>pip-audit, Trivy, Grype]
-        BUILD[build.yml<br/>Docker, SBOM, Docs]
-        DEPLOY[deploy.yml<br/>Reports & GitHub Pages]
-        PERF[performance.yml<br/>Benchmarks & Load Tests]
-    end
-
-    subgraph "Standalone Workflows"
-        DEP[dependencies.yml<br/>Scheduled Updates]
-        AUTO[auto-version-release.yml<br/>Version Management]
-        PUB[publish-release.yml<br/>PyPI & GitHub Release]
-    end
-
-    CI -->|calls| TEST
-    CI -->|calls| SEC
-    CI -->|calls| BUILD
-    CI -->|calls| DEPLOY
-    CI -->|calls| PERF
-    CI -->|triggers| AUTO
-    AUTO -->|triggers| PUB
-    DEP -->|creates PR| CI
-
-    %% Muted palette to match site blues with softer contrast
-    style CI fill:#1E88E5,stroke:#0D47A1,stroke-width:1.5px,color:#fff
-    style TEST fill:#64B5F6,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
-    style SEC fill:#26A69A,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
-    style BUILD fill:#BA68C8,stroke:#6A1B9A,stroke-width:1.5px,color:#0F172A
-    style DEPLOY fill:#4DD0E1,stroke:#00838F,stroke-width:1.5px,color:#0F172A
-    style PERF fill:#B0BEC5,stroke:#546E7A,stroke-width:1.5px,color:#0F172A
-    style DEP fill:#CFD8DC,stroke:#90A4AE,stroke-width:1.5px,color:#0F172A
-    style AUTO fill:#FBC02D,stroke:#F57F17,stroke-width:1.5px,color:#0F172A
-    style PUB fill:#EF6C00,stroke:#E65100,stroke-width:1.5px,color:#fff
-```
-
-## Workflow Descriptions
-
-### Main CI/CD Pipeline (`ci.yml`)
-
-**Purpose:** Orchestrator workflow that manages the entire CI/CD process by calling reusable workflows.
-
-**Triggers:**
-- Push to `main` branch
-- Pull requests to `main`
-- Tag pushes (`v*.*.*`)
-- Manual dispatch
-
-**Flow:**
-1. **Change Detection** - docs-only PRs skip the heavy jobs
-2. **Test Phase** - Calls `test.yml` for smoke tests, code quality, unit tests, and coverage
-3. **Security Phase** - Calls `security.yml` (full scan on main/tags, basic on PR)
-4. **Build Phase** - Calls `build.yml` (builds Docker images, SBOM, docs)
-5. **Integration Phase** - Calls `test.yml` again with integration tests enabled
-6. **CI Gate** - aggregates test/security/build/integration results; the only required status check
-7. **Performance Phase** - Calls `performance.yml` (main branch only)
-8. **Deploy Phase** - Calls `deploy.yml` (main branch only)
-9. **Trigger Auto-Version** - Triggers `auto-version-release.yml` (main branch only)
-
-**Benefits:**
-- Modular architecture with a short orchestrator workflow
-- Clear separation of concerns
-- Easy to maintain and extend
-- Consistent execution across all environments
-
-### Reusable Workflow: Test (`test.yml`)
-
-**Purpose:** Handles all testing phases including smoke tests, unit tests, coverage, and integration tests.
-
-**Inputs:**
-- `python-version` - Python version to use (default: '3.15')
-- `run-integration` - Whether to run integration tests (default: false)
-- `artifact-suffix` - Suffix for artifact names to avoid conflicts (default: '')
-
-**Jobs:**
-1. **Smoke Tests** - Quick validation (imports, syntax)
-2. **Code Quality** - Ruff format check, linting, mypy type checking
-3. **Unit Tests** - Multi-version Python testing (3.10 through 3.15 on pushes; 3.15 only on pull requests)
-4. **Coverage** - Test coverage with reports
-5. **Integration Tests** - Tests against containerized API (when enabled)
-
-**Called by:** `ci.yml` (twice - once for unit tests, once for integration)
-
-### Reusable Workflow: Security (`security.yml`)
-
-**Purpose:** Performs security scanning at different levels based on context (comprehensive on main/tags, basic on PRs).
-
-**Inputs:**
-
-- `python-version` - Python version to use (default: '3.15')
-- `full-scan` - Whether to run comprehensive security scan (default: false)
-
-**Jobs:**
-
-1. **Basic Security Checks** - always runs
-   - Bandit (code analysis & hardcoded secrets)
-   - Semgrep (pattern-based security analysis)
-   - pip-audit (package auditing)
-   - pip-licenses (license report)
-2. **Container Security Scan** - always builds the image and fails on fixable CRITICAL/HIGH (Trivy) and fixable CRITICAL (Grype); SARIF upload, JSON reports and Syft SBOM only when `full-scan` is true
-   - Trivy (container image vulnerabilities)
-   - Grype (SBOM vulnerability analysis)
-
-**Execution Strategy:**
-
-- **Pull Requests:** basic checks plus container gates (Bandit, Semgrep, pip-audit, pip-licenses, Trivy/Grype fixable-vulnerability gates)
-- **Main & Tags:** the same plus full container reports (SARIF, Trivy JSON, Syft SBOM, Grype report)
-
-**Called by:** `ci.yml` (full scan on main/tags, basic on PR)
-
-#### Security Tools Architecture
-
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#E3F2FD', 'primaryTextColor': '#0F172A', 'primaryBorderColor': '#1E88E5', 'lineColor': '#1E88E5', 'secondaryColor': '#BBDEFB', 'tertiaryColor': '#90CAF9', 'edgeLabelBackground': '#E3F2FD'}}}%%
-graph LR
-    SEC["security.yml<br/>Orchestrator"]
-
-    subgraph "Always On (All Branches)"
-        BASIC["Basic Security<br/>✓ Bandit<br/>✓ Semgrep<br/>✓ pip-audit<br/>✓ pip-licenses"]
-        GATE["Container Gates<br/>✓ Trivy fixable CRIT/HIGH<br/>✓ Grype fixable CRIT"]
-    end
-
-    subgraph "Full Scan (Main/Tags Only)"
-        CONT["Container Reports<br/>✓ SARIF<br/>✓ Trivy JSON<br/>✓ Syft SBOM<br/>✓ Grype report"]
-    end
-
-    SEC --> BASIC
-    SEC --> GATE
-    SEC --> CONT
-
-    CONT -->|SARIF Upload| GHSEC["GitHub Security Tab"]
-    BASIC -->|Reports| REPORTS["security-reports artifact"]
-    CONT -->|Reports| REPORTS2["container-security-reports artifact"]
-
-    %% Muted palette consistent with site blues
-    style SEC fill:#26A69A,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
-    style BASIC fill:#64B5F6,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
-    style GATE fill:#64B5F6,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
-    style CONT fill:#4DD0E1,stroke:#00838F,stroke-width:1.5px,color:#0F172A
-    style GHSEC fill:#CFD8DC,stroke:#90A4AE,stroke-width:1.5px,color:#0F172A
-    style REPORTS fill:#BBDEFB,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
-    style REPORTS2 fill:#BBDEFB,stroke:#1E88E5,stroke-width:1.5px,color:#0F172A
-```
-
-### Reusable Workflow: Build (`build.yml`)
-
-**Purpose:** Builds Docker images, generates SBOM, and builds documentation.
-
-**Inputs:**
-- `python-version` - Python version to use (default: '3.15')
-- `push-image` - Whether to push Docker image to registry (default: false)
-
-**Jobs:**
-1. **Docker Build** - Builds and optionally pushes container images
-2. **SBOM** - Generates Software Bill of Materials
-3. **Documentation** - Builds MkDocs documentation
-
-**Called by:** `ci.yml` (pushes images on main/tags, only builds on PR)
-
-### Reusable Workflow: Deploy (`deploy.yml`)
-
-**Purpose:** Generates consolidated reports and deploys documentation to GitHub Pages.
-
-**Inputs:**
-- `python-version` - Python version to use (default: '3.15')
-
-**Jobs:**
-1. **Generate Reports** - Creates test, coverage, security, license, CI/CD and performance reports
-2. **Deploy Documentation** - Deploys to GitHub Pages (main branch only)
-
-**Called by:** `ci.yml` (main branch only)
-
-### Reusable Workflow: Performance (`performance.yml`)
-
-**Purpose:** Runs performance benchmarks and load testing.
-
-**Inputs:**
-- `python-version` - Python version to use (default: '3.15')
-
-**Jobs:**
-1. **Load Test** - Locust-based load testing (20 concurrent users)
-2. **Benchmark** - Performance baseline measurements
-
-**Called by:** `ci.yml` (main branch only)
-
-### Standalone Workflow: Dependencies (`dependencies.yml`)
-
-**Purpose:** Automated dependency updates on a weekly schedule.
-
-**Triggers:**
-- Weekly cron schedule (Mondays at 9:00 AM UTC)
-- Manual dispatch
-
-**Jobs:**
-1. **Update Python Dependencies** - Updates pyproject.toml
-2. **Update Frontend Dependencies** - Updates package.json
-3. **Security Audit** - Runs security checks on dependencies
-
-**Creates:** Pull request with dependency updates that triggers CI/CD
-
-### Standalone Workflow: Auto Version & Release (`auto-version-release.yml`)
-
-**Purpose:** Automatically manages version bumping based on conventional commits.
-
-**Triggers:**
-- Workflow dispatch from `ci.yml` (after successful main branch build)
-- Manual dispatch
-
-**Process:**
-1. Analyzes merged PR title to determine version bump type:
-   - `feat:`, `feature:` → **minor** version bump
-   - `fix:`, `bugfix:`, `chore:`, `perf:`, `refactor:`, `docs:` → **patch** version bump (also the default)
-   - `feat!:`, `feature!:`, `breaking!:` → **major** version bump
-2. Calculates new version
-3. Updates `pyproject.toml` and `backend/__init__.py`
-4. Creates version bump PR
-5. Waits for `CI Gate` on the PR (maintainer approval of the run needed unless `RELEASE_TOKEN` is set), then squash-merges it
-6. Creates git tag (format: `v*.*.*`)
-7. Triggers `publish-release.yml`
-
-### Standalone Workflow: Publish Release (`publish-release.yml`)
-
-**Purpose:** Publishes releases to PyPI and GitHub Releases.
-
-**Triggers:**
-- Git tag push (pattern: `v*.*.*`)
-- Manual dispatch with tag input
-
-**Jobs:**
-1. **Build Package** - Creates wheel and source distribution
-2. **Publish to PyPI** - Uploads package to PyPI registry (using trusted publishing)
-3. **Create GitHub Release** - Creates release with artifacts and generated notes
-
-## Workflow Triggers Summary
-
-| Workflow | PR | Push to Main | Tag Push | Manual | Cron | Called by ci.yml |
-|----------|----|--------------|---------|---------|---------| -----------------|
-| **ci.yml** (Main) | ✓ | ✓ | ✓ | ✓ | - | - |
-| test.yml | - | - | - | - | - | ✓ |
-| security.yml | - | - | - | - | - | ✓ |
-| build.yml | - | - | - | - | - | ✓ |
-| deploy.yml | - | - | - | - | - | ✓ |
-| performance.yml | - | - | - | - | - | ✓ |
-| dependencies.yml | - | - | - | ✓ | ✓ | - |
-| auto-version-release.yml | - | - | - | ✓ | - | Triggered by ci.yml |
-| publish-release.yml | - | - | ✓ | ✓ | - | Triggered by auto-version |
-
-## Key Benefits of Refactored Architecture
-
-### 1. Modularity
-- **Separation of Concerns:** Each workflow has a single, well-defined purpose
-- **Reusability:** Workflows can be called by multiple other workflows
-- **Maintainability:** Changes are isolated to specific workflow files
-
-### 2. Simplification
-- **Main CI/CD:** Reduced from one large workflow to a short orchestrator
-- **Clear Flow:** Easy to understand the overall CI/CD process
-- **Less Duplication:** Common logic is in reusable workflows
-
-### 3. Flexibility
-- **Configurable:** Workflows accept inputs for different scenarios
-- **Conditional Execution:** Different behavior on PR vs main branch
-- **Independent Triggers:** Some workflows can run standalone
-
-### 4. Efficiency
-- **Parallel Execution:** Independent workflows can run in parallel
-- **Smart Scheduling:** Performance tests only on main, full security scan only on main and tags
-- **Resource Optimization:** Only necessary steps run based on context
-
-### 5. Testability
-- **Isolated Testing:** Individual workflows can be tested independently
-- **Manual Triggers:** `ci.yml` and the standalone workflows support manual dispatch for testing
-- **Clear Dependencies:** Easy to see what depends on what
-
-## Environment Variables
-
-All workflows use consistent environment configuration:
-
-```yaml
-env:
-  PYTHON_VERSION: '3.15'
-  NODE_VERSION: '26'
-  REPORTS_DIR: 'docs/reports'
-```
-
-## Secrets Required
-
-- `GITHUB_TOKEN` - Automatically provided by GitHub Actions
-- No additional secrets required (PyPI uses OIDC trusted publishing)
-- `RELEASE_TOKEN` (optional) - lets the version-bump PR's CI start without manual approval
-
-## Cache Strategy
-
-Workflows leverage GitHub Actions caching for:
-- Python dependencies (pip cache via setup-python-env action)
-- Node.js dependencies (npm cache)
-- Docker layer caching (buildx cache)
-- Build artifacts between jobs
-
-## Migration from Old Architecture
-
-The original monolithic workflow was split into the nine files described above (an orchestrator, five reusable workflows and three standalone workflows). Since then the gate semantics have also changed: `CI Gate` is the single required status check, and the container vulnerability gates run on every pipeline rather than only on `main` and tags.
+## Why it is shaped this way
+
+- **One build per run.** The container image is built once and that build is scanned,
+  smoke-tested, integration-tested and, on `main`, pushed. Earlier versions of the pipeline
+  built it three times per run.
+- **No bump commits.** The version is derived from the git tag, so a release is a tag push, not
+  a pull request. That removes two full pipeline runs per release and the manual approval that
+  used to be needed for the bump pull request.
+- **Release only when something ships.** Documentation, CI and tooling merges are verified but
+  do not produce a release.
+- **Publish does not rebuild.** The tagged commit is the one the `main` run tested and pushed;
+  the publish run builds the Python package from the tag and publishes it.
+- **Performance tests are scheduled**, not on the merge path.
+
+## Triggers
+
+| Workflow | Trigger |
+| --- | --- |
+| `ci.yml` | pull requests to `main`; pushes to `main`; manual |
+| `publish-release.yml` | tags `v*.*.*`; manual with a tag |
+| `performance.yml` | Mondays 06:00 UTC; manual |
+| `dependencies.yml` | Mondays 09:00 UTC; manual |
+
+## Secrets and environment
+
+- `RELEASE_TOKEN` (fine-grained PAT, Contents write) for the tag push.
+- `pypi` environment (OIDC trusted publishing; branch `main` and tags `v*`).
+- `GITHUB_TOKEN` read-only by default; jobs request what they need.
+
+Mermaid node labels use `<br/>` line breaks; the site's Mermaid renderer keeps them legible.
