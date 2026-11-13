@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#semantic-versioning-guide" class="md-skip">
+        <a href="#versioning" class="md-skip">
           Skip to content
         </a>
       
@@ -2757,8 +2757,12 @@
   
 
 
-<h1 id="semantic-versioning-guide">Semantic Versioning Guide<a class="headerlink" href="#semantic-versioning-guide" title="Permanent link">&para;</a></h1>
-<p>This project follows <a href="https://semver.org/">Semantic Versioning 2.0.0</a>.</p>
+<h1 id="versioning">Versioning<a class="headerlink" href="#versioning" title="Permanent link">&para;</a></h1>
+<p>This project uses <a href="https://semver.org/">Semantic Versioning</a>. <strong>The version is the git tag</strong>:
+<code>pyproject.toml</code> declares it as dynamic and hatch-vcs derives it from <code>vX.Y.Z</code> tags, <code>backend.__version__</code>
+reads it from the installed distribution, and the container image receives it as a build argument.
+Nothing in the repository has to be edited to cut a release; see
+<a href="../AUTOMATED_VERSIONING/">AUTOMATED_VERSIONING.md</a> for the flow.</p>
 <h2 id="automated-versioning-primary-method">Automated Versioning (Primary Method)<a class="headerlink" href="#automated-versioning-primary-method" title="Permanent link">&para;</a></h2>
 <p><strong>The project uses automated PR-based versioning</strong> where every merged pull request automatically increments the version and publishes to PyPI. See <a href="../AUTOMATED_VERSIONING/">AUTOMATED_VERSIONING.md</a> for the complete guide.</p>
 <p><strong>Quick summary:</strong>
@@ -2783,7 +2787,7 @@
 <p>The project uses automated PR-based versioning. When a PR is merged to main:</p>
 <ol>
 <li><strong>Auto-Version Workflow Triggers</strong></li>
-<li><code>ci.yml</code> dispatches <code>auto-version-release.yml</code> after a successful run on main</li>
+<li>the <code>Release</code> job of <code>ci.yml</code> tags the release after a green, releasable run on main</li>
 <li>
 <p>Determines version bump from the PR title</p>
 </li>
@@ -2949,7 +2953,7 @@
 <li>Ready for production testing</li>
 </ul>
 <h2 id="container-image-tags">Container Image Tags<a class="headerlink" href="#container-image-tags" title="Permanent link">&para;</a></h2>
-<p>The build workflow (<code>build.yml</code>) creates multiple tags:</p>
+<p>The <code>Container</code> job of <code>ci.yml</code> pushes multiple tags:</p>
 <table>
 <thead>
 <tr>
@@ -3068,7 +3072,7 @@
 <ol>
 <li>Does the infra/containers/Containerfile exist?</li>
 <li>Are there syntax errors in the infra/containers/Containerfile?</li>
-<li>Check the <code>build.yml</code> job logs for details</li>
+<li>Check the <code>Container</code> job logs of the <code>main</code> run for details</li>
 </ol>
 <h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
 <ol>

@@ -2933,7 +2933,7 @@
 - 🟢 Green: Dependencies tracked
 - ⚪ Grey: No license report</p>
 <h3 id="4-github-cicd-workflows">4. GitHub CI/CD Workflows<a class="headerlink" href="#4-github-cicd-workflows" title="Permanent link">&para;</a></h3>
-<p>The dashboard fetches the latest completed runs from GitHub's public API (no authentication required), then reads the jobs of the most recent <strong><code>CI/CD Pipeline</code></strong> run (<code>.github/workflows/ci.yml</code>). The reusable workflows <code>security.yml</code>, <code>build.yml</code>, <code>performance.yml</code> and <code>deploy.yml</code> are <code>workflow_call</code>-only and never appear as runs of their own; they show up as jobs inside the <code>CI/CD Pipeline</code> run.</p>
+<p>The dashboard fetches the latest completed runs from GitHub's public API (no authentication required), then reads the jobs of the most recent <strong><code>CI/CD Pipeline</code></strong> run (<code>.github/workflows/ci.yml</code>). All stages (quality, tests, security scans, container build and scan, docs, release) are jobs of that single run; <code>performance.yml</code> is a separate weekly workflow.</p>
 <p>The <code>CI/CD</code> row shows four columns:</p>
 <h4 id="ci">CI<a class="headerlink" href="#ci" title="Permanent link">&para;</a></h4>
 <p><strong>Source</strong>: Conclusion of the latest completed <code>CI/CD Pipeline</code> workflow run</p>
@@ -2943,14 +2943,14 @@
 - 🔴 Red: Latest run failed
 - ⚪ Grey: Cancelled or no recent runs</p>
 <h4 id="sec">Sec<a class="headerlink" href="#sec" title="Permanent link">&para;</a></h4>
-<p><strong>Source</strong>: Job <code>Run Security Scans / Basic Security Checks</code> of that run (the <code>security.yml</code> SAST/dependency scans called by <code>ci.yml</code>)</p>
+<p><strong>Source</strong>: Job <code>Security Scans</code> of that run (Bandit, Semgrep, pip-audit, pip-licenses)</p>
 <p><strong>Status</strong>: <code>ok</code> / <code>fail</code> / <code>can</code> / <code>skip</code> / <code>n/a</code></p>
 <p><strong>RAG Thresholds</strong>:
 - 🟢 Green: Job succeeded
 - 🔴 Red: Job failed
 - ⚪ Grey: Cancelled, skipped (for example a docs-only change) or not found</p>
 <h4 id="autover">AutoVer<a class="headerlink" href="#autover" title="Permanent link">&para;</a></h4>
-<p><strong>Source</strong>: Job <code>Trigger Auto-Version-Release</code> of that run (dispatches <code>auto-version-release.yml</code>; only present for pushes to <code>main</code>)</p>
+<p><strong>Source</strong>: Job <code>Release</code> of that run (tags the release; only present for releasable pushes to <code>main</code>)</p>
 <p><strong>Status</strong>: <code>ok</code> / <code>fail</code> / <code>can</code> / <code>skip</code> / <code>n/a</code></p>
 <p><strong>RAG Thresholds</strong>:
 - 🟢 Green: Job succeeded

@@ -2548,7 +2548,7 @@
 <ol>
 <li>Developer creates PR with changes</li>
 <li>PR merged to main</li>
-<li>ci.yml runs on <code>main</code> and, after a successful run, dispatches auto-version-release.yml, which:</li>
+<li>ci.yml runs on <code>main</code>; on a green, releasable run its <code>Release</code> job tags <code>vX.Y.Z</code> (the version is derived from the tag by hatch-vcs), which:</li>
 <li>Determines version bump</li>
 <li>Creates and merges version bump PR</li>
 <li>Pushes version tag</li>
@@ -2664,7 +2664,7 @@
 <p><strong>Problem:</strong> Tag not created automatically</p>
 <p><strong>Solution:</strong></p>
 <ol>
-<li>Check <code>auto-version-release.yml</code> logs</li>
+<li>Check the <code>Release</code> job of the <code>CI/CD Pipeline</code> run on <code>main</code></li>
 <li>Verify version bump PR was merged</li>
 <li>Manually create tag if needed:</li>
 </ol>
