@@ -2623,6 +2623,7 @@
 <li><strong>Opens and merges a version bump PR</strong> against the main branch</li>
 <li><strong>Creates a git tag</strong> for the new version</li>
 <li><strong>Triggers the publish workflow</strong> (<code>publish-release.yml</code>) which builds and publishes to PyPI</li>
+<li><strong>Dispatches the CI pipeline on the tag</strong> (<code>ci.yml</code>) so the versioned container image (<code>X.Y.Z</code>, <code>X.Y</code>, <code>X</code>, <code>latest</code>) is pushed to GHCR; a tag pushed with the workflow token would not trigger it otherwise</li>
 </ol>
 <h2 id="version-bump-rules">Version Bump Rules<a class="headerlink" href="#version-bump-rules" title="Permanent link">&para;</a></h2>
 <p>The workflow follows <a href="https://semver.org/">Semantic Versioning 2.0.0</a>:</p>
