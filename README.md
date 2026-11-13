@@ -154,7 +154,7 @@ with WeatherClient() as client:
 APP_ENV=development uvicorn backend.api.main:app --reload --port 5000
 
 # Production (APP_SECRET_KEY is required)
-gunicorn -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:5000 --workers 4 --timeout 120 backend.api.main:app
+gunicorn -k uvicorn_worker.UvicornWorker --bind 0.0.0.0:5000 --workers 4 --timeout 120 backend.api.main:app
 
 # GET request
 curl "http://localhost:5000/api/v1/weather?city=London&country=UK"

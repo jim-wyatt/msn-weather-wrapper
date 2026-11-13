@@ -24,10 +24,10 @@ from typing import Any
 
 def generate_timestamp() -> str:
     """Generate timestamp in documentation format."""
-    from datetime import datetime
+    from datetime import datetime, timezone
 
     # Use strftime without platform-specific directives
-    dt = datetime.utcnow()
+    dt = datetime.now(timezone.utc)
     month = dt.strftime("%B")
     day = dt.day  # No leading zero
     year = dt.year

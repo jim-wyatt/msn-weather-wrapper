@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Nginx no longer reflects the request `Origin` or answers preflights itself; CORS is handled only by FastAPI, so cross-origin callers must be listed in `CORS_ORIGINS`
 
 ### Fixed
+- Removed deprecated API usage: gunicorn now loads the worker from the `uvicorn-worker` package (the `uvicorn.workers` module is deprecated), the test client uses `httpx2` on Python 3.11+ as Starlette now expects and sends raw bodies as `content=`, the report generator uses timezone-aware `datetime.now(timezone.utc)` instead of `utcnow()`, and pytest-asyncio's fixture loop scope is set explicitly
 - The release trigger now looks up the pull request that produced the merged commit instead of the most recently created merged PR, which after a release was the version-bump PR itself; every second release was being skipped
 - The release workflow now dispatches the CI pipeline on the new tag so the versioned container image (`X.Y.Z`, `X.Y`, `X`, `latest`) is published; tags pushed with the workflow token never triggered it, so 2.0.14 shipped without an image tag
 

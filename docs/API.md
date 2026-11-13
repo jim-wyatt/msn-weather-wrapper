@@ -329,7 +329,7 @@ The project includes Gunicorn 27+ as a production ASGI server. Use it for produc
 ```bash
 # Gunicorn is already included in dependencies
 
-gunicorn -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:5000 --workers 4 --timeout 120 backend.api.main:app
+gunicorn -k uvicorn_worker.UvicornWorker --bind 0.0.0.0:5000 --workers 4 --timeout 120 backend.api.main:app
 
 ```
 
