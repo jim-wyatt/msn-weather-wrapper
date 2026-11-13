@@ -234,7 +234,7 @@ jobs:
           echo "python=$("$pipx_python" -c 'import platform; print(platform.python_version())')" >> "$GITHUB_OUTPUT"
       - name: Restore Semgrep environment
         id: semgrep-cache
-        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             ~/.local/pipx/venvs/semgrep
@@ -329,7 +329,7 @@ jobs:
       # Trivy's; downloading it fresh was the longest step in this job after the build. On a
       # same-day hit nothing is fetched, on an older restore Grype updates it in place.
       - name: Restore Grype vulnerability database
-        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/grype/db
           key: grype-db-${{ steps.sbom-tools.outputs.date }}
@@ -401,7 +401,7 @@ jobs:
       # Push the validated build (cache hit, no rebuild) with its final tags and attest it
       - name: Log in to GHCR
         if: github.event_name == 'push'
-        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
