@@ -56,7 +56,7 @@ NEXTJS_PID=$!
 echo "Next.js started (PID: $NEXTJS_PID)"
 
 # Start gunicorn with the ASGI worker in the background
-gunicorn -k uvicorn.workers.UvicornWorker --bind "$GUNICORN_BIND" --workers "$GUNICORN_WORKERS" --timeout "$GUNICORN_TIMEOUT" --forwarded-allow-ips "$GUNICORN_FORWARDED_ALLOW_IPS" backend.api.main:app &
+gunicorn -k uvicorn_worker.UvicornWorker --bind "$GUNICORN_BIND" --workers "$GUNICORN_WORKERS" --timeout "$GUNICORN_TIMEOUT" --forwarded-allow-ips "$GUNICORN_FORWARDED_ALLOW_IPS" backend.api.main:app &
 GUNICORN_PID=$!
 
 echo "gunicorn started (PID: $GUNICORN_PID)"

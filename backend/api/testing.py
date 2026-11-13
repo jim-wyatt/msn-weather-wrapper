@@ -19,6 +19,13 @@ import json
 from typing import Any, cast
 
 import httpx
+
+try:  # Starlette's TestClient uses httpx2 when it is installed (Python 3.11+)
+    import httpx2
+
+    _INVALID_URL_ERRORS: tuple[type[Exception], ...] = (httpx.InvalidURL, httpx2.InvalidURL)
+except ImportError:  # pragma: no cover - exercised on Python 3.10
+    _INVALID_URL_ERRORS = (httpx.InvalidURL,)
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
@@ -65,6 +72,10 @@ class _TestClient:
     @staticmethod
     def _normalize_kwargs(kwargs: dict[str, Any]) -> dict[str, Any]:
         normalized = dict(kwargs)
+        # httpx deprecated passing raw bytes/text as ``data=``; that is ``content=`` now.
+        # Mappings (form data) keep using ``data=``.
+        if isinstance(normalized.get("data"), (str, bytes)):
+            normalized["content"] = normalized.pop("data")
         content_type = normalized.pop("content_type", None)
         if isinstance(content_type, str):
             raw_headers = normalized.get("headers")
@@ -77,7 +88,7 @@ class _TestClient:
         try:
             request_fn = cast(Any, self._client).request
             response: Any = request_fn(method, *args, **self._normalize_kwargs(kwargs))
-        except httpx.InvalidURL as exc:
+        except _INVALID_URL_ERRORS as exc:
             payload = {"error": "Invalid input", "message": str(exc)}
             response = _SyntheticResponse(status_code=400, payload=payload)
         return _TestClientResponse(response)
