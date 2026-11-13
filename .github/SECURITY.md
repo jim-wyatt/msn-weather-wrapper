@@ -142,7 +142,8 @@ All dependencies are:
 ### Container Deployment
 
 - Always use specific version tags (not `latest`)
-- The published image currently runs its processes as root inside the container; prefer rootless Podman or a user-namespace-remapped runtime
+- The published image runs all of its processes as the unprivileged user `app` (uid 10001) on port 8080 and needs no capabilities: run it with `--cap-drop ALL --security-opt no-new-privileges`
+- Third-party GitHub Actions are pinned to commit SHAs (Dependabot keeps the pins current) and `GITHUB_TOKEN` is not persisted in checkouts that do not push
 - Use read-only file systems when possible
 - Regularly update base images
 - Scan images before deployment

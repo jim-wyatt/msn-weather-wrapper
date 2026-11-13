@@ -2,6 +2,7 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  poweredByHeader: false,
   async rewrites() {
     const apiUrl = process.env.API_URL ?? 'http://localhost:5000';
     return [

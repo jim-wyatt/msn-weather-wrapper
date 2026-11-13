@@ -94,6 +94,23 @@ class TestInputValidation:
                 assert "invalid characters" in error.lower()
 
 
+class TestSecurityHeaders:
+    """Every API response carries the defence-in-depth headers."""
+
+    def test_headers_on_success(self, client):
+        response = client.get("/api/v1/health")
+        assert response.status_code == 200
+        assert response.headers["X-Content-Type-Options"] == "nosniff"
+        assert response.headers["X-Frame-Options"] == "DENY"
+        assert response.headers["Referrer-Policy"] == "no-referrer"
+
+    def test_headers_on_error(self, client):
+        response = client.get("/api/v1/weather?city=&country=")
+        assert response.status_code >= 400
+        assert response.headers["X-Content-Type-Options"] == "nosniff"
+        assert response.headers["X-Frame-Options"] == "DENY"
+
+
 class TestCorsConfiguration:
     """Test CORS origin configuration."""
 

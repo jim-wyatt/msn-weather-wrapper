@@ -26,7 +26,9 @@ jobs:
       contents: read
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - uses: ./.github/actions/setup-python-env
         with:
@@ -71,7 +73,7 @@ jobs:
         run: python scripts/evaluate_security_reports.py security-reports
 
       - name: Upload security reports as artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: security-reports
@@ -96,13 +98,15 @@ jobs:
       security-events: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4.4.1
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
 
       - name: Build container image
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: .
           file: ./infra/containers/Containerfile
@@ -116,7 +120,7 @@ jobs:
 
       - name: Run Trivy vulnerability scanner
         if: ${{ inputs.full-scan }}
-        uses: aquasecurity/trivy-action@v0.36.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: msn-weather-app:security-scan
           format: 'sarif'
@@ -126,14 +130,14 @@ jobs:
 
       - name: Upload Trivy results to GitHub Security
         if: ${{ inputs.full-scan }}
-        uses: github/codeql-action/upload-sarif@v4
+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
         with:
           sarif_file: 'trivy-results.sarif'
           category: 'container-security'
 
       - name: Run Trivy for JSON report
         if: ${{ inputs.full-scan }}
-        uses: aquasecurity/trivy-action@v0.36.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: msn-weather-app:security-scan
           format: 'json'
@@ -152,7 +156,7 @@ jobs:
       # CRITICAL or HIGH vulnerability that has a fix available. Findings with no fix yet
       # (most base-image OS packages) are reported by the steps above but do not block.
       - name: Fail on fixable CRITICAL/HIGH vulnerabilities
-        uses: aquasecurity/trivy-action@v0.36.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: msn-weather-app:security-scan
           format: 'table'
@@ -174,7 +178,7 @@ jobs:
 
       - name: Upload container security reports
         if: ${{ inputs.full-scan && always() }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: container-security-reports
           path: security-reports/

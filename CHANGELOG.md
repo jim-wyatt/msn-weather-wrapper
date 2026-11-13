@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### ⚠️ Breaking
+- **Container runs unprivileged on port 8080**
+  - Every process in the published image (nginx, Next.js, gunicorn) now runs as user `app` (uid 10001) and nginx listens on port **8080** instead of 80. Update port mappings from `-p 8080:80` to `-p 8080:8080`; the compose file is already updated. The image needs no Linux capabilities and works with `--cap-drop ALL --security-opt no-new-privileges`
 - **Container and API configuration hardening**
   - `APP_SECRET_KEY` is no longer generated at image build time (every pull of the published image shared the same key). It must now be supplied at runtime when `APP_ENV=production`, e.g. `podman run -e APP_SECRET_KEY=...`; the container exits at startup without it
   - `CORS_ORIGINS=*` is rejected at startup. List explicit origins (comma-separated), or leave it unset for same-origin deployments. The image no longer defaults to `*`
@@ -27,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtimes and tooling moved to current stable/LTS lines: Python 3.15 in CI and the container images (the library still supports 3.10+ and is now tested on 3.10 through 3.15), Node.js 26 LTS, npm 12, pip 26.3, and the latest ruff, mypy, and pre-commit hooks. Runtime dependency floors in `pyproject.toml` were raised to the current minor lines; dev-tool floors stay where they were so the dev extra still installs on 3.10.
 
 ### Security
+- Hardening pass: nginx now sends `Content-Security-Policy`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy` and `server_tokens off`, hides `X-Powered-By`, and limits request bodies; the API sets `X-Content-Type-Options`, `X-Frame-Options` and `Referrer-Policy` on every response (covered by tests); Next.js no longer sends `X-Powered-By`
+- All third-party GitHub Actions are pinned to commit SHAs with version comments (Dependabot keeps them current), and checkouts that never push no longer persist the workflow token
 - Updated Next.js to 16.4 and refreshed transitive frontend dependencies (`sharp`, `postcss`, `nanoid`, `baseline-browser-mapping`) to clear outstanding advisories
 - Updated the pinned `pip` in the container image to 26.2.1
 - Bandit, Semgrep, and pip-audit results now fail the security workflow instead of being ignored

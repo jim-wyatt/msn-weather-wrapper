@@ -497,7 +497,7 @@ export CORS_ORIGINS=https://your-frontend.example.com
 # Build and run
 
 podman build -f infra/containers/Containerfile -t msn-weather-wrapper .
-podman run -p 8080:80 \
+podman run -p 8080:8080 --cap-drop ALL --security-opt no-new-privileges \
   -e APP_SECRET_KEY="${APP_SECRET_KEY:?Set APP_SECRET_KEY first}" \
   -e CORS_ORIGINS="${CORS_ORIGINS:-}" \
   msn-weather-wrapper
