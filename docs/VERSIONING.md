@@ -243,12 +243,9 @@ The `Container` job of `ci.yml` pushes multiple tags:
 | `X.Y.Z` | `1.2.3` | Exact version (immutable) |
 | `X.Y` | `1.2` | Latest patch in minor version |
 | `X` | `1` | Latest minor in major version |
-| `latest` | `latest` | Latest build from `main` |
+| `latest` | `latest` | Most recent release |
 | `sha-<short sha>` | `sha-1a2b3c4` | Every pushed build (`type=sha`) |
 | `<branch>` | `main` | Pushes to a branch (`type=ref,event=branch`; in practice `main`) |
-| `X.Y.Z-alpha.N` | `1.2.0-alpha.1` | Alpha prerelease |
-| `X.Y.Z-beta.N` | `1.2.0-beta.1` | Beta prerelease |
-| `X.Y.Z-rc.N` | `1.2.0-rc.1` | Release candidate |
 
 ### Usage Examples
 
