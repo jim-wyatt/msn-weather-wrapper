@@ -225,6 +225,24 @@ Changes
 
 There is no opt-out; every merge to `main` releases. If a release must not happen, do not merge, or merge and accept the patch release. Deleting the tag after the fact does not cancel `publish-release.yml`, which is dispatched explicitly by the workflow right after the tag push.
 
+### RELEASE_TOKEN, or opening the bump PR by hand
+
+The repository setting **Allow GitHub Actions to create and approve pull requests** is
+disabled as part of the hardening baseline. Without a `RELEASE_TOKEN` secret (a GitHub App
+token or fine-grained PAT with *Contents* and *Pull requests* write), the workflow can push
+the `chore/version-bump-X.Y.Z` branch but cannot open the pull request, and fails at
+"Create version bump pull request". Recovery:
+
+```bash
+gh pr create --base main --head chore/version-bump-X.Y.Z --title "chore: bump version to X.Y.Z"
+gh workflow run auto-version-release.yml -f pr_title="<title of the merged PR>" -f pr_number=<n>
+```
+
+The re-run reuses the open PR, waits for `CI Gate`, merges, tags and dispatches the publish
+and container-image runs. Do not merge anything else to `main` until the tag exists, or a
+second release run computes a conflicting version. With `RELEASE_TOKEN` set none of this is
+needed, and the bump PR's CI and the tag push also trigger on their own.
+
 ## Troubleshooting
 
 ### Release Waiting on the Version Bump PR

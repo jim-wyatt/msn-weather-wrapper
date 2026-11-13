@@ -143,9 +143,12 @@ jobs:
       - name: Create version bump pull request
         if: steps.check.outputs.skip == 'false' && steps.check.outputs.bump == 'true'
         env:
-          # A pull request opened with GITHUB_TOKEN has its CI held for manual approval.
-          # If a RELEASE_TOKEN secret (GitHub App or fine-grained token with contents and
-          # pull-requests write) is configured, the PR is opened with it and CI starts on its own.
+          # A pull request opened with GITHUB_TOKEN has its CI held for manual approval, and
+          # with "Allow GitHub Actions to create and approve pull requests" disabled (the
+          # hardened default) GITHUB_TOKEN cannot open the PR at all. A RELEASE_TOKEN secret
+          # (GitHub App or fine-grained token with contents and pull-requests write) avoids
+          # both; without it a maintainer opens the PR from the pushed branch and re-runs
+          # this workflow, which resumes at the existing PR.
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.GITHUB_TOKEN }}
           INPUT_PR_TITLE: ${{ github.event.inputs.pr_title }}
           INPUT_PR_NUMBER: ${{ github.event.inputs.pr_number }}
@@ -277,10 +280,11 @@ jobs:
           echo "⏳ Waiting for PR merge to be processed..."
           sleep 5
 
-          # Fetch latest main
+          # Discard the version-file edits left in the workspace by the earlier step (on a
+          # resumed run they were never committed here) and move to the merged main
+          git checkout -- pyproject.toml backend/__init__.py 2>/dev/null || true
           git fetch origin main
-          git checkout main
-          git pull origin main
+          git checkout -B main origin/main
 
           # Get the latest commit SHA on main
           COMMIT_SHA=$(git rev-parse HEAD)
