@@ -1,6 +1,6 @@
 """MSN Weather Wrapper - A Python wrapper for MSN Weather services."""
 
-__version__ = "2.0.15"
+__version__ = "2.1.0"
 
 from backend.client import WeatherClient
 from backend.models import Location, WeatherData
