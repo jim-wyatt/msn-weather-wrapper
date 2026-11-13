@@ -98,7 +98,7 @@ The project uses a **comprehensive security scanning workflow** integrated into 
 **License Compliance:**
 - **pip-licenses**: Dependency license report on all branches
 
-Results are evaluated by `scripts/evaluate_security_reports.py`: Bandit HIGH findings, any Semgrep finding (rulesets `p/python`, `p/security-audit`, `.semgrep.yml`), and any pip-audit vulnerability fail the job. Semgrep is installed with pipx in its own environment so its transitive dependencies are not counted by pip-audit.
+Results are evaluated by `scripts/evaluate_security_reports.py`: Bandit HIGH findings, any Semgrep finding (rulesets `p/python`, `p/security-audit`, `.semgrep.yml`), and any pip-audit vulnerability fail the job. Semgrep is installed with pipx in its own environment so its transitive dependencies are not counted by pip-audit; its version is pinned in `.github/requirements/semgrep.txt` and kept current by Dependabot.
 
 **Platform scanning (GitHub):**
 - **CodeQL** default setup for Python, JavaScript/TypeScript and GitHub Actions; results are required by the `main` ruleset
