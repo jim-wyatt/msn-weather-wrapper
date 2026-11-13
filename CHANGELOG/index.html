@@ -2763,6 +2763,7 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 </ul>
 <h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
 <ul>
+<li>The release trigger now looks up the pull request that produced the merged commit instead of the most recently created merged PR, which after a release was the version-bump PR itself; every second release was being skipped</li>
 <li>The release workflow now dispatches the CI pipeline on the new tag so the versioned container image (<code>X.Y.Z</code>, <code>X.Y</code>, <code>X</code>, <code>latest</code>) is published; tags pushed with the workflow token never triggered it, so 2.0.14 shipped without an image tag</li>
 </ul>
 <h3 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h3>
