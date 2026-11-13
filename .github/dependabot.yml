@@ -104,6 +104,24 @@ updates:
 
   # Container base images. The FROM lines pin image digests, so without this the base
   # images never move and interpreter CVEs accumulate in the published image.
+  # CI-only tools pinned outside the project's dependencies (Semgrep runs from its own pipx
+  # environment so pip-audit never counts its transitive dependencies).
+  - package-ecosystem: "pip"
+    directory: "/.github/requirements"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "UTC"
+    labels:
+      - "dependencies"
+      - "ci"
+    assignees:
+      - "jim-wyatt"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
   # Dependabot's docker updater matches both Dockerfile and Containerfile names.
   - package-ecosystem: "docker"
     directories:
