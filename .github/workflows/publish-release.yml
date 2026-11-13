@@ -1,7 +1,9 @@
 name: Publish Release
 
-# Triggered automatically when a version tag is created (v*.*.*)
-# or manually via workflow_dispatch for fallback/testing
+# Runs on the tag that ci.yml creates after a green main run. The tagged commit is the
+# one that run tested, scanned and pushed as an image, so nothing is rebuilt or re-tested
+# here: build the Python package from the tag (version via hatch-vcs), attest it, publish
+# it to PyPI, verify the versioned image exists, and create the GitHub release.
 on:
   push:
     tags:
@@ -9,89 +11,63 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag to publish (e.g., v1.6.3)'
-        required: false
+        description: 'Tag to publish (e.g. v2.1.7)'
+        required: true
         type: string
 
 env:
   PYTHON_VERSION: '3.15'
-  NODE_VERSION: '26'
 
 jobs:
-  # Job 1: Build Python Package
   build-package:
     name: Build Python Package
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     permissions:
       contents: read
-      id-token: write       # sign the package attestation with the workflow's OIDC identity
-      attestations: write   # store the attestation on GitHub
+      id-token: write
+      attestations: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
-      - name: Checkout code
+      - name: Checkout tag
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          ref: ${{ github.ref }}
-
+          ref: ${{ github.event.inputs.tag || github.ref }}
+          fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip
-
-      - name: Install build tools
-        run: python -m pip install build twine
-
-      - name: Extract version from tag
+      - name: Version from the tag
         id: version
         run: |
-          # Support both tag push and workflow_dispatch triggers
-          if [[ -n "${{ github.event.inputs.tag }}" ]]; then
-            # Manual workflow_dispatch trigger
-            VERSION="${{ github.event.inputs.tag }}"
-            VERSION=${VERSION#v}  # Remove leading 'v' if present
-          else
-            # Automatic tag push trigger (GITHUB_REF is refs/tags/vX.X.X)
-            VERSION=${GITHUB_REF#refs/tags/v}
-          fi
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Building version: $VERSION"
-
-      - name: Update version in pyproject.toml
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+          echo "Publishing ${TAG#v}"
+      - name: Build sdist and wheel
         run: |
-          TAG_VERSION=${{ steps.version.outputs.version }}
-          echo "Setting version to: $TAG_VERSION"
-          sed -i "s|^version = .*|version = \"$TAG_VERSION\"|" pyproject.toml
-          echo "Updated pyproject.toml version:"
-          grep '^version = ' pyproject.toml
-
-      - name: Build package
-        run: python -m build
-
-      - name: Check package
-        run: twine check dist/*
-
-      # Signed build provenance for the sdist and wheel, verifiable with
-      # `gh attestation verify <file> --repo <owner>/<repo>`
+          python -m pip install --upgrade pip build twine
+          python -m build
+          twine check dist/*
+          ls -l dist
+          # The wheel version must equal the tag (hatch-vcs reads the tag from the checkout)
+          test -f "dist/msn_weather_wrapper-${{ steps.version.outputs.version }}-py3-none-any.whl"
       - name: Attest package provenance
         uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
         with:
           subject-path: 'dist/*'
-
-      - name: Upload build artifacts
+      - name: Upload package
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: python-package
           path: dist/
 
-  # Job 2: Publish to PyPI
   publish-pypi:
     name: Publish to PyPI
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     needs: [build-package]
     environment:
       name: pypi
@@ -104,121 +80,57 @@ jobs:
         with:
           name: python-package
           path: dist/
-
-      - name: Publish to PyPI
+      - name: Publish to PyPI (trusted publishing)
         uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
         with:
           print-hash: true
 
-  # Job 3: Create GitHub Release
-  release:
+  github-release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     needs: [build-package, publish-pypi]
     permissions:
       contents: write
+      packages: read
+    env:
+      VERSION: ${{ needs.build-package.outputs.version }}
     steps:
-      - name: Checkout code
+      - name: Checkout tag
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          ref: ${{ github.event.inputs.tag || github.ref }}
           fetch-depth: 0
-
-      - name: Extract version info
-        id: version
-        run: |
-          # Support both tag push and workflow_dispatch triggers
-          if [[ -n "${{ github.event.inputs.tag }}" ]]; then
-            # Manual workflow_dispatch trigger
-            VERSION="${{ github.event.inputs.tag }}"
-            VERSION=${VERSION#v}  # Remove leading 'v' if present
-          else
-            # Automatic tag push trigger (GITHUB_REF is refs/tags/vX.X.X)
-            VERSION=${GITHUB_REF#refs/tags/v}
-          fi
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          # Check if this is a prerelease (contains alpha, beta, rc)
-          if [[ $VERSION =~ (alpha|beta|rc) ]]; then
-            echo "prerelease=true" >> $GITHUB_OUTPUT
-          else
-            echo "prerelease=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Download Python package
+      - name: Download package
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: python-package
-          path: release-artifacts/python-package/
-
-      - name: Generate release notes
-        id: release_notes
+          path: dist/
+      - name: Verify the versioned container image was published by the main run
         run: |
-          VERSION=${{ steps.version.outputs.version }}
-          PREV_TAG=$(git describe --tags --abbrev=0 "v${VERSION}^" 2>/dev/null || echo "")
-
-          if [ -n "$PREV_TAG" ]; then
-            CHANGELOG=$(git log "$PREV_TAG"..HEAD --pretty=format:"%h - %s (%an)" | head -20)
-          else
-            CHANGELOG=$(git log --pretty=format:"%h - %s (%an)" | head -20)
-          fi
-
-          cat > /tmp/release_notes.txt << EOF
-          ## Release v${VERSION}
-
-          ### 📦 Artifacts
-          - Python package (wheel and source distribution)
-          - Built with Python ${{ env.PYTHON_VERSION }}
-
-          ### 📝 Changes
-          \`\`\`
-          ${CHANGELOG}
-          \`\`\`
-
-          ### 🔗 Links
-          - [PyPI Package](https://pypi.org/project/msn-weather-wrapper/${VERSION}/)
-          - [GitHub Repository](https://github.com/jim-wyatt/msn-weather-wrapper)
-
-          ---
-          *Release automatically created from tag v${VERSION}*
-          EOF
-
-          # Use heredoc for multiline output
+          docker buildx imagetools inspect "ghcr.io/${{ github.repository }}:${VERSION}" > /dev/null \
+            && echo "image ghcr.io/${{ github.repository }}:${VERSION} present" \
+            || echo "::warning::ghcr.io/${{ github.repository }}:${VERSION} not found; the main run that produced this tag should have pushed it"
+      - name: Release notes
+        run: |
+          PREV=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | grep -v "^v${VERSION}$" | head -n 1)
           {
-            echo 'release_notes<<EOF'
-            cat /tmp/release_notes.txt
-            echo 'EOF'
-          } >> $GITHUB_OUTPUT
-
-      - name: Create GitHub Release
+            echo "## v${VERSION}"
+            echo
+            echo "### Changes since ${PREV:-the beginning}"
+            git log --format='- %s (%h)' "${PREV:+$PREV..}v${VERSION}"
+            echo
+            echo "### Artifacts"
+            echo "- PyPI: https://pypi.org/project/msn-weather-wrapper/${VERSION}/"
+            echo "- Container: \`ghcr.io/${{ github.repository }}:${VERSION}\`"
+            echo "- Verify: \`gh attestation verify oci://ghcr.io/${{ github.repository }}:${VERSION} --repo ${{ github.repository }}\`"
+          } > release-notes.md
+          cat release-notes.md
+      - name: Create release
         uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
         with:
-          tag_name: v${{ steps.version.outputs.version }}
-          name: Release v${{ steps.version.outputs.version }}
-          body: ${{ steps.release_notes.outputs.release_notes }}
-          files: release-artifacts/python-package/*
-          prerelease: ${{ steps.version.outputs.prerelease }}
-          draft: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Deployment Summary
-        run: |
-          cat >> $GITHUB_STEP_SUMMARY << 'EOF'
-          # 🎉 Release Published!
-
-          ## Details
-          - **Version**: v${{ steps.version.outputs.version }}
-          - **Prerelease**: ${{ steps.version.outputs.prerelease }}
-
-          ## 📦 Published Artifacts
-          - ✅ Python package published to [PyPI](https://pypi.org/project/msn-weather-wrapper/${{ steps.version.outputs.version }}/)
-          - ✅ GitHub Release created with packages attached
-
-          ## 🔗 Links
-          - [GitHub Release](https://github.com/jim-wyatt/msn-weather-wrapper/releases/tag/v${{ steps.version.outputs.version }})
-          - [PyPI Package](https://pypi.org/project/msn-weather-wrapper/${{ steps.version.outputs.version }}/)
-
-          ---
-          *Automatically published from tag push*
-          EOF
+          tag_name: v${{ env.VERSION }}
+          name: v${{ env.VERSION }}
+          body_path: release-notes.md
+          files: dist/*

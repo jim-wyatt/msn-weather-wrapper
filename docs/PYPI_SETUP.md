@@ -77,7 +77,7 @@ Once OIDC is configured, releases are fully automatic:
 
 1. Developer creates PR with changes
 2. PR merged to main
-3. ci.yml runs on `main` and, after a successful run, dispatches auto-version-release.yml, which:
+3. ci.yml runs on `main`; on a green, releasable run its `Release` job tags `vX.Y.Z` (the version is derived from the tag by hatch-vcs), which:
    - Determines version bump
    - Creates and merges version bump PR
    - Pushes version tag
@@ -176,7 +176,7 @@ unzip -l dist/*.whl | head -20
 
 **Solution:**
 
-1. Check `auto-version-release.yml` logs
+1. Check the `Release` job of the `CI/CD Pipeline` run on `main`
 2. Verify version bump PR was merged
 3. Manually create tag if needed:
 

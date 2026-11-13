@@ -30,11 +30,11 @@ graph TB
 
 | Category | Location | Runs in CI |
 | ---------- | ------- | -------- |
-| **Backend Unit Tests** | `tests/test_client.py`, `tests/test_models.py`, `tests/test_api.py` | ✅ `test.yml` |
-| **Security Tests** | `tests/test_security.py` | ✅ `test.yml` |
-| **Security report gate tests** | `tests/test_security_reports.py` (covers `scripts/evaluate_security_reports.py`) | ✅ `test.yml` |
-| **Integration Tests** | `tests/test_integration.py` | ✅ `test.yml` (against the built container) |
-| **Benchmarks** | `tests/test_benchmarks.py` | ✅ `performance.yml` (main branch) |
+| **Backend Unit Tests** | `tests/test_client.py`, `tests/test_models.py`, `tests/test_api.py` | ✅ `ci.yml` |
+| **Security Tests** | `tests/test_security.py` | ✅ `ci.yml` |
+| **Security report gate tests** | `tests/test_security_reports.py` (covers `scripts/evaluate_security_reports.py`) | ✅ `ci.yml` |
+| **Integration Tests** | `tests/test_integration.py` | ✅ `ci.yml` (against the built container) |
+| **Benchmarks** | `tests/test_benchmarks.py` | ✅ `performance.yml` (weekly schedule and on demand) |
 | **Frontend E2E Tests** | `frontend/tests/e2e/` | ❌ Run locally or in containers |
 
 Current test counts, results, and coverage figures are published in the CI-generated [Test Report](reports/test-report.md) and [Coverage Report](reports/coverage-report.md).

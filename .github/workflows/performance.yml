@@ -1,20 +1,16 @@
 name: Performance Testing
 
+# Load and benchmark tests are not part of every merge: they run weekly and on demand.
 on:
-  workflow_call:
-    inputs:
-      python-version:
-        description: 'Python version for performance tests'
-        required: false
-        type: string
-        default: '3.15'
-
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
-  PYTHON_VERSION: ${{ inputs.python-version || '3.15' }}
+  PYTHON_VERSION: '3.15'
 
 jobs:
   load-test:

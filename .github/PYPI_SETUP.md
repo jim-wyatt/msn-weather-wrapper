@@ -80,7 +80,7 @@ python -m twine upload --repository testpypi dist/*
 
 ### Test Automated Release
 
-Create a test release. Direct pushes to `main` are blocked by the repository ruleset, so open a PR for any file changes; to publish a test version just push the tag (`publish-release.yml` sets the package version from the tag, so `pyproject.toml` does not need editing):
+Create a test release. Direct pushes to `main` are blocked by the repository ruleset, so open a PR for any file changes; to publish a test version just push the tag (hatch-vcs derives the package version from the tag, so `pyproject.toml` does not need editing):
 
 ```bash
 git tag -a v1.0.0-beta.1 -m "Beta release for testing"

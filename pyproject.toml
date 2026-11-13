@@ -1,10 +1,10 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
 name = "msn-weather-wrapper"
-version = "2.1.5"
+dynamic = ["version"]  # derived from the git tag by hatch-vcs (see docs/VERSIONING.md)
 description = "A production-ready Python wrapper for MSN Weather with a FastAPI backend and CI/CD"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -66,7 +66,6 @@ dev = [
     "bandit>=1.7.0",
     "pip-audit>=2.7.0",
     "pip-licenses>=5.0.0",
-    "python-semantic-release>=9.0.0",
     "setuptools>=75.0.0",
 ]
 
@@ -76,6 +75,13 @@ Documentation = "https://jim-wyatt.github.io/msn-weather-wrapper/"
 Repository = "https://github.com/jim-wyatt/msn-weather-wrapper"
 Changelog = "https://github.com/jim-wyatt/msn-weather-wrapper/blob/main/CHANGELOG.md"
 Issues = "https://github.com/jim-wyatt/msn-weather-wrapper/issues"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.version.raw-options]
+# Untagged builds get X.Y.Z.devN (no local segment); tagged builds get exactly X.Y.Z
+local_scheme = "no-local-version"
 
 [tool.hatch.build.targets.wheel]
 packages = ["backend"]
@@ -140,46 +146,3 @@ paths_to_mutate = "backend/"
 backup = false
 runner = "pytest -x --tb=no -q"
 tests_dir = "tests/"
-
-[tool.semantic_release]
-version_toml = ["pyproject.toml:project.version"]
-version_variables = ["backend/__init__.py:__version__"]
-branch = "main"
-changelog_file = "CHANGELOG.md"
-build_command = "pip install build && python -m build"
-dist_path = "dist/"
-upload_to_vcs_release = true
-
-[tool.semantic_release.commit_parser_options]
-allowed_tags = [
-    "build",
-    "chore",
-    "ci",
-    "docs",
-    "feat",
-    "fix",
-    "perf",
-    "style",
-    "refactor",
-    "test",
-]
-major_tags = ["breaking"]
-minor_tags = ["feat"]
-patch_tags = ["chore", "fix", "perf"]
-
-[tool.semantic_release.changelog]
-template_dir = "templates"
-exclude_commit_patterns = [
-    "^Merge",
-    "^Bump version",
-]
-
-[tool.semantic_release.changelog.environment]
-block_start_string = "{%"
-block_end_string = "%}"
-variable_start_string = "{{"
-variable_end_string = "}}"
-comment_start_string = "{#"
-comment_end_string = "#}"
-trim_blocks = false
-lstrip_blocks = false

@@ -31,6 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refreshed the security policy, CODEOWNERS, package metadata, pre-commit hook versions, and Dependabot grouping
 
 ### Changed
+- **CI/CD streamlined into one pipeline.** The container image is built once per run and that build is scanned, smoke-tested, integration-tested and pushed (it used to be built three times); the reusable test/security/build/deploy workflows and the version-bump workflow are gone. Performance tests run weekly instead of on every merge
+- **The version is the git tag.** `pyproject.toml` declares a dynamic version resolved by hatch-vcs, `backend.__version__` reads the installed metadata, the image gets it as `APP_VERSION`, and the health endpoint reports it. A green `main` run tags the release itself (`RELEASE_TOKEN`) and the tag runs a short publish workflow; there is no bump commit or bump pull request any more, and merges that change only documentation, CI or tooling are not released
 - Runtimes and tooling moved to current stable/LTS lines: Python 3.15 in CI and the container images (the library still supports 3.10+ and is now tested on 3.10 through 3.15), Node.js 26 LTS, npm 12, pip 26.3, and the latest ruff, mypy, and pre-commit hooks. Runtime dependency floors in `pyproject.toml` were raised to the current minor lines; dev-tool floors stay where they were so the dev extra still installs on 3.10.
 
 ### Security

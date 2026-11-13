@@ -104,8 +104,8 @@ If you're learning the codebase, explore it in this order:
 - 🔍 Type safety with mypy strict mode
 - 📋 SBOM generation for supply chain security
 - ♿ WCAG 2.1 Level AA accessible frontend
-- 🔄 **Modular CI/CD** - Reusable workflows with a single required gate, Docker layer caching, and signed build provenance for images and packages
-- 🏷️ **Automated semantic versioning** - Merged PRs are versioned and published to PyPI automatically
+- 🔄 **One-build CI/CD** - a single pipeline builds the image once, scans, smoke- and integration-tests that build, and pushes it with signed provenance; one required gate
+- 🏷️ **Release = tag** - the version is derived from the git tag (hatch-vcs); a green merge to `main` that changes shippable code is tagged, published to PyPI and released automatically
 - 📌 **Pinned, maintained base images** - Container base images are pinned by digest and bumped weekly by Dependabot
 
 ---

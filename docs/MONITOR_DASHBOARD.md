@@ -187,7 +187,7 @@ The dashboard auto-refreshes every 60 seconds and shows at-a-glance status using
 
 ### 4. GitHub CI/CD Workflows
 
-The dashboard fetches the latest completed runs from GitHub's public API (no authentication required), then reads the jobs of the most recent **`CI/CD Pipeline`** run (`.github/workflows/ci.yml`). The reusable workflows `security.yml`, `build.yml`, `performance.yml` and `deploy.yml` are `workflow_call`-only and never appear as runs of their own; they show up as jobs inside the `CI/CD Pipeline` run.
+The dashboard fetches the latest completed runs from GitHub's public API (no authentication required), then reads the jobs of the most recent **`CI/CD Pipeline`** run (`.github/workflows/ci.yml`). All stages (quality, tests, security scans, container build and scan, docs, release) are jobs of that single run; `performance.yml` is a separate weekly workflow.
 
 The `CI/CD` row shows four columns:
 
@@ -204,7 +204,7 @@ The `CI/CD` row shows four columns:
 
 #### Sec
 
-**Source**: Job `Run Security Scans / Basic Security Checks` of that run (the `security.yml` SAST/dependency scans called by `ci.yml`)
+**Source**: Job `Security Scans` of that run (Bandit, Semgrep, pip-audit, pip-licenses)
 
 **Status**: `ok` / `fail` / `can` / `skip` / `n/a`
 
@@ -215,7 +215,7 @@ The `CI/CD` row shows four columns:
 
 #### AutoVer
 
-**Source**: Job `Trigger Auto-Version-Release` of that run (dispatches `auto-version-release.yml`; only present for pushes to `main`)
+**Source**: Job `Release` of that run (tags the release; only present for releasable pushes to `main`)
 
 **Status**: `ok` / `fail` / `can` / `skip` / `n/a`
 
