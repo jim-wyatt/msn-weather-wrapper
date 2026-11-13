@@ -12,7 +12,7 @@ Runs on every pull request and every push to `main` (and on demand).
 | **Version** | Derives the version the run produces: on `main` the next semver from the latest tag and the merged PR's title (`feat:` → minor, `feat!:`/`breaking:` → major, else patch); `X.Y.Z.dev0` when nothing shippable changed; `0.0.0.dev0` on PRs | ✓ | ✓ |
 | **Code Quality** | `ruff format --check --preview`, `ruff check`, `mypy --strict` | ✓ | ✓ |
 | **Unit Tests** | unit, API and security tests with coverage; Python 3.15 on PRs, 3.10–3.15 on `main` | ✓ | ✓ |
-| **Security Scans** | Bandit (HIGH gates), Semgrep (pipx-isolated), pip-audit, pip-licenses, evaluated by `scripts/evaluate_security_reports.py` | ✓ | ✓ |
+| **Security Scans** | Bandit (HIGH gates), Semgrep (pipx-isolated, pinned in `.github/requirements/semgrep.txt`), pip-audit, pip-licenses, evaluated by `scripts/evaluate_security_reports.py` | ✓ | ✓ |
 | **Container** | builds the image **once** (version baked in via `APP_VERSION`), gates on fixable CRITICAL/HIGH (Trivy) and fixable CRITICAL (Grype), smoke-tests and integration-tests that build; on `main` also uploads Trivy SARIF/JSON, Syft SBOMs and the Grype report, then pushes the same build to GHCR (`sha-…`, `main`, and on a release `X.Y.Z`, `X.Y`, `X`, `latest`) with a signed provenance attestation | ✓ | ✓ |
 | **Documentation** | `mkdocs build --strict`; on `main` renders the test, coverage, security, license and CI reports from this run's artifacts and deploys the site | ✓ | ✓ |
 | **CI Gate** | the single status check the `main` ruleset requires; fails unless every job above succeeded (skipped is fine for documentation-only changes) | ✓ | ✓ |
