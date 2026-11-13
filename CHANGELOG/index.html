@@ -2783,6 +2783,7 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 </ul>
 <h3 id="security">Security<a class="headerlink" href="#security" title="Permanent link">&para;</a></h3>
 <ul>
+<li>The image lock file is now resolved for the image's own interpreter (Python 3.15 on Linux) instead of universally; the universal lock kept a Python 3.10-only <code>soupsieve</code> 3.x pin that carried GHSA-mmhr-3c5m-f64f even though the image never installed it</li>
 <li>Supply chain: the container image installs Python dependencies from a hash-pinned <code>requirements.txt</code> (<code>pip install --require-hashes</code>, verified with <code>pip check</code>) and the frontend with <code>npm ci --ignore-scripts</code>; the weekly dependency workflow regenerates the lock</li>
 <li><code>APP_SECRET_KEY_FILE</code> lets the session secret be read from a mounted secret file instead of the environment; production rejects keys shorter than 32 characters</li>
 <li>nginx enforces an edge rate limit (20 req/s per client, burst 40, 429 beyond) and a per-client connection cap, and gunicorn only trusts proxy headers from loopback; nginx access and error logs now go to the container's stdout/stderr</li>
