@@ -184,13 +184,13 @@ function App() {
           <p className="subtitle">Get real-time weather information for any city</p>
         </header>
 
+        <main id="main">
         <div className="search-section" role="search" aria-label="Weather search">
           <CityAutocomplete onCitySelect={fetchWeatherWithRetry} />
           <button
             className="location-button"
             onClick={fetchWeatherByLocation}
             disabled={loadingLocation}
-            aria-label="Get weather for my current location"
             aria-busy={loadingLocation}
           >
             <span aria-hidden="true">{loadingLocation ? '⏳' : '📍'}</span>
@@ -201,7 +201,7 @@ function App() {
         {recentSearches.length > 0 && (
           <section className="recent-searches" aria-label="Recent weather searches">
             <div className="recent-searches-header">
-              <h3 id="recent-searches-heading">Recent Searches</h3>
+              <h2 id="recent-searches-heading">Recent Searches</h2>
               <button
                 className="clear-button"
                 onClick={clearRecentSearches}
@@ -210,23 +210,18 @@ function App() {
                 Clear
               </button>
             </div>
-            <div
-              className="recent-searches-list"
-              role="list"
-              aria-labelledby="recent-searches-heading"
-            >
+            <ul className="recent-searches-list" aria-labelledby="recent-searches-heading">
               {recentSearches.map((search) => (
-                <button
-                  key={JSON.stringify([search.city, search.country])}
-                  className="recent-search-item"
-                  onClick={() => handleRecentSearchClick(search)}
-                  role="listitem"
-                  aria-label={`View weather for ${search.city}, ${search.country}`}
-                >
-                  {search.city}, {search.country}
-                </button>
+                <li key={JSON.stringify([search.city, search.country])}>
+                  <button
+                    className="recent-search-item"
+                    onClick={() => handleRecentSearchClick(search)}
+                  >
+                    {search.city}, {search.country}
+                  </button>
+                </li>
               ))}
-            </div>
+            </ul>
           </section>
         )}
 
@@ -241,7 +236,7 @@ function App() {
           <div className="error-card" role="alert" aria-live="assertive">
             <span className="error-icon" aria-hidden="true">⚠️</span>
             <div className="error-content">
-              <h3>Error</h3>
+              <h2>Error</h2>
               <p>{error}</p>
             </div>
           </div>
@@ -267,15 +262,13 @@ function App() {
 
             <div className="temperature-section">
               <div className="temperature-main">
-                <span
-                  aria-label={`Temperature: ${Math.round(convertTemp(weather.temperature, unit))} degrees ${unit === 'C' ? 'Celsius' : 'Fahrenheit'}`}
-                >
+                <span>
                   {Math.round(convertTemp(weather.temperature, unit))}°{unit}
                 </span>
                 <button
                   className="unit-toggle"
                   onClick={toggleUnit}
-                  aria-label={`Switch temperature unit to ${unit === 'C' ? 'Fahrenheit' : 'Celsius'}`}
+                  aria-label={`Switch temperature unit to °${unit === 'C' ? 'F' : 'C'} (${unit === 'C' ? 'Fahrenheit' : 'Celsius'})`}
                 >
                   °{unit === 'C' ? 'F' : 'C'}
                 </button>
@@ -316,10 +309,11 @@ function App() {
         {!weather && !loading && !error && (
           <div className="empty-state" role="status" aria-live="polite">
             <div className="empty-icon" aria-hidden="true">🔍</div>
-            <h3>Search for a city</h3>
+            <h2>Search for a city</h2>
             <p>Start typing in the search box above to get weather information</p>
           </div>
         )}
+        </main>
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ test.describe('MSN Weather App - Basic Functionality', () => {
   });
 
   test('should show empty state initially', async ({ page }) => {
-    await expect(page.getByText('Search for a city')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Search for a city' })).toBeVisible();
     await expect(page.getByText('Start typing in the search box above')).toBeVisible();
   });
 

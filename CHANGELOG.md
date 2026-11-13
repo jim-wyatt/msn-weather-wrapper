@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Nginx no longer reflects the request `Origin` or answers preflights itself; CORS is handled only by FastAPI, so cross-origin callers must be listed in `CORS_ORIGINS`
 
 ### Fixed
+- Frontend accessibility: the page now has a `<main>` landmark, headings no longer skip from h1 to h3, recent searches are a real list, the location and unit-toggle buttons' accessible names include their visible text, `aria-activedescendant` is only set while the suggestion list is open, and the brand and secondary text colours meet WCAG AA (7:1 for body text) on white; axe reports no violations on the homepage or after a search
+- The Playwright suite runs again: the visual and accessibility specs were still written for a "Get Weather" button that the autocomplete UI removed; they now select a city from the suggestions, mock the weather API so screenshots and scans are deterministic, and the config honours `PORT` so a second checkout can run alongside another dev server. Visual baselines regenerated
 - The release workflow now dispatches the CI pipeline on the new tag so the versioned container image (`X.Y.Z`, `X.Y`, `X`, `latest`) is published; tags pushed with the workflow token never triggered it, so 2.0.14 shipped without an image tag
 
 ### Documentation

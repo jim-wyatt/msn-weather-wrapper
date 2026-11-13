@@ -1,7 +1,41 @@
 import { test, expect } from '@playwright/test';
 
+import type { Page } from '@playwright/test';
+
+// The UI has no submit button: a city is chosen from the autocomplete list.
+async function chooseCity(page: Page, city: string) {
+  await page.fill('input[type="text"]', city);
+  const first = page.locator('.suggestion-item').first();
+  await expect(first).toBeVisible({ timeout: 2000 });
+  await first.click();
+}
+
 test.describe('Visual Regression Tests', () => {
   test.beforeEach(async ({ page }) => {
+    // Screenshots must not depend on live upstream data: answer the API with fixed
+    // payloads. The weather response is delayed slightly so the loading state is capturable.
+    await page.route('**/api/v1/recent-searches', async route => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ recent_searches: [] }) });
+      } else {
+        await route.continue();
+      }
+    });
+    await page.route('**/api/v1/weather*', async route => {
+      const city = new URL(route.request().url()).searchParams.get('city') ?? 'London';
+      await new Promise(resolve => setTimeout(resolve, 400));
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          location: { city, country: 'Testland' },
+          temperature: 18.5,
+          condition: 'Partly Cloudy',
+          humidity: 61,
+          wind_speed: 9.5,
+        }),
+      });
+    });
     await page.goto('/', { waitUntil: 'load' });
     await page.waitForSelector('h1:has-text("MSN Weather")', { timeout: 10000 });
   });
@@ -49,11 +83,10 @@ test.describe('Visual Regression Tests', () => {
 
   test('should match weather results display', async ({ page }) => {
     // Enter city and get weather
-    await page.fill('input[type="text"]', 'London');
-    await page.click('button:has-text("Get Weather")');
+    await chooseCity(page, 'London');
 
     // Wait for results
-    await page.waitForSelector('.weather-result', { timeout: 5000 });
+    await page.waitForSelector('.weather-card', { timeout: 5000 });
     await page.waitForTimeout(500); // Wait for animations
 
     await expect(page).toHaveScreenshot('weather-results.png', {
@@ -64,14 +97,12 @@ test.describe('Visual Regression Tests', () => {
 
   test('should match loading state', async ({ page }) => {
     // Click get weather and quickly capture loading state
-    await page.fill('input[type="text"]', 'Paris');
-
     // Start request and capture loading
     const responsePromise = page.waitForResponse(response =>
-      response.url().includes('/api/weather') && response.status() === 200
+      response.url().includes('/api/v1/weather') && response.status() === 200
     );
 
-    await page.click('button:has-text("Get Weather")');
+    await chooseCity(page, 'Paris');
 
     // Capture loading state quickly
     await page.waitForTimeout(100);
@@ -83,12 +114,17 @@ test.describe('Visual Regression Tests', () => {
   });
 
   test('should match error state', async ({ page }) => {
-    // Trigger error
-    await page.fill('input[type="text"]', '!!!invalid!!!');
-    await page.click('button:has-text("Get Weather")');
-
-    // Wait for error to display
-    await page.waitForTimeout(2000);
+    // Trigger error: the API answers 503 for the selected city
+    await page.route('**/api/v1/weather*', async route => {
+      await route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({ error: 'Upstream service error', message: 'Failed to fetch weather data from the upstream service.' }),
+      });
+    });
+    await chooseCity(page, 'London');
+    await page.waitForSelector('[role="alert"]', { timeout: 5000 });
+    await page.waitForTimeout(500);
 
     await expect(page).toHaveScreenshot('error-state.png', {
       fullPage: true,
@@ -120,7 +156,7 @@ test.describe('Visual Regression Tests', () => {
 
   test('should match hover states', async ({ page }) => {
     // Hover over button
-    await page.hover('button:has-text("Get Weather")');
+    await page.hover('.location-button');
     await page.waitForTimeout(100); // Wait for hover transition
 
     await expect(page).toHaveScreenshot('button-hover.png', {
@@ -174,9 +210,8 @@ test.describe('Visual Regression Tests', () => {
 
   test('should match scrolled state with long content', async ({ page }) => {
     // Get weather to populate content
-    await page.fill('input[type="text"]', 'Tokyo');
-    await page.click('button:has-text("Get Weather")');
-    await page.waitForSelector('.weather-result', { timeout: 5000 });
+    await chooseCity(page, 'Tokyo');
+    await page.waitForSelector('.weather-card', { timeout: 5000 });
 
     // Scroll down
     await page.evaluate(() => window.scrollTo(0, 300));
@@ -189,11 +224,10 @@ test.describe('Visual Regression Tests', () => {
 
   test('should match animation end states', async ({ page }) => {
     // Fill input to trigger animation
-    await page.fill('input[type="text"]', 'Berlin');
-    await page.click('button:has-text("Get Weather")');
+    await chooseCity(page, 'Berlin');
 
     // Wait for results and animations to complete
-    await page.waitForSelector('.weather-result', { timeout: 5000 });
+    await page.waitForSelector('.weather-card', { timeout: 5000 });
     await page.waitForTimeout(1000); // Wait for all animations
 
     await expect(page).toHaveScreenshot('animations-complete.png', {

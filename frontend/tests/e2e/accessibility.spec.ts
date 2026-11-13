@@ -98,6 +98,20 @@ test.describe('Accessibility Tests', () => {
   });
 
   test('should be accessible after weather data loads', async ({ page }) => {
+    // Deterministic weather payload: the scan must not depend on the live upstream
+    await page.route('**/api/v1/weather*', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          location: { city: 'London', country: 'UK' },
+          temperature: 18.5,
+          condition: 'Partly Cloudy',
+          humidity: 61,
+          wind_speed: 9.5,
+        }),
+      });
+    });
     // Enter city and select from dropdown
     const searchInput = page.getByPlaceholder(/Search for a city/i);
     await searchInput.fill('London');
@@ -108,8 +122,9 @@ test.describe('Accessibility Tests', () => {
     await expect(firstSuggestion).toBeVisible({ timeout: 2000 });
     await firstSuggestion.click();
 
-    // Wait for results
+    // Wait for results and for the card's fade-in to finish (text is low-contrast mid-animation)
     await page.waitForSelector('.weather-card', { timeout: 5000 });
+    await expect(page.locator('.weather-card')).toHaveCSS('opacity', '1');
 
     // Check accessibility of results
     const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
@@ -170,7 +185,7 @@ test.describe('Accessibility Tests', () => {
 
   test('should have proper focus management', async ({ page }) => {
     // Focus rather than click: clicking starts a geolocation lookup that disables the button
-    const locationButton = page.getByRole('button', { name: /current location/i });
+    const locationButton = page.getByRole('button', { name: /use my location/i });
     await locationButton.focus();
     await expect(locationButton).toBeFocused();
 
