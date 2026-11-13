@@ -32,7 +32,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3949ab 0%, #764ba2 100%);
   min-height: 100vh;
 }
 
@@ -85,7 +85,7 @@ body {
   font-size: 16px;
   font-weight: 600;
   background: white;
-  color: #667eea;
+  color: #3949ab;
   border: 2px solid white;
   border-radius: 12px;
   cursor: pointer;
@@ -94,7 +94,7 @@ body {
 }
 
 .location-button:hover:not(:disabled) {
-  background: #667eea;
+  background: #3949ab;
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -120,7 +120,7 @@ body {
   margin-bottom: 12px;
 }
 
-.recent-searches-header h3 {
+.recent-searches-header h2 {
   font-size: 16px;
   color: #333;
   font-weight: 600;
@@ -131,7 +131,7 @@ body {
   font-size: 14px;
   font-weight: 500;
   background: transparent;
-  color: #666;
+  color: #595959;
   border: 1px solid #e0e0e0;
   border-radius: 6px;
   cursor: pointer;
@@ -144,9 +144,16 @@ body {
 }
 
 .recent-searches-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.recent-searches-list li {
+  display: contents;
 }
 
 .recent-search-item {
@@ -161,9 +168,9 @@ body {
 }
 
 .recent-search-item:hover {
-  background: #667eea;
+  background: #3949ab;
   color: white;
-  border-color: #667eea;
+  border-color: #3949ab;
   transform: translateY(-1px);
 }
 
@@ -205,7 +212,7 @@ body {
   font-size: 32px;
 }
 
-.error-content h3 {
+.error-content h2 {
   color: #c62828;
   margin-bottom: 8px;
   font-size: 18px;
@@ -257,7 +264,7 @@ body {
 
 .location-country {
   font-size: 16px;
-  color: #666;
+  color: #595959;
   font-weight: 400;
 }
 
@@ -286,7 +293,7 @@ body {
 .unit-toggle {
   font-size: 24px;
   font-weight: 600;
-  color: #999;
+  color: #595959;
   background: #f5f5f5;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
@@ -309,7 +316,7 @@ body {
 
 .condition {
   font-size: 24px;
-  color: #666;
+  color: #595959;
   font-weight: 500;
 }
 
@@ -340,7 +347,7 @@ body {
 
 .detail-label {
   font-size: 12px;
-  color: #999;
+  color: #595959;
   text-transform: uppercase;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -365,7 +372,7 @@ body {
   margin-bottom: 20px;
 }
 
-.empty-state h3 {
+.empty-state h2 {
   font-size: 24px;
   color: #333;
   margin-bottom: 12px;
@@ -373,7 +380,7 @@ body {
 
 .empty-state p {
   font-size: 16px;
-  color: #666;
+  color: #595959;
   line-height: 1.6;
 }
 

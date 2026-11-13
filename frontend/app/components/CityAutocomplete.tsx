@@ -92,7 +92,11 @@ export default function CityAutocomplete({ onCitySelect }: CityAutocompleteProps
         role="combobox"
         aria-expanded={showSuggestions && filteredCities.length > 0}
         aria-controls="city-suggestions"
-        aria-activedescendant={selectedIndex >= 0 ? `city-option-${selectedIndex}` : undefined}
+        aria-activedescendant={
+          showSuggestions && filteredCities.length > 0 && selectedIndex >= 0
+            ? `city-option-${selectedIndex}`
+            : undefined
+        }
         aria-autocomplete="list"
         aria-label="Search for a city to get weather information"
       />
