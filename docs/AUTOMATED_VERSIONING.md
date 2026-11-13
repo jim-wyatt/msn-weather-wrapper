@@ -227,6 +227,15 @@ There is no opt-out; every merge to `main` releases. If a release must not happe
 
 ### RELEASE_TOKEN, or opening the bump PR by hand
 
+**Hands-free releases need a `RELEASE_TOKEN` secret.** Create a fine-grained personal access
+token (GitHub → Settings → Developer settings → Fine-grained tokens) scoped to this repository
+with *Contents: Read and write* and *Pull requests: Read and write* (nothing else; set an
+expiry and rotate it), and store it as the repository secret `RELEASE_TOKEN`. With it the
+workflow opens the bump pull request (so its CI runs on its own), merges it once `CI Gate`
+passes, and pushes the tag with the same token, which triggers the publish and container-image
+runs natively; the explicit dispatch steps are skipped.
+
+
 The repository setting **Allow GitHub Actions to create and approve pull requests** is
 disabled as part of the hardening baseline. Without a `RELEASE_TOKEN` secret (a GitHub App
 token or fine-grained PAT with *Contents* and *Pull requests* write), the workflow can push
