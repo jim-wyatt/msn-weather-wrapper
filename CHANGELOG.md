@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `CORS_ORIGINS=*` is rejected at startup. List explicit origins (comma-separated), or leave it unset for same-origin deployments. The image no longer defaults to `*`
   - Nginx no longer reflects the request `Origin` or answers preflights itself; CORS is handled only by FastAPI, so cross-origin callers must be listed in `CORS_ORIGINS`
 
+### Fixed
+- The release workflow now dispatches the CI pipeline on the new tag so the versioned container image (`X.Y.Z`, `X.Y`, `X`, `latest`) is published; tags pushed with the workflow token never triggered it, so 2.0.14 shipped without an image tag
+
 ### Documentation
 - Refreshed the README (security gates, endpoint table, health checks, supply chain) and corrected the city count to the 406 entries in the autocomplete data
 - Documentation accuracy pass: dev-server commands now set `APP_ENV=development`, Node.js 26 / Python 3.15 and current dependency versions everywhere, the CI test matrix, the security-report gate tests, the full scripts list, and the session-cookie wording for recent searches

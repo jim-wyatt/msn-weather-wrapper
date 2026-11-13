@@ -11,6 +11,7 @@ When a PR is merged to `main`, the CI/CD pipeline (`ci.yml`) runs on the push an
 3. **Opens and merges a version bump PR** against the main branch
 4. **Creates a git tag** for the new version
 5. **Triggers the publish workflow** (`publish-release.yml`) which builds and publishes to PyPI
+6. **Dispatches the CI pipeline on the tag** (`ci.yml`) so the versioned container image (`X.Y.Z`, `X.Y`, `X`, `latest`) is pushed to GHCR; a tag pushed with the workflow token would not trigger it otherwise
 
 ## Version Bump Rules
 
