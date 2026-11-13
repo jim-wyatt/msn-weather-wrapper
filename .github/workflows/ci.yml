@@ -375,10 +375,12 @@ jobs:
           tags: |
             type=raw,value=main
             type=sha,prefix=sha-
+            # Release tags: X.Y.Z plus the moving X.Y and X tags. `pattern` is only honoured by the
+            # semver type, so the version is fed in as a tag-like value rather than a raw tag.
+            type=semver,pattern={{version}},value=v${{ env.APP_VERSION }},enable=${{ env.IS_RELEASE }}
+            type=semver,pattern={{major}}.{{minor}},value=v${{ env.APP_VERSION }},enable=${{ env.IS_RELEASE }}
+            type=semver,pattern={{major}},value=v${{ env.APP_VERSION }},enable=${{ env.IS_RELEASE }}
             type=raw,value=latest,enable=${{ env.IS_RELEASE }}
-            type=raw,value=${{ env.APP_VERSION }},enable=${{ env.IS_RELEASE }}
-            type=raw,value=${{ env.APP_VERSION }},pattern={{major}}.{{minor}},enable=${{ env.IS_RELEASE }}
-            type=raw,value=${{ env.APP_VERSION }},pattern={{major}},enable=${{ env.IS_RELEASE }}
       - name: Push image
         if: github.event_name == 'push'
         id: push
