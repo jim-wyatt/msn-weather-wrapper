@@ -2689,7 +2689,7 @@ graph TD
 - <strong>Grype</strong>: scans the image on every pipeline and fails on fixable CRITICAL findings (it also version-scans the python/node binaries, which Trivy does not); on <code>main</code> and tags it additionally produces a Syft SBOM and an SBOM-based Grype report</p>
 <p><strong>License Compliance:</strong>
 - <strong>pip-licenses</strong>: Dependency license report on all branches</p>
-<p>Results are evaluated by <code>scripts/evaluate_security_reports.py</code>: Bandit HIGH findings, any Semgrep finding (rulesets <code>p/python</code>, <code>p/security-audit</code>, <code>.semgrep.yml</code>), and any pip-audit vulnerability fail the job. Semgrep is installed with pipx in its own environment so its transitive dependencies are not counted by pip-audit.</p>
+<p>Results are evaluated by <code>scripts/evaluate_security_reports.py</code>: Bandit HIGH findings, any Semgrep finding (rulesets <code>p/python</code>, <code>p/security-audit</code>, <code>.semgrep.yml</code>), and any pip-audit vulnerability fail the job. Semgrep is installed with pipx in its own environment so its transitive dependencies are not counted by pip-audit; its version is pinned in <code>.github/requirements/semgrep.txt</code> and kept current by Dependabot.</p>
 <p><strong>Platform scanning (GitHub):</strong>
 - <strong>CodeQL</strong> default setup for Python, JavaScript/TypeScript and GitHub Actions; results are required by the <code>main</code> ruleset
 - <strong>Secret scanning</strong> with push protection
