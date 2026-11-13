@@ -221,10 +221,15 @@ jobs:
       # Semgrep lives in its own pipx environment: its pinned transitive dependencies are not
       # project dependencies and must not be counted by pip-audit. The version is pinned in
       # .github/requirements/semgrep.txt (Dependabot bumps it) and the environment is cached
-      # per version and interpreter, so most runs skip the install.
+      # per version, so most runs skip the install. pipx uses the runner image's own Python,
+      # not the 3.15 from setup-python: semgrep-core crashes under Python 3.15 on Linux
+      # (semgrep/semgrep#11979), and the cached venv symlinks that interpreter, so the cache
+      # key carries the runner image version as well.
       - name: Semgrep version
         id: semgrep
-        run: echo "spec=$(grep -E '^semgrep==' .github/requirements/semgrep.txt)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "spec=$(grep -E '^semgrep==' .github/requirements/semgrep.txt)" >> "$GITHUB_OUTPUT"
+          echo "image=${ImageOS:-unknown}-${ImageVersion:-unknown}" >> "$GITHUB_OUTPUT"
       - name: Restore Semgrep environment
         id: semgrep-cache
         uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
@@ -232,7 +237,7 @@ jobs:
           path: |
             ~/.local/pipx/venvs/semgrep
             ~/.local/bin/semgrep
-          key: semgrep-${{ runner.os }}-${{ runner.arch }}-py${{ env.PYTHON_VERSION }}-${{ steps.semgrep.outputs.spec }}
+          key: semgrep-${{ runner.os }}-${{ runner.arch }}-${{ steps.semgrep.outputs.image }}-${{ steps.semgrep.outputs.spec }}
       - name: Install scanners
         env:
           PIPX_HOME: /home/runner/.local/pipx
@@ -240,7 +245,7 @@ jobs:
           SEMGREP_SPEC: ${{ steps.semgrep.outputs.spec }}
           SEMGREP_CACHED: ${{ steps.semgrep-cache.outputs.cache-hit }}
         run: |
-          if [ "$SEMGREP_CACHED" != "true" ]; then pipx install --python "$pythonLocation/bin/python" "$SEMGREP_SPEC"; fi
+          if [ "$SEMGREP_CACHED" != "true" ]; then pipx install "$SEMGREP_SPEC"; fi
           semgrep --version
           pip install bandit pip-audit pip-licenses
       - name: Bandit, Semgrep, pip-audit, pip-licenses
