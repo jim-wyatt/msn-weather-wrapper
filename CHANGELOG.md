@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Nginx no longer reflects the request `Origin` or answers preflights itself; CORS is handled only by FastAPI, so cross-origin callers must be listed in `CORS_ORIGINS`
 
 ### Fixed
+- The release trigger now looks up the pull request that produced the merged commit instead of the most recently created merged PR, which after a release was the version-bump PR itself; every second release was being skipped
 - The release workflow now dispatches the CI pipeline on the new tag so the versioned container image (`X.Y.Z`, `X.Y`, `X`, `latest`) is published; tags pushed with the workflow token never triggered it, so 2.0.14 shipped without an image tag
 
 ### Documentation

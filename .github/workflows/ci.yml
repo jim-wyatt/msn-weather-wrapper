@@ -187,10 +187,15 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PR_NUMBER=$(gh pr list --state merged --base main --limit 1 --json number -q '.[0].number')
+          # Look up the pull request that produced THIS commit. (`gh pr list --state merged
+          # --limit 1` returns the most recently *created* merged PR, which after a release
+          # is the version-bump PR even when a newer PR was merged later, so every second
+          # release was silently skipped.)
+          PR_NUMBER=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls" \
+            -q '[.[] | select(.merged_at != null)] | .[0].number // empty')
 
           if [[ -z "$PR_NUMBER" ]]; then
-            echo "No recent merged PR found - skipping auto-version"
+            echo "No merged PR is associated with ${GITHUB_SHA} - skipping auto-version"
             echo "skip=true" >> $GITHUB_OUTPUT
             exit 0
           fi
