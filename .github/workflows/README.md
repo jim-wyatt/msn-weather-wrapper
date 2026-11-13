@@ -136,7 +136,7 @@ The coverage job uploads with `fail_ci_if_error: false`; the workflow does not c
 **Not required:**
 - PyPI publishing uses trusted publishing (OIDC) through the `pypi` environment, so no PyPI token is stored
 
-**Optional:** `RELEASE_TOKEN` (GitHub App or fine-grained PAT with Contents + Pull requests write) lets `auto-version-release.yml` open the version-bump PR so its CI runs without a maintainer clicking "Approve and run workflows".
+**`RELEASE_TOKEN`** (fine-grained PAT scoped to this repository with Contents and Pull requests write) makes `auto-version-release.yml` hands-free: it opens the bump PR so its CI runs, merges it, and pushes the tag so the publish and image runs trigger natively. Without it the workflow stops after pushing the bump branch (the repository does not let Actions open pull requests) and a maintainer opens the PR and re-runs it.
 
 ### Branch protection
 
