@@ -230,7 +230,9 @@ podman build -t msn-weather-wrapper -f infra/containers/Containerfile .
 podman run -p 8080:8080 --cap-drop ALL --security-opt no-new-privileges -e APP_SECRET_KEY msn-weather-wrapper
 ```
 
-`APP_SECRET_KEY` must be supplied at runtime in production. Set `CORS_ORIGINS` to a
+`APP_SECRET_KEY` (at least 32 characters) must be supplied at runtime in production, either
+directly or as a file via `APP_SECRET_KEY_FILE` (for example a Docker/Podman secret mounted at
+`/run/secrets/app_secret_key`), which keeps it out of the environment. Set `CORS_ORIGINS` to a
 comma-separated list of explicit origins if the API is called cross-origin; see
 [.env.example](.env.example) for all settings.
 
@@ -248,6 +250,13 @@ Point external liveness and readiness probes at `/api/v1/health/live` and `/api/
 - nginx sets `Content-Security-Policy`, `X-Frame-Options: DENY`, `X-Content-Type-Options`,
   `Referrer-Policy` and `Permissions-Policy` on every response and hides upstream fingerprints;
   terminate TLS in front of the container and add `Strict-Transport-Security` there.
+- nginx enforces the edge rate limit (20 requests/s per client, burst 40, then 429) and a
+  per-client connection cap; the API's per-minute budget applies on top of it. nginx logs go
+  to the container's stdout/stderr.
+- The image installs Python dependencies from the hash-pinned `requirements.txt` and the
+  frontend with `npm ci --ignore-scripts`, so a rebuild cannot pick up an unreviewed release.
+  Regenerate the lock with
+  `uv pip compile pyproject.toml --universal --generate-hashes --python-version 3.10 -o requirements.txt`.
 
 ### Supply chain
 

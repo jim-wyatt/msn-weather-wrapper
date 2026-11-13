@@ -45,17 +45,47 @@ def get_cors_origins() -> list[str]:
     return origins
 
 
+MIN_SECRET_KEY_LENGTH = 32
+
+
+def _read_secret_key_file(path: str) -> str:
+    """Read a secret from a file (Docker/Podman secrets, Kubernetes mounted secrets)."""
+    try:
+        with open(path, encoding="utf-8") as handle:
+            return handle.read().strip()
+    except OSError as error:
+        raise ValueError(f"APP_SECRET_KEY_FILE could not be read: {error}") from error
+
+
 def get_secret_key() -> str:
-    """Resolve the app secret key with secure development fallback."""
-    secret_key = os.getenv("APP_SECRET_KEY")
+    """Resolve the app secret key with secure development fallback.
+
+    Resolution order: ``APP_SECRET_KEY_FILE`` (a file containing the key, so the value
+    never appears in the environment or ``docker inspect``), then ``APP_SECRET_KEY``.
+    Outside development/testing the key must be set and at least 32 characters long.
+    """
+    secret_key: str | None = None
+    secret_file = os.getenv("APP_SECRET_KEY_FILE")
+    if secret_file:
+        secret_key = _read_secret_key_file(secret_file)
+    if not secret_key:
+        secret_key = os.getenv("APP_SECRET_KEY")
 
     if secret_key and secret_key != DEFAULT_SECRET_KEY_PLACEHOLDER:
+        if len(secret_key) < MIN_SECRET_KEY_LENGTH and not (
+            ENVIRONMENT == "development" or DEBUG or TESTING
+        ):
+            raise ValueError(
+                f"APP_SECRET_KEY must be at least {MIN_SECRET_KEY_LENGTH} characters in "
+                "production. Generate one with: "
+                "python -c 'import secrets; print(secrets.token_hex(32))'"
+            )
         return secret_key
 
     if ENVIRONMENT == "development" or DEBUG or TESTING:
         return secrets.token_hex(32)
 
     raise ValueError(
-        "APP_SECRET_KEY must be set in production. "
+        "APP_SECRET_KEY (or APP_SECRET_KEY_FILE) must be set in production. "
         "Generate one with: python -c 'import secrets; print(secrets.token_hex(32))'"
     )
