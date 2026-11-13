@@ -78,9 +78,12 @@ updates:
           - "minor"
           - "patch"
 
-  # GitHub Actions
+  # GitHub Actions. "/" covers .github/workflows; composite actions under .github/actions
+  # are only scanned when their directory is listed here.
   - package-ecosystem: "github-actions"
-    directory: "/"
+    directories:
+      - "/"
+      - "/.github/actions/setup-python-env"
     schedule:
       interval: "weekly"
       day: "monday"
