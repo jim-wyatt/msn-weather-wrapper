@@ -17,6 +17,13 @@ The frontend includes comprehensive E2E tests using Playwright, covering:
 
 ## Running Tests
 
+`npm run test:e2e` starts what it needs: the Next.js dev server on port 3000 and, when the
+repository's Python virtualenv exists at `../.venv`, the FastAPI backend on port 5000 (with
+`APP_ENV=development`). Already-running servers are reused outside CI. If there is no
+virtualenv (for example inside the Playwright container), only the frontend is started and
+the API is expected at `API_URL`.
+
+
 ### Prerequisites
 Ensure Node.js 26+ is installed:
 ```bash
