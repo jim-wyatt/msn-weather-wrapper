@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtimes and tooling moved to current stable/LTS lines: Python 3.15 in CI and the container images (the library still supports 3.10+ and is now tested on 3.10 through 3.15), Node.js 26 LTS, npm 12, pip 26.3, and the latest ruff, mypy, and pre-commit hooks. Runtime dependency floors in `pyproject.toml` were raised to the current minor lines; dev-tool floors stay where they were so the dev extra still installs on 3.10.
 
 ### Security
+- The image lock file is now resolved for the image's own interpreter (Python 3.15 on Linux) instead of universally; the universal lock kept a Python 3.10-only `soupsieve` 3.x pin that carried GHSA-mmhr-3c5m-f64f even though the image never installed it
 - Supply chain: the container image installs Python dependencies from a hash-pinned `requirements.txt` (`pip install --require-hashes`, verified with `pip check`) and the frontend with `npm ci --ignore-scripts`; the weekly dependency workflow regenerates the lock
 - `APP_SECRET_KEY_FILE` lets the session secret be read from a mounted secret file instead of the environment; production rejects keys shorter than 32 characters
 - nginx enforces an edge rate limit (20 req/s per client, burst 40, 429 beyond) and a per-client connection cap, and gunicorn only trusts proxy headers from loopback; nginx access and error logs now go to the container's stdout/stderr
