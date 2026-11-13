@@ -302,12 +302,15 @@ jobs:
 
       - name: Smoke test
         run: |
-          docker rm -f test-app 2>/dev/null || true
+          docker rm -f msn-weather-app 2>/dev/null || true
           test_secret="$(openssl rand -hex 32)"; echo "::add-mask::$test_secret"
-          docker run -d --name test-app -p 8080:8080 --cap-drop ALL --security-opt no-new-privileges \
-            -e "APP_SECRET_KEY=$test_secret" -e CORS_ORIGINS=http://localhost:3000 msn-weather-app:ci
+          # The integration suite fires ~30 requests inside a minute, which is the image's default
+          # per-IP budget; the API limiter is not under test here, so give the test container headroom.
+          docker run -d --name msn-weather-app -p 8080:8080 --cap-drop ALL --security-opt no-new-privileges \
+            -e "APP_SECRET_KEY=$test_secret" -e CORS_ORIGINS=http://localhost:3000 \
+            -e RATE_LIMIT_PER_IP=1000 -e RATE_LIMIT_GLOBAL=10000 msn-weather-app:ci
           for i in $(seq 1 30); do curl -fsS http://localhost:8080/api/v1/health/ready >/dev/null 2>&1 && break; sleep 2; done
-          probe() { curl -fsS "$1" > /dev/null || { echo "::error::$1 did not respond"; docker logs test-app || true; exit 1; }; }
+          probe() { curl -fsS "$1" > /dev/null || { echo "::error::$1 did not respond"; docker logs msn-weather-app || true; exit 1; }; }
           probe http://localhost:8080/api/v1/health/ready
           probe http://localhost:8080/
           echo "reported version: $(curl -fsS http://localhost:8080/api/v1/health | python -c 'import json,sys; print(json.load(sys.stdin).get("version"))')"
@@ -315,7 +318,7 @@ jobs:
         run: pytest tests/test_integration.py -v -m integration --tb=short --override-ini="addopts=" --junitxml=junit-integration.xml
       - name: Stop container
         if: always()
-        run: docker rm -f test-app 2>/dev/null || true
+        run: docker rm -f msn-weather-app 2>/dev/null || true
 
       # Full reports only where they are consumed: pushes to main
       - name: Trivy SARIF to the Security tab
