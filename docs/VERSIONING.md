@@ -236,7 +236,7 @@ git tag -a v1.2.0-rc.1 -m "Release candidate 1 for v1.2.0"
 
 ## Container Image Tags
 
-The build workflow (`build.yml`) creates multiple tags:
+The `Container` job of `ci.yml` pushes multiple tags:
 
 | Tag Pattern | Example | Purpose |
 |-------------|---------|---------|
@@ -333,7 +333,7 @@ python -m twine upload --repository testpypi dist/*
 
 1. Does the infra/containers/Containerfile exist?
 2. Are there syntax errors in the infra/containers/Containerfile?
-3. Check the `build.yml` job logs for details
+3. Check the `Container` job logs of the `main` run for details
 
 ## Best Practices
 
