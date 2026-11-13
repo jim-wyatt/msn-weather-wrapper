@@ -9,10 +9,9 @@ RUN npm install -g npm@12.2.2
 # Copy frontend package files
 COPY frontend/package.json frontend/package-lock.json* ./
 
-# Install frontend dependencies
-# Use npm install (not npm ci) to allow regeneration of lock file with all dependencies
-# This ensures platform-specific optionalDependencies like @img/sharp-* are included
-RUN npm install
+# Install exactly what the lockfile says and skip lifecycle scripts (a common
+# supply-chain vector); the lockfile carries the platform-specific optional packages
+RUN npm ci --ignore-scripts
 
 # Copy frontend source
 COPY frontend/ .
@@ -35,12 +34,16 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 RUN python -m pip install --no-cache-dir "pip==26.3"
 
-# Copy Python project files and install dependencies
+# Runtime dependencies come from the hash-pinned lock file: every artifact must match
+# a recorded sha256, so a rebuild cannot silently pick up a different or tampered release.
+COPY requirements.txt ./
+RUN python -m pip install --no-cache-dir --require-hashes --no-deps -r requirements.txt
+
+# Then install the application itself without re-resolving its dependencies, and prove
+# that the lock file satisfies pyproject.toml (pip check fails on anything missing).
 COPY pyproject.toml README.md ./
 COPY backend/ backend/
-# Install as a regular (non-editable) package so all code is embedded in the venv
-# and does not depend on source files being present in the final image
-RUN python -m pip install --no-cache-dir .
+RUN python -m pip install --no-cache-dir --no-deps . && python -m pip check
 
 # Stage 3: Final runtime image - no build tools, no supervisor
 FROM python:3.15-slim-trixie@sha256:65a65fc7b30b06cb6df4930fd4650697cb23f4c2698ab81fc87e4b031bc36928
@@ -84,8 +87,9 @@ COPY --from=frontend-builder /frontend/.next/standalone /app/frontend
 COPY --from=frontend-builder /frontend/.next/static /app/frontend/.next/static
 COPY --from=frontend-builder /frontend/public /app/frontend/public
 
-# Copy nginx configuration
+# Copy nginx configuration (site config plus the http-level rate limit zones)
 COPY infra/config/nginx.conf /etc/nginx/sites-available/default
+COPY infra/config/nginx-limits.conf /etc/nginx/conf.d/limits.conf
 
 # Copy and enable the entrypoint script
 COPY infra/config/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
@@ -97,6 +101,7 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 RUN sed -i 's|^pid /run/nginx.pid;|pid /tmp/nginx.pid;|; s|^user www-data;|# runs as the unprivileged app user (USER below); no user directive|' /etc/nginx/nginx.conf \
     && grep -q '^pid /tmp/nginx.pid;' /etc/nginx/nginx.conf \
     && mkdir -p /var/log/nginx /app/frontend/.next/cache \
+    && ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log \
     && chown -R app:app /var/log/nginx /var/lib/nginx /etc/nginx/sites-available /app/frontend/.next/cache
 
 # Set production environment variables

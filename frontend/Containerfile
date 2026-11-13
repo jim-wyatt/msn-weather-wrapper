@@ -10,9 +10,8 @@ RUN npm install -g npm@12.2.2
 # Copy package files
 COPY package.json package-lock.json ./
 
-# Use npm install so Docker builds are not blocked by lockfile drift and
-# platform-specific optional dependencies introduced by Next.js tooling.
-RUN npm install
+# Install exactly what the lockfile says and skip lifecycle scripts
+RUN npm ci --ignore-scripts
 
 # Copy source files
 COPY . .

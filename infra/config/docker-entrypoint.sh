@@ -5,6 +5,9 @@ set -e
 GUNICORN_WORKERS="${GUNICORN_WORKERS:-4}"
 GUNICORN_TIMEOUT="${GUNICORN_TIMEOUT:-120}"
 GUNICORN_BIND="${GUNICORN_BIND:-127.0.0.1:5000}"
+# Only nginx (loopback) may set X-Forwarded-For/X-Real-IP; the API keys its rate limiter
+# and request logs on the client address these headers carry.
+GUNICORN_FORWARDED_ALLOW_IPS="${GUNICORN_FORWARDED_ALLOW_IPS:-127.0.0.1}"
 
 # Next.js standalone server settings
 NEXTJS_PORT="${NEXTJS_PORT:-3000}"
@@ -53,7 +56,7 @@ NEXTJS_PID=$!
 echo "Next.js started (PID: $NEXTJS_PID)"
 
 # Start gunicorn with the ASGI worker in the background
-gunicorn -k uvicorn.workers.UvicornWorker --bind "$GUNICORN_BIND" --workers "$GUNICORN_WORKERS" --timeout "$GUNICORN_TIMEOUT" backend.api.main:app &
+gunicorn -k uvicorn.workers.UvicornWorker --bind "$GUNICORN_BIND" --workers "$GUNICORN_WORKERS" --timeout "$GUNICORN_TIMEOUT" --forwarded-allow-ips "$GUNICORN_FORWARDED_ALLOW_IPS" backend.api.main:app &
 GUNICORN_PID=$!
 
 echo "gunicorn started (PID: $GUNICORN_PID)"

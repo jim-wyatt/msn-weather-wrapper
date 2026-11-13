@@ -144,6 +144,9 @@ All dependencies are:
 - Always use specific version tags (not `latest`)
 - The published image runs all of its processes as the unprivileged user `app` (uid 10001) on port 8080 and needs no capabilities: run it with `--cap-drop ALL --security-opt no-new-privileges`
 - Third-party GitHub Actions are pinned to commit SHAs (Dependabot keeps the pins current) and `GITHUB_TOKEN` is not persisted in checkouts that do not push
+- The image installs Python dependencies from the hash-pinned `requirements.txt` (`pip --require-hashes`) and the frontend with `npm ci --ignore-scripts`
+- Supply the session secret through `APP_SECRET_KEY_FILE` (a mounted secret) rather than the environment where possible; keys shorter than 32 characters are rejected in production
+- nginx applies the edge rate limit (20 req/s per client, burst 40) and connection cap in front of the API's own limiter
 - Use read-only file systems when possible
 - Regularly update base images
 - Scan images before deployment
