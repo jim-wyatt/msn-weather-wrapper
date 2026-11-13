@@ -256,7 +256,7 @@ Point external liveness and readiness probes at `/api/v1/health/live` and `/api/
 - The image installs Python dependencies from the hash-pinned `requirements.txt` and the
   frontend with `npm ci --ignore-scripts`, so a rebuild cannot pick up an unreviewed release.
   Regenerate the lock with
-  `uv pip compile pyproject.toml --universal --generate-hashes --python-version 3.10 -o requirements.txt`.
+  `uv pip compile pyproject.toml --generate-hashes --python-version 3.15 --python-platform linux -o requirements.txt`.
 
 ### Supply chain
 
