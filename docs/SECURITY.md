@@ -92,6 +92,7 @@ The project uses a **comprehensive security scanning workflow** integrated into 
 - **pip-audit**: Vulnerability checking of installed dependencies
 
 **Container Security:**
+- **Alpine runtime image**: the published image is built on `python:3.15-alpine3.24` with nginx and the Node.js runtime libraries added from Alpine's repositories. Alpine ships a small package set and patches quickly, so the image does not carry the won't-fix HIGH findings that a Debian base accumulates in util-linux, krb5, ncurses, sqlite, perl and friends. Dev images (`Containerfile.dev`, `Containerfile.playwright`) stay on Debian because Playwright's browsers need glibc; they are never published or scanned
 - **Trivy**: scans the freshly built image on every pipeline and fails on fixable CRITICAL/HIGH findings; on `main` and tags it also uploads SARIF to the GitHub Security tab and a JSON report
 - **Grype**: scans the image on every pipeline and fails on fixable CRITICAL findings (it also version-scans the python/node binaries, which Trivy does not); on `main` and tags it additionally produces a Syft SBOM and an SBOM-based Grype report
 

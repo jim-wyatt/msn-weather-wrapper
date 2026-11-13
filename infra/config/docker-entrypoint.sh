@@ -42,7 +42,7 @@ esac
 case "$NEXTJS_HOSTNAME" in
     *[!a-zA-Z0-9.\-]*) echo "Invalid NEXTJS_HOSTNAME: $NEXTJS_HOSTNAME"; exit 1 ;;
 esac
-sed -i "s|127\.0\.0\.1:3000|${NEXTJS_HOSTNAME}:${NEXTJS_PORT}|" /etc/nginx/sites-available/default
+sed -i "s|127\.0\.0\.1:3000|${NEXTJS_HOSTNAME}:${NEXTJS_PORT}|" /etc/nginx/http.d/default.conf
 
 # Start nginx as daemon
 nginx

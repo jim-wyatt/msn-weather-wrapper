@@ -1,6 +1,14 @@
-# Multi-stage Dockerfile - Unified FastAPI + Next.js Frontend
+# Multi-stage Containerfile - Unified FastAPI + Next.js Frontend
+#
+# Every stage is Alpine based. The Debian (python:slim) runtime carried a long tail of
+# OS packages that nothing in the image used at runtime (util-linux, krb5, ncurses,
+# sqlite, perl, systemd libraries, ...) and Debian marks most of their HIGH CVEs as
+# won't-fix, so they sat permanently in the Trivy and Grype reports. Alpine ships a far
+# smaller base and patches quickly; the Python packages with compiled extensions
+# (lxml, pydantic-core) install as musllinux wheels straight from the hash-pinned lock.
+
 # Stage 1: Build Next.js frontend (produces .next/standalone/)
-FROM node:26-trixie-slim@sha256:e6bedef217677b276c591795e169840edd9096dbf13f29df8ef8d1856b8820bc AS frontend-builder
+FROM node:26-alpine3.24@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5 AS frontend-builder
 
 WORKDIR /frontend
 
@@ -19,14 +27,12 @@ COPY frontend/ .
 # Build frontend (Next.js standalone output)
 RUN npm run build
 
-# Stage 2: Build Python dependencies (requires gcc for compiled extensions)
-FROM python:3.15-slim-trixie@sha256:65a65fc7b30b06cb6df4930fd4650697cb23f4c2698ab81fc87e4b031bc36928 AS python-builder
+# Stage 2: Install Python dependencies into a virtual environment
+FROM python:3.15-alpine3.24@sha256:0f9552bb28711333da16915ec146f5e6bb44a7fdac9ced15dc17c2e0206346dd AS python-builder
 
 WORKDIR /app
 
-# Install build-only tools (not copied to final image)
-RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends gcc && \
-    apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
+RUN apk upgrade --no-cache
 
 # Create a virtual environment to hold all Python packages
 RUN python -m venv /opt/venv
@@ -36,6 +42,8 @@ RUN python -m pip install --no-cache-dir "pip==26.3"
 
 # Runtime dependencies come from the hash-pinned lock file: every artifact must match
 # a recorded sha256, so a rebuild cannot silently pick up a different or tampered release.
+# Everything installs as a wheel (the lock carries the musllinux hashes), so the builder
+# needs no compiler.
 COPY requirements.txt ./
 RUN python -m pip install --no-cache-dir --require-hashes --no-deps -r requirements.txt
 
@@ -50,23 +58,33 @@ COPY backend/ backend/
 RUN python -m pip install --no-cache-dir --no-deps . && python -m pip check
 
 # Stage 3: Final runtime image - no build tools, no supervisor
-FROM python:3.15-slim-trixie@sha256:65a65fc7b30b06cb6df4930fd4650697cb23f4c2698ab81fc87e4b031bc36928
+FROM python:3.15-alpine3.24@sha256:0f9552bb28711333da16915ec146f5e6bb44a7fdac9ced15dc17c2e0206346dd
 
 WORKDIR /app
 
-# Install runtime dependencies: nginx for the reverse proxy and libatomic1, which the
-# Node.js 26 binary copied in below links against (python:slim does not ship it).
-# curl is deliberately not installed: the health check uses the Python interpreter
-# that is already in the image, and curl/libcurl carried the largest share of
-# (unfixed) OS vulnerability findings in container scans.
-RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
+# Runtime packages: nginx for the reverse proxy, plus libstdc++, libgcc and libatomic,
+# which the Node.js 26 binary copied in below links against (python:alpine does not
+# ship them). curl is deliberately not installed: the health check uses the Python
+# interpreter that is already in the image.
+RUN apk upgrade --no-cache && apk add --no-cache \
     nginx \
-    libatomic1 \
-    && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
+    libstdc++ \
+    libgcc \
+    libatomic
+
+# python:alpine pulls in sqlite-libs for the stdlib sqlite3 module, which nothing in this
+# image imports, and sqlite is a steady source of HIGH CVEs (FTS5, session changesets).
+# The base image pins the interpreter's runtime libraries through the .python-rundeps
+# virtual package, so re-declare that package without sqlite and apk lets it go.
+RUN deps="$(apk info --depends .python-rundeps | tail -n +2 | grep -v '^$' | grep -v sqlite)" \
+    && apk add --no-cache --virtual .python-rundeps $deps \
+    && apk del --no-cache sqlite-libs \
+    && rm -f /usr/local/lib/python3.15/lib-dynload/_sqlite3.*.so \
+    && ! apk info -e sqlite-libs
 
 # Unprivileged runtime user. Everything below (nginx, Next.js, gunicorn) runs as this
 # user, so the image works with --cap-drop ALL and no-new-privileges.
-RUN groupadd --gid 10001 app && useradd --uid 10001 --gid app --create-home --shell /usr/sbin/nologin app
+RUN addgroup -g 10001 app && adduser -D -u 10001 -G app -h /home/app -s /sbin/nologin app
 
 # Copy virtual environment with all Python packages from builder stage
 COPY --from=python-builder /opt/venv /opt/venv
@@ -91,9 +109,11 @@ COPY --from=frontend-builder /frontend/.next/standalone /app/frontend
 COPY --from=frontend-builder /frontend/.next/static /app/frontend/.next/static
 COPY --from=frontend-builder /frontend/public /app/frontend/public
 
-# Copy nginx configuration (site config plus the http-level rate limit zones)
-COPY infra/config/nginx.conf /etc/nginx/sites-available/default
-COPY infra/config/nginx-limits.conf /etc/nginx/conf.d/limits.conf
+# nginx configuration. Alpine's nginx.conf includes /etc/nginx/http.d/*.conf inside the
+# http context in name order, so the rate-limit zones load first and the site config
+# replaces the package's default server.
+COPY infra/config/nginx-limits.conf /etc/nginx/http.d/00-limits.conf
+COPY infra/config/nginx.conf /etc/nginx/http.d/default.conf
 
 # Copy and enable the entrypoint script
 COPY infra/config/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
@@ -102,11 +122,13 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 # nginx as a non-root process: it listens on an unprivileged port (see nginx.conf),
 # keeps its pid file in /tmp, and needs its log and temp directories writable. The
 # site config stays writable so the entrypoint can substitute the Next.js address.
-RUN sed -i 's|^pid /run/nginx.pid;|pid /tmp/nginx.pid;|; s|^user www-data;|# runs as the unprivileged app user (USER below); no user directive|' /etc/nginx/nginx.conf \
+RUN sed -i 's|^user nginx;|# runs as the unprivileged app user (USER below); no user directive|' /etc/nginx/nginx.conf \
+    && sed -i '1i pid /tmp/nginx.pid;' /etc/nginx/nginx.conf \
     && grep -q '^pid /tmp/nginx.pid;' /etc/nginx/nginx.conf \
+    && ! grep -q '^user ' /etc/nginx/nginx.conf \
     && mkdir -p /var/log/nginx /app/frontend/.next/cache \
     && ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log \
-    && chown -R app:app /var/log/nginx /var/lib/nginx /etc/nginx/sites-available /app/frontend/.next/cache
+    && chown -R app:app /var/log/nginx /var/lib/nginx /run/nginx /etc/nginx/http.d /app/frontend/.next/cache
 
 # Set production environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
